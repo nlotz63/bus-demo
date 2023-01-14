@@ -1,0 +1,34 @@
+<div class="abel-player-container">
+  <div class="abel-step-container" FlexLayout="row">
+    <app-production-function
+      fxFlex="100%"
+      *ngIf="model === 'pf01' && ready"
+      [mode]="step"
+      @myAnimationTrigger
+    ></app-production-function>
+    <app-labor-demand
+      *ngIf="model === 'ld01' && ready"
+      [mode]="step"
+      @myAnimationTrigger
+    ></app-labor-demand>
+  </div>
+  <div id="navigation" fxFlexLayout="row" fxLayoutAlign="space-around center">
+    <button
+      [disabled]="backDisabled"
+      fxFlex="10%"
+      (click)="stepper(false)"
+      mat-raised-button
+    >
+      Back
+    </button>
+    <p fxFlex="20%">Step {{ step + 1 }} of {{ stepArray.length }}</p>
+    <button
+      [disabled]="nextDisabled"
+      fxFlex="10%"
+      (click)="stepper(true)"
+      mat-raised-button
+    >
+      Next
+    </button>
+  </div>
+</div>

@@ -1,0 +1,279 @@
+<div
+  class="econ-interactive-container"
+  fxLayout="row"
+  fxLayout.xs="column"
+  fxLayoutGap="10px"
+  econMath
+>
+  <div fxFlex="45%">
+    <div *ngIf="mode === 0">
+      <h2>The Determination of Labor Demand</h2>
+      <ul>
+        <li>
+          The amount of labor demanded at any given real wage rate is the
+          quantity of labor at which the marginal product of labor (MPN) equals
+          the real wage rate.
+        </li>
+        <li>
+          Use the slider to see how the quantity of labor demanded changes with
+          the changes in the real wage, <span econMath="\( \omega \)"></span>.
+        </li>
+        <li>
+          As the real wage decreases, the quantity of labor demanded increases.
+        </li>
+      </ul>
+<!--       <econ-slider
+        class="econ-control"
+        label="Real wage, \(\omega \)"
+        min="72"
+        max="92"
+        value="79.45"
+        showValue="false"
+        [displayValue]="rw.toString()"
+        step=".05"
+        (input)="updateChart(23539, 25.99, $event.value, 0, 0, 0, 0)"
+        (change)="messageBuilder('rw', $event.value)"
+      ></econ-slider>
+ -->    </div>
+    <div *ngIf="mode === 1">
+      <h2>Factors that Shift the Labor Demand Curve</h2>
+      <ul>
+        <li>
+          A beneficial supply shock, or an increase in the capital stock, that
+          raises the <b>MPN</b> at every level of labor shifts the labor demand
+          curve <b>(ND)</b> upward and to the right.
+        </li>
+        <li>
+          An adverse supply shock, or a decrease in the capital stock, that
+          lowers the <b>MPN</b> at every level of labor shifts the labor demand
+          curve <b>(ND)</b> downward and to the left.
+        </li>
+        <li>Use the sliders below to simulate these shocks.</li>
+        <li>
+          Moving the productivity slider to the left simulates an adverse supply
+          shock and moving the slider to the right simulates a beneficial supply
+          shock
+        </li>
+        <li>
+          Moving the capital stock slider to the left simulates a decline in the
+          capital stock and moving the slider to the right simulates an increase
+          in the capital stock.
+        </li>
+      </ul>
+      <div fxLayout="column">
+<!--         <econ-slider
+          class="econ-control"
+          label="Productivity"
+          min="23.99"
+          max="27.99"
+          [showPercent]="true"
+          showValue="false"
+          [value]="A.toString()"
+          step=".1"
+          (input)="updateChart(K, $event.value, rw, 0, 0, 0, 0)"
+          (change)="messageBuilder('prod', $event.value)"
+        ></econ-slider>
+        <econ-slider
+          class="econ-control"
+          label="Capital stock"
+          min="19539"
+          max="27539"
+          [showPercent]="true"
+          showValue="false"
+          [value]="K.toString()"
+          step="100"
+          (input)="updateChart($event.value, A, rw, 0, 0, 0, 0)"
+          (change)="messageBuilder('capital', $event.value)"
+        ></econ-slider>
+ -->        <button mat-raised-button (click)="reset()">Reset</button>
+      </div>
+    </div>
+    <div *ngIf="mode === 2">
+      <h2>The Determination of Labor Supply</h2>
+      <ul>
+        <li>The amount of labor supplied depends the real wage.</li>
+        <li>
+          Use the slider to see how the quantity of labor supplied changes with
+          the changes in the real wage, <span econMath="\( \omega \)"></span>.
+        </li>
+        <li>
+          As the real wage increases, the quantity of labor supplied increases.
+        </li>
+      </ul>
+<!--       <econ-slider
+        class="econ-control"
+        label="Real wage, \(\omega \)"
+        min="72"
+        max="92"
+        value="79.45"
+        showValue="false"
+        [displayValue]="rw.toString()"
+        step=".05"
+        (input)="updateChart(23539, 25.99, $event.value, 0, 0, 0, 0)"
+        (change)="messageBuilder('rw', $event.value)"
+      ></econ-slider>
+ -->    </div>
+    <div *ngIf="mode === 3">
+      <h2>Factors that Shift the Labor Supply Curve</h2>
+      <ul>
+        <li>
+          Each of the following changes reduces the quantity of labor supplied
+          at any given real wage rate and thus shifts the labor supply curve to
+          left:
+        </li>
+        <li>An increase in wealth</li>
+        <li>An increase in the expected future real wage rate</li>
+        <li>A decrease in working-age population</li>
+        <li>A decrease in the labor force participation rate</li>
+        <li>
+          Moving the slider to the right, increases the value of each of the
+          variables below. Note which direction the labor supply curve moves in
+          each case.
+        </li>
+      </ul>
+      <div fxLayout="column">
+<!--         <econ-slider
+          class="econ-control"
+          label="Wealth"
+          min="-6"
+          max="6"
+          [showPercent]="true"
+          showValue="false"
+          [value]="wealth.toString()"
+          step=".05"
+          (input)="
+            updateChart(23539, 25.99, 80, $event.value, exWage, pop, partRate)
+          "
+          (change)="messageBuilder('wealth', $event.value)"
+        ></econ-slider>
+        <econ-slider
+          class="econ-control"
+          label="Expected future real wage"
+          min="-6"
+          max="6"
+          [showPercent]="true"
+          showValue="false"
+          [value]="exWage.toString()"
+          step=".05"
+          (input)="
+            updateChart(23539, 25.99, 80, wealth, $event.value, pop, partRate)
+          "
+          (change)="messageBuilder('exRw', $event.value)"
+        ></econ-slider>
+        <econ-slider
+          class="econ-control"
+          label="Working-age population"
+          min="-6"
+          max="6"
+          [showPercent]="true"
+          showValue="false"
+          [value]="pop.toString()"
+          step=".05"
+          (input)="
+            updateChart(
+              23539,
+              25.99,
+              80,
+              wealth,
+              exWage,
+              $event.value,
+              partRate
+            )
+          "
+          (change)="messageBuilder('pop', $event.value)"
+        ></econ-slider>
+        <econ-slider
+          class="econ-control"
+          label="Participation rate"
+          min="-6"
+          max="6"
+          [showPercent]="true"
+          showValue="false"
+          [value]="partRate.toString()"
+          step=".05"
+          (input)="
+            updateChart(23539, 25.99, 80, wealth, exWage, pop, $event.value)
+          "
+          (change)="messageBuilder('partRate', $event.value)"
+        ></econ-slider>
+ -->        <button mat-raised-button (click)="reset()">Reset</button>
+      </div>
+    </div>
+    <div *ngIf="mode === 4">
+      <h2>Labor Market Equilibrium</h2>
+      <ul>
+        <li>
+          In equilibrium, the real wage equals the value at which the quantity
+          of labor demanded equals the quantity of labor supplied.
+        </li>
+      </ul>
+<!--       <econ-slider
+        tabindex="-1"
+        class="econ-control"
+        label="Real wage, \( \omega \)"
+        min="72"
+        max="90"
+        showValue="false"
+        [displayValue]="rw.toString()"
+        value="79.45"
+        step=".05"
+        (input)="updateChart(23539, 25.99, $event.value, 0, 0, 0, 0)"
+        (change)="messageBuilder('rw', $event.value)"
+      ></econ-slider>
+ -->    </div>
+    <div *ngIf="mode === 5">
+      <h2>
+        How Shifts in Labor Supply and Labor Demand Affect Equilibrium in the
+        Labor Market
+      </h2>
+      <ul>
+        <li>
+          Move the "Productivity" slider to the left to simulate a temporary
+          adverse supply shock that affects the location of the labor demand
+          curve.
+        </li>
+        <li>
+          Notice that the equilibrium real wage rate falls and the equilibrium
+          level of employment falls.
+        </li>
+        <li>
+          Move the “Wealth” slider to the right to simulate an increase in
+          wealth. Notice that the equilibrium real wage rate increases and the
+          equilibrium level of employment falls.
+        </li>
+      </ul>
+      <div fxLayout="column">
+<!--         <econ-slider
+          class="econ-control"
+          label="Productivity"
+          min="23.99"
+          max="27.99"
+          [showPercent]="true"
+          showValue="false"
+          [value]="A.toString()"
+          step=".05"
+          (input)="updateChart(K, $event.value, rw, wealth, 0, 0, 0)"
+          (change)="messageBuilder('prod', $event.value)"
+        ></econ-slider>
+        <econ-slider
+          aria-describedby="sliderInstruction"
+          class="econ-control"
+          label="Wealth"
+          min="-6"
+          max="6"
+          [showPercent]="true"
+          showValue="false"
+          [value]="wealth.toString()"
+          step=".05"
+          (input)="updateChart(K, A, rw, $event.value, 0, 0, 0)"
+          (change)="messageBuilder('wealth', $event.value)"
+        ></econ-slider>
+ -->        <button mat-raised-button (click)="reset()">Reset</button>
+      </div>
+    </div>
+  </div>
+  <!--mode narative here-->
+  <div fxFlex="55%">
+    <div id="container"></div>
+  </div>
+</div>

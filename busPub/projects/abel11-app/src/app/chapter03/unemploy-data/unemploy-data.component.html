@@ -1,0 +1,27 @@
+<div class="econ-interactive-container">
+  <div fxLayout="column">
+    <div fxFlexFill id="container"></div>
+  </div>
+  <div
+    fxLayout="row"
+    fxLayout.xs="column"
+    fxLayoutGap="20px"
+    class="data-control"
+    fxLayoutAlign="center center"
+  >
+      <mat-form-field fxFlex="50" class="yield-control" appearance="fill">
+        <mat-label>Choose Data to View</mat-label>
+        <mat-select [(value)]="selected" (selectionChange)="addSeries()">
+          <mat-option
+            *ngFor="let data of macroData"
+            [value]="data.value"
+          >
+            {{ data.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button id="recession" fxFlex="25%" [disabled]="recessionDisabled" mat-raised-button>
+        {{ recessionTitle }}
+      </button>
+      <button fxFlex="25%" mat-raised-button (click)="resetChart()">Reset chart</button>
+  </div>

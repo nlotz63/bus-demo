@@ -1,0 +1,163 @@
+<div
+  class="econ-interactive-container"
+  fxLayout="row"
+  fxLayout.xs="column"
+  fxLayoutGap="10px"
+>
+  <div fxFlex="45%" >
+    <!--Mode 0-->
+    <div *ngIf="mode === 0">
+      <h2>Diminishing Marginal Productivity</h2>
+      <ul>
+        <li>Point <b>A</b> shows actual U.S. output in 2020.</li>
+        <li>
+          Moving from points <b>B</b> to <b>C</b> shows a $1,000 billion increase in the capital stock, as does moving from point <b>C</b> to <b>D</b>.
+        </li>
+        <li>
+          Use the slider to move the points along the production function.
+        </li>
+        <li>The table below summarizes the changes in output.</li>
+        <li>
+          Notice that the marginal productivity of capital declines as the capital stock increases, illustrating the idea of diminishing marginal productivity of capital.
+        </li>
+      </ul>
+<!--       <econ-slider
+        label="Capital at point C:"
+        class="econ-control"
+        showValue="false"
+        displayValue="${{ centerPoint | number: '1.0-0' }}"
+        units="billion"
+        min="1000"
+        max="20000"
+        step="1000"
+        value="3000"
+        (input)="plotDimMarginal($event.value)"
+        (change)="messageBuilder($event.value)"
+      ></econ-slider>
+ -->
+      <table>
+        <caption>
+          Summary Table
+        </caption>
+        <tr>
+          <th></th>
+          <th>Change in capital</th>
+          <th>Change in output</th>
+        </tr>
+        <tr>
+          <th>B to C</th>
+          <td>$1,000 billion</td>
+          <td>{{ diff1 | currency }} billion</td>
+        </tr>
+        <tr>
+          <th>C to D</th>
+          <td>$1,000 billion</td>
+          <td>{{ diff2 | currency }} billion</td>
+        </tr>
+      </table>
+    </div>
+    <!--Mode 1-->
+    <div *ngIf="mode === 1">
+      <h2>Marginal Product of Capital</h2>
+      <ul>
+        <li>
+          Click or tap points on the production function to see the tangent line
+          at that point. The slope of the tangent line equals the marginal product of capital at that point.
+        </li>
+        <li>
+          Or use the slider to move the tangent line along the production
+          function by changing the capital stock.
+        </li>
+        <li>
+          Note that as the quantity of capital increases, the slope of the tangent line decreases so the marginal product of
+          capital decreases, illustrating diminishing marginal productivity of capital.
+        </li>
+<!--         <li>
+          The Marginal product of capital is
+          <span [econHighlight]="slope">{{ slope | currency }}</span> billion.
+        </li> -->
+      </ul>
+<!--       <econ-slider
+        label="Capital"
+        class="econ-control"
+        displayValue="${{ centerPoint | number: '1.0-0' }}"
+        units="billion"
+        showValue="false"
+        min="1000"
+        max="14000"
+        step="1000"
+        value="1000"
+        (input)="plotTangent($event.value)"
+        (change)="messageBuilder($event.value)"
+      ></econ-slider>
+ -->    </div>
+    <!--Mode 2-->
+    <div *ngIf="mode === 2">
+      <h2>The Production Function Relating Output and Labor</h2>
+      <ul>
+        <li>
+          Click or tap points on the production function to see the tangent line
+          at that point. The slope of the tangent line equals the marginal product of labor at that point.
+        </li>
+        <li>
+          Or use the slider to move the tangent line along the production
+          function by changing the quantity of labor.
+        </li>
+        <li>
+          Note that as the quantity of labor increases, the slope of the tangent line decreases so the marginal product of
+          labor decreases, illustrating diminishing marginal productivity of labor.
+        </li>
+<!--         <li>
+          The Marginal product of labor is
+          <span [econHighlight]="slope">{{ slope | currency }}</span> billion.
+        </li>
+ -->      </ul>
+<!--       <econ-slider
+        label="Labor"
+        class="econ-control"
+        displayValue="{{ centerPoint | number }}"
+        units="million workers"
+        showValue="false"
+        min="20"
+        max="125"
+        step="5"
+        value="20"
+        (input)="plotTangent($event.value)"
+        (change)="messageBuilder($event.value)"
+      ></econ-slider>
+ -->    </div>
+    <!--Mode 3-->
+    <div *ngIf="mode === 3">
+      <h2>Adverse Supply Shock</h2>
+      <ul>
+        <li>
+          Move the slider to the left to simulate an adverse productivity shock
+          that lowers the marginal productivity of labor <b>(MPN)</b>.
+        </li>
+        <li>
+          For any level of labor, the amount of output than can be produced is
+          now less than before.
+        </li>
+        <li>
+          The slope of the production function is lower at every level of
+          employment.
+        </li>
+      </ul>
+<!--       <econ-slider
+        label="Adverse supply shock"
+        class="econ-control"
+        min="15"
+        max="25.99"
+        step=".01"
+        showValue="false"
+        [showPercent]="true"
+        value="25.99"
+        (input)="shiftPf($event.value)"
+        (change)="messageBuilder($event.value)"
+      ></econ-slider>
+ -->    </div>
+  </div>
+  <div fxFlex="55%" fxFlexFill>
+    <div  id="container"></div>
+  </div>
+</div>

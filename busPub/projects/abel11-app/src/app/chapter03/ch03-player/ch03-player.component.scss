@@ -1,0 +1,36 @@
+#navigation {
+  margin-top: -10px;
+  position:relative;
+  top: 0px;
+  margin-left: 5px;
+  background-color: #3096DF;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  box-shadow: 3px 4px 4px rgba(211, 211, 211, 0.877);
+
+
+}
+
+.abel-player-container {
+  max-width: 1000px;
+  margin-left: 5px;
+  background-color: #FFFFE8;
+
+}
+
+button {
+  background-color: beige;
+  padding: 5px;
+}
+.abel-step-container {
+  min-height: 560px;
+}
+@media screen and (max-width: 599px) {
+  .abel-step-container {
+    min-height: calc(100vh);
+  }
+  #navigation {
+    margin-top: 0px;
+  }
+
+}

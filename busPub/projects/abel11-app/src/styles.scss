@@ -2,7 +2,6 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
-
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -10,18 +9,18 @@
 // Be sure that you only ever include this mixin once!
 @include mat.core();
 
-$acctg-palette: (
-50: #00c8ff,
-100: #00b2e2,
-200: #00aad8,
-300: #51aacd,
-400: #007fa3,
-500: #257D46,
-600: #006f89,
-700: #00748f,
-800: #214876,
-900: #003145,
-contrast: (
+$abel-palette: (
+  50: #00c8ff,
+  100: #00b2e2,
+  200: #00aad8,
+  300: #51aacd,
+  400: #007fa3,
+  500: #257D46,
+  600: #006f89,
+  700: #00748f,
+  800: #214876,
+  900: #003145,
+  contrast: (
   50: rgba(black, 0.87),
   100: rgba(black, 0.87),
   200: rgba(black, 0.87),
@@ -32,7 +31,7 @@ contrast: (
   700: white,
   800: white,
   900: white,
-),
+  ),
 );
 
 @include mat.strong-focus-indicators((
@@ -44,29 +43,85 @@ contrast: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$acctg-poe-primary: mat.define-palette($acctg-palette);
-$acctg-poe-accent: mat.define-palette($acctg-palette);
+$abel11-app-primary: mat.define-palette($abel-palette);
+$abel11-app-accent: mat.define-palette($abel-palette);
 
 // The warn palette is optional (defaults to red).
-$acctg-poe-warn: mat.define-palette(mat.$red-palette);
+$abel11-app-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$acctg-poe-theme: mat.define-light-theme((
+$abel11-app-theme: mat.define-light-theme((
   color: (
-    primary: $acctg-poe-primary,
-    accent: $acctg-poe-accent,
-    warn: $acctg-poe-warn,
+    primary: $abel11-app-primary,
+    accent: $abel11-app-accent,
+    warn: $abel11-app-warn,
   )
 ));
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include mat.all-component-themes($acctg-poe-theme);
-@include mat.strong-focus-indicators-theme($acctg-poe-theme);
+@include mat.all-component-themes($abel11-app-theme);
+@include mat.strong-focus-indicators-theme($abel11-app-theme);
 
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.econ-interactive-container {
+  max-width: 1000px;
+  min-height: 550px;
+  background-color: #EAF7FD;
+  margin-left: 5px;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  border-bottom-left-radius: 0px;
+  box-shadow: 2px 4px 4px rgba(211, 211, 211, 0.877);
+}
+
+
+.econ-control {
+  position: relative;
+  left: 10%;
+}
+.model-container:focus-within {
+  border: solid rgb(4, 123, 156) 2px;
+}
+.model-container {
+  overflow: hidden;
+}
+
+h1 {
+  font-size: large;
+  color: #214876;
+  text-align: center;
+}
+
+h2 {
+  color: #00245D;
+  font-size: 14pt;
+  font-weight: 600;
+  margin-left: 5px;
+}
+caption {
+  color: #00245D;
+  font-size: 14pt;
+  font-weight: 600;
+  text-align: left;
+  margin-left: 5px;
+}
+
+
+.econ-message {
+  background-color: white;
+  color: black;
+
+}
+.econ-message button span {
+  color: rgb(4, 123, 156);
+  font-weight: bold;
+  font-size: 1.1em;
+}
+/* You can add global styles to this file, and also import other style files */
