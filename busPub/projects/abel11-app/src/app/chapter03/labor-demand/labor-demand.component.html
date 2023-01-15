@@ -1,11 +1,8 @@
 <div
-  class="econ-interactive-container"
-  fxLayout="row"
-  fxLayout.xs="column"
-  fxLayoutGap="10px"
+  class="wrapper"
   econMath
 >
-  <div fxFlex="45%">
+  <div class="item-narative">
     <div *ngIf="mode === 0">
       <h2>The Determination of Labor Demand</h2>
       <ul>
@@ -273,7 +270,7 @@
     </div>
   </div>
   <!--mode narative here-->
-  <div fxFlex="55%">
+  <div class="item-chart">
     <div id="container"></div>
   </div>
 </div>
