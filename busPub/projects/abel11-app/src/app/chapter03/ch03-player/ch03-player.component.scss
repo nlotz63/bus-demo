@@ -1,3 +1,12 @@
+@import '../../../../app-mixins';
+
+.player-navigation-container {
+  @include flexbox();
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #navigation {
   margin-top: -10px;
   position:relative;
@@ -21,6 +30,7 @@
 button {
   background-color: beige;
   padding: 5px;
+  margin: 7px 7px
 }
 .abel-step-container {
   min-height: 560px;
