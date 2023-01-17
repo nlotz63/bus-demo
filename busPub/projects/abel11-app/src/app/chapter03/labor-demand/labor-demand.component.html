@@ -22,11 +22,11 @@
        <econ-slider
         class="econ-control"
         label="Real wage, \(\omega \)"
-        [min]="72"
-        [max]="92"
+        min="72"
+        max="92"
         value="79.45"
         showValue="false"
-        [displayValue]="rw.toString()"
+        [displayValue]="rw"
         step=".05"
         (input)="updateChart(23539, 25.99, $event, 0, 0, 0, 0)"
         (change)="messageBuilder('rw', $event)"
@@ -61,11 +61,11 @@
          <econ-slider
           class="econ-control"
           label="Productivity"
-          [min]="23.99"
-          [max]="27.99"
+          min="23.99"
+          max="27.99"
           [showPercent]="true"
           showValue="false"
-          [value]="A.toString()"
+          [value]="A"
           step=".1"
           (input)="updateChart(K, $event, rw, 0, 0, 0, 0)"
           (change)="messageBuilder('prod', $event)"
@@ -73,11 +73,11 @@
         <econ-slider
           class="econ-control"
           label="Capital stock"
-          [min]="19539"
-          [max]="27539"
+          min="19539"
+          max="27539"
           showValue="false"
           [showPercent]="true"
-          [value]="K.toString()"
+          [value]="K"
           step="100"
           (input)="updateChart($event, A, rw, 0, 0, 0, 0)"
           (change)="messageBuilder('capital', $event)"
@@ -85,7 +85,7 @@
         <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
-    <div *ngIf="mode === 2">
+    <div *ngIf="mode === 2" class="item-narative">
       <h2>The Determination of Labor Supply</h2>
       <ul>
         <li>The amount of labor supplied depends the real wage.</li>
@@ -97,20 +97,20 @@
           As the real wage increases, the quantity of labor supplied increases.
         </li>
       </ul>
-<!--       <econ-slider
+       <econ-slider
         class="econ-control"
         label="Real wage, \(\omega \)"
         min="72"
         max="92"
         value="79.45"
         showValue="false"
-        [displayValue]="rw.toString()"
+        [displayValue]="rw"
         step=".05"
-        (input)="updateChart(23539, 25.99, $event.value, 0, 0, 0, 0)"
-        (change)="messageBuilder('rw', $event.value)"
+        (input)="updateChart(23539, 25.99, $event, 0, 0, 0, 0)"
+        (change)="messageBuilder('rw', $event)"
       ></econ-slider>
- -->    </div>
-    <div *ngIf="mode === 3">
+    </div>
+    <div *ngIf="mode === 3" class="item-narative">
       <h2>Factors that Shift the Labor Supply Curve</h2>
       <ul>
         <li>
@@ -128,20 +128,20 @@
           each case.
         </li>
       </ul>
-      <div fxLayout="column">
-<!--         <econ-slider
+      <div class="control-column">
+         <econ-slider
           class="econ-control"
           label="Wealth"
           min="-6"
           max="6"
           [showPercent]="true"
           showValue="false"
-          [value]="wealth.toString()"
+          [value]="wealth"
           step=".05"
           (input)="
-            updateChart(23539, 25.99, 80, $event.value, exWage, pop, partRate)
+            updateChart(23539, 25.99, 80, $event, exWage, pop, partRate)
           "
-          (change)="messageBuilder('wealth', $event.value)"
+          (change)="messageBuilder('wealth', $event)"
         ></econ-slider>
         <econ-slider
           class="econ-control"
@@ -150,12 +150,12 @@
           max="6"
           [showPercent]="true"
           showValue="false"
-          [value]="exWage.toString()"
+          [value]="exWage"
           step=".05"
           (input)="
-            updateChart(23539, 25.99, 80, wealth, $event.value, pop, partRate)
+            updateChart(23539, 25.99, 80, wealth, $event, pop, partRate)
           "
-          (change)="messageBuilder('exRw', $event.value)"
+          (change)="messageBuilder('exRw', $event)"
         ></econ-slider>
         <econ-slider
           class="econ-control"
@@ -164,7 +164,7 @@
           max="6"
           [showPercent]="true"
           showValue="false"
-          [value]="pop.toString()"
+          [value]="pop"
           step=".05"
           (input)="
             updateChart(
@@ -173,11 +173,11 @@
               80,
               wealth,
               exWage,
-              $event.value,
+              $event,
               partRate
             )
           "
-          (change)="messageBuilder('pop', $event.value)"
+          (change)="messageBuilder('pop', $event)"
         ></econ-slider>
         <econ-slider
           class="econ-control"
@@ -186,17 +186,17 @@
           max="6"
           [showPercent]="true"
           showValue="false"
-          [value]="partRate.toString()"
+          [value]="partRate"
           step=".05"
           (input)="
-            updateChart(23539, 25.99, 80, wealth, exWage, pop, $event.value)
+            updateChart(23539, 25.99, 80, wealth, exWage, pop, $event)
           "
-          (change)="messageBuilder('partRate', $event.value)"
+          (change)="messageBuilder('partRate', $event)"
         ></econ-slider>
- -->        <button mat-raised-button (click)="reset()">Reset</button>
+         <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
-    <div *ngIf="mode === 4">
+    <div *ngIf="mode === 4" class="item-narative">
       <h2>Labor Market Equilibrium</h2>
       <ul>
         <li>
@@ -204,21 +204,21 @@
           of labor demanded equals the quantity of labor supplied.
         </li>
       </ul>
-<!--       <econ-slider
+       <econ-slider
         tabindex="-1"
         class="econ-control"
         label="Real wage, \( \omega \)"
         min="72"
         max="90"
         showValue="false"
-        [displayValue]="rw.toString()"
+        [displayValue]="rw"
         value="79.45"
         step=".05"
-        (input)="updateChart(23539, 25.99, $event.value, 0, 0, 0, 0)"
-        (change)="messageBuilder('rw', $event.value)"
+        (input)="updateChart(23539, 25.99, $event, 0, 0, 0, 0)"
+        (change)="messageBuilder('rw', $event)"
       ></econ-slider>
- -->    </div>
-    <div *ngIf="mode === 5">
+     </div>
+    <div *ngIf="mode === 5" class="item-narative">
       <h2>
         How Shifts in Labor Supply and Labor Demand Affect Equilibrium in the
         Labor Market
@@ -239,18 +239,18 @@
           equilibrium level of employment falls.
         </li>
       </ul>
-      <div fxLayout="column">
-<!--         <econ-slider
+      <div class="control-column">
+         <econ-slider
           class="econ-control"
           label="Productivity"
           min="23.99"
           max="27.99"
           [showPercent]="true"
           showValue="false"
-          [value]="A.toString()"
+          [value]="A"
           step=".05"
-          (input)="updateChart(K, $event.value, rw, wealth, 0, 0, 0)"
-          (change)="messageBuilder('prod', $event.value)"
+          (input)="updateChart(K, $event, rw, wealth, 0, 0, 0)"
+          (change)="messageBuilder('prod', $event)"
         ></econ-slider>
         <econ-slider
           aria-describedby="sliderInstruction"
@@ -260,12 +260,12 @@
           max="6"
           [showPercent]="true"
           showValue="false"
-          [value]="wealth.toString()"
+          [value]="wealth"
           step=".05"
-          (input)="updateChart(K, A, rw, $event.value, 0, 0, 0)"
-          (change)="messageBuilder('wealth', $event.value)"
+          (input)="updateChart(K, A, rw, $event, 0, 0, 0)"
+          (change)="messageBuilder('wealth', $event)"
         ></econ-slider>
- -->        <button mat-raised-button (click)="reset()">Reset</button>
+         <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
   </div>
