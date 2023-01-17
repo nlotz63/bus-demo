@@ -7,11 +7,12 @@
   align-items: center;
 }
 
-#navigation {
-  margin-top: -10px;
+ #navigation {
+  margin-top: 5px;
   position:relative;
   top: 0px;
   margin-left: 5px;
+  margin-top: -3px;
   background-color: #3096DF;
   border-bottom-right-radius: 8px;
   border-bottom-left-radius: 8px;
@@ -20,10 +21,16 @@
 
 }
 
+.interactive-container {
+  min-height: 550px;
+}
+
 .abel-player-container {
   max-width: 1000px;
   margin-left: 5px;
   background-color: #FFFFE8;
+  @include flexbox();
+  flex-flow: column;
 
 }
 
@@ -31,16 +38,4 @@ button {
   background-color: beige;
   padding: 5px;
   margin: 7px 7px
-}
-.abel-step-container {
-  min-height: 560px;
-}
-@media screen and (max-width: 599px) {
-  .abel-step-container {
-    min-height: calc(100vh);
-  }
-  #navigation {
-    margin-top: 0px;
-  }
-
 }

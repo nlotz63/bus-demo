@@ -1,0 +1,12 @@
+@import '../../../../app-mixins';
+
+.control-container {
+  @include flexbox();
+  justify-content: space-around;
+  align-items: center;
+
+}
+
+.control-item {
+ margin-top: 15px;
+}

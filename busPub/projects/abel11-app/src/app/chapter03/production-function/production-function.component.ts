@@ -230,7 +230,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
     } while (x <= max);
 
   }
-  public plotTangent(tanX1: number, addSeries?: boolean) {
+  public plotTangent(tanX1: any, addSeries?: boolean) {
+    tanX1 = typeof tanX1 === 'object' ? Number(tanX1.target.value) : tanX1;
     let tanValues = this.config[this.mode].plotLabor ? this._computePF( this.A, this.K, tanX1 ) : this._computePF(this.A, tanX1, this.N);
     let deltaX = this.mode === 1 ? 2000 : 20;
     let xLabel = this.config[this.mode].plotLabor ? 'Labor' : 'Captial', mpLabel = this.config[this.mode].plotLabor ? 'MPL' : 'MPK', xUnit = this.config[this.mode].plotLabor ? 'million workers' : 'billions';
@@ -308,7 +309,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
 
   }
 
-  public plotDimMarginal(centerPoint: number, addSeries?: boolean) {
+  public plotDimMarginal(centerPoint: any, addSeries?: boolean) {
+    centerPoint =  typeof centerPoint === 'object' ? Number(centerPoint.target.value) : centerPoint;
     let lowerX = centerPoint - 1000, upperX = centerPoint + 1000,
       centerY = this._computePF(this.A, centerPoint, this.N)[0], lowerY = this._computePF(this.A, lowerX, this.N)[0], upperY = this._computePF(this.A, upperX, this.N)[0];
 
@@ -460,7 +462,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
 
 
   }
-  public shiftPf(A: number, reference?: boolean) {
+  public shiftPf(A: any, reference?: boolean) {
+    A = typeof A === 'object' ? Number(A.target.value) : A;
     let x = 0;
     let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = max / 200;
     this.seriesData = [];
@@ -515,7 +518,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
     return [productionFunction, marginalProduct];
   }
 
-  public messageBuilder(value: number) {
+  public messageBuilder(value: any) {
+    value = Number(value.target.value);
     let message: string = ``;
 
     switch (this.mode) {
