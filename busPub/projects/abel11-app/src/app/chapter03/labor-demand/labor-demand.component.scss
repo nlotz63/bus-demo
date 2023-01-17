@@ -29,19 +29,22 @@
 }
 
 .item-chart {
-  @include flex(1 0 60%);
-  @include order(2);
+  @include flex(5.5 5.5);
 }
 
 .item-narative {
-  @include flex(1 0 40%);
-  @include order(2);
+  @include flex(4.5 4.5);
 }
 
-@media all and (max-width: 650px) {
+.control-column {
+  @include flexbox();
+  flex-flow: column;
+}
+
+@media all and (max-width: 750px) {
   .wrapper {
     @include flexbox();
-    flex-flow: column;
+    flex-flow: column-reverse;
   }
 
   .item-chart {
