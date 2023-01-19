@@ -1,22 +1,38 @@
 <div class="econ-interactive-container">
   <div class="wrapper">
-    <div class="item-narrative" *ngIf="mode === 0">
-      <h2>Step 1</h2>
-      <p>{{mode}}</p>
-    </div>
-    <div class="narrative-item" *ngIf="mode === 1">
-      <h2>Step 2</h2>
-      <p>{{mode}}</p>
+    <div class="item-narrative">
+      <div *ngIf="mode === 0">
+        <h2>Step 1</h2>
+        <p>{{mode}}</p>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+      </div>
+      <div *ngIf="mode === 1">
+        <h2>Step 2</h2>
+        <p>{{mode}}</p>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
 
-    </div>
-    <div class="narrative-item" *ngIf="mode === 2">
-      <h2>Step 3</h2>
-      <p>{{mode}}</p>
+      </div>
+      <div *ngIf="mode === 2">
+        <h2>Step 3</h2>
+        <p>{{mode}}</p>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+      </div>
+      </div>
 
-    </div>
     <div id="chart1" class="item-chart">
-      <h2>Chart will go here</h2>
     </div>
     </div>
-    <app-player [steps]="3" (modeChange)="mode = $event" class="player-navigation-container"></app-player>
+    <app-player *ngIf="showPlayer" [steps]="3" (modeChange)="mode = $event" class="player-navigation-container"></app-player>
     </div>

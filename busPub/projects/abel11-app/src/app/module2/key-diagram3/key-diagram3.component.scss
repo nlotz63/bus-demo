@@ -3,14 +3,14 @@
 .wrapper {
   @include flexbox();
   flex-flow: row;
+  justify-content:space-between;
 }
-
 .item-chart {
-  @include flex(5.5 5.5);
+  @include flex(5.5 );
 }
 
 .item-narrative {
-  @include flex(4.5 4.5);
+  @include flex(4.5 );
 }
 
 .control-column {
