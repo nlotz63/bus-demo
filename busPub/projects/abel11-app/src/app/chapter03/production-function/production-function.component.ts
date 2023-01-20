@@ -30,6 +30,9 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
 
   // set conditions properties
   @Input() mode = 0;
+  steps = 4;
+  showPlayer = false;
+
 
   config = [
     {
@@ -81,7 +84,6 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
 
   // Graph properties
   seriesData: any[] = [];
-
   // template properties
   lowerX = 0;
   centerPoint = 3000;
@@ -100,6 +102,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.activeRoute.queryParams.subscribe((params) => {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
+      this.showPlayer = params['showPlayer'] === 'true' ? true : false;
+
     });
     this.createSeries();
 
@@ -132,7 +136,44 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.chart = new Highcharts.Chart( 'container', {
+  //  this.chart = new Highcharts.Chart( 'container', this.chart1 );
+    this._setupChart();
+  }
+
+  public playStep(value: any) {
+    this.mode = value;
+    this.chart.destroy();
+    this.createSeries();
+    switch (this.mode) {
+      case 0:
+        this.centerPoint = 3000;
+        this.prevK = 3000;
+
+        break;
+      case 1:
+        this.slope = 2.138079871234851;
+        this.centerPoint = 1000;
+        this.prevK = 1000;
+
+        break;
+      case 2:
+        this.slope = 151.75105655051237;
+        this.centerPoint = 20;
+        this.prevN = 20;
+        break;
+      case 3:
+
+        break;
+      default:
+        break;
+    }
+     this._setupChart();
+
+  }
+
+  private _setupChart() {
+
+    this.chart = new Highcharts.Chart('container', {
       chart: {
         type: 'spline',
         animation: false,
@@ -193,8 +234,6 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
         labels: []
       }]
 
-
-
     });
     switch (this.mode) {
       case 0:
@@ -216,7 +255,9 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
 
   }
 
+
   private createSeries() {
+    this.seriesData = [];
     let x = 0;
     let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = max/200;
 

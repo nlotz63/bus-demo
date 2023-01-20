@@ -3,7 +3,7 @@
 .wrapper {
   @include flexbox();
   flex-flow: row;
-  max-width: 1000px;
+  justify-content: space-between;
 }
 
 .item-chart {
@@ -12,6 +12,7 @@
 
 .item-narative {
   @include flex(4.5 4.5);
+  margin-right: 5px
 }
 
 .control-column {
@@ -45,3 +46,12 @@ button {
   margin: 8px;
   left: 40%;
 }
+
+.player-navigation-container {
+  @include flexbox();
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 5px;
+}
+

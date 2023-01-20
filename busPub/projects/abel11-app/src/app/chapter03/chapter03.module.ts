@@ -4,7 +4,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { BusPubLibModule } from 'bus-pub-lib';
-// import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -13,6 +12,7 @@ import { ProductionFunctionComponent } from './production-function/production-fu
 import { LaborDemandComponent } from './labor-demand/labor-demand.component';
 import { UnemployDataComponent } from './unemploy-data/unemploy-data.component';
 import { Ch03PlayerComponent } from './ch03-player/ch03-player.component';
+import { PlayerModule } from '../player/player.module';
 
 
 @NgModule({
@@ -25,8 +25,8 @@ import { Ch03PlayerComponent } from './ch03-player/ch03-player.component';
   imports: [
     CommonModule,
     Chapter03RoutingModule,
-  //  FlexLayoutModule,
     BusPubLibModule,
+    PlayerModule,
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,

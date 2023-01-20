@@ -1,6 +1,8 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
+import { transition, trigger, style, animate } from '@angular/animations';
+
 import * as Highcharts from 'highcharts/highstock';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_annotate from 'highcharts/modules/annotations';
@@ -13,10 +15,23 @@ HC_seriesLabel(Highcharts);
 @Component({
   selector: 'app-labor-demand',
   templateUrl: './labor-demand.component.html',
-  styleUrls: ['./labor-demand.component.scss']
+  styleUrls: ['./labor-demand.component.scss'],
+  animations: [
+    trigger('myAnimationTrigger', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('400ms 30ms ease-in', style({ opacity: 1 }))
+
+      ]),
+      transition(':leave', [
+        animate('0s', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class LaborDemandComponent implements OnInit, AfterViewInit {
-  @Input() mode = 1;
+  @Input() mode: any = 1;
+  showPlayer = false;
   chart!: Highcharts.Chart;
 
   //chart properties
@@ -60,6 +75,7 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.activeRoute.queryParams.subscribe((params) => {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
+      this.showPlayer = params['showPlayer'] === 'true' ? true : false;
     });
     this.createSeries(23539, 25.99, 79.45, 0, 0, 0, 0, true);
 
@@ -245,6 +261,15 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
       default:
         break;
     }
+  }
+
+  public playStep(value: any) {
+    this.mode = value;
+    this.chart.destroy();
+    this.createSeries(23539, 25.99, 79.45, 0, 0, 0, 0, true);
+    this._setupChart();
+   // this.updateChart(23539, 25.99, 79.45, 0, 0, 0, 0);
+
   }
 
   public reset() {

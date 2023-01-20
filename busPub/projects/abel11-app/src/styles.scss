@@ -75,9 +75,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   //min-height: 550px;
   background-color: #EAF7FD;
   margin-left: 5px;
+  padding: 0.25rem;
   border: 1px solid lightgrey;
   border-radius: 8px;
-  border-bottom-left-radius: 0px;
+  //border-bottom-left-radius: 0px;
   box-shadow: 2px 4px 4px rgba(211, 211, 211, 0.877);
 }
 

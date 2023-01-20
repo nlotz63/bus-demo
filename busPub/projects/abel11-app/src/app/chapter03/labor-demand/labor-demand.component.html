@@ -1,9 +1,9 @@
-<div
-  class="wrapper econ-interactive-container"
-  econMath
+<div class="econ-interactive-container">
+  <div
+  class="wrapper"
 >
   <div class="item-narative">
-    <div *ngIf="mode === 0">
+    <div *ngIf="mode === 0" @myAnimationTrigger>
       <h2>The Determination of Labor Demand</h2>
       <ul>
         <li>
@@ -21,6 +21,7 @@
       </ul>
        <econ-slider
         class="econ-control"
+        econMath
         label="Real wage, \(\omega \)"
         min="72"
         max="92"
@@ -32,7 +33,7 @@
         (change)="messageBuilder('rw', $event)"
       ></econ-slider>
      </div>
-    <div *ngIf="mode === 1">
+    <div *ngIf="mode === 1" @myAnimationTrigger>
       <h2>Factors that Shift the Labor Demand Curve</h2>
       <ul>
         <li>
@@ -85,7 +86,7 @@
         <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
-    <div *ngIf="mode === 2" class="item-narative">
+    <div *ngIf="mode === 2" @myAnimationTrigger>
       <h2>The Determination of Labor Supply</h2>
       <ul>
         <li>The amount of labor supplied depends the real wage.</li>
@@ -99,6 +100,7 @@
       </ul>
        <econ-slider
         class="econ-control"
+        econMath
         label="Real wage, \(\omega \)"
         min="72"
         max="92"
@@ -110,7 +112,7 @@
         (change)="messageBuilder('rw', $event)"
       ></econ-slider>
     </div>
-    <div *ngIf="mode === 3" class="item-narative">
+    <div *ngIf="mode === 3" @myAnimationTrigger>
       <h2>Factors that Shift the Labor Supply Curve</h2>
       <ul>
         <li>
@@ -196,7 +198,7 @@
          <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
-    <div *ngIf="mode === 4" class="item-narative">
+    <div *ngIf="mode === 4" @myAnimationTrigger>
       <h2>Labor Market Equilibrium</h2>
       <ul>
         <li>
@@ -207,6 +209,7 @@
        <econ-slider
         tabindex="-1"
         class="econ-control"
+        econMath
         label="Real wage, \( \omega \)"
         min="72"
         max="90"
@@ -218,7 +221,7 @@
         (change)="messageBuilder('rw', $event)"
       ></econ-slider>
      </div>
-    <div *ngIf="mode === 5" class="item-narative">
+    <div *ngIf="mode === 5" @myAnimationTrigger>
       <h2>
         How Shifts in Labor Supply and Labor Demand Affect Equilibrium in the
         Labor Market
@@ -272,4 +275,7 @@
   <!--mode narative here-->
   <div id="container" class="item-chart">
   </div>
+</div>
+
+  <app-player *ngIf="showPlayer" role="navigation" class="player-navigation-container" [mode]="mode" [steps]="6" (modeChange)="playStep($event)"></app-player>
 </div>
