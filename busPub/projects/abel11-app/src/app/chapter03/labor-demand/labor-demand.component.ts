@@ -215,15 +215,7 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
     }
 
   }
-  public updateChart(K: any, A: any, rw: any, wealth: any, exWage: any, pop: any, partRate: any) {
-    if (typeof K === 'object') K = +K.target.value;
-    if (typeof A === 'object') A = +A.target.value;
-    if (typeof rw === 'object') rw = +rw.target.value;
-    if (typeof wealth === 'object') wealth = +wealth.target.value;
-    if (typeof exWage === 'object') exWage = +exWage.target.value;
-    if (typeof pop === 'object') pop = +pop.target.value;
-    if (typeof partRate === 'object') partRate = +partRate.target.value;
-
+  public updateChart(K: number, A: number, rw: number, wealth: number, exWage: number, pop: number, partRate: number) {
     this.createSeries(K, A, rw, wealth, exWage, pop, partRate, false);
     switch (this.mode) {
       case 0:
@@ -711,7 +703,6 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
 
   }
   public messageBuilder(slider: string, value: any) {
-    if (typeof value === 'object') value = +value.target.value;
     let message: string = ``;
     switch (this.mode) {
       case 0:
