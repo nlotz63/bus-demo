@@ -1,18 +1,52 @@
 <div class="econ-interactive-container">
   <div class="wrapper">
     <div class="item-narrative">
-      <div *ngIf="mode === 0">
-        <h2>Step 1</h2>
-        <p>{{mode}}</p>
+      <div *ngIf="mode === 0" @myAnimationTrigger>
+        <h2>Saving Curve</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+        <econ-slider
+        label="Real interest rate"
+        showValue="false"
+        [min]="0"
+        [max]="12"
+        [value]="slider.value.rRate!"
+        (valueChange)="slider.patchValue({ rRate: $event})"
+        />
+        {{slider.value.rRate}}
+
+      </div>
+      <div *ngIf="mode === 1" @myAnimationTrigger>
+        <h2>Investment Curve</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+        <econ-slider
+        label="Real interest rate"
+        showValue="false"
+        [min]="0"
+        [max]="12"
+        [value]="slider.value.rRate!"
+        (valueChange)="slider.patchValue({rRate: $event})"
+        />
+        {{slider.value.rRate}}
+
+      </div>
+      <div *ngIf="mode === 2" @myAnimationTrigger>
+        <h2>Equilibrium</h2>
         <ul>
           <li>Bullet point 1</li>
           <li>Bullet point 2</li>
           <li>Bullet point 3</li>
         </ul>
       </div>
-      <div *ngIf="mode === 1">
-        <h2>Step 2</h2>
-        <p>{{mode}}</p>
+      <div *ngIf="mode === 3" @myAnimationTrigger>
+        <h2>Factors that Shift Saving</h2>
         <ul>
           <li>Bullet point 1</li>
           <li>Bullet point 2</li>
@@ -20,19 +54,28 @@
         </ul>
 
       </div>
-      <div *ngIf="mode === 2">
-        <h2>Step 3</h2>
-        <p>{{mode}}</p>
+      <div *ngIf="mode === 4" @myAnimationTrigger>
+        <h2>Factors that Shift Investment</h2>
         <ul>
           <li>Bullet point 1</li>
           <li>Bullet point 2</li>
           <li>Bullet point 3</li>
         </ul>
-      </div>
-      </div>
+        <econ-slider
+        label="Effective tax rate"
+        showValue="false"
+        [min]="-2"
+        [max]="2"
+        step=.05
+        [value]="slider.value.taxRate!"
+        (valueChange)="slider.patchValue({taxRate: $event})"
+        />
+        {{slider.value.taxRate}}
 
+      </div>
+      </div>
     <div id="chart1" class="item-chart">
     </div>
     </div>
-    <app-player *ngIf="showPlayer" [steps]="3" (modeChange)="mode = $event" class="player-navigation-container"></app-player>
+    <app-player *ngIf="showPlayer" [steps]="5" [mode]="mode" (modeChange)="playStep( $event)" class="player-navigation-container"></app-player>
     </div>
