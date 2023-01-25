@@ -45,13 +45,13 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
 
 
   slider = new FormGroup({
-    rRate: new FormControl(6),
+    rRate: new FormControl(3),
     taxRate: new FormControl(0),
     expectedMPK: new FormControl(0),
     output: new FormControl(0),
     expectedOutput: new FormControl(0),
     wealth: new FormControl(0),
-    expectedRealRate: new FormControl(),
+    expectedRealRate: new FormControl(0),
     govPurchases: new FormControl(0),
     taxes: new FormControl(0)
   });
@@ -162,7 +162,17 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           data: series.seriesSaving
 
         });
+        this.chart.addSeries({
+          type: 'line',
+          name: '',
+          color: 'darkgrey',
+          lineWidth: 2,
+          dashStyle: 'ShortDash',
+          zIndex: 2,
+          animation: false,
+          data: series.qSaving
 
+        });
         break;
       case 1:
         this.chart.addSeries({
@@ -171,8 +181,19 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           zIndex: 1,
           animation: false,
           data: series.seriesInvestment
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: '',
+          color: 'darkgrey',
+          lineWidth: 2,
+          dashStyle: 'ShortDash',
+          zIndex: 2,
+          animation: false,
+          data: series.qInvestment
 
         });
+
         break;
 
       default:
@@ -206,9 +227,13 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     switch (this.mode) {
       case 0:
         this.chart.series[0].setData(series.seriesSaving, true, false, false);
+        this.chart.series[1].setData(series.qSaving, true, false, false);
+
         break;
       case 1:
         this.chart.series[0].setData(series.seriesInvestment, true, false, false);
+        this.chart.series[1].setData(series.qInvestment, true, false, false);
+
         break;
 
       default:
@@ -217,25 +242,22 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
             break;
     }
 
-    console.log(series.seriesSaving);
-
   }
 
   private _createSeries(addRef: boolean){
     // math generate all curves and key points in the chart returns an object of arrays
+    let rRate = this.slider.value.rRate!, taxRate = this.slider.value.taxRate!, eMPK = this.slider.value.expectedMPK!, output = this.slider.value.output!, eOutput = this.slider.value.expectedOutput!, wealth = this.slider.value.wealth!, eRealRate = this.slider.value.expectedRealRate!, govPurchase = this.slider.value.govPurchases!, taxes = this.slider.value.taxes!;
 
-    let saving = [], investment = [], qSaving = [], qInestment = [], eq = [], savingRef = [], investmentRef = [], qSavingRef = [], qInvestmentRef = [], eqRef = [];
+    let saving = [], investment = [], qSaving = [], qInvestment = [], eq = [], savingRef = [], investmentRef = [], qSavingRef = [], qInvestmentRef = [], eqRef = [];
 
-    let alpha = .00004, exponent = 1.6, x = 25,
-      investShift = 7 - this.slider.value.taxRate!, savingShift = .2;
+    let alpha = .00004, exponent = 1.6, exp1 = .5, beta = .16, x = 25,
+      investShift = 7 - taxRate + eMPK, savingShift = .2 - output + eOutput + wealth - .25*eRealRate + govPurchase - .25*taxes;
 
-    let savingCurve = (x: number) => {
-      return savingShift + alpha * Math.pow(x, exponent);
-    };
+    let savingCurve = (x: number) => { return savingShift + alpha * Math.pow(x, exponent);};
+    let investmentCurve = (x: number) => { return investShift - beta * Math.pow(x, exp1); }
 
-    let investmentCurve = (x: number) => {
-      return investShift - .16*Math.pow(x, .5);
-    }
+    let inverseSaving = (x: number) => { return Math.pow((x - savingShift) / alpha, 1 / exponent); };
+    let inverseInvestment = (x: number) => { return Math.pow((x - investShift) / beta, 1 / exp1); }
 
     do {
       let point = {
@@ -249,10 +271,38 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       x = x + 25;
 
     } while (x <= 2000);
-    console.log(investment);
+
+    // Key point series
+    qSaving = [
+      [0, rRate],
+      {
+        name: 'saving supplied',
+        x: inverseSaving(rRate),
+        y: rRate,
+        color: 'green',
+        marker: { enabled: true, symbol: 'circle', radius: 4 }
+
+      },
+      [inverseSaving(rRate), 0]
+    ];
+    qInvestment = [
+      [0, rRate],
+      {
+        name: 'investment supplied',
+        x: inverseInvestment(rRate),
+        y: rRate,
+        color: 'green',
+        marker: { enabled: true, symbol: 'circle', radius: 4 }
+
+      },
+      [inverseInvestment(rRate), 0]
+    ];
+
     return {
       seriesSaving: saving,
-      seriesInvestment: investment
+      seriesInvestment: investment,
+      qSaving: qSaving,
+      qInvestment: qInvestment
     }
   }
 

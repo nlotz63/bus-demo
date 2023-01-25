@@ -11,8 +11,9 @@
         <econ-slider
         label="Real interest rate"
         showValue="false"
-        [min]="0"
-        [max]="12"
+        [min]="0.25"
+        [max]="5"
+        step=".1"
         [value]="slider.value.rRate!"
         (valueChange)="slider.patchValue({ rRate: $event})"
         />
@@ -29,8 +30,9 @@
         <econ-slider
         label="Real interest rate"
         showValue="false"
-        [min]="0"
-        [max]="12"
+        [min]=".4"
+        [max]="5"
+        step=".1"
         [value]="slider.value.rRate!"
         (valueChange)="slider.patchValue({rRate: $event})"
         />
