@@ -57,7 +57,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
   });
 
 
-// Chart properties
+  // Chart properties
   chart!: Highcharts.Chart;
 
   chart1: Highcharts.Options = {
@@ -65,8 +65,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       type: 'spline',
       animation: false,
       height: 540,
-      ignoreHiddenSeries: true
-
+      ignoreHiddenSeries: true,
     },
     credits: {
       text: 'Pearson Education',
@@ -81,7 +80,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       lineColor: '#757575',
       lineWidth: 1.,
       tickColor: '#757575',
-      title: { text: 'Labor, N (millions of workers)' },
+      title: { useHTML: true, text: 'Desired national saving S<sup>d</sup>, and desired investment, I<sup>d</sup> (billions of dollars)' },
       min: 0,
       max: 1750
 
@@ -92,7 +91,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       lineWidth: 1.,
       tickColor: '#757575',
       tickWidth: 1,
-      title: { text: 'Real wage' },
+      title: { useHTML: true, text: 'Real interest rate, r' },
       min: 0,
       max: 5
 
@@ -103,12 +102,12 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         color: '#C31229',
         tooltip: {
           headerFormat: '{series.name}<br/>',
-          pointFormat: 'Quantity: {point.x:.0f}<br/>Real interest rate: {point.y:.2f}%'
+          pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
         }
       }
 
     }
-}
+  }
 
 
 
@@ -120,38 +119,47 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
     });
 
-    //capture slider value changes and update the chart
-    this.slider.valueChanges.subscribe((value) => {
-      this._updateChart(value);
-    }
-    );
   }
 
   ngAfterViewInit() {
     this.chart = new Highcharts.Chart('chart1', this.chart1);
     this.playStep(this.mode);
+
+    //capture slider value changes and update the chart
+    this.slider.valueChanges.subscribe((value) => {
+      this._updateChart(value);
+    }
+    );
+
   }
 
   // Public methods
   public playStep(value: any) {
     this.mode = value;
+    this.slider.setValue({
+      rRate: 2.26,
+      taxRate: 0,
+      expectedMPK: 0,
+      output: 0,
+      expectedOutput: 0,
+      wealth: 0,
+      expectedRealRate: 0,
+      govPurchases: 0,
+      taxes: 0
+    });
     this.chart.destroy();
     this._setupChart(true);
 
   }
 
-  public reset() {
-    //this.chart.destroy();
-  //  this._setupChart();
-    //this.updateChart(23539, 25.99, 79.45, 0, 0, 0, 0);
+  public messageBuilder(slider: string, startValue: any) {
+    console.log(startValue);
   }
 
-
-//Private methods
+  //Private methods
 
   private _setupChart(addRef: boolean) {
     let series: any = this._createSeries(addRef);
-
     this.chart = new Highcharts.Chart('chart1', this.chart1);
 
     switch (this.mode) {
@@ -314,10 +322,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     }
 
 
-  //  this._updateChart(true);
-
-
-}
+  }
   private _updateChart(value: any) {
     let series: any = this._createSeries(false);
     let slider = this.slider.value;
@@ -340,11 +345,11 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.series[3].setData(series.qSaving, true, false, false);
         this.chart.series[4].setData(series.qInvestment, true, false, false);
         if (this.slider.value.rRate !== 2.26) this.chart.series[2].hide();
-        if(this.slider.value.rRate === 2.26) this.chart.series[3].hide();
+        if (this.slider.value.rRate === 2.26) this.chart.series[3].hide();
         if (this.slider.value.rRate === 2.26) this.chart.series[4].hide();
         if (this.slider.value.rRate === 2.26) this.chart.series[2].show();
-        if(this.slider.value.rRate !== 2.26) this.chart.series[3].show();
-        if(this.slider.value.rRate !== 2.26) this.chart.series[4].show();
+        if (this.slider.value.rRate !== 2.26) this.chart.series[3].show();
+        if (this.slider.value.rRate !== 2.26) this.chart.series[4].show();
 
 
         break;
@@ -356,26 +361,26 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.series[2].setData(series.equilibrium, true, false, false);
         if (slider.expectedMPK! + slider.taxRate! !== 0) this.chart.series[5].show();
         if (Math.abs(slider.expectedMPK! + slider.taxRate!) < .1) this.chart.series[5].hide();
-        if(Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) >= .1) this.chart.series[4].show();
-        if(Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) < .1) this.chart.series[4].hide();
+        if (Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) >= .1) this.chart.series[4].show();
+        if (Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) < .1) this.chart.series[4].hide();
 
 
 
-            break;
+        break;
     }
 
   }
 
-  private _createSeries(addRef: boolean){
+  private _createSeries(addRef: boolean) {
     // math generate all curves and key points in the chart returns an object of arrays
     let rRate = this.slider.value.rRate!, taxRate = this.slider.value.taxRate!, eMPK = this.slider.value.expectedMPK!, output = this.slider.value.output!, eOutput = this.slider.value.expectedOutput!, wealth = this.slider.value.wealth!, eRealRate = this.slider.value.expectedRealRate!, govPurchase = this.slider.value.govPurchases!, taxes = this.slider.value.taxes!;
 
     let saving = [], investment = [], qSaving = [], qInvestment = [], eq = [], savingRef: any[] = [], investmentRef: any[] = [], qSavingRef = [], qInvestmentRef = [], eqRef: any[] = [];
 
     let alpha = .00004, exponent = 1.6, exp1 = .5, beta = .16, x = 25,
-      investShift = 7 - taxRate + eMPK, savingShift = .2 - output + eOutput + wealth - .25*eRealRate + govPurchase - .25*taxes;
+      investShift = 7 - taxRate + eMPK, savingShift = .2 - output + eOutput + wealth - .25 * eRealRate + govPurchase - .25 * taxes;
 
-    let savingCurve = (x: number) => { return savingShift + alpha * Math.pow(x, exponent);};
+    let savingCurve = (x: number) => { return savingShift + alpha * Math.pow(x, exponent); };
     let investmentCurve = (x: number) => { return investShift - beta * Math.pow(x, exp1); }
 
     let inverseSaving = (x: number) => { return Math.pow((x - savingShift) / alpha, 1 / exponent); };

@@ -6,6 +6,7 @@ import { Module2RoutingModule } from './module2-routing.module';
 import { KeyDiagram3Component } from './key-diagram3/key-diagram3.component';
 import { PlayerModule } from '../player/player.module';
 import { BusPubLibModule } from 'bus-pub-lib';
+import { MatButtonModule } from '@angular/material/button';
 
 
 
@@ -18,6 +19,7 @@ import { BusPubLibModule } from 'bus-pub-lib';
     Module2RoutingModule,
     PlayerModule,
     ReactiveFormsModule,
+    MatButtonModule,
     BusPubLibModule
   ]
 })

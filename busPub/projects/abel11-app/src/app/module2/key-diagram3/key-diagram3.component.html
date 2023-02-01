@@ -15,9 +15,10 @@
           [max]="5"
           step=".1"
           [value]="slider.value.rRate!"
-          (valueChange)="slider.patchValue({ rRate: $event })"
+          #startValue
+          (valueChange)="slider.patchValue({ rRate: $event });messageBuilder('rRate', startValue)"
         ></econ-slider>
-        {{ slider.value.rRate }}
+        {{ slider.value.rRate }}%
       </div>
       <div *ngIf="mode === 1" @myAnimationTrigger>
         <h2>Investment Curve</h2>
@@ -35,7 +36,7 @@
           [value]="slider.value.rRate!"
           (valueChange)="slider.patchValue({ rRate: $event })"
         ></econ-slider>
-        {{ slider.value.rRate }}
+        {{ slider.value.rRate }}%
       </div>
       <div *ngIf="mode === 2" @myAnimationTrigger>
         <h2>Equilibrium</h2>
@@ -53,7 +54,7 @@
           [value]="slider.value.rRate!"
           (valueChange)="slider.patchValue({ rRate: $event })"
         ></econ-slider>
-        {{ slider.value.rRate }}
+        {{ slider.value.rRate }}%
       </div>
       <div *ngIf="mode === 3" @myAnimationTrigger>
         <h2>Factors that Shift Saving</h2>
@@ -123,6 +124,7 @@
             [value]="slider.value.taxes!"
             (valueChange)="slider.patchValue({ taxes: $event })"
           ></econ-slider>
+          <button mat-raised-button (click)="playStep(3)">Reset</button>
         </div>
       </div>
       <div *ngIf="mode === 4" @myAnimationTrigger>
@@ -153,6 +155,7 @@
             [value]="slider.value.expectedMPK!"
             (valueChange)="slider.patchValue({ expectedMPK: $event })"
           ></econ-slider>
+          <button mat-raised-button (click)="playStep(4)">Reset</button>
         </div>
       </div>
     </div>
