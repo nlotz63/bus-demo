@@ -9,16 +9,15 @@
           <li>Bullet point 3</li>
         </ul>
         <econ-slider
-        label="Real interest rate"
-        showValue="false"
-        [min]="0.25"
-        [max]="5"
-        step=".1"
-        [value]="slider.value.rRate!"
-        (valueChange)="slider.patchValue({ rRate: $event})"
-        />
-        {{slider.value.rRate}}
-
+          label="Real interest rate"
+          showValue="false"
+          [min]="0.25"
+          [max]="5"
+          step=".1"
+          [value]="slider.value.rRate!"
+          (valueChange)="slider.patchValue({ rRate: $event })"
+        ></econ-slider>
+        {{ slider.value.rRate }}
       </div>
       <div *ngIf="mode === 1" @myAnimationTrigger>
         <h2>Investment Curve</h2>
@@ -28,16 +27,15 @@
           <li>Bullet point 3</li>
         </ul>
         <econ-slider
-        label="Real interest rate"
-        showValue="false"
-        [min]=".4"
-        [max]="5"
-        step=".1"
-        [value]="slider.value.rRate!"
-        (valueChange)="slider.patchValue({rRate: $event})"
-        />
-        {{slider.value.rRate}}
-
+          label="Real interest rate"
+          showValue="false"
+          [min]="0.4"
+          [max]="5"
+          step=".1"
+          [value]="slider.value.rRate!"
+          (valueChange)="slider.patchValue({ rRate: $event })"
+        ></econ-slider>
+        {{ slider.value.rRate }}
       </div>
       <div *ngIf="mode === 2" @myAnimationTrigger>
         <h2>Equilibrium</h2>
@@ -46,6 +44,16 @@
           <li>Bullet point 2</li>
           <li>Bullet point 3</li>
         </ul>
+        <econ-slider
+          label="Real interest rate"
+          showValue="false"
+          [min]="0.4"
+          [max]="5"
+          step=".01"
+          [value]="slider.value.rRate!"
+          (valueChange)="slider.patchValue({ rRate: $event })"
+        ></econ-slider>
+        {{ slider.value.rRate }}
       </div>
       <div *ngIf="mode === 3" @myAnimationTrigger>
         <h2>Factors that Shift Saving</h2>
@@ -54,7 +62,68 @@
           <li>Bullet point 2</li>
           <li>Bullet point 3</li>
         </ul>
-
+        <div class="control-column">
+          <econ-slider
+            label="Output"
+            showValue="false"
+            [min]="-2"
+            [max]="2"
+            step=".01"
+            [showPercent]="true"
+            [value]="slider.value.output!"
+            (valueChange)="slider.patchValue({ output: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Expected output"
+            showValue="false"
+            [min]="-2"
+            [max]="2"
+            step=".01"
+            [showPercent]="true"
+            [value]="slider.value.expectedOutput!"
+            (valueChange)="slider.patchValue({ expectedOutput: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Wealth"
+            showValue="false"
+            [min]="-2"
+            [max]="2"
+            step=".01"
+            [showPercent]="true"
+            [value]="slider.value.wealth!"
+            (valueChange)="slider.patchValue({ wealth: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Expected real interest rate"
+            showValue="false"
+            [min]="-2"
+            [max]="2"
+            step=".01"
+            [showPercent]="true"
+            [value]="slider.value.expectedRealRate!"
+            (valueChange)="slider.patchValue({ expectedRealRate: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Government purchases"
+            showValue="false"
+            [min]="-2"
+            [max]="2"
+            step=".01"
+            [showPercent]="true"
+            [value]="slider.value.govPurchases!"
+            (valueChange)="slider.patchValue({ govPurchases: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Taxes"
+            showValue="false"
+            [min]="-2"
+            [max]="2"
+            step=".01"
+            [showPercent]="true"
+            [value]="slider.value.taxes!"
+            (valueChange)="slider.patchValue({ taxes: $event })"
+          ></econ-slider>
+        </div>
       </div>
       <div *ngIf="mode === 4" @myAnimationTrigger>
         <h2>Factors that Shift Investment</h2>
@@ -63,21 +132,37 @@
           <li>Bullet point 2</li>
           <li>Bullet point 3</li>
         </ul>
-        <econ-slider
-        label="Effective tax rate"
-        showValue="false"
-        [min]="-2"
-        [max]="2"
-        step=.05
-        [value]="slider.value.taxRate!"
-        (valueChange)="slider.patchValue({taxRate: $event})"
-        />
-        {{slider.value.taxRate}}
-
+        <div class="control-column">
+          <econ-slider
+            label="Effective tax rate"
+            showValue="false"
+            [min]="-2"
+            [max]="2"
+            step=".01"
+            [showPercent]="true"
+            [value]="slider.value.taxRate!"
+            (valueChange)="slider.patchValue({ taxRate: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Expected MPK"
+            showValue="false"
+            [min]="-2"
+            [max]="2"
+            step=".01"
+            [showPercent]="true"
+            [value]="slider.value.expectedMPK!"
+            (valueChange)="slider.patchValue({ expectedMPK: $event })"
+          ></econ-slider>
+        </div>
       </div>
-      </div>
-    <div id="chart1" class="item-chart">
     </div>
-    </div>
-    <app-player *ngIf="showPlayer" [steps]="5" [mode]="mode" (modeChange)="playStep( $event)" class="player-navigation-container"></app-player>
-    </div>
+    <div id="chart1" class="item-chart"></div>
+  </div>
+  <app-player
+    *ngIf="showPlayer"
+    [steps]="5"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
+</div>

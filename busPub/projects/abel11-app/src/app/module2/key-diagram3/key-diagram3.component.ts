@@ -45,7 +45,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
 
 
   slider = new FormGroup({
-    rRate: new FormControl(3),
+    rRate: new FormControl(2.26),
     taxRate: new FormControl(0),
     expectedMPK: new FormControl(0),
     output: new FormControl(0),
@@ -100,7 +100,11 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     plotOptions: {
       series: {
         enableMouseTracking: true,
-        color: '#C31229'
+        color: '#C31229',
+        tooltip: {
+          headerFormat: '{series.name}<br/>',
+          pointFormat: 'Quantity: {point.x:.0f}<br/>Real interest rate: {point.y:.2f}%'
+        }
       }
 
     }
@@ -132,9 +136,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
   public playStep(value: any) {
     this.mode = value;
     this.chart.destroy();
-   // this._createSeries(true);
-    this._setupChart();
-   // this.updateChart(23539, 25.99, 79.45, 0, 0, 0, 0);
+    this._setupChart(true);
 
   }
 
@@ -147,8 +149,8 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
 
 //Private methods
 
-  private _setupChart() {
-    let series: any = this._createSeries(false);
+  private _setupChart(addRef: boolean) {
+    let series: any = this._createSeries(addRef);
 
     this.chart = new Highcharts.Chart('chart1', this.chart1);
 
@@ -156,7 +158,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       case 0:
         this.chart.addSeries({
           type: 'spline',
-          name: 'saving',
+          name: 'Saving',
           zIndex: 1,
           animation: false,
           data: series.seriesSaving
@@ -167,7 +169,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: '',
           color: 'darkgrey',
           lineWidth: 2,
-          dashStyle: 'ShortDash',
+          dashStyle: 'ShortDot',
           zIndex: 2,
           animation: false,
           data: series.qSaving
@@ -177,7 +179,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       case 1:
         this.chart.addSeries({
           type: 'spline',
-          name: 'investment',
+          name: 'Investment',
           zIndex: 1,
           animation: false,
           data: series.seriesInvestment
@@ -187,7 +189,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: '',
           color: 'darkgrey',
           lineWidth: 2,
-          dashStyle: 'ShortDash',
+          dashStyle: 'ShortDot',
           zIndex: 2,
           animation: false,
           data: series.qInvestment
@@ -195,11 +197,10 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         });
 
         break;
-
-      default:
+      case 2:
         this.chart.addSeries({
           type: 'spline',
-          name: 'saving',
+          name: 'Saving',
           zIndex: 1,
           animation: false,
           data: series.seriesSaving
@@ -207,11 +208,107 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         });
         this.chart.addSeries({
           type: 'spline',
-          name: 'investment',
+          name: 'Investment',
           zIndex: 1,
           animation: false,
           data: series.seriesInvestment
 
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: 'Equilibrium',
+          color: 'darkgrey',
+          dashStyle: 'ShortDot',
+          zIndex: 3,
+          animation: false,
+          data: series.equilibrium
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: '',
+          color: 'darkgrey',
+          lineWidth: 2,
+          dashStyle: 'ShortDot',
+          zIndex: 2,
+          animation: false,
+          data: series.qSaving
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: '',
+          color: 'darkgrey',
+          lineWidth: 2,
+          dashStyle: 'ShortDot',
+          zIndex: 2,
+          animation: false,
+          data: series.qInvestment
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: '',
+          color: 'darkgrey',
+          dashStyle: 'ShortDot',
+          zIndex: 2,
+          animation: false,
+          data: series.eqRef
+        });
+        break;
+
+      default:
+        this.chart.addSeries({
+          type: 'spline',
+          name: 'Saving',
+          zIndex: 1,
+          animation: false,
+          data: series.seriesSaving
+
+        });
+        this.chart.addSeries({
+          type: 'spline',
+          name: 'Investment',
+          zIndex: 1,
+          animation: false,
+          data: series.seriesInvestment
+
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: 'Equilibrium',
+          color: 'darkgrey',
+          dashStyle: 'ShortDot',
+          zIndex: 3,
+          animation: false,
+          data: series.equilibrium
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: '',
+          color: 'darkgrey',
+          dashStyle: 'ShortDot',
+          zIndex: 2,
+          animation: false,
+          data: series.eqRef,
+          visible: false
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: '',
+          color: 'darkgrey',
+          dashStyle: 'ShortDash',
+          zIndex: 1,
+          animation: false,
+          data: series.savingRef,
+          visible: false
+        });
+        this.chart.addSeries({
+          type: 'line',
+          name: '',
+          color: 'darkgrey',
+          dashStyle: 'ShortDash',
+          zIndex: 1,
+          animation: false,
+          data: series.investmentRef,
+          visible: false
         });
         break;
     }
@@ -223,6 +320,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
 }
   private _updateChart(value: any) {
     let series: any = this._createSeries(false);
+    let slider = this.slider.value;
 
     switch (this.mode) {
       case 0:
@@ -235,10 +333,34 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.series[1].setData(series.qInvestment, true, false, false);
 
         break;
+      case 2:
+        this.chart.series[0].setData(series.seriesSaving, true, false, false);
+        this.chart.series[1].setData(series.seriesInvestment, true, false, false);
+        this.chart.series[2].setData(series.equilibrium, true, false, false);
+        this.chart.series[3].setData(series.qSaving, true, false, false);
+        this.chart.series[4].setData(series.qInvestment, true, false, false);
+        if (this.slider.value.rRate !== 2.26) this.chart.series[2].hide();
+        if(this.slider.value.rRate === 2.26) this.chart.series[3].hide();
+        if (this.slider.value.rRate === 2.26) this.chart.series[4].hide();
+        if (this.slider.value.rRate === 2.26) this.chart.series[2].show();
+        if(this.slider.value.rRate !== 2.26) this.chart.series[3].show();
+        if(this.slider.value.rRate !== 2.26) this.chart.series[4].show();
+
+
+        break;
+
 
       default:
         this.chart.series[0].setData(series.seriesSaving, true, false, false);
         this.chart.series[1].setData(series.seriesInvestment, true, false, false);
+        this.chart.series[2].setData(series.equilibrium, true, false, false);
+        if (slider.expectedMPK! + slider.taxRate! !== 0) this.chart.series[5].show();
+        if (Math.abs(slider.expectedMPK! + slider.taxRate!) < .1) this.chart.series[5].hide();
+        if(Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) >= .1) this.chart.series[4].show();
+        if(Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) < .1) this.chart.series[4].hide();
+
+
+
             break;
     }
 
@@ -248,7 +370,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     // math generate all curves and key points in the chart returns an object of arrays
     let rRate = this.slider.value.rRate!, taxRate = this.slider.value.taxRate!, eMPK = this.slider.value.expectedMPK!, output = this.slider.value.output!, eOutput = this.slider.value.expectedOutput!, wealth = this.slider.value.wealth!, eRealRate = this.slider.value.expectedRealRate!, govPurchase = this.slider.value.govPurchases!, taxes = this.slider.value.taxes!;
 
-    let saving = [], investment = [], qSaving = [], qInvestment = [], eq = [], savingRef = [], investmentRef = [], qSavingRef = [], qInvestmentRef = [], eqRef = [];
+    let saving = [], investment = [], qSaving = [], qInvestment = [], eq = [], savingRef: any[] = [], investmentRef: any[] = [], qSavingRef = [], qInvestmentRef = [], eqRef: any[] = [];
 
     let alpha = .00004, exponent = 1.6, exp1 = .5, beta = .16, x = 25,
       investShift = 7 - taxRate + eMPK, savingShift = .2 - output + eOutput + wealth - .25*eRealRate + govPurchase - .25*taxes;
@@ -258,6 +380,26 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
 
     let inverseSaving = (x: number) => { return Math.pow((x - savingShift) / alpha, 1 / exponent); };
     let inverseInvestment = (x: number) => { return Math.pow((x - investShift) / beta, 1 / exp1); }
+
+    let _findEq = (): number => {
+      let lowX = 0, upX = 2000, midX = (lowX + upX) / 2, epsilon = .0001;
+      let i = 0
+
+      do {
+        let diff = savingCurve(midX) - investmentCurve(midX);
+
+        if (diff < 0) {
+          lowX = midX;
+          midX = (upX + midX) / 2;
+        } else {
+          upX = midX;
+          midX = (lowX + midX) / 2;
+        }
+        i++;
+
+      } while (Math.abs(savingCurve(midX) - investmentCurve(midX)) > epsilon);
+      return midX;
+    }
 
     do {
       let point = {
@@ -297,12 +439,45 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       },
       [inverseInvestment(rRate), 0]
     ];
+    eq = [
+      [0, investmentCurve(_findEq())],
+      {
+        name: 'Equilibrium',
+        x: _findEq(),
+        y: investmentCurve(_findEq()),
+        color: 'green',
+        marker: { enabled: true, symbol: 'circle', radius: 4 },
+      },
+      [_findEq(), 0]
+    ];
+    //reference series
+    if (addRef) {
+      eqRef = [
+        [0, investmentCurve(_findEq())],
+        {
+          name: 'Equilibrium',
+          x: _findEq(),
+          y: investmentCurve(_findEq()),
+          color: 'darkgrey',
+          marker: { enabled: true, symbol: 'circle', radius: 4 },
+        },
+        [_findEq(), 0]
+      ];
+      savingRef = saving;
+      investmentRef = investment;
+
+    }
 
     return {
       seriesSaving: saving,
       seriesInvestment: investment,
       qSaving: qSaving,
-      qInvestment: qInvestment
+      qInvestment: qInvestment,
+      equilibrium: eq,
+      eqRef: eqRef,
+      savingRef: savingRef,
+      investmentRef: investmentRef
+
     }
   }
 

@@ -16,6 +16,7 @@
 .control-column {
   @include flexbox();
   flex-flow: column;
+  margin-left: 5px;
 }
 
 @media all and (max-width: 750px) {
