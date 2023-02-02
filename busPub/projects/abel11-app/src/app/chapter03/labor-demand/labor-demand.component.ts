@@ -30,7 +30,7 @@ HC_seriesLabel(Highcharts);
   ]
 })
 export class LaborDemandComponent implements OnInit, AfterViewInit {
-  @Input() mode: any = 1;
+  @Input() mode: any = 0;
   showPlayer = false;
   chart!: Highcharts.Chart;
 
