@@ -124,18 +124,12 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.chart = new Highcharts.Chart('chart1', this.chart1);
     this.playStep(this.mode);
-
-    //capture slider value changes and update the chart
-    this.slider.valueChanges.subscribe((value) => {
-      this._updateChart(value);
-    }
-    );
-
   }
 
   // Public methods
   public playStep(value: any) {
     this.mode = value;
+   // this.chart.destroy();
     this.slider.setValue({
       rRate: 2.26,
       taxRate: 0,
@@ -147,7 +141,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       govPurchases: 0,
       taxes: 0
     });
-    this.chart.destroy();
+
     this._setupChart(true);
 
   }
@@ -323,7 +317,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
 
 
   }
-  private _updateChart(value: any) {
+  public _updateChart(value: any) {
     let series: any = this._createSeries(false);
     let slider = this.slider.value;
 
