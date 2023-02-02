@@ -169,7 +169,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: '',
-          color: 'darkgrey',
+          color: 'black',
           lineWidth: 2,
           dashStyle: 'ShortDot',
           zIndex: 2,
@@ -189,7 +189,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: '',
-          color: 'darkgrey',
+          color: 'black',
           lineWidth: 2,
           dashStyle: 'ShortDot',
           zIndex: 2,
@@ -219,7 +219,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: 'Equilibrium',
-          color: 'darkgrey',
+          color: 'black',
           dashStyle: 'ShortDot',
           zIndex: 3,
           animation: false,
@@ -228,7 +228,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: '',
-          color: 'darkgrey',
+          color: 'black',
           lineWidth: 2,
           dashStyle: 'ShortDot',
           zIndex: 2,
@@ -238,7 +238,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: '',
-          color: 'darkgrey',
+          color: 'black',
           lineWidth: 2,
           dashStyle: 'ShortDot',
           zIndex: 2,
@@ -250,6 +250,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: '',
           color: 'darkgrey',
           dashStyle: 'ShortDot',
+          lineWidth: 1,
           zIndex: 2,
           animation: false,
           data: series.eqRef
@@ -276,7 +277,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: 'Equilibrium',
-          color: 'darkgrey',
+          color: 'black',
           dashStyle: 'ShortDot',
           zIndex: 3,
           animation: false,
@@ -290,13 +291,14 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           zIndex: 2,
           animation: false,
           data: series.eqRef,
-          visible: false
+          visible: true
         });
         this.chart.addSeries({
           type: 'line',
           name: '',
           color: 'darkgrey',
           dashStyle: 'ShortDash',
+          lineWidth: 1,
           zIndex: 1,
           animation: false,
           data: series.savingRef,
@@ -307,6 +309,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: '',
           color: 'darkgrey',
           dashStyle: 'ShortDash',
+          lineWidth: 1,
           zIndex: 1,
           animation: false,
           data: series.investmentRef,
@@ -354,12 +357,9 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.series[1].setData(series.seriesInvestment, true, false, false);
         this.chart.series[2].setData(series.equilibrium, true, false, false);
         if (slider.expectedMPK! + slider.taxRate! !== 0) this.chart.series[5].show();
-        if (Math.abs(slider.expectedMPK! + slider.taxRate!) < .1) this.chart.series[5].hide();
-        if (Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) >= .1) this.chart.series[4].show();
-        if (Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) < .1) this.chart.series[4].hide();
-
-
-
+        if (Math.abs(slider.expectedMPK! + slider.taxRate!) < .05) this.chart.series[5].hide();
+        if (Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) >= .05) this.chart.series[4].show();
+        if (Math.abs(slider.expectedOutput! + slider.output! + slider.expectedRealRate! + slider.taxes! + slider.wealth! + slider.govPurchases!) < .05) this.chart.series[4].hide();
         break;
     }
 
