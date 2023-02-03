@@ -248,9 +248,9 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: '',
-          color: 'darkgrey',
+          color: '#797979',
           dashStyle: 'ShortDot',
-          lineWidth: 1,
+          lineWidth: 2,
           zIndex: 2,
           animation: false,
           data: series.eqRef
@@ -286,7 +286,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: '',
-          color: 'darkgrey',
+          color: '#797979',
           dashStyle: 'ShortDot',
           zIndex: 2,
           animation: false,
@@ -296,9 +296,9 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: '',
-          color: 'darkgrey',
+          color: '#797979',
           dashStyle: 'ShortDash',
-          lineWidth: 1,
+          lineWidth: 2,
           zIndex: 1,
           animation: false,
           data: series.savingRef,
@@ -307,7 +307,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'line',
           name: '',
-          color: 'darkgrey',
+          color: '#797979',
           dashStyle: 'ShortDash',
           lineWidth: 1,
           zIndex: 1,
@@ -457,7 +457,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: 'Equilibrium',
           x: _findEq(),
           y: investmentCurve(_findEq()),
-          color: 'darkgrey',
+          color: '#797979',
           marker: { enabled: true, symbol: 'circle', radius: 4 },
         },
         [_findEq(), 0]
