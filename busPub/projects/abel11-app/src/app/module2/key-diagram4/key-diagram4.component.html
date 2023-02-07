@@ -21,7 +21,7 @@
       <p econMath>
         $$ S^d = I^d + NX $$ therefore, net exports, NX:
         $$ NX = S^d - I^d $$
-       <span econMath="$$ NX = {{savingDesired | number: '0.0-0'}} - {{investmentDesired | number: '0.0-0'}} = {{savingDesired - investmentDesired | number: '0.0-0'}} $$"></span>
+        <span econMath="$$ NX = {{savingDesired | currency: 'USD': 'symbol' : '0.0-0'}} - {{investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} = {{savingDesired - investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} $$"></span>
       </p>
     </div>
     <div *ngIf="mode === 1" @myAnimationTrigger>
@@ -32,20 +32,20 @@
         <li>Bullet point 3</li>
       </ul>
       <econ-slider
-        label="Real interest rate"
+        label="Shift saving curve"
         showValue="false"
         [min]="0-2"
         [max]="2"
         step=".01"
+        [showPercent]="true"
         [value]="slider.value.govPurchases!"
         #startValue
-        (valueChange)="updateChart({ govPurchases: $event })"
+        (valueChange)="updateChart({ govPurchases: -$event })"
       ></econ-slider>
-      {{ slider.value.govPurchases }}%
       <p econMath>
         $$ S^d = I^d + NX $$ therefore, net exports, NX:
         $$ NX = S^d - I^d $$
-       <span econMath="$$ NX = {{savingDesired | number: '0.0-0'}} - {{investmentDesired | number: '0.0-0'}} = {{savingDesired - investmentDesired | number: '0.0-0'}} $$"></span>
+       <span econMath="$$ NX = {{savingDesired | currency: 'USD': 'symbol' : '0.0-0'}} - {{investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} = {{savingDesired - investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} $$"></span>
       </p>
     </div>
     <div *ngIf="mode === 2" @myAnimationTrigger>
@@ -56,20 +56,19 @@
         <li>Bullet point 3</li>
       </ul>
       <econ-slider
-        label="Real interest rate"
+        label="Shift investment curve"
         showValue="false"
         [min]="-2"
         [max]="2"
         step=".01"
         [value]="slider.value.taxRate!"
         #startValue
-        (valueChange)="updateChart({taxRate: $event})"
+        (valueChange)="updateChart({taxRate: -$event})"
       ></econ-slider>
-      {{ slider.value.taxRate }}%
       <p econMath>
         $$ S^d = I^d + NX $$ therefore, net exports, NX:
         $$ NX = S^d - I^d $$
-       <span econMath="$$ NX = {{savingDesired | number: '0.0-0'}} - {{investmentDesired | number: '0.0-0'}} = {{savingDesired - investmentDesired | number: '0.0-0'}} $$"></span>
+        <span econMath="$$ NX = {{savingDesired | currency: 'USD': 'symbol' : '0.0-0'}} - {{investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} = {{savingDesired - investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} $$"></span>
       </p>
     </div>
 </div>
