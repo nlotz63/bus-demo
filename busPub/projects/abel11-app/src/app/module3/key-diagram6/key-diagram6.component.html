@@ -1,0 +1,69 @@
+<p>k<div class="econ-interactive-container">
+  <div class="wrapper">
+  <div class="item-narrative">
+    <div *ngIf="mode === 0" @myAnimationTrigger>
+      <h2>World real interest rate and net exports (NX)</h2>
+      <ul>
+        <li>Bullet point 1</li>
+        <li>Bullet point 2</li>
+        <li>Bullet point 3</li>
+      </ul>
+      <econ-slider
+        label="World real interest rate"
+        showValue="false"
+        [min]="0.25"
+        [max]="5"
+        step=".1"
+        [value]="slider.value.rRate!"
+        (valueChange)="updateChart({rRate: $event})"
+      ></econ-slider>
+    </div>
+    <div *ngIf="mode === 1" @myAnimationTrigger>
+      <h2>Shifts of the saving curve and net exports (NX)</h2>
+      <ul>
+        <li>Bullet point 1</li>
+        <li>Bullet point 2</li>
+        <li>Bullet point 3</li>
+      </ul>
+      <econ-slider
+        label="Shift saving curve"
+        showValue="false"
+        [min]="0-2"
+        [max]="2"
+        step=".01"
+        [showPercent]="true"
+        [value]="slider.value.govPurchases!"
+        #startValue
+        (valueChange)="updateChart({ govPurchases: -$event })"
+      ></econ-slider>
+    </div>
+    <div *ngIf="mode === 2" @myAnimationTrigger>
+      <h2>Shifts of the investment curve and net exports (NX)</h2>
+      <ul>
+        <li>Bullet point 1</li>
+        <li>Bullet point 2</li>
+        <li>Bullet point 3</li>
+      </ul>
+      <econ-slider
+        label="Shift investment curve"
+        showValue="false"
+        [min]="-2"
+        [max]="2"
+        step=".01"
+        [value]="slider.value.taxRate!"
+        #startValue
+        (valueChange)="updateChart({taxRate: -$event})"
+      ></econ-slider>
+    </div>
+</div>
+  <div id="chart1" class="item-chart"></div>
+</div>
+<app-player
+*ngIf="showPlayer"
+[steps]="3"
+[mode]="mode"
+(modeChange)="playStep($event)"
+class="player-navigation-container"
+></app-player>
+
+</div>
