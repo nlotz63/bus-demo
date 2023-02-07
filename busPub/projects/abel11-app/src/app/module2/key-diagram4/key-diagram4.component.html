@@ -2,7 +2,30 @@
   <div class="wrapper">
   <div class="item-narrative">
     <div *ngIf="mode === 0" @myAnimationTrigger>
-      <h2>Saving Curve</h2>
+      <h2>World real interest rate and net exports (NX)</h2>
+      <ul>
+        <li>Bullet point 1</li>
+        <li>Bullet point 2</li>
+        <li>Bullet point 3</li>
+      </ul>
+      <econ-slider
+        label="World real interest rate"
+        showValue="false"
+        [min]="0.25"
+        [max]="5"
+        step=".1"
+        [value]="slider.value.rRate!"
+        (valueChange)="updateChart({rRate: $event})"
+      ></econ-slider>
+      {{ slider.value.rRate }}%
+      <p econMath>
+        $$ S^d = I^d + NX $$ therefore, net exports, NX:
+        $$ NX = S^d - I^d $$
+       <span econMath="$$ NX = {{savingDesired | number: '0.0-0'}} - {{investmentDesired | number: '0.0-0'}} = {{savingDesired - investmentDesired | number: '0.0-0'}} $$"></span>
+      </p>
+    </div>
+    <div *ngIf="mode === 1" @myAnimationTrigger>
+      <h2>Shifts of the saving curve and net exports (NX)</h2>
       <ul>
         <li>Bullet point 1</li>
         <li>Bullet point 2</li>
@@ -11,21 +34,50 @@
       <econ-slider
         label="Real interest rate"
         showValue="false"
-        [min]="0.25"
-        [max]="5"
-        step=".1"
-        [value]="slider.value.rRate!"
+        [min]="0-2"
+        [max]="2"
+        step=".01"
+        [value]="slider.value.govPurchases!"
         #startValue
-        (valueChange)="slider.patchValue({ rRate: $event });updateChart(false);updateChart(false)"
+        (valueChange)="updateChart({ govPurchases: $event })"
       ></econ-slider>
-      {{ slider.value.rRate }}%
+      {{ slider.value.govPurchases }}%
+      <p econMath>
+        $$ S^d = I^d + NX $$ therefore, net exports, NX:
+        $$ NX = S^d - I^d $$
+       <span econMath="$$ NX = {{savingDesired | number: '0.0-0'}} - {{investmentDesired | number: '0.0-0'}} = {{savingDesired - investmentDesired | number: '0.0-0'}} $$"></span>
+      </p>
+    </div>
+    <div *ngIf="mode === 2" @myAnimationTrigger>
+      <h2>Shifts of the investment curve and net exports (NX)</h2>
+      <ul>
+        <li>Bullet point 1</li>
+        <li>Bullet point 2</li>
+        <li>Bullet point 3</li>
+      </ul>
+      <econ-slider
+        label="Real interest rate"
+        showValue="false"
+        [min]="-2"
+        [max]="2"
+        step=".01"
+        [value]="slider.value.taxRate!"
+        #startValue
+        (valueChange)="updateChart({taxRate: $event})"
+      ></econ-slider>
+      {{ slider.value.taxRate }}%
+      <p econMath>
+        $$ S^d = I^d + NX $$ therefore, net exports, NX:
+        $$ NX = S^d - I^d $$
+       <span econMath="$$ NX = {{savingDesired | number: '0.0-0'}} - {{investmentDesired | number: '0.0-0'}} = {{savingDesired - investmentDesired | number: '0.0-0'}} $$"></span>
+      </p>
     </div>
 </div>
   <div id="chart1" class="item-chart"></div>
 </div>
 <app-player
 *ngIf="showPlayer"
-[steps]="5"
+[steps]="3"
 [mode]="mode"
 (modeChange)="playStep($event)"
 class="player-navigation-container"

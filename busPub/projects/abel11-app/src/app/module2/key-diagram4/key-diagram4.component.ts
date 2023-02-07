@@ -39,8 +39,12 @@ HC_accessibility(Highcharts);
 export class KeyDiagram4Component implements OnInit, AfterViewInit {
   mode: number = 0;
   showPlayer: boolean = false;
+  investmentDesired: number = 625;
+  savingDesired: number = 1067;
+  saveRef: any[] = []
+  investRef: any[] = [];
 
-  constructor(private ActiveRoute: ActivatedRoute, private announceer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
 
     // create form controls for sliders
 
@@ -93,9 +97,23 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'NX',
+          color: 'black',
           zIndex: 1,
           animation: false,
-          data: []
+          marker: {enabled: false},
+          data: [],
+          zoneAxis: 'x',
+          zones: [
+            {
+              value: this.investmentDesired,
+              dashStyle: 'Dot'
+            },
+            {
+              value: this.savingDesired,
+              dashStyle: 'Solid'
+            },
+            {value: 1750, dashStyle: 'Dot'}
+          ]
         },
 
       ],
@@ -139,6 +157,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
     });
+    this._createSeries(true);
   }
 
   ngAfterViewInit(): void {
@@ -160,17 +179,75 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         govPurchases: 0,
         taxes: 0
       });
-
+      this._setupChart(true);
       this.updateChart(2);
 
     }
 
   public updateChart(value: any) {
-    let series = this._createSeries();
-    this.chart.series[0].setData(series.seriesSaving, true, false, false);
-    this.chart.series[1].setData(series.seriesInvestment, true, false, false);
-    this.chart.series[2].setData(series.seriesNX, true, false, false);
+    let series = this._createSeries(false);
+    this.slider.patchValue(value);
 
+    this.chart.update({
+      series: [
+        {
+          type: 'spline',
+          name: 'Saving',
+          zIndex: 1,
+          animation: false,
+          data: series.seriesSaving
+        },
+        {
+          type: 'spline',
+          name: 'Investment',
+          zIndex: 1,
+          animation: false,
+          data: series.seriesInvestment
+        },
+        {
+          type: 'line',
+          name: 'World real interest rate',
+          zIndex: 1,
+          animation: false,
+          data: series.seriesNX,
+          zoneAxis: 'x',
+          zones: [
+            {
+              value: this.investmentDesired,
+              dashStyle: 'Dot'
+            },
+            {
+              value: this.savingDesired,
+              dashStyle: 'Solid'
+            },
+            {value: 1750, dashStyle: 'Dot'}
+          ],
+          tooltip: {
+            pointFormat: ''
+          }
+        },
+        {
+          type: 'spline',
+          name: 'initial saving',
+          data: this.saveRef,
+          dashStyle: 'Dash',
+          lineWidth: 1,
+          color: '#797979',
+          visible: this.slider.value.govPurchases !== 0 ? true : false
+        },
+        {
+          type: 'spline',
+          name: 'initial investment',
+          data: this.investRef,
+          dashStyle: 'Dash',
+          lineWidth: 1,
+          color: '#797979',
+          visible: this.slider.value.taxRate !== 0 ? true : false
+
+        }
+
+      ],
+    });
 
 
     }
@@ -182,10 +259,41 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
   // Private methods
 
   private _setupChart(addRef: boolean) {
+    this._createSeries(addRef);
+    switch (this.mode) {
+      case 1:
+        this.chart.addSeries({
+          type: 'spline',
+          name: 'initial saving',
+          data: this.saveRef,
+          dashStyle: 'Dash',
+          lineWidth: 1,
+          color: '#797979',
+          visible: this.slider.value.govPurchases !== 0 ? true : false
+        });
+
+        break;
+      case 2:
+        this.chart.addSeries({
+          type: 'spline',
+          name: 'initial investment',
+          data: this.investRef,
+          dashStyle: 'Dash',
+          lineWidth: 1,
+          color: '#797979',
+          visible: this.slider.value.taxRate !== 0 ? true : false
+
+        });
+        break;
+
+      default:
+
+        break;
+    }
 
   }
 
-  private _createSeries() {
+  private _createSeries(addRef: boolean) {
     // math generate all curves and key points in the chart returns an object of arrays
     let rRate = this.slider.value.rRate!, taxRate = this.slider.value.taxRate!, eMPK = this.slider.value.expectedMPK!, output = this.slider.value.output!, eOutput = this.slider.value.expectedOutput!, wealth = this.slider.value.wealth!, eRealRate = this.slider.value.expectedRealRate!, govPurchase = this.slider.value.govPurchases!, taxes = this.slider.value.taxes!;
 
@@ -233,27 +341,36 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
 
     } while (x <= 2000);
 
-   let nx = [
-     {
-       name: 'desired saving',
-       x: inverseSaving(rRate),
-       y: rRate,
-       color: 'blue',
-       marker: {
-         symbol: 'circle',
-       }
-     },
-     {
-       name: 'desired investment',
-       x: inverseInvestment(rRate),
-       y: rRate,
-       color: 'blue',
-       marker: {
-         symbol: 'circle',
-       }
+    let nx = [
+      [0, rRate],
+      {
+        name: 'desired investment',
+        x: inverseInvestment(rRate),
+        y: rRate,
+        color: 'blue',
+        marker: {
+          symbol: 'circle',
 
-     }
-    ]
+        }
+      },
+
+      {
+        name: 'desired saving',
+        x: inverseSaving(rRate),
+        y: rRate,
+        color: 'blue',
+        marker: {
+          symbol: 'circle',
+        }
+      },
+      [1750, rRate]
+    ];
+    this.savingDesired = inverseSaving(rRate);
+    this.investmentDesired = inverseInvestment(rRate);
+    if (addRef) {
+      this.saveRef = saving;
+      this.investRef = investment;
+    }
 
     return {
       seriesSaving: saving,
