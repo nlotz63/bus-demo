@@ -1,4 +1,4 @@
-<p>k<div class="econ-interactive-container">
+<div class="econ-interactive-container">
   <div class="wrapper">
   <div class="item-narrative">
     <div *ngIf="mode === 0" @myAnimationTrigger>
@@ -14,9 +14,10 @@
         [min]="0.25"
         [max]="5"
         step=".1"
-        [value]="slider.value.rRate!"
-        (valueChange)="updateChart({rRate: $event})"
+        [value]="slider.value.wealth!"
+        (valueChange)="updateChart({wealth: $event})"
       ></econ-slider>
+      {{slider.value.wealth}}
     </div>
     <div *ngIf="mode === 1" @myAnimationTrigger>
       <h2>Shifts of the saving curve and net exports (NX)</h2>
@@ -50,9 +51,9 @@
         [min]="-2"
         [max]="2"
         step=".01"
-        [value]="slider.value.taxRate!"
+        [value]="slider.value.taxes!"
         #startValue
-        (valueChange)="updateChart({taxRate: -$event})"
+        (valueChange)="updateChart({taxes: -$event})"
       ></econ-slider>
     </div>
 </div>

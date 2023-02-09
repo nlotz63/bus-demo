@@ -38,16 +38,25 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
   showPlayer: boolean = false;
 
   slider = new FormGroup({
-    rRate: new FormControl(3),
-    taxRate: new FormControl(0),
-    expectedMPK: new FormControl(0),
-    output: new FormControl(0),
     expectedOutput: new FormControl(0),
     wealth: new FormControl(0),
-    expectedRealRate: new FormControl(0),
     govPurchases: new FormControl(0),
-    taxes: new FormControl(0)
+    taxes: new FormControl(0),
+    expectedTFP: new FormControl(0),
+    effTax: new FormControl(0),
+
+    money: new FormControl(3),
+    priceLevel: new FormControl(0),
+    expectedInflation: new FormControl(0),
+    nominalRate: new FormControl(0),
+
+    supplyShock: new FormControl(0),
+    laborSupply: new FormControl(0),
+    capitalStock: new FormControl(0)
+
+
   });
+
   chart!: Highcharts.Chart;
   chart1: Highcharts.Options = {
     chart: {
@@ -60,7 +69,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
       text: 'Pearson Education',
       href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
     },
-    title: { text: 'National saving and investment in a small open economy' },
+    title: { text: 'ISLM Model' },
     legend: { enabled: false },
     series: [
       {
@@ -85,15 +94,28 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
         animation: false,
         data: [],
       },
-
+      {
+        type: 'line',
+        name: '',
+        color: 'black',
+        dashStyle: 'Dot',
+        lineWidth: 1,
+        zIndex: 2,
+        allowPointSelect: true,
+        animation: false,
+        data: [],
+        marker: {
+          enabled: true,
+        }
+      },
     ],
     xAxis: {
       lineColor: '#757575',
       lineWidth: 1.,
       tickColor: '#757575',
-      title: { useHTML: true, text: 'Desired national saving S<sup>d</sup>, and desired investment, I<sup>d</sup> (billions of dollars)' },
+      title: { useHTML: true, text: 'Output, Y (billions of dollars)' },
       min: 0,
-      max: 1750
+      max: 2400
 
     },
     yAxis: {
@@ -104,7 +126,6 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
       tickWidth: 1,
       title: { useHTML: true, text: 'Real interest rate, r' },
       min: 0,
-      max: 5
 
     },
     plotOptions: {
@@ -138,6 +159,11 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
   }
 
   public updateChart(value: any) {
+    this.slider.patchValue(value);
+   let series = this._createSeries(false);
+    this.chart.series[0].setData(series.IS);
+    this.chart.series[1].setData(series.LM);
+    this.chart.series[3].setData(series.EQ);
 
 
   }
@@ -153,6 +179,54 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
   }
 
   private _createSeries(addRef: boolean) {
+    // model parameters
+    let c0: number = 300, cy: number = .75, cr: number = 300, t0: number = 100, t: number = 0.2, i0: number = 200, ir: number = 200, G: number = 600;
+    let M: number = 133200, P: number = 120, l0: number = 1000, ly: number = 0.5, lr: number = 500, piE: number = 0.05;
+    let x: number = 0, isSeries = [], lmSeries = [], eqSeries = [];
+
+    let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
+    let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
+    let eq = (-(c0 / (cr + ir)) - G / (cr + ir) - i0 / (cr + ir) + l0 / lr - M / (lr * P) - piE + (cy * t0) / (cr + ir)) / (-(ly / lr) - (1 - cy + cy * t) / (cr + ir));
+
+    do {
+      let point = {
+        name: 'IS',
+        x: x,
+        y: is(x)
+      };
+      let point2 = {
+        name: 'LM',
+        x: x,
+        y: lm(x)
+      }
+
+      isSeries.push(point);
+      lmSeries.push(point2);
+      x = x + 25;
+    } while (x < 3000);
+
+    // equilibrium series
+    eqSeries = [
+      { x: 0, y: is(eq), marker: {enabled: false, radius: 0 } },
+      {
+        name: 'Equilibrium',
+        x: eq,
+        y: is(eq),
+        color: 'blue',
+        marker: {
+          symbol: 'circle',
+          enabled: true
+
+        }
+      },
+      { x: eq, y: 0, marker: {enabled: false}}
+    ];
+
+    return {
+      IS: isSeries,
+      LM: lmSeries,
+      EQ: eqSeries
+    }
 
 }
 
