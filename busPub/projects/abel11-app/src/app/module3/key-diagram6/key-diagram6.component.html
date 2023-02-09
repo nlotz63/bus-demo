@@ -1,70 +1,218 @@
 <div class="econ-interactive-container">
   <div class="wrapper">
-  <div class="item-narrative">
-    <div *ngIf="mode === 0" @myAnimationTrigger>
-      <h2>World real interest rate and net exports (NX)</h2>
-      <ul>
-        <li>Bullet point 1</li>
-        <li>Bullet point 2</li>
-        <li>Bullet point 3</li>
-      </ul>
-      <econ-slider
-        label="World real interest rate"
-        showValue="false"
-        [min]="0.25"
-        [max]="5"
-        step=".1"
-        [value]="slider.value.wealth!"
-        (valueChange)="updateChart({wealth: $event})"
-      ></econ-slider>
-      {{slider.value.wealth}}
-    </div>
-    <div *ngIf="mode === 1" @myAnimationTrigger>
-      <h2>Shifts of the saving curve and net exports (NX)</h2>
-      <ul>
-        <li>Bullet point 1</li>
-        <li>Bullet point 2</li>
-        <li>Bullet point 3</li>
-      </ul>
-      <econ-slider
-        label="Shift saving curve"
-        showValue="false"
-        [min]="0-2"
-        [max]="2"
-        step=".01"
-        [showPercent]="true"
-        [value]="slider.value.govPurchases!"
-        #startValue
-        (valueChange)="updateChart({ govPurchases: -$event })"
-      ></econ-slider>
-    </div>
-    <div *ngIf="mode === 2" @myAnimationTrigger>
-      <h2>Shifts of the investment curve and net exports (NX)</h2>
-      <ul>
-        <li>Bullet point 1</li>
-        <li>Bullet point 2</li>
-        <li>Bullet point 3</li>
-      </ul>
-      <econ-slider
-        label="Shift investment curve"
-        showValue="false"
-        [min]="-2"
-        [max]="2"
-        step=".01"
-        [value]="slider.value.taxes!"
-        #startValue
-        (valueChange)="updateChart({taxes: -$event})"
-      ></econ-slider>
-    </div>
-</div>
-  <div id="chart1" class="item-chart"></div>
-</div>
-<app-player
-*ngIf="showPlayer"
-[steps]="3"
-[mode]="mode"
-(modeChange)="playStep($event)"
-class="player-navigation-container"
-></app-player>
+    <div class="item-narrative">
+      <div *ngIf="mode === 0" @myAnimationTrigger>
+        <h2>World real interest rate and net exports (NX)</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+        <econ-slider
+          label="Wealth"
+          showValue="false"
+          [min]="-250"
+          [max]="250"
+          step="10"
+          [value]="slider.value.wealth!"
+          (valueChange)="updateChart({ wealth: $event })"
+        ></econ-slider>
+        {{ slider.value.wealth }}
+      </div>
+      <div *ngIf="mode === 1" @myAnimationTrigger>
+        <h2>Factors that shift the IS curve</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+        <div class="control-column">
+          <econ-slider
+            label="Wealth"
+            showValue="false"
+            displayValue="{{ slider.value.wealth }}"
+            [min]="0"
+            [max]="300"
+            step="10"
+            [value]="slider.value.wealth!"
+            (valueChange)="updateChart({ wealth: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Expected future output"
+            showValue="false"
+            displayValue="{{ slider.value.expectedOutput }}"
+            [min]="0"
+            [max]="300"
+            step="10"
+            [value]="slider.value.expectedOutput!"
+            (valueChange)="updateChart({ expectedOutput: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Government purchases"
+            showValue="false"
+            displayValue="{{ slider.value.govPurchases }}"
+            [min]="400"
+            [max]="750"
+            step="10"
+            [showPercent]="true"
+            [value]="slider.value.govPurchases!"
+            #startValue
+            (valueChange)="updateChart({ govPurchases: $event })"
+          ></econ-slider>
+          <econ-slider
+          label="Taxes"
+          showValue="false"
+          displayValue="{{ slider.value.taxes }}"
+          [min]="200"
+          [max]="600"
+          step="10"
+          [showPercent]="true"
+          [value]="slider.value.taxes!"
+          #startValue
+          (valueChange)="updateChart({ taxes: $event })"
+        ></econ-slider>
+          <econ-slider
+            label="Expected future TFP"
+            showValue="false"
+            displayValue="{{ slider.value.expectedTFP }}"
+            [min]="-50"
+            [max]="50"
+            step="1"
+            [showPercent]="true"
+            [value]="slider.value.expectedTFP!"
+            #startValue
+            (valueChange)="updateChart({ expectedTFP: $event })"
+          ></econ-slider>
+          <econ-slider
+          label="Effective tax rate on capital"
+          showValue="false"
+          displayValue="{{ slider.value.effTax | percent: '0.2-2' }}"
+          [min]=".04"
+          [max]=".21"
+          step=".0025"
+          [showPercent]="true"
+          [value]="slider.value.effTax!"
+          #startValue
+          (valueChange)="updateChart({ effTax: $event })"
+        ></econ-slider>
 
+        </div>
+      </div>
+      <div *ngIf="mode === 2" @myAnimationTrigger>
+        <h2>Factors that shift the LM curve</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+        <div class="control-column">
+          <econ-slider
+          label="Nominal money supply"
+          showValue="false"
+          displayValue="{{slider.value.money | currency: 'USD' : 'symbol':  '0.0-0'}}"
+          [min]="105000"
+          [max]="165000"
+          step="100"
+          [value]="slider.value.money!"
+          #startValue
+          (valueChange)="updateChart({ money: $event })"
+        ></econ-slider>
+        <econ-slider
+        label="Price level"
+        showValue="false"
+        displayValue="{{slider.value.priceLevel | number: '0.0-0'}}"
+        [min]="80"
+        [max]="160"
+        step="1"
+        [value]="slider.value.priceLevel!"
+        #startValue
+        (valueChange)="updateChart({ priceLevel: $event })"
+      ></econ-slider>
+      <econ-slider
+      label="Expected inflation"
+      showValue="false"
+      displayValue="{{slider.value.expectedInflation | percent: '0.2-2'}}"
+      [min]="0.01"
+      [max]="0.09"
+      step="0.0025"
+      [value]="slider.value.expectedInflation!"
+      (valueChange)="updateChart({ expectedInflation: $event })"
+    ></econ-slider>
+    <econ-slider
+    label="Nominal rate on money"
+    showValue="false"
+    displayValue="{{slider.value.nominalRate | percent: '0.2-2'}}"
+    [min]="0.0"
+    [max]="0.04"
+    step="0.0025"
+    [value]="slider.value.nominalRate!"
+    (valueChange)="updateChart({ nominalRate: $event })"
+  ></econ-slider>
+
+      </div>
+      </div>
+      <div *ngIf="mode === 3" @myAnimationTrigger>
+        <h2>Shocks and long-run equilibrium</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+        <div class="control-column">
+          <econ-slider
+          label="Supply shock"
+          showValue="false"
+          displayValue="{{slider.value.supplyShock}}"
+          [min]="-300"
+          [max]="300"
+          step="10"
+          [value]="slider.value.supplyShock!"
+          #startValue
+          (valueChange)="updateChart({ supplyShock: $event })"
+        ></econ-slider>
+        <econ-slider
+        label="Price level"
+        showValue="false"
+        displayValue="{{slider.value.priceLevel | number: '0.0-0'}}"
+        [min]="80"
+        [max]="160"
+        step="1"
+        [value]="slider.value.priceLevel!"
+        #startValue
+        (valueChange)="updateChart({ priceLevel: $event })"
+      ></econ-slider>
+<!--       <econ-slider
+      label="Expected inflation"
+      showValue="false"
+      displayValue="{{slider.value.expectedInflation | percent: '0.2-2'}}"
+      [min]="0.01"
+      [max]="0.09"
+      step="0.0025"
+      [value]="slider.value.expectedInflation!"
+      (valueChange)="updateChart({ expectedInflation: $event })"
+    ></econ-slider>
+    <econ-slider
+    label="Nominal rate on money"
+    showValue="false"
+    displayValue="{{slider.value.nominalRate | percent: '0.2-2'}}"
+    [min]="0.0"
+    [max]="0.04"
+    step="0.0025"
+    [value]="slider.value.nominalRate!"
+    (valueChange)="updateChart({ nominalRate: $event })"
+  ></econ-slider>
+ -->
+      </div>
+      </div>
+
+    </div>
+    <div id="chart1" class="item-chart"></div>
+  </div>
+  <app-player
+    *ngIf="showPlayer"
+    [steps]="4"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
 </div>

@@ -38,17 +38,17 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
   showPlayer: boolean = false;
 
   slider = new FormGroup({
-    expectedOutput: new FormControl(0),
-    wealth: new FormControl(0),
-    govPurchases: new FormControl(0),
-    taxes: new FormControl(0),
-    expectedTFP: new FormControl(0),
-    effTax: new FormControl(0),
+    expectedOutput: new FormControl(150),
+    wealth: new FormControl(150),
+    govPurchases: new FormControl(600),
+    taxes: new FormControl(400),
+    expectedTFP: new FormControl(385),
+    effTax: new FormControl(0.12),
 
-    money: new FormControl(3),
-    priceLevel: new FormControl(0),
-    expectedInflation: new FormControl(0),
-    nominalRate: new FormControl(0),
+    money: new FormControl(133200),
+    priceLevel: new FormControl(120),
+    expectedInflation: new FormControl(0.05),
+    nominalRate: new FormControl(0.02),
 
     supplyShock: new FormControl(0),
     laborSupply: new FormControl(0),
@@ -58,90 +58,6 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
   });
 
   chart!: Highcharts.Chart;
-  chart1: Highcharts.Options = {
-    chart: {
-      type: 'spline',
-      animation: false,
-      height: 540,
-      ignoreHiddenSeries: true,
-    },
-    credits: {
-      text: 'Pearson Education',
-      href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
-    },
-    title: { text: 'ISLM Model' },
-    legend: { enabled: false },
-    series: [
-      {
-        type: 'line',
-        name: 'IS curve',
-        zIndex: 1,
-        animation: false,
-        data: []
-      },
-      {
-        type: 'line',
-        name: 'LM curve',
-        zIndex: 1,
-        animation: false,
-        data: []
-      },
-      {
-        type: 'line',
-        name: 'FE',
-        color: 'black',
-        zIndex: 0,
-        animation: false,
-        data: [],
-      },
-      {
-        type: 'line',
-        name: '',
-        color: 'black',
-        dashStyle: 'Dot',
-        lineWidth: 1,
-        zIndex: 2,
-        allowPointSelect: true,
-        animation: false,
-        data: [],
-        marker: {
-          enabled: true,
-        }
-      },
-    ],
-    xAxis: {
-      lineColor: '#757575',
-      lineWidth: 1.,
-      tickColor: '#757575',
-      title: { useHTML: true, text: 'Output, Y (billions of dollars)' },
-      min: 0,
-      max: 2400
-
-    },
-    yAxis: {
-      gridLineWidth: 0,
-      lineColor: '#757575',
-      lineWidth: 1.,
-      tickColor: '#757575',
-      tickWidth: 1,
-      title: { useHTML: true, text: 'Real interest rate, r' },
-      min: 0,
-
-    },
-    plotOptions: {
-      series: {
-        enableMouseTracking: true,
-        color: '#C31229',
-        tooltip: {
-          headerFormat: '{series.name}<br/>',
-          pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
-        }
-      }
-
-    }
-  }
-
-
 
 
   constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
@@ -163,26 +79,118 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
    let series = this._createSeries(false);
     this.chart.series[0].setData(series.IS);
     this.chart.series[1].setData(series.LM);
+    this.chart.series[2].setData(series.FE);
     this.chart.series[3].setData(series.EQ);
 
 
   }
 
   public playStep(mode: number) {
+    this.mode = mode;
     this._setupChart();
 
   }
 
   private _setupChart() {
-    this.chart = new Highcharts.Chart('chart1', this.chart1);
+    let series = this._createSeries(true);
+    if (this.chart) this.chart.destroy();
+    this.chart = new Highcharts.Chart('chart1', {
+      chart: {
+        type: 'spline',
+        animation: false,
+        height: 540,
+        ignoreHiddenSeries: true,
+      },
+      credits: {
+        text: 'Pearson Education',
+        href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
+      },
+      title: { text: 'ISLM Model' },
+      legend: { enabled: false },
+      series: [
+        {
+          type: 'line',
+          name: 'IS curve',
+          zIndex: 1,
+          animation: false,
+          data: series.IS
+        },
+        {
+          type: 'line',
+          name: 'LM curve',
+          zIndex: 1,
+          animation: false,
+          data: series.LM
+        },
+        {
+          type: 'line',
+          name: 'FE',
+          color: 'black',
+          zIndex: 0,
+          animation: false,
+          data: series.FE,
+        },
+        {
+          type: 'line',
+          name: '',
+          color: 'black',
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          zIndex: 2,
+          allowPointSelect: true,
+          animation: false,
+          data: series.EQ,
+          marker: {
+            enabled: true,
+          }
+        },
+      ],
+      xAxis: {
+        lineColor: '#757575',
+        lineWidth: 1.,
+        tickColor: '#757575',
+        title: { useHTML: true, text: 'Output, Y (billions of dollars)' },
+        min: 0,
+        max: 2400
+
+      },
+      yAxis: {
+        gridLineWidth: 0,
+        lineColor: '#757575',
+        lineWidth: 1.,
+        tickColor: '#757575',
+        tickWidth: 1,
+        title: { useHTML: true, text: 'Real interest rate, r' },
+        min: 0,
+        max: 2.5
+
+      },
+      plotOptions: {
+        series: {
+          enableMouseTracking: true,
+          color: '#C31229',
+          tooltip: {
+            headerFormat: '{series.name}<br/>',
+            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+          }
+        }
+
+      }
+    });
 
   }
 
   private _createSeries(addRef: boolean) {
+    // slider values
+    let slider = this.slider.value;
     // model parameters
-    let c0: number = 300, cy: number = .75, cr: number = 300, t0: number = 100, t: number = 0.2, i0: number = 200, ir: number = 200, G: number = 600;
-    let M: number = 133200, P: number = 120, l0: number = 1000, ly: number = 0.5, lr: number = 500, piE: number = 0.05;
-    let x: number = 0, isSeries = [], lmSeries = [], eqSeries = [];
+    let c0: number = slider.expectedOutput! + slider.wealth!, cy: number = .75, cr: number = 300, t0: number = 0.25 * slider.taxes!, t: number = 0.2,
+    i0: number = slider.expectedTFP!*(1 - 4*slider.effTax!), ir: number = 200, G: number = slider.govPurchases!;
+    let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
+
+    let ybar = 1289 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
+
+    let x: number = 300, isSeries = [], lmSeries = [], eqSeries = [], feSeries;
 
     let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
     let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
@@ -203,7 +211,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
       isSeries.push(point);
       lmSeries.push(point2);
       x = x + 25;
-    } while (x < 3000);
+    } while (x < 2500);
 
     // equilibrium series
     eqSeries = [
@@ -222,10 +230,16 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
       { x: eq, y: 0, marker: {enabled: false}}
     ];
 
+    feSeries = [
+      [ybar, 0],
+      [ybar, 2.25]
+    ]
+
     return {
       IS: isSeries,
       LM: lmSeries,
-      EQ: eqSeries
+      EQ: eqSeries,
+      FE: feSeries
     }
 
 }
