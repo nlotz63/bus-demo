@@ -87,6 +87,23 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
 
   public playStep(mode: number) {
     this.mode = mode;
+    this.slider.setValue({
+      expectedOutput: 150,
+    wealth: 150,
+    govPurchases: 600,
+    taxes: 400,
+    expectedTFP: 385,
+    effTax: 0.12,
+
+    money: 133200,
+    priceLevel: 120,
+    expectedInflation: 0.05,
+    nominalRate:0.02,
+
+    supplyShock: 0,
+    laborSupply: 0,
+    capitalStock: 0
+    })
     this._setupChart();
 
   }
