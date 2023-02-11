@@ -8,12 +8,14 @@ import { BusPubLibModule } from 'bus-pub-lib';
 import { PlayerModule } from '../player/player.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { Fig92Component } from './fig92/fig92.component';
 
 
 @NgModule({
   declarations: [
     KeyDiagram6Component,
-    KeyDiagram7Component
+    KeyDiagram7Component,
+    Fig92Component
   ],
   imports: [
     CommonModule,
