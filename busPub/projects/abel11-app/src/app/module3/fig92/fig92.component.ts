@@ -69,7 +69,7 @@ export class Fig92Component {
     this.chart.series[0].setData(series.NS);
     this.chart.series[1].setData(series.Invest);
     this.chart.series[2].setData(series.EQ);
-    this.chart2.series[3].setData(series.EQ2);
+    this.chart2.series[1].setData(series.EQ2);
 
 
 
@@ -117,16 +117,17 @@ export class Fig92Component {
         {
           type: 'line',
           name: 'National saving',
-          zIndex: 1,
+          zIndex: -1,
           animation: false,
-          data: series.NS
+          data: series.NS,
         },
         {
           type: 'line',
           name: 'National investment',
-          zIndex: 1,
+          zIndex: -1,
           animation: false,
-          data: series.Invest
+          data: series.Invest,
+
         },
         {
           type: 'line',
@@ -147,7 +148,7 @@ export class Fig92Component {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: 'Output, Y (billions of dollars)' },
+        title: { useHTML: true, text: 'Desired national saving, S<sup>d</sup>, and desired investment, I<sup>d</sup>' },
         min: 750,
         max: 2500
 
@@ -186,7 +187,7 @@ export class Fig92Component {
         text: 'Pearson Education',
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
-      title: { text: 'ISLM Model' },
+      title: { text: 'IS Curve' },
       legend: { enabled: false },
       series: [
         {
@@ -198,21 +199,6 @@ export class Fig92Component {
         },
         {
           type: 'line',
-          name: 'LM curve',
-          zIndex: 1,
-          animation: false,
-          data: series.LM
-        },
-        {
-          type: 'line',
-          name: 'FE',
-          color: 'black',
-          zIndex: 0,
-          animation: false,
-          data: series.FE,
-        },
-        {
-          type: 'line',
           name: '',
           color: 'black',
           dashStyle: 'Dot',
@@ -220,7 +206,7 @@ export class Fig92Component {
           zIndex: 3,
           allowPointSelect: true,
           animation: false,
-          data: series.EQ,
+          data: series.EQ2,
           marker: {
             enabled: true,
           }
