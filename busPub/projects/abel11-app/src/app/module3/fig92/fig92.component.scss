@@ -3,7 +3,7 @@
 .wrapper {
   @include flexbox();
   flex-flow: row;
-  justify-content:space-between;
+  justify-content: space-around;
 }
 .item-chart {
   @include flex(5.5 );
@@ -23,6 +23,7 @@
   .wrapper {
     @include flexbox();
     flex-flow: column-reverse;
+
   }
 
   .item-chart {

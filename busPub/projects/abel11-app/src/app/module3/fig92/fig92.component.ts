@@ -107,6 +107,7 @@ export class Fig92Component {
         height: 425,
         ignoreHiddenSeries: true,
       },
+      tooltip: { enabled: false },
       credits: {
         text: 'Pearson Education',
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
@@ -120,14 +121,19 @@ export class Fig92Component {
           zIndex: -1,
           animation: false,
           data: series.NS,
+          accessibility: {
+            description: 'An upward-sloping straight line'
+          }
         },
-        {
+                {
           type: 'line',
           name: 'National investment',
           zIndex: -1,
           animation: false,
-          data: series.Invest,
-
+                  data: series.Invest,
+                  accessibility: {
+                    description: 'A downward-sloping straight line'
+                  }
         },
         {
           type: 'line',
@@ -141,14 +147,18 @@ export class Fig92Component {
           data: series.EQ,
           marker: {
             enabled: true,
+          },
+          accessibility: {
+            description: 'A point showing the intersection of the national saving and investment curves'
           }
+
         },
       ],
       xAxis: {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: 'Desired national saving, S<sup>d</sup>, and desired investment, I<sup>d</sup>' },
+        title: { useHTML: true, text: 'Desired national saving, and desired investment' },
         min: 750,
         max: 2500
 
@@ -161,7 +171,8 @@ export class Fig92Component {
         tickWidth: 1,
         title: { useHTML: true, text: 'Real interest rate, r' },
         min: 0,
-        max: 6.5
+        max: 7,
+        tickInterval: 1
 
       },
       plotOptions: {
@@ -195,7 +206,10 @@ export class Fig92Component {
           name: 'IS curve',
           zIndex: -1,
           animation: false,
-          data: series.IS
+          data: series.IS,
+          accessibility: {
+            description: 'A downward-sloping straight line '
+          }
         },
         {
           type: 'line',
@@ -209,6 +223,9 @@ export class Fig92Component {
           data: series.EQ2,
           marker: {
             enabled: true,
+          },
+          accessibility: {
+            description: 'A point that moves along the IS curve the corresponds to the intersection of the national saving and investment curve'
           }
         },
       ],
@@ -307,7 +324,7 @@ export class Fig92Component {
         name: 'Equilibrium',
         x: eq,
         y: invest(eq),
-        color: 'blue',
+        color: '#008000',
         marker: {
           symbol: 'circle',
           enabled: true
@@ -322,7 +339,7 @@ export class Fig92Component {
         name: 'Equilibrium',
         x: ybar,
         y: invest(eq),
-        color: 'blue',
+        color: '#008000',
         marker: {
           symbol: 'circle',
           enabled: true
