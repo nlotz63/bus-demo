@@ -1,4 +1,3 @@
-import { MatStepperModule } from '@angular/material/stepper';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,7 +10,6 @@ import { Chapter03RoutingModule } from './chapter03-routing.module';
 import { ProductionFunctionComponent } from './production-function/production-function.component';
 import { LaborDemandComponent } from './labor-demand/labor-demand.component';
 import { UnemployDataComponent } from './unemploy-data/unemploy-data.component';
-import { Ch03PlayerComponent } from './ch03-player/ch03-player.component';
 import { PlayerModule } from '../player/player.module';
 
 
@@ -20,7 +18,6 @@ import { PlayerModule } from '../player/player.module';
     ProductionFunctionComponent,
     LaborDemandComponent,
     UnemployDataComponent,
-    Ch03PlayerComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +28,6 @@ import { PlayerModule } from '../player/player.module';
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatStepperModule
 
   ]
 })
