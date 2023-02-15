@@ -13,7 +13,7 @@ import HC_data from 'highcharts/modules/export-data';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
-HC_seriesLabel(Highcharts);
+//HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
@@ -65,13 +65,51 @@ export class Fig92Component {
 
   public updateChart(value: any) {
     this.slider.patchValue(value);
-   let series = this._createSeries(false);
+    let series = this._createSeries(false);
     this.chart.series[0].setData(series.NS);
     this.chart.series[1].setData(series.Invest);
     this.chart.series[2].setData(series.EQ);
     this.chart2.series[1].setData(series.EQ2);
 
+    this.chart.series[0].update(
+      {
+        type: 'line',
+        label: {
+          enabled: true,
+          useHTML: true,
+          style: {
+            fontSize: '12px',
+            fontWeight: '400'
+          },
+          formatter: () => {
+            return `Saving, S(Y = ${series.FE[0][0]})`;
+          }
 
+        }
+      }
+    );
+    this.chart.series[2].update({
+      type: 'line',
+      label: {
+        formatter: () => {
+          return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
+        }
+        }
+    })
+    this.chart2.series[1].update({
+      type: 'line',
+      label: {
+        enabled: true,
+        useHTML: true,
+        style: { fontSize: '11px', fontWeight: '400' },
+        formatter: () => {
+          return `${this.chart2.series[1].getName()}:</br>Y = ${series.EQ2[1].x}</br>r = ${series.EQ2[1].y}`;
+        }
+      },
+      accessibility: {
+        description: `${this.chart2.series[1].getName()}: The point on the I S cuve has coordinates Y equals ${series.EQ2[1].x} and r equals ${series.EQ2[1].y}%`
+      }
+    });
 
   }
 
@@ -79,20 +117,20 @@ export class Fig92Component {
     this.mode = mode;
     this.slider.setValue({
       expectedOutput: 1200,
-    wealth: 150,
-    govPurchases: 600,
-    taxes: 400,
-    expectedTFP: 385,
-    effTax: 0.12,
+      wealth: 150,
+      govPurchases: 600,
+      taxes: 400,
+      expectedTFP: 385,
+      effTax: 0.12,
 
-    money: 133200,
-    priceLevel: 120,
-    expectedInflation: 0.05,
-    nominalRate:0.02,
+      money: 133200,
+      priceLevel: 120,
+      expectedInflation: 0.05,
+      nominalRate: 0.02,
 
-    supplyShock: 0,
-    laborSupply: 0,
-    capitalStock: 0
+      supplyShock: 0,
+      laborSupply: 0,
+      capitalStock: 0
     })
     this._setupChart();
 
@@ -117,27 +155,39 @@ export class Fig92Component {
       series: [
         {
           type: 'line',
-          name: 'National saving',
+          name: 'Saving, S(Y = 1200)',
           zIndex: -1,
           animation: false,
           data: series.NS,
           accessibility: {
             description: 'An upward-sloping straight line'
+          },
+          label: {
+            style: {
+              fontSize: '12px',
+              fontWeight: '400'
+            }
           }
-        },
-                {
-          type: 'line',
-          name: 'National investment',
-          zIndex: -1,
-          animation: false,
-                  data: series.Invest,
-                  accessibility: {
-                    description: 'A downward-sloping straight line'
-                  }
         },
         {
           type: 'line',
-          name: '',
+          name: 'Investment, I',
+          zIndex: -1,
+          animation: false,
+          data: series.Invest,
+          accessibility: {
+            description: 'A downward-sloping straight line'
+          },
+          label: {
+            style: {
+              fontSize: '12px',
+              fontWeight: '400'
+            }
+          }
+        },
+        {
+          type: 'line',
+          name: 'Equilibrium',
           color: 'black',
           dashStyle: 'Dot',
           lineWidth: 1,
@@ -150,7 +200,15 @@ export class Fig92Component {
           },
           accessibility: {
             description: 'A point showing the intersection of the national saving and investment curves'
+          },
+          label: {
+            useHTML: true,
+            style: {fontSize: '11px', fontWeight: '400'},
+            formatter: () => {
+              return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
+            }
           }
+
 
         },
       ],
@@ -182,6 +240,9 @@ export class Fig92Component {
           tooltip: {
             headerFormat: '{series.name}<br/>',
             pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+          },
+          label: {
+            enabled: true
           }
         }
 
@@ -209,11 +270,18 @@ export class Fig92Component {
           data: series.IS,
           accessibility: {
             description: 'A downward-sloping straight line '
+          },
+          label: {
+            style: {
+              fontSize: '12px',
+              fontWeight: '400'
+            }
           }
+
         },
         {
           type: 'line',
-          name: '',
+          name: 'IS curve point',
           color: 'black',
           dashStyle: 'Dot',
           lineWidth: 1,
@@ -226,7 +294,16 @@ export class Fig92Component {
           },
           accessibility: {
             description: 'A point that moves along the IS curve the corresponds to the intersection of the national saving and investment curve'
+          },
+          label: {
+            enabled: true,
+            useHTML: true,
+            style: {fontSize: '11px', fontWeight: '400'},
+            formatter: () => {
+              return `IS curve point:</br>Y = ${series.EQ2[1].x}</br>r = ${series.EQ2[1].y}`;
+            }
           }
+
         },
       ],
       xAxis: {
@@ -267,20 +344,20 @@ export class Fig92Component {
     // slider values
     let slider = this.slider.value;
     // model parameters
-    let c0: number =300, cy: number = .75, cr: number = 300, t0: number = 0.25 * slider.taxes!, t: number = 0.2,
-    i0: number = 2000, ir: number = 200, G: number = slider.govPurchases!;
+    let c0: number = 300, cy: number = .75, cr: number = 300, t0: number = 0.25 * slider.taxes!, t: number = 0.2,
+      i0: number = 2000, ir: number = 200, G: number = slider.govPurchases!;
     let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
 
     let ybar = slider.expectedOutput! + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
 
-    let x: number = 300, isSeries = [], lmSeries = [], eqSeries = [],  eq2Series = [], feSeries, nsSeries = [], investSeries = [];
+    let x: number = 300, isSeries = [], lmSeries = [], eqSeries = [], eq2Series = [], feSeries, nsSeries = [], investSeries = [];
 
     let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
     let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
-    let ns = (x: number) => { return (c0 + G - cy*t0 + x - ybar + cy*ybar - cy*t*ybar)/cr }
-    let invest = (x: number) => { return (i0 - x)/ir }
-    let eq = (cr*i0 - c0*ir - G*ir + cy*ir*t0 + ir*ybar - cy*ir*ybar +
-      cy*ir*t*ybar)/(cr + ir);
+    let ns = (x: number) => { return (c0 + G - cy * t0 + x - ybar + cy * ybar - cy * t * ybar) / cr }
+    let invest = (x: number) => { return (i0 - x) / ir }
+    let eq = (cr * i0 - c0 * ir - G * ir + cy * ir * t0 + ir * ybar - cy * ir * ybar +
+      cy * ir * t * ybar) / (cr + ir);
 
     do {
       let point = {
@@ -306,11 +383,11 @@ export class Fig92Component {
         x: x,
         y: ns(x)
       };
-        let point2 = {
-          name: 'Investment',
-          x: x,
-          y: invest(x)
-        }
+      let point2 = {
+        name: 'Investment',
+        x: x,
+        y: invest(x)
+      }
       nsSeries.push(point);
       investSeries.push(point2);
 
@@ -319,7 +396,7 @@ export class Fig92Component {
 
     // equilibrium series
     eqSeries = [
-      { x: 0, y: invest(eq), marker: {enabled: false, radius: 0 } },
+      { x: 0, y: invest(eq), marker: { enabled: false, radius: 0 } },
       {
         name: 'Equilibrium',
         x: eq,
@@ -331,10 +408,14 @@ export class Fig92Component {
 
         }
       },
-      { x: eq, y: 0, marker: {enabled: false}}
+      {
+        x: eq, y: 0, marker: {
+          enabled: false, radius: 0
+          }
+      }
     ];
     eq2Series = [
-      { x: 0, y: invest(eq), marker: {enabled: false, radius: 0 } },
+      { x: 0, y: invest(eq), marker: { enabled: false, radius: 0 } },
       {
         name: 'Equilibrium',
         x: ybar,
@@ -346,7 +427,7 @@ export class Fig92Component {
 
         }
       },
-      { x: ybar, y: 0, marker: {enabled: false}}
+      { x: ybar, y: 0, marker: { enabled: false } }
     ];
     feSeries = [
       [ybar, 0],
@@ -363,6 +444,6 @@ export class Fig92Component {
       Invest: investSeries
     }
 
-}
+  }
 
 }
