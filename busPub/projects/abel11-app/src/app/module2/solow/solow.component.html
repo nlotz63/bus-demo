@@ -1,1 +1,22 @@
-<p>solow works!</p>
+<div class="econ-interactive-container">
+  <div class="wrapper">
+    <div class="item-narrative">
+      <div *ngIf="mode === 0" @myAnimationTrigger>
+        <h2>Overview of the ISLM model</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+      </div>
+    </div>
+    <div id="chart1" class="item-chart"></div>
+  </div>
+    <app-player
+    *ngIf="showPlayer"
+    [steps]="4"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
+</div>
