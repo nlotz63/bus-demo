@@ -1,71 +1,74 @@
 <div class="econ-interactive-container">
   <div class="wrapper">
     <div class="item-narrative">
-      <div *ngIf="mode === 0" @myAnimationTrigger>
+      <div class="econ-narative-block" *ngIf="mode === 0" @myAnimationTrigger>
         <h2>Saving Curve</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>Desired national saving is the level of national saving that occurs when aggregate consumption is at its desired level.</li>
+          <li>The saving curve, S, shows the level of desired national saving at each real interest rate.</li>
+          <li>Desired national saving increases when the real interest rate increases, so the saving curve slopes upward.</li>
         </ul>
         <econ-slider
           label="Real interest rate"
+          class="econ-control"
           showValue="false"
-          [min]="0.25"
+          [min]="-2"
           [max]="5"
           step=".1"
+          displayValue="{{ slider.value.rRate }}%"
           [value]="slider.value.rRate!"
-          #startValue
           (valueChange)="slider.patchValue({ rRate: $event });_updateChart(false);_updateChart(false)"
         ></econ-slider>
-        {{ slider.value.rRate }}%
-      </div>
-      <div *ngIf="mode === 1" @myAnimationTrigger>
+              </div>
+      <div class="econ-narative-block" *ngIf="mode === 1" @myAnimationTrigger>
         <h2>Investment Curve</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>Desired investment is the level of investment that firms desire to reach their desired capital stock.</li>
+          <li>The investment curve, I, shows the amount that firms want to invest in new capital goods at each real interest rate.</li>
+          <li>The investment curve slopes downward because a higher real interest rate raises the user cost of capital and thus lowers the amount of capital that firms want to use.</li>
         </ul>
         <econ-slider
           label="Real interest rate"
+          class="econ-control"
           showValue="false"
-          [min]="0.4"
+          [min]="-2"
           [max]="5"
           step=".1"
+          displayValue="{{ slider.value.rRate }}%"
           [value]="slider.value.rRate!"
           (valueChange)="slider.patchValue({ rRate: $event });_updateChart(false)"
         ></econ-slider>
-        {{ slider.value.rRate }}%
       </div>
-      <div *ngIf="mode === 2" @myAnimationTrigger>
+      <div class="econ-narative-block" *ngIf="mode === 2" @myAnimationTrigger>
         <h2>Equilibrium</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>Goods market equilibrium requires that desired national saving equal desired investment, or <span econMath="\(S^d = I^d\)"></span>.</li>
+          <li>Goods market equilibrium occurs in the diagram at the point where the saving curve and investment curve intersect.</li>
+          <li>At the equilibrium point, desired national saving equals desired investment.</li>
+          <li>The equilibrium real interest rate is the real interest rate that clears the goods market.</li>
         </ul>
         <econ-slider
           label="Real interest rate"
+          class="econ-control"
           showValue="false"
-          [min]="0.4"
+          [min]="-2"
           [max]="5"
           step=".01"
+          displayValue="{{ slider.value.rRate }}%"
           [value]="slider.value.rRate!"
           (valueChange)="slider.patchValue({ rRate: $event });_updateChart(false)"
         ></econ-slider>
-        {{ slider.value.rRate }}%
       </div>
-      <div *ngIf="mode === 3" @myAnimationTrigger>
+      <div class="econ-narative-block" *ngIf="mode === 3" @myAnimationTrigger>
         <h2>Factors that Shift Saving</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>An increase in current output causes desired national saving to rise because part of the extra income is saved to provide for future consumption.</li>
+          <li>An increase in expected future output causes desired national saving to fall because anticipation of future income raises current desired consumption, lowering current desired saving.</li>
+          <li>An increase in wealth causes desired national saving to fall because some of the extra wealth is consumed, which reduces saving for given income.</li>
         </ul>
-        <div class="control-column">
+        <div class="control-column econ-control">
           <econ-slider
-            label="Output"
+            label="Current output"
             showValue="false"
             [min]="-2"
             [max]="2"
@@ -75,7 +78,7 @@
             (valueChange)="slider.patchValue({ output: $event });_updateChart(false)"
           ></econ-slider>
           <econ-slider
-            label="Expected output"
+            label="Expected future output"
             showValue="false"
             [min]="-2"
             [max]="2"
@@ -94,16 +97,16 @@
             [value]="slider.value.wealth!"
             (valueChange)="slider.patchValue({ wealth: $event });_updateChart(false)"
           ></econ-slider>
-          <econ-slider
-            label="Expected real interest rate"
-            showValue="false"
-            [min]="-2"
-            [max]="2"
-            step=".01"
-            [showPercent]="true"
-            [value]="slider.value.expectedRealRate!"
-            (valueChange)="slider.patchValue({ expectedRealRate: $event });_updateChart(false)"
-          ></econ-slider>
+          <button mat-raised-button (click)="playStep(3)">Reset</button>
+        </div>
+      </div>
+      <div class="econ-narative-block" *ngIf="mode === 4" @myAnimationTrigger>
+        <h2>Factors that Shift Investment</h2>
+        <ul>
+          <li>An increase in government purchases causes desired national saving to fall because higher government purchases directly lower desired national saving.</li>
+          <li>An increase in taxes causes desired national saving to remain unchanged or rise. Saving doesn’t change if consumers take into account an offsetting future tax cut; saving rises if consumers don’t take into account a future tax cut and thus reduce current consumption.</li>
+        </ul>
+        <div class="control-column econ-control">
           <econ-slider
             label="Government purchases"
             showValue="false"
@@ -124,17 +127,17 @@
             [value]="slider.value.taxes!"
             (valueChange)="slider.patchValue({ taxes: $event });_updateChart(false)"
           ></econ-slider>
-          <button mat-raised-button (click)="playStep(3)">Reset</button>
+          <mat-checkbox (change)="slider.patchValue({ricardian: !slider.value.ricardian})">Ricardian equivalence holds</mat-checkbox>
+          <button mat-raised-button (click)="playStep(4)">Reset</button>
         </div>
       </div>
-      <div *ngIf="mode === 4" @myAnimationTrigger>
+      <div class="econ-narative-block" *ngIf="mode === 5" @myAnimationTrigger>
         <h2>Factors that Shift Investment</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>An increase in the effective tax rate causes desired investment to fall because the tax-adjusted user cost increases, which reduces desired capital stock.</li>
+          <li>An increase in expected future MPK causes desired investment to rise because the desired capital stock increases.</li>
         </ul>
-        <div class="control-column">
+        <div class="control-column econ-control">
           <econ-slider
             label="Effective tax rate"
             showValue="false"
@@ -146,7 +149,7 @@
             (valueChange)="slider.patchValue({ taxRate: $event });_updateChart(false)"
           ></econ-slider>
           <econ-slider
-            label="Expected MPK"
+            label="Expected future MPK"
             showValue="false"
             [min]="-2"
             [max]="2"
@@ -155,7 +158,7 @@
             [value]="slider.value.expectedMPK!"
             (valueChange)="slider.patchValue({ expectedMPK: $event });_updateChart(false)"
           ></econ-slider>
-          <button mat-raised-button (click)="playStep(4)">Reset</button>
+          <button mat-raised-button (click)="playStep(5)">Reset</button>
         </div>
       </div>
     </div>
@@ -163,7 +166,7 @@
   </div>
   <app-player
     *ngIf="showPlayer"
-    [steps]="5"
+    [steps]="6"
     [mode]="mode"
     (modeChange)="playStep($event)"
     class="player-navigation-container"

@@ -45,7 +45,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
 
 
   slider = new FormGroup({
-    rRate: new FormControl(2.26),
+    rRate: new FormControl(0.61),
     taxRate: new FormControl(0),
     expectedMPK: new FormControl(0),
     output: new FormControl(0),
@@ -53,7 +53,8 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     wealth: new FormControl(0),
     expectedRealRate: new FormControl(0),
     govPurchases: new FormControl(0),
-    taxes: new FormControl(0)
+    taxes: new FormControl(0),
+    ricardian: new FormControl(false)
   });
 
 
@@ -82,7 +83,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       tickColor: '#757575',
       title: { useHTML: true, text: 'Desired national saving S<sup>d</sup>, and desired investment, I<sup>d</sup> (billions of dollars)' },
       min: 0,
-      max: 1750
+      max: 2500
 
     },
     yAxis: {
@@ -92,7 +93,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       tickColor: '#757575',
       tickWidth: 1,
       title: { useHTML: true, text: 'Real interest rate, r' },
-      min: 0,
+      min: -2.1,
       max: 5
 
     },
@@ -131,7 +132,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     this.mode = value;
    // this.chart.destroy();
     this.slider.setValue({
-      rRate: 2.26,
+      rRate: 0.61,
       taxRate: 0,
       expectedMPK: 0,
       output: 0,
@@ -139,7 +140,8 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       wealth: 0,
       expectedRealRate: 0,
       govPurchases: 0,
-      taxes: 0
+      taxes: 0,
+      ricardian: false
     });
 
     this._setupChart(true);
@@ -341,12 +343,12 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         this.chart.series[2].setData(series.equilibrium, true, false, false);
         this.chart.series[3].setData(series.qSaving, true, false, false);
         this.chart.series[4].setData(series.qInvestment, true, false, false);
-        if (this.slider.value.rRate !== 2.26) this.chart.series[2].hide();
-        if (this.slider.value.rRate === 2.26) this.chart.series[3].hide();
-        if (this.slider.value.rRate === 2.26) this.chart.series[4].hide();
-        if (this.slider.value.rRate === 2.26) this.chart.series[2].show();
-        if (this.slider.value.rRate !== 2.26) this.chart.series[3].show();
-        if (this.slider.value.rRate !== 2.26) this.chart.series[4].show();
+        if (this.slider.value.rRate !== 0.61) this.chart.series[2].hide();
+        if (this.slider.value.rRate === 0.61) this.chart.series[3].hide();
+        if (this.slider.value.rRate === 0.61) this.chart.series[4].hide();
+        if (this.slider.value.rRate === 0.61) this.chart.series[2].show();
+        if (this.slider.value.rRate !== 0.61) this.chart.series[3].show();
+        if (this.slider.value.rRate !== 0.61) this.chart.series[4].show();
 
 
         break;
@@ -369,16 +371,16 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     // math generate all curves and key points in the chart returns an object of arrays
     let rRate = this.slider.value.rRate!, taxRate = this.slider.value.taxRate!, eMPK = this.slider.value.expectedMPK!, output = this.slider.value.output!, eOutput = this.slider.value.expectedOutput!, wealth = this.slider.value.wealth!, eRealRate = this.slider.value.expectedRealRate!, govPurchase = this.slider.value.govPurchases!, taxes = this.slider.value.taxes!;
 
-    let saving = [], investment = [], qSaving = [], qInvestment = [], eq = [], savingRef: any[] = [], investmentRef: any[] = [], qSavingRef = [], qInvestmentRef = [], eqRef: any[] = [];
+    let saving = [], investment = [], qSaving = [], qInvestment = [], eq = [], savingRef: any[] = [], investmentRef: any[] = [], eqRef: any[] = [];
 
-    let alpha = .00004, exponent = 1.6, exp1 = .5, beta = .16, x = 25,
-      investShift = 7 - taxRate + eMPK, savingShift = .2 - output + eOutput + wealth - .25 * eRealRate + govPurchase - .25 * taxes;
+    let alpha = .00004, exponent = 1.6, exp1 = .5, beta = .2, x = 0, taxCoefficient = this.slider.value.ricardian ? .02 : .3,
+      investShift = 7 - taxRate + eMPK, savingShift = -2 - output + eOutput + wealth - .25 * eRealRate + govPurchase - taxCoefficient * taxes;
 
     let savingCurve = (x: number) => { return savingShift + alpha * Math.pow(x, exponent); };
     let investmentCurve = (x: number) => { return investShift - beta * Math.pow(x, exp1); }
 
     let inverseSaving = (x: number) => { return Math.pow((x - savingShift) / alpha, 1 / exponent); };
-    let inverseInvestment = (x: number) => { return Math.pow((x - investShift) / beta, 1 / exp1); }
+    let inverseInvestment = (x: number) => { return Math.pow((x - investShift) / beta, 1/exp1); }
 
     let _findEq = (): number => {
       let lowX = 0, upX = 2000, midX = (lowX + upX) / 2, epsilon = .0001;
@@ -424,7 +426,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         marker: { enabled: true, symbol: 'circle', radius: 4 }
 
       },
-      [inverseSaving(rRate), 0]
+      [inverseSaving(rRate), -3]
     ];
     qInvestment = [
       [0, rRate],
@@ -436,7 +438,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         marker: { enabled: true, symbol: 'circle', radius: 4 }
 
       },
-      [inverseInvestment(rRate), 0]
+      [inverseInvestment(rRate), -3]
     ];
     eq = [
       [0, investmentCurve(_findEq())],
@@ -447,7 +449,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         color: 'green',
         marker: { enabled: true, symbol: 'circle', radius: 4 },
       },
-      [_findEq(), 0]
+      [_findEq(), -3]
     ];
     //reference series
     if (addRef) {
@@ -460,7 +462,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           color: '#797979',
           marker: { enabled: true, symbol: 'circle', radius: 4 },
         },
-        [_findEq(), 0]
+        [_findEq(), -3]
       ];
       savingRef = saving;
       investmentRef = investment;
