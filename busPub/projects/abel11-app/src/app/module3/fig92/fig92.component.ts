@@ -13,7 +13,7 @@ import HC_data from 'highcharts/modules/export-data';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
-//HC_seriesLabel(Highcharts);
+HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
@@ -21,7 +21,7 @@ HC_accessibility(Highcharts);
   templateUrl: './fig92.component.html',
   styleUrls: ['./fig92.component.scss']
 })
-export class Fig92Component {
+export class Fig92Component implements OnInit, AfterViewInit {
 
   mode: number = 0;
   showPlayer: boolean = false;
@@ -188,6 +188,7 @@ export class Fig92Component {
         {
           type: 'line',
           name: 'Equilibrium',
+          enableMouseTracking: true,
           color: 'black',
           dashStyle: 'Dot',
           lineWidth: 1,
@@ -235,7 +236,7 @@ export class Fig92Component {
       },
       plotOptions: {
         series: {
-          enableMouseTracking: true,
+          enableMouseTracking: false,
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
@@ -243,7 +244,11 @@ export class Fig92Component {
           },
           label: {
             enabled: true
-          }
+          },
+          marker: {
+            radius: 0
+          },
+
         }
 
       }
@@ -404,6 +409,7 @@ export class Fig92Component {
         color: '#008000',
         marker: {
           symbol: 'circle',
+          radius: 4,
           enabled: true
 
         }
