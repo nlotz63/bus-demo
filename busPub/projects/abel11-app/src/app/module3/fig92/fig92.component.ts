@@ -27,7 +27,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
   showPlayer: boolean = false;
 
   slider = new FormGroup({
-    expectedOutput: new FormControl(1200),
+    expectedOutput: new FormControl(900),
     wealth: new FormControl(150),
     govPurchases: new FormControl(600),
     taxes: new FormControl(400),
@@ -92,7 +92,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
       type: 'line',
       label: {
         formatter: () => {
-          return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
+          return `Equilibrium:</br>I = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[1].y.toPrecision(2)}%`;
         }
         }
     })
@@ -102,8 +102,10 @@ export class Fig92Component implements OnInit, AfterViewInit {
         enabled: true,
         useHTML: true,
         style: { fontSize: '11px', fontWeight: '400' },
+
         formatter: () => {
-          return `${this.chart2.series[1].getName()}:</br>Y = ${series.EQ2[1].x}</br>r = ${series.EQ2[1].y}`;
+          let x = series.EQ2[1].x.toFixed(0), y = series.EQ2[1].y.toPrecision(2);
+          return `${this.chart2.series[1].getName()}:</br>Y = ${x}</br>r = ${y}`;
         }
       },
       accessibility: {
@@ -116,7 +118,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
   public playStep(mode: number) {
     this.mode = mode;
     this.slider.setValue({
-      expectedOutput: 1200,
+      expectedOutput: 900,
       wealth: 150,
       govPurchases: 600,
       taxes: 400,
@@ -206,7 +208,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
             useHTML: true,
             style: {fontSize: '11px', fontWeight: '400'},
             formatter: () => {
-              return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
+              return `Equilibrium:</br>I = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[1].y.toPrecision(2)}%`;
             }
           }
 
@@ -229,8 +231,8 @@ export class Fig92Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         tickWidth: 1,
         title: { useHTML: true, text: 'Real interest rate, r' },
-        min: 0,
-        max: 7,
+        min: -3,
+        max: 5,
         tickInterval: 1
 
       },
@@ -305,7 +307,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
             useHTML: true,
             style: {fontSize: '11px', fontWeight: '400'},
             formatter: () => {
-              return `IS curve point:</br>Y = ${series.EQ2[1].x}</br>r = ${series.EQ2[1].y}`;
+              return `IS curve point:</br>Y = ${series.EQ2[1].x.toFixed(0)}</br>r = ${series.EQ2[1].y.toPrecision(2)}`;
             }
           }
 
@@ -316,7 +318,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         title: { useHTML: true, text: 'Output, Y (billions of dollars)' },
-        min: 1200
+        min: 900
 
       },
       yAxis: {
@@ -326,8 +328,9 @@ export class Fig92Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         tickWidth: 1,
         title: { useHTML: true, text: 'Real interest rate, r' },
-        min: .75,
-        max: 7
+        min: -2.1,
+        max: 5,
+        tickInterval: 1
 
       },
       plotOptions: {
@@ -349,8 +352,8 @@ export class Fig92Component implements OnInit, AfterViewInit {
     // slider values
     let slider = this.slider.value;
     // model parameters
-    let c0: number = 300, cy: number = .75, cr: number = 300, t0: number = 0.25 * slider.taxes!, t: number = 0.2,
-      i0: number = 2000, ir: number = 200, G: number = slider.govPurchases!;
+    let c0: number = 175, cy: number = .6, cr: number = 300, t0: number = 0.25 * slider.taxes!, t: number = 0.2,
+      i0: number = 1850, ir: number = 220, G: number = slider.govPurchases!;
     let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
 
     let ybar = slider.expectedOutput! + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
@@ -379,7 +382,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
       isSeries.push(point);
       lmSeries.push(point2);
       x = x + 25;
-    } while (x < 6500);
+    } while (x < 7500);
     x = 50;
 
     do {
@@ -397,7 +400,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
       investSeries.push(point2);
 
       x = x + 5;
-    } while (x < 2000);
+    } while (x < 2400);
 
     // equilibrium series
     eqSeries = [
@@ -415,7 +418,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
         }
       },
       {
-        x: eq, y: 0, marker: {
+        x: eq, y: -3, marker: {
           enabled: false, radius: 0
           }
       }
@@ -433,10 +436,10 @@ export class Fig92Component implements OnInit, AfterViewInit {
 
         }
       },
-      { x: ybar, y: 0, marker: { enabled: false } }
+      { x: ybar, y: -3, marker: { enabled: false } }
     ];
     feSeries = [
-      [ybar, 0],
+      [ybar, -3],
       [ybar, 2.25]
     ]
 
