@@ -96,7 +96,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'World real interest rate',
+          name: 'Net exports',
           color: 'black',
           zIndex: 1,
           animation: false,
@@ -241,7 +241,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Net Exports',
+          name: 'Net exports',
           zIndex: 1,
           animation: false,
           data: series.seriesNX,
