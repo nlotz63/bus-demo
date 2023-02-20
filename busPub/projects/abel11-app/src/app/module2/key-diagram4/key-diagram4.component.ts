@@ -96,7 +96,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'World real interest rate',
+          name: 'Net exports',
           color: 'black',
           zIndex: 1,
           animation: false,
@@ -179,7 +179,11 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
           tooltip: {
             headerFormat: '{series.name}<br/>',
             pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
-          }
+          },
+          label: {
+            style: { fontWeight: '400'}
+         }
+
         }
 
       }
@@ -241,7 +245,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Net Exports',
+          name: 'Net exports',
           zIndex: 1,
           animation: false,
           data: series.seriesNX,
