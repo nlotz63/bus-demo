@@ -1,85 +1,162 @@
 <div class="econ-interactive-container">
   <div class="wrapper">
-  <div class="item-narrative">
-    <div *ngIf="mode === 0" @myAnimationTrigger>
-      <h2>World real interest rate and net exports (NX)</h2>
-      <ul>
-        <li>Bullet point 1</li>
-        <li>Bullet point 2</li>
-        <li>Bullet point 3</li>
-      </ul>
-      <econ-slider
-        label="World real interest rate"
-        showValue="false"
-        [min]="0.25"
-        [max]="5"
-        step=".1"
-        [value]="slider.value.rRate!"
-        (valueChange)="updateChart({rRate: $event})"
-      ></econ-slider>
-      {{ slider.value.rRate }}%
-      <p econMath>
-        $$ S^d = I^d + NX $$ therefore, net exports, NX:
-        $$ NX = S^d - I^d $$
-        <span econMath="$$ NX = {{savingDesired | currency: 'USD': 'symbol' : '0.0-0'}} - {{investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} = {{savingDesired - investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} $$"></span>
-      </p>
+    <div class="item-narrative">
+      <div class="econ-narative-block" *ngIf="mode === 0" @myAnimationTrigger>
+        <h2>World real interest rate and net exports (NX)</h2>
+        <ul>
+          <li>
+            The world real interest rate is measured on the vertical axis, and
+            the small open economy's desired national saving,
+            <span econMath="\(S^d\)"></span>, and desired investment,
+            <span econMath="\(I^d\)"></span>, are measured on the horizontal
+            axis.
+          </li>
+          <li>
+            The world real interest rate, <span econMath="\(r^w\)"></span>, is
+            fixed, as indicated by the horizontal line.
+          </li>
+          <li>
+            The saving curve, <span econMath="\(S\)"></span>, and the investment
+            curve, <span econMath="\(I\)"></span>, are the same as in the
+            closed-economy saving-investment diagram, Key Diagram 3.
+          </li>
+          <li>
+            An increase in the world real interest rate,
+            <span econMath="\(r^w\)"></span>, raises the horizontal line in the
+            diagram, and vice-versa.
+          </li>
+        </ul>
+        <econ-slider
+          label="World real interest rate"
+          class="econ-control"
+          showValue="false"
+          displayValue="{{ slider.value.rRate }}%"
+          [min]="-2"
+          [max]="5"
+          step=".01"
+          [value]="slider.value.rRate!"
+          (valueChange)="updateChart({ rRate: $event })"
+        ></econ-slider>
+        <p class="econ-control">
+          <span econMath="$$ NX = S^d - I^d $$"></span>
+          <span
+            econMath="$$ NX = {{
+              savingDesired | currency : 'USD' : 'symbol' : '0.0-0'
+            }} - {{
+              investmentDesired | currency : 'USD' : 'symbol' : '0.0-0'
+            }} = {{
+              savingDesired - investmentDesired
+                | currency : 'USD' : 'symbol' : '0.0-0'
+            }} $$"
+          ></span>
+        </p>
+      </div>
+      <div class="econ-narative-block" *ngIf="mode === 1" @myAnimationTrigger>
+        <h2>Shifts of the saving curve and net exports (NX)</h2>
+        <ul>
+          <li>
+            Anything that increases desired national saving in the small open
+            economy, for a fixed value of the world real interest rate, shifts
+            the saving curve to the right.
+          </li>
+          <li
+            matTooltip="an increase in current output, Y, a decrease in expected future output, a decrease in wealth, a decrease in current government purchases, G, and (if Ricardian equivalence doesn't hold and taxes affect saving) an increase in current taxes, T."
+            tabindex="0"
+          >
+            Hover over this bullet point to view factors that shift the saving
+            curve to the right.
+          </li>
+          <li>
+            An increase in desired national saving shifts the saving curve to
+            the right and raises net exports and the current account balance,
+            <span econMath="\(CA\)"></span>.
+          </li>
+          <li>
+            Equivalently, an increase in desired national saving raises the
+            country's net foreign lending, which equals its financial account
+            deficit, <span econMath="\(-FA\)"></span>.
+          </li>
+        </ul>
+        <econ-slider
+          label="Shift saving curve"
+          class="econ-control"
+          showValue="false"
+          [min]="0 - 2"
+          [max]="2"
+          step=".01"
+          [showPercent]="true"
+          [value]="slider.value.govPurchases!"
+          #startValue
+          (valueChange)="updateChart({ govPurchases: -$event })"
+        ></econ-slider>
+        <p class="econ-control">
+          <span econMath="$$ NX = S^d - I^d $$"></span>
+          <span
+            econMath="$$ NX = {{
+              savingDesired | currency : 'USD' : 'symbol' : '0.0-0'
+            }} - {{
+              investmentDesired | currency : 'USD' : 'symbol' : '0.0-0'
+            }} = {{
+              savingDesired - investmentDesired
+                | currency : 'USD' : 'symbol' : '0.0-0'
+            }} $$"
+          ></span>
+        </p>
+      </div>
+      <div class="econ-narative-block" *ngIf="mode === 2" @myAnimationTrigger>
+        <h2>Shifts of the investment curve and net exports (NX)</h2>
+        <ul>
+          <li>
+            Anything that increases desired investment at the prevailing real
+            interest rate shifts the investment curve to the right.
+          </li>
+          <li
+            tabindex="0"
+            matTooltip="an increase in the expected future total factor productivity, TFP,
+          a decrease in the effective tax rate on capital."
+          >
+            Hover over this bullet point to view factors that shift the
+            investment curve to the right
+          </li>
+          <li>
+            An increase in desired investment shifts the investment curve to the
+            right and lowers net exports, the current account balance, net
+            foreign lending, and the financial account deficit.
+          </li>
+        </ul>
+        <econ-slider
+          label="Shift investment curve"
+          class="econ-control"
+          showValue="false"
+          [min]="-2"
+          [max]="2"
+          step=".01"
+          [value]="slider.value.taxRate!"
+          #startValue
+          (valueChange)="updateChart({ taxRate: -$event })"
+        ></econ-slider>
+        <p class="econ-control">
+          <span econMath="$$ NX = S^d - I^d $$"></span>
+          <span
+            econMath="$$ NX = {{
+              savingDesired | currency : 'USD' : 'symbol' : '0.0-0'
+            }} - {{
+              investmentDesired | currency : 'USD' : 'symbol' : '0.0-0'
+            }} = {{
+              savingDesired - investmentDesired
+                | currency : 'USD' : 'symbol' : '0.0-0'
+            }} $$"
+          ></span>
+        </p>
+      </div>
     </div>
-    <div *ngIf="mode === 1" @myAnimationTrigger>
-      <h2>Shifts of the saving curve and net exports (NX)</h2>
-      <ul>
-        <li>Bullet point 1</li>
-        <li>Bullet point 2</li>
-        <li>Bullet point 3</li>
-      </ul>
-      <econ-slider
-        label="Shift saving curve"
-        showValue="false"
-        [min]="0-2"
-        [max]="2"
-        step=".01"
-        [showPercent]="true"
-        [value]="slider.value.govPurchases!"
-        #startValue
-        (valueChange)="updateChart({ govPurchases: -$event })"
-      ></econ-slider>
-      <p econMath>
-        $$ S^d = I^d + NX $$ therefore, net exports, NX:
-        $$ NX = S^d - I^d $$
-       <span econMath="$$ NX = {{savingDesired | currency: 'USD': 'symbol' : '0.0-0'}} - {{investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} = {{savingDesired - investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} $$"></span>
-      </p>
-    </div>
-    <div *ngIf="mode === 2" @myAnimationTrigger>
-      <h2>Shifts of the investment curve and net exports (NX)</h2>
-      <ul>
-        <li>Bullet point 1</li>
-        <li>Bullet point 2</li>
-        <li>Bullet point 3</li>
-      </ul>
-      <econ-slider
-        label="Shift investment curve"
-        showValue="false"
-        [min]="-2"
-        [max]="2"
-        step=".01"
-        [value]="slider.value.taxRate!"
-        #startValue
-        (valueChange)="updateChart({taxRate: -$event})"
-      ></econ-slider>
-      <p econMath>
-        $$ S^d = I^d + NX $$ therefore, net exports, NX:
-        $$ NX = S^d - I^d $$
-        <span econMath="$$ NX = {{savingDesired | currency: 'USD': 'symbol' : '0.0-0'}} - {{investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} = {{savingDesired - investmentDesired | currency: 'USD': 'symbol' : '0.0-0'}} $$"></span>
-      </p>
-    </div>
-</div>
-  <div id="chart1" class="item-chart"></div>
-</div>
-<app-player
-*ngIf="showPlayer"
-[steps]="3"
-[mode]="mode"
-(modeChange)="playStep($event)"
-class="player-navigation-container"
-></app-player>
-
+    <div id="chart1" class="item-chart"></div>
+  </div>
+  <app-player
+    *ngIf="showPlayer"
+    [steps]="3"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
 </div>

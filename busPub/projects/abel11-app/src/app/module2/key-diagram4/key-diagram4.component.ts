@@ -51,7 +51,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
 
 
     slider = new FormGroup({
-      rRate: new FormControl(3),
+      rRate: new FormControl(1.75),
       taxRate: new FormControl(0),
       expectedMPK: new FormControl(0),
       output: new FormControl(0),
@@ -96,7 +96,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'NX',
+          name: 'World real interest rate',
           color: 'black',
           zIndex: 1,
           animation: false,
@@ -115,6 +115,41 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
             {value: 1750, dashStyle: 'Dot'}
           ]
         },
+        {
+          type: 'line',
+          name: 'Sd',
+          zIndex: 3,
+          animation: false,
+          dashStyle: 'Dot',
+          color: 'black',
+          data: [],
+          label: {
+            useHTML: true,
+            format: 'S<sup>d</sup>'
+          },
+          marker: {
+            symbol: 'circle',
+            radius: 4
+          }
+        },
+        {
+          type: 'line',
+          name: 'Id',
+          zIndex: 3,
+          animation: false,
+          dashStyle: 'Dot',
+          color: 'black',
+          data: [],
+          label: {
+            useHTML: true,
+            format: 'I<sup>d</sup>'
+          },
+          marker: {
+            symbol: 'circle',
+            radius: 4
+          }
+        }
+
 
       ],
       xAxis: {
@@ -123,7 +158,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         title: { useHTML: true, text: 'Desired national saving S<sup>d</sup>, and desired investment, I<sup>d</sup> (billions of dollars)' },
         min: 0,
-        max: 1750
+        max: 2500
 
       },
       yAxis: {
@@ -133,7 +168,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         tickWidth: 1,
         title: { useHTML: true, text: 'Real interest rate, r' },
-        min: 0,
+        min: -2.1,
         max: 5
 
       },
@@ -169,7 +204,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
     public playStep(value: any) {
       this.mode = value;
       this.slider.setValue({
-        rRate: 3,
+        rRate: 1.75,
         taxRate: 0,
         expectedMPK: 0,
         output: 0,
@@ -185,8 +220,8 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
     }
 
   public updateChart(value: any) {
-    let series = this._createSeries(false);
     this.slider.patchValue(value);
+    let series = this._createSeries(false);
 
     this.chart.update({
       series: [
@@ -206,10 +241,11 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'World real interest rate',
+          name: 'Net Exports',
           zIndex: 1,
           animation: false,
           data: series.seriesNX,
+          enableMouseTracking: false,
           zoneAxis: 'x',
           zones: [
             {
@@ -220,12 +256,44 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
               value: this.savingDesired,
               dashStyle: 'Solid'
             },
-            {value: 1750, dashStyle: 'Dot'}
+            {value: 2500, dashStyle: 'Dot'}
           ],
           tooltip: {
             pointFormat: ''
+          },
+          label: {
+            style: { fontWeight: '400'}
+         }
+        },
+        {
+          type: 'line',
+          name: 'Sd',
+          zIndex: 2,
+          animation: false,
+          data: series.qSaving,
+          label: {
+            useHTML: true,
+            format: 'S<sup>d</sup>'
           }
         },
+        {
+          type: 'line',
+          name: 'Sd',
+          zIndex: 3,
+          animation: false,
+          dashStyle: 'Dot',
+          color: 'black',
+          data: series.qInvestment,
+          label: {
+            useHTML: true,
+            format: 'I<sup>d</sup>'
+          },
+          marker: {
+            symbol: 'circle',
+            radius: 4
+          }
+        },
+
         {
           type: 'spline',
           name: 'initial saving',
@@ -297,10 +365,10 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
     // math generate all curves and key points in the chart returns an object of arrays
     let rRate = this.slider.value.rRate!, taxRate = this.slider.value.taxRate!, eMPK = this.slider.value.expectedMPK!, output = this.slider.value.output!, eOutput = this.slider.value.expectedOutput!, wealth = this.slider.value.wealth!, eRealRate = this.slider.value.expectedRealRate!, govPurchase = this.slider.value.govPurchases!, taxes = this.slider.value.taxes!;
 
-    let saving = [], investment = [], qSaving = [], qInvestment = [], eq = [], savingRef: any[] = [], investmentRef: any[] = [], qSavingRef = [], qInvestmentRef = [], eqRef: any[] = [];
+    let saving = [], investment = [], qSaving: any[] = [], qInvestment: any[] = [], eq = [], savingRef: any[] = [], investmentRef: any[] = [], qSavingRef = [], qInvestmentRef = [], eqRef: any[] = [];
 
-    let alpha = .00004, exponent = 1.6, exp1 = .5, beta = .16, x = 25,
-      investShift = 7 - taxRate + eMPK, savingShift = .2 - output + eOutput + wealth - .25 * eRealRate + govPurchase - .25 * taxes;
+    let alpha = .00004, exponent = 1.6, exp1 = .5, beta = .2, x = 0,
+      investShift = 7 - taxRate + eMPK, savingShift = -2 - output + eOutput + wealth - .25 * eRealRate + govPurchase - .3 * taxes;
 
     let savingCurve = (x: number) => { return savingShift + alpha * Math.pow(x, exponent); };
     let investmentCurve = (x: number) => { return investShift - beta * Math.pow(x, exp1); }
@@ -353,7 +421,6 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
 
         }
       },
-
       {
         name: 'desired saving',
         x: inverseSaving(rRate),
@@ -363,8 +430,28 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
           symbol: 'circle',
         }
       },
-      [1750, rRate]
+      [2500, rRate]
     ];
+    qSaving = [
+      {
+        x: inverseSaving(rRate),
+        y: rRate,
+        color: 'blue',
+        marker: { enabled: true, Symbol: 'circle', }
+      },
+      [inverseSaving(rRate), -3]
+    ];
+    qInvestment = [
+      {
+        x: inverseInvestment(rRate),
+        y: rRate,
+        color: 'blue',
+        marker: { enabled: true, Symbol: 'circle', }
+      },
+      [inverseInvestment(rRate), -3]
+    ];
+
+
     this.savingDesired = inverseSaving(rRate);
     this.investmentDesired = inverseInvestment(rRate);
     if (addRef) {
@@ -376,8 +463,8 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
       seriesSaving: saving,
       seriesInvestment: investment,
       seriesNX: nx,
-      //qSaving: qSaving,
-      //qInvestment: qInvestment,
+      qSaving: qSaving,
+      qInvestment: qInvestment,
       //equilibrium: eq,
       eqRef: eqRef,
       savingRef: savingRef,
