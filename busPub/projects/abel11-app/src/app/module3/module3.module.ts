@@ -9,6 +9,7 @@ import { PlayerModule } from '../player/player.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Fig92Component } from './fig92/fig92.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { Fig92Component } from './fig92/fig92.component';
     BusPubLibModule,
     PlayerModule,
     ReactiveFormsModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTooltipModule
   ]
 })
 export class Module3Module { }

@@ -111,16 +111,35 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
 
   public restoreEquilibrium() {
     let newPrice: number;
-    this.playInterval.subscribe(() => {
+     const subscription = this.playInterval.subscribe(() => {
       let series = this._createSeries(false);
       let difference = series.FE[0][0] - series.EQ[1].x;
-      if (difference < 0) {
-        newPrice = this.slider.value.priceLevel! + 1;
+      if (Math.abs(difference) > 60) {
+        if (difference < 0) {
+          newPrice = this.slider.value.priceLevel! + 1;
+        } else {
+         newPrice = this.slider.value.priceLevel! - 1;
+        }
+        this.updateChart({ priceLevel: newPrice });
+      } else if (Math.abs(difference) > 5 && Math.abs(difference) < 60) {
+        if (difference < 0) {
+          newPrice = this.slider.value.priceLevel! + .25;
+        } else {
+         newPrice = this.slider.value.priceLevel! - .25;
+        }
+        this.updateChart({ priceLevel: newPrice });
+      }  else if (Math.abs(difference) >= 1 && Math.abs(difference) < 5) {
+        if (difference < 0) {
+          newPrice = this.slider.value.priceLevel! + .05;
+        } else {
+         newPrice = this.slider.value.priceLevel! - .05;
+        }
+        this.updateChart({ priceLevel: newPrice });
       } else {
-       newPrice = this.slider.value.priceLevel! - 1;
+        subscription.unsubscribe();
+
+        return;
       }
-      this.updateChart({ priceLevel: newPrice });
-      console.log(difference);
       })
 
   }

@@ -22,6 +22,7 @@
   margin-left: 5px;
 }
 
+
 @media all and (max-width: 750px) {
   .wrapper {
     @include flexbox();
@@ -36,6 +37,10 @@
     @include flex(0 0 100%);
   }
 
+}
+
+.large-button {
+  width: 100px;
 }
 
 ul {
