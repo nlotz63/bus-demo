@@ -12,6 +12,9 @@
 .item-narrative {
   @include flex(4.5 );
 }
+.econ-narative-block {
+  margin-right: 7px;
+}
 
 .control-column {
   @include flexbox();
