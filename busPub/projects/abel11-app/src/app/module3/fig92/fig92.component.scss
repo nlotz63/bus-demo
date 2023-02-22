@@ -3,14 +3,15 @@
 .wrapper {
   @include flexbox();
   flex-flow: row;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 .item-chart {
-  @include flex(5.5 );
+  @include flex(5 );
 }
 
 .item-narrative {
-  @include flex(4.5 );
+  @include flex(6.5 1 65%) ;
+
 }
 
 .control-column {
@@ -30,10 +31,14 @@
     @include flex(1 0 100%);
   }
 
-  .item-narative {
+  .item-narrative {
     @include flex(0 0 100%);
   }
-
+}
+.econ-slider {
+  @include flex(3.5 0 35%);
+  align-self: center;
+  padding-left: 55px;
 }
 
 ul {

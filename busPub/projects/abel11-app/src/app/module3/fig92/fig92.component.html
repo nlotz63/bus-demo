@@ -4,30 +4,35 @@
     <div id="chart2" class="item-chart"></div>
   </div>
   <div class="wrapper">
-    <div class="item-narative">
+    <div class="item-narrative">
       <ul>
         <li>
-          Bullet 1
+          The IS curve is derived from the curves depicting desired national
+          saving and desired investment.
         </li>
         <li>
-          Bullet 2
+          Higher levels of output (income) increase desired national saving and
+          shift the saving curve to the right.
         </li>
         <li>
-          Bullet 3
+          The real interest rate at equilibrium between saving and investment in
+          the diagram on the left is plotted in the diagram on the right along
+          with the level of output on the horizontal axis.
         </li>
       </ul>
     </div>
-    <econ-slider
-    label="Output, \(Y\)"
-    econMath
-    showValue="false"
-    displayValue="{{ slider.value.expectedOutput }}"
-    [min]="900"
-    [max]="7000"
-    step="100"
-    [value]="slider.value.expectedOutput!"
-    (valueChange)="updateChart({ expectedOutput: $event })"
-  ></econ-slider>
-</div>
-
+    <div class="econ-slider">
+      <econ-slider
+        label="Output, \(Y\)"
+        econMath
+        showValue="false"
+        displayValue="{{ slider.value.expectedOutput }}"
+        [min]="900"
+        [max]="7000"
+        step="100"
+        [value]="slider.value.expectedOutput!"
+        (valueChange)="updateChart({ expectedOutput: $event })"
+      ></econ-slider>
+      </div>
+  </div>
 </div>
