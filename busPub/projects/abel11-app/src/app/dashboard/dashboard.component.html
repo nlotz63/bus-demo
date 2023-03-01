@@ -1,0 +1,196 @@
+<h1 class="mat-headline grid">
+  Abel/Bernanke/Croushore: Macroeconomics 11e Interactive Models
+</h1>
+<div class="grid grid-pad">
+  <a
+    [routerLink]="['/module01/pf01']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="pf01 = true"
+    (mouseout)="pf01 = false"
+  >
+    <div class="module hero">
+      <h4>Production Function</h4>
+    </div>
+  </a>
+
+  <a
+    [routerLink]="['/module01/ld01']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="ld01 = true"
+    (mouseout)="ld01 = false"
+  >
+    <div class="module hero">
+      <h4>Labor Demand</h4>
+    </div>
+  </a>
+  <a
+    routerLink="/module01/unemployment"
+    class="col-1-4"
+    (mouseover)="unemployment = true"
+    (mouseout)="unemployment = false"
+  >
+    <div class="module hero">
+      <h4>Unemployment Data</h4>
+    </div>
+  </a>
+  <a
+    [routerLink]="['/module02/key-diagram3']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="key3 = true"
+    (mouseout)="key3 = false"
+  >
+    <div class="module hero">
+      <h4>Key Diagram 3</h4>
+    </div>
+  </a>
+  <a
+    [routerLink]="['/module02/key-diagram4']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="key4 = true"
+    (mouseout)="key4 = false"
+  >
+    <div class="module hero">
+      <h4>Key Diagram 4</h4>
+    </div>
+  </a>
+  <a
+    [routerLink]="['/module02/key-diagram5']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="key5 = true"
+    (mouseout)="key5 = false"
+  >
+    <div class="module hero">
+      <h4>Key Diagram 5</h4>
+    </div>
+  </a>
+  <a
+    [routerLink]="['/module02/solow']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="solow = true"
+    (mouseout)="solow = false"
+  >
+    <div class="module hero">
+      <h4>Solow Model</h4>
+    </div>
+  </a>
+  <a
+    routerLink="/module03/figure9.2"
+    class="col-1-4"
+    (mouseover)="fig92 = true"
+    (mouseout)="fig92 = false"
+  >
+    <div class="module hero">
+      <h4>Figure 9.2</h4>
+    </div>
+  </a>
+  <a
+    [routerLink]="['/module03/key-diagram6']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="key6 = true"
+    (mouseout)="key6 = false"
+  >
+    <div class="module hero">
+      <h4>Key Diagram 6</h4>
+    </div>
+  </a>
+  <a
+    [routerLink]="['/module03/key-diagram7']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="key7 = true"
+    (mouseout)="key7 = false"
+  >
+    <div class="module hero">
+      <h4>Key Diagram 7</h4>
+    </div>
+  </a>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="pf01">
+  <h2>Key Points for the Production Function Interactive</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="ld01">
+  <h2>Key Points for the Labor Demand Interactive</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="unemployment">
+  <h2>Key Points for the Unemployment Interactive</h2>
+  <ol>
+    <li>Weird situation where the graph doesn't display full width when opened from the dashboard.</li>
+    <li>Clicking browser refresh will fix the issue.</li>
+    <li>Working on a fix.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="key3">
+  <h2>Key Points for Key Diagram 3</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="key4">
+  <h2>Key Points for Key Diagram 4</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="key5">
+  <h2>Key Points for Key Diagram 5</h2>
+  <ol>
+    <li>This model is not ready to view.</li>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="solow">
+  <h2>Key Points for the Solow Model</h2>
+  <ol>
+    <li>This model is not ready to view.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="fig92">
+  <h2>Key Points for Figure 9.2 Interactive</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="key6">
+  <h2>Key Points for Key Diagram 6</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="key7">
+  <h2>Key Points for Key Diagram 7</h2>
+  <ol>
+    <li>This model is not ready to view.</li>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
