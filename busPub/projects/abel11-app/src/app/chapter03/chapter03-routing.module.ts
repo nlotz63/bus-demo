@@ -5,8 +5,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  {path: 'pf01', component: ProductionFunctionComponent, title: 'Production function'},
-  {path: 'ld01', component: LaborDemandComponent, title: 'Labor demand'},
+  {path: 'key-diagram1', component: ProductionFunctionComponent, title: 'Production function'},
+  {path: 'key-diagram2', component: LaborDemandComponent, title: 'Labor demand'},
   { path: 'unemployment', component: UnemployDataComponent, title: 'Unemployment data-grapher' },
 
 ];

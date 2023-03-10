@@ -8,11 +8,11 @@ import { SolowComponent } from './solow/solow.component';
 
 const routes: Routes = [
   { path: 'key-diagram3', component: KeyDiagram3Component, title: 'National Saving Model' },
-  { path: 'key-diagram4', component: KeyDiagram4Component, title: 'National Saving (open economy) Model' },
-  { path: 'key-diagram5', component: KeyDiagram5Component, title: 'National Saving (open economy) Model' },
+  { path: 'key-diagram4', component: KeyDiagram4Component, title: 'National Saving (small open economy) Model' },
+  { path: 'key-diagram5', component: KeyDiagram5Component, title: 'National Saving (large open economy) Model' },
   { path: 'solow', component: SolowComponent, title: 'Solow model' },
   { path: 'desired-capital', component: DesiredCapitalComponent, title: 'Desired capital model' }
-  
+
 ];
 
 @NgModule({

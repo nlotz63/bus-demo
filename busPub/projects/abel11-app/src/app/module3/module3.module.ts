@@ -10,13 +10,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { Fig92Component } from './fig92/fig92.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { KeyDiagram8Component } from './key-diagram8/key-diagram8.component';
+import { Fig94Component } from './fig94/fig94.component';
 
 
 @NgModule({
   declarations: [
     KeyDiagram6Component,
     KeyDiagram7Component,
-    Fig92Component
+    Fig92Component,
+    KeyDiagram8Component,
+    Fig94Component
   ],
   imports: [
     CommonModule,

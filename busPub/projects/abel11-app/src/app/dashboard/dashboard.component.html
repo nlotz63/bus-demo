@@ -3,26 +3,26 @@
 </h1>
 <div class="grid grid-pad">
   <a
-    [routerLink]="['/module01/pf01']"
+    [routerLink]="['/module01/key-diagram1']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
     (mouseover)="pf01 = true"
     (mouseout)="pf01 = false"
   >
     <div class="module hero">
-      <h4>Production Function</h4>
+      <h4>Key Diagram 1</h4>
     </div>
   </a>
 
   <a
-    [routerLink]="['/module01/ld01']"
+    [routerLink]="['/module01/key-diagram2']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
     (mouseover)="ld01 = true"
     (mouseout)="ld01 = false"
   >
     <div class="module hero">
-      <h4>Labor Demand</h4>
+      <h4>Key Diagram 2</h4>
     </div>
   </a>
   <a
@@ -90,6 +90,16 @@
     </div>
   </a>
   <a
+    routerLink="/module03/figure9.4"
+    class="col-1-4"
+    (mouseover)="fig92 = true"
+    (mouseout)="fig92 = false"
+  >
+    <div class="module hero">
+      <h4>Figure 9.4</h4>
+    </div>
+  </a>
+  <a
     [routerLink]="['/module03/key-diagram6']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
@@ -111,6 +121,48 @@
       <h4>Key Diagram 7</h4>
     </div>
   </a>
+  <a
+    [routerLink]="['/module03/key-diagram8']"
+    [queryParams]="{ showPlayer: true }"
+    class="col-1-4"
+    (mouseover)="key7 = true"
+    (mouseout)="key7 = false"
+  >
+    <div class="module hero">
+      <h4>Key Diagram 8</h4>
+    </div>
+  </a>
+  <a
+    routerLink="/module04/figure13.4"
+    class="col-1-4"
+    (mouseover)="fig92 = true"
+    (mouseout)="fig92 = false"
+  >
+    <div class="module hero">
+      <h4>Figure 13.4</h4>
+    </div>
+  </a>
+  <a
+    routerLink="/module04/figure13.5"
+    class="col-1-4"
+    (mouseover)="fig92 = true"
+    (mouseout)="fig92 = false"
+  >
+    <div class="module hero">
+      <h4>Figure 13.5</h4>
+    </div>
+  </a>
+  <a
+  routerLink="/module04/figure13.9"
+  class="col-1-4"
+  (mouseover)="fig92 = true"
+  (mouseout)="fig92 = false"
+>
+  <div class="module hero">
+    <h4>Figure 13.9</h4>
+  </div>
+</a>
+
 </div>
 <div class="berk-key-points col-1-8" *ngIf="pf01">
   <h2>Key Points for the Production Function Interactive</h2>
@@ -131,7 +183,10 @@
 <div class="berk-key-points col-1-8" *ngIf="unemployment">
   <h2>Key Points for the Unemployment Interactive</h2>
   <ol>
-    <li>Weird situation where the graph doesn't display full width when opened from the dashboard.</li>
+    <li>
+      Weird situation where the graph doesn't display full width when opened
+      from the dashboard.
+    </li>
     <li>Clicking browser refresh will fix the issue.</li>
     <li>Working on a fix.</li>
   </ol>
