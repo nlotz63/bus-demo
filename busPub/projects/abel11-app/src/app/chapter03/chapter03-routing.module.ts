@@ -7,7 +7,7 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {path: 'key-diagram1', component: ProductionFunctionComponent, title: 'Production function'},
   {path: 'key-diagram2', component: LaborDemandComponent, title: 'Labor demand'},
-  { path: 'unemployment', component: UnemployDataComponent, title: 'Unemployment data-grapher' },
+  { path: 'figure3.15', component: UnemployDataComponent, title: 'Unemployment data-grapher' },
 
 ];
 

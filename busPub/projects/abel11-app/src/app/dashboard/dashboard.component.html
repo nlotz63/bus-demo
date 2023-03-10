@@ -6,8 +6,8 @@
     [routerLink]="['/module01/key-diagram1']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="pf01 = true"
-    (mouseout)="pf01 = false"
+    (mouseover)="interactive = 1"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Key Diagram 1</h4>
@@ -18,29 +18,29 @@
     [routerLink]="['/module01/key-diagram2']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="ld01 = true"
-    (mouseout)="ld01 = false"
+    (mouseover)="interactive = 2"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Key Diagram 2</h4>
     </div>
   </a>
   <a
-    routerLink="/module01/unemployment"
+    routerLink="/module01/figure3.15"
     class="col-1-4"
-    (mouseover)="unemployment = true"
-    (mouseout)="unemployment = false"
+    (mouseover)="interactive = 3"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
-      <h4>Unemployment Data</h4>
+      <h4>Figure 3.15</h4>
     </div>
   </a>
   <a
     [routerLink]="['/module02/key-diagram3']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="key3 = true"
-    (mouseout)="key3 = false"
+    (mouseover)="interactive = 4"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Key Diagram 3</h4>
@@ -50,8 +50,8 @@
     [routerLink]="['/module02/key-diagram4']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="key4 = true"
-    (mouseout)="key4 = false"
+    (mouseover)="interactive = 5"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Key Diagram 4</h4>
@@ -61,29 +61,29 @@
     [routerLink]="['/module02/key-diagram5']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="key5 = true"
-    (mouseout)="key5 = false"
+    (mouseover)="interactive = 6"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Key Diagram 5</h4>
     </div>
   </a>
   <a
-    [routerLink]="['/module02/solow']"
+    [routerLink]="['/module02/figure6.5']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="solow = true"
-    (mouseout)="solow = false"
+    (mouseover)="interactive = 7"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
-      <h4>Solow Model</h4>
+      <h4>Figure 6.5</h4>
     </div>
   </a>
   <a
     routerLink="/module03/figure9.2"
     class="col-1-4"
-    (mouseover)="fig92 = true"
-    (mouseout)="fig92 = false"
+    (mouseover)="interactive = 8"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Figure 9.2</h4>
@@ -92,8 +92,8 @@
   <a
     routerLink="/module03/figure9.4"
     class="col-1-4"
-    (mouseover)="fig92 = true"
-    (mouseout)="fig92 = false"
+    (mouseover)="interactive = 9"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Figure 9.4</h4>
@@ -103,8 +103,8 @@
     [routerLink]="['/module03/key-diagram6']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="key6 = true"
-    (mouseout)="key6 = false"
+    (mouseover)="interactive = 10"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Key Diagram 6</h4>
@@ -114,8 +114,8 @@
     [routerLink]="['/module03/key-diagram7']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="key7 = true"
-    (mouseout)="key7 = false"
+    (mouseover)="interactive = 11"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Key Diagram 7</h4>
@@ -125,8 +125,8 @@
     [routerLink]="['/module03/key-diagram8']"
     [queryParams]="{ showPlayer: true }"
     class="col-1-4"
-    (mouseover)="key7 = true"
-    (mouseout)="key7 = false"
+    (mouseover)="interactive = 12"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Key Diagram 8</h4>
@@ -135,8 +135,8 @@
   <a
     routerLink="/module04/figure13.4"
     class="col-1-4"
-    (mouseover)="fig92 = true"
-    (mouseout)="fig92 = false"
+    (mouseover)="interactive = 13"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Figure 13.4</h4>
@@ -145,8 +145,8 @@
   <a
     routerLink="/module04/figure13.5"
     class="col-1-4"
-    (mouseover)="fig92 = true"
-    (mouseout)="fig92 = false"
+    (mouseover)="interactive = 14"
+    (mouseout)="interactive = null"
   >
     <div class="module hero">
       <h4>Figure 13.5</h4>
@@ -155,8 +155,8 @@
   <a
   routerLink="/module04/figure13.9"
   class="col-1-4"
-  (mouseover)="fig92 = true"
-  (mouseout)="fig92 = false"
+  (mouseover)="interactive = 15"
+  (mouseout)="interactive = null"
 >
   <div class="module hero">
     <h4>Figure 13.9</h4>
@@ -164,7 +164,7 @@
 </a>
 
 </div>
-<div class="berk-key-points col-1-8" *ngIf="pf01">
+<div class="berk-key-points col-1-8" *ngIf="interactive === 1">
   <h2>Key Points for the Production Function Interactive</h2>
   <ol>
     <li>Point one.</li>
@@ -172,7 +172,7 @@
     <li>Point three.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="ld01">
+<div class="berk-key-points col-1-8" *ngIf="interactive === 2">
   <h2>Key Points for the Labor Demand Interactive</h2>
   <ol>
     <li>Point one.</li>
@@ -180,8 +180,8 @@
     <li>Point three.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="unemployment">
-  <h2>Key Points for the Unemployment Interactive</h2>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 3">
+  <h2>Key Points for Figure 3.15: Unemployment Interactive</h2>
   <ol>
     <li>
       Weird situation where the graph doesn't display full width when opened
@@ -191,15 +191,15 @@
     <li>Working on a fix.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="key3">
-  <h2>Key Points for Key Diagram 3</h2>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 4">
+  <h2>Key Points for Key Diagram 3: national saving</h2>
   <ol>
     <li>Point one.</li>
     <li>Point two.</li>
     <li>Point three.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="key4">
+<div class="berk-key-points col-1-8" *ngIf="interactive === 5">
   <h2>Key Points for Key Diagram 4</h2>
   <ol>
     <li>Point one.</li>
@@ -207,7 +207,7 @@
     <li>Point three.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="key5">
+<div class="berk-key-points col-1-8" *ngIf="interactive === 6">
   <h2>Key Points for Key Diagram 5</h2>
   <ol>
     <li>This model is not ready to view.</li>
@@ -216,23 +216,31 @@
     <li>Point three.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="solow">
-  <h2>Key Points for the Solow Model</h2>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 7">
+  <h2>Key Points for figure 6.5: Solow Model</h2>
   <ol>
     <li>This model is not ready to view.</li>
     <li>Point two.</li>
     <li>Point three.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="fig92">
-  <h2>Key Points for Figure 9.2 Interactive</h2>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 8">
+  <h2>Key Points for Figure 9.2: derive IS curve</h2>
   <ol>
     <li>Point one.</li>
     <li>Point two.</li>
     <li>Point three.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="key6">
+<div class="berk-key-points col-1-8" *ngIf="interactive === 9">
+  <h2>Key Points for Figure 9.4: derive LM curve</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 10">
   <h2>Key Points for Key Diagram 6</h2>
   <ol>
     <li>Point one.</li>
@@ -240,10 +248,43 @@
     <li>Point three.</li>
   </ol>
 </div>
-<div class="berk-key-points col-1-8" *ngIf="key7">
+<div class="berk-key-points col-1-8" *ngIf="interactive === 11">
   <h2>Key Points for Key Diagram 7</h2>
   <ol>
     <li>This model is not ready to view.</li>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 12">
+  <h2>Key Points for Key Diagram 8</h2>
+  <ol>
+    <li>This model is not ready to view.</li>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 13">
+  <h2>Key Points for Figure 13.4 Interactive</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 14">
+  <h2>Key Points for Figure 13.5 Interactive</h2>
+  <ol>
+    <li>Point one.</li>
+    <li>Point two.</li>
+    <li>Point three.</li>
+  </ol>
+</div>
+<div class="berk-key-points col-1-8" *ngIf="interactive === 15">
+  <h2>Key Points for Figure 13.9: open economy ISLM</h2>
+  <ol>
     <li>Point one.</li>
     <li>Point two.</li>
     <li>Point three.</li>

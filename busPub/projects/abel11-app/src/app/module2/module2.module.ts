@@ -12,7 +12,6 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { KeyDiagram4Component } from './key-diagram4/key-diagram4.component';
 import { KeyDiagram5Component } from './key-diagram5/key-diagram5.component';
 import { SolowComponent } from './solow/solow.component';
-import { DesiredCapitalComponent } from './desired-capital/desired-capital.component';
 
 
 
@@ -22,7 +21,6 @@ import { DesiredCapitalComponent } from './desired-capital/desired-capital.compo
     KeyDiagram4Component,
     KeyDiagram5Component,
     SolowComponent,
-    DesiredCapitalComponent
   ],
   imports: [
     CommonModule,
