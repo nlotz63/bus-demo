@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { transition, trigger, style, animate } from '@angular/animations';
 
 
 import * as Highcharts from 'highcharts';
@@ -25,6 +24,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
 
   mode: number = 0;
   showPlayer: boolean = false;
+  previousY = 900;
 
   slider = new FormGroup({
     expectedOutput: new FormControl(900),
@@ -112,6 +112,26 @@ export class Fig92Component implements OnInit, AfterViewInit {
         description: `${this.chart2.series[1].getName()}: The point on the I S cuve has coordinates Y equals ${series.EQ2[1].x} and r equals ${series.EQ2[1].y}%`
       }
     });
+
+    let announceMessage = () => {
+      let message = '';
+      let announce = () => {
+
+      }
+      if (this.previousY < series.EQ2[1].x) {
+        message = `The saving curve shifted down and to the right and the point on the IS curve moved down along the curve.`
+      } else {
+        message = `The saving curve curve shifted up  and to the left and the point on the IS curve moved up along the curve.`
+
+      }
+      this.announcer.announce(message);
+
+     this.previousY = series.EQ2[1].x;
+
+
+    }
+
+    announceMessage();
 
   }
 
