@@ -4,6 +4,7 @@
   @include flexbox();
   flex-flow: row;
   justify-content: space-between;
+  width: 100%
 }
 .item-chart {
   @include flex(5 );
