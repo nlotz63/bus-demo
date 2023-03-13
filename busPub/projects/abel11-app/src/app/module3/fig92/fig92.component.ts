@@ -105,7 +105,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
 
         formatter: () => {
           let x = series.EQ2[1].x.toFixed(0), y = series.EQ2[1].y.toPrecision(2);
-          return `${this.chart2.series[1].getName()}:</br>Y = ${x}</br>r = ${y}`;
+          return `${this.chart2.series[1].getName()}:</br>Y = ${x}</br>r = ${y}%`;
         }
       },
       accessibility: {
@@ -327,7 +327,7 @@ export class Fig92Component implements OnInit, AfterViewInit {
             useHTML: true,
             style: {fontSize: '11px', fontWeight: '400'},
             formatter: () => {
-              return `IS curve point:</br>Y = ${series.EQ2[1].x.toFixed(0)}</br>r = ${series.EQ2[1].y.toPrecision(2)}`;
+              return `IS curve point:</br>Y = ${series.EQ2[1].x.toFixed(0)}</br>r = ${series.EQ2[1].y.toPrecision(2)}%`;
             }
           }
 
