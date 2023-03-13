@@ -1,1 +1,38 @@
-<p>fig94 works!</p>
+<div class="econ-interactive-container">
+  <div class="wrapper">
+    <div id="chart1" class="item-chart"></div>
+    <div id="chart2" class="item-chart"></div>
+  </div>
+  <div class="wrapper">
+    <div class="item-narrative">
+      <ul>
+        <li>
+          The IS curve is derived from the curves depicting desired national
+          saving and desired investment.
+        </li>
+        <li>
+          Higher levels of output (income) increase desired national saving and
+          shift the saving curve to the right.
+        </li>
+        <li>
+          The real interest rate at equilibrium between saving and investment in
+          the diagram on the left is plotted in the diagram on the right along
+          with the level of output on the horizontal axis.
+        </li>
+      </ul>
+    </div>
+    <div class="econ-slider">
+      <econ-slider
+        label="Output, \(Y\)"
+        econMath
+        showValue="false"
+        displayValue="{{ slider.value.expectedOutput }}"
+        [min]="900"
+        [max]="7000"
+        step="100"
+        [value]="slider.value.expectedOutput!"
+        (valueChange)="updateChart({ expectedOutput: $event })"
+      ></econ-slider>
+      </div>
+  </div>
+</div>

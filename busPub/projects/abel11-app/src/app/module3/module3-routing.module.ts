@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'key-diagram7', component: KeyDiagram7Component, title: 'AD/AS model' },
   { path: 'key-diagram8', component: KeyDiagram8Component, title: 'AD/AS (misperceptions)' },
   { path: 'figure9.2', component: Fig92Component, title: 'Derive IS curve' },
-  { path: 'figure9.4', component: Fig94Component, title: 'Derive IS curve' }
+  { path: 'figure9.4', component: Fig94Component, title: 'Derive LM curve' }
 
 ];
 

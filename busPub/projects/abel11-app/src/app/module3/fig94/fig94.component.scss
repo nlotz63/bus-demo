@@ -1,0 +1,62 @@
+@import '../../../../app-mixins';
+
+.wrapper {
+  @include flexbox();
+  flex-flow: row;
+  justify-content: space-between;
+  width: 100%
+}
+.item-chart {
+  @include flex(5 );
+}
+
+.item-narrative {
+  @include flex(6.5 1 65%) ;
+
+}
+
+.control-column {
+  @include flexbox();
+  flex-flow: column;
+  margin-left: 5px;
+}
+
+@media all and (max-width: 750px) {
+  .wrapper {
+    @include flexbox();
+    flex-flow: column-reverse;
+
+  }
+
+  .item-chart {
+    @include flex(1 0 100%);
+  }
+
+  .item-narrative {
+    @include flex(0 0 100%);
+  }
+}
+.econ-slider {
+  @include flex(3.5 0 35%);
+  align-self: center;
+  padding-left: 55px;
+}
+
+ul {
+  line-height: 1.75em;
+}
+
+button {
+  width: 60px;
+  position: relative;
+  margin: 8px;
+  left: 40%;
+}
+
+.player-navigation-container {
+  @include flexbox();
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 5px;
+}
