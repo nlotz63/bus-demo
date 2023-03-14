@@ -78,7 +78,27 @@ export class KeyDiagram7Component {
   }
 
   public updateChart(value: any) {
+    this.slider.patchValue(value);
+    let series = this._createSeries(false);
+    let difference = series.FE[0].x - series.EQ[1].x;
+    let eqLabel = Math.abs(difference) < 1 ? 'Long-run' : 'Short-run';
+    this.chart.series[0].setData(series.AD);
+    this.chart.series[1].setData(series.SRAS);
+    this.chart.series[2].setData(series.FE);
+    this.chart.series[3].setData(series.EQ);
 
+    this.chart.series[3].update(
+      {
+        type: 'line',
+        label: {
+          useHTML: true,
+          style: {fontSize: '11px', fontWeight: '400'},
+          formatter: (): any => {
+            return `${eqLabel}:</br>Y = $${series.EQ[0].x.toFixed(0)}</br>Price level = ${series.EQ[0].y.toFixed(0)}`;
+          }
+        }
+      }
+    )
 
   }
 
@@ -106,12 +126,41 @@ export class KeyDiagram7Component {
   }
 
   public restoreEquilibrium() {
+    let newPrice: number;
+    const subscription = this.playInterval.subscribe(() => {
+      let series = this._createSeries(false);
+      let difference = series.FE[0].x - series.EQ[1].x;
+      if (Math.abs(difference) > 60) {
+        if (difference < 0) {
+          newPrice = this.slider.value.priceLevel! + 1;
+        } else {
+          newPrice = this.slider.value.priceLevel! - 1;
+        }
+        this.updateChart({ priceLevel: newPrice });
+      } else if (Math.abs(difference) > 5 && Math.abs(difference) < 60) {
+        if (difference < 0) {
+          newPrice = this.slider.value.priceLevel! + .25;
+        } else {
+          newPrice = this.slider.value.priceLevel! - .25;
+        }
+        this.updateChart({ priceLevel: newPrice });
+      } else if (Math.abs(difference) >= .9 && Math.abs(difference) < 5) {
+        if (difference < 0) {
+          newPrice = this.slider.value.priceLevel! + .05;
+        } else {
+          newPrice = this.slider.value.priceLevel! - .05;
+        }
+        this.updateChart({ priceLevel: newPrice });
+      } else {
+        subscription.unsubscribe();
 
+        return;
+      }
+    });
   }
 
   private _setupChart() {
     let series = this._createSeries(true);
-    console.log(series.AD);
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
         type: 'spline',
@@ -128,17 +177,17 @@ export class KeyDiagram7Component {
       series: [
         {
           type: 'line',
-          name: 'AD curve',
+          name: 'AD',
           zIndex: 1,
           animation: false,
           data: series.AD
         },
         {
           type: 'line',
-          name: 'SRAS curve',
+          name: 'SRAS',
           zIndex: 1,
           animation: false,
-          data: []
+          data: series.SRAS
         },
         {
           type: 'line',
@@ -146,7 +195,80 @@ export class KeyDiagram7Component {
           color: 'black',
           zIndex: 0,
           animation: false,
-          data: [],
+          data: series.FE,
+        },
+        {
+          type: 'line',
+          name: 'Eqilibrium',
+          color: 'black',
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          zIndex: 2,
+          allowPointSelect: false,
+          animation: false,
+          data: series.EQ,
+          marker: {
+            enabled: true,
+          },
+          label: {
+            useHTML: true,
+            style: { fontSize: '11px', fontWeight: '400' },
+            connectorAllowed: true,
+            formatter: (): any => {
+              return `Long-run:</br>Y = $${series.EQ[0].x.toFixed(0)}</br>Price level = ${series.EQ[0].y.toFixed(0)}`;
+            }
+          }
+        },
+        {
+          type: 'line',
+          name: 'Initial AD',
+          dashStyle: 'Dash',
+          color: 'rgba(93, 93, 93, 1)',
+          lineWidth: 1,
+          zIndex: -1,
+          label: { enabled: false },
+          visible: true,
+          animation: false,
+          data: series.adRef
+        },
+        {
+          type: 'line',
+          name: 'Initial SRAS',
+          dashStyle: 'Dash',
+          color: 'rgba(93, 93, 93, 1)',
+          lineWidth: 1,
+          zIndex: -1,
+          label: { enabled: false },
+          visible: true,
+          animation: false,
+          data: series.srasRef
+        },
+        {
+          type: 'line',
+          name: 'Initial LRAS',
+          dashStyle: 'Dash',
+          color: 'rgba(93, 93, 93, 1)',
+          lineWidth: 1,
+          zIndex: -1,
+          label: { enabled: false },
+          visible: true,
+          animation: false,
+          data: series.feRef,
+        },
+        {
+          type: 'line',
+          name: 'Initial equilibrium',
+          color: 'rgba(93, 93, 93, 1)',
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          zIndex: 1,
+          allowPointSelect: false,
+          animation: false,
+          data: series.eqRef,
+          marker: {
+            enabled: true,
+          },
+          label: {enabled: false}
         },
 
       ],
@@ -156,7 +278,7 @@ export class KeyDiagram7Component {
         tickColor: '#757575',
         title: { useHTML: true, text: 'Output, Y (billions of dollars)' },
         min: 2000,
-        max: 7000
+        max: 6750
 
       },
       yAxis: {
@@ -166,6 +288,9 @@ export class KeyDiagram7Component {
         tickColor: '#757575',
         tickWidth: 1,
         title: { useHTML: true, text: 'Price level, P' },
+        min: 25,
+        max: 275,
+        tickInterval: 50
 
       },
       plotOptions: {
@@ -193,11 +318,12 @@ export class KeyDiagram7Component {
 
     let ybar = 4000 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
 
-    let x: number = 2750, adSeries = [], lmSeries = [], eqSeries = [], feSeries;
+    let x: number = 2500, adSeries = [], srasSeries = [], eqSeries = [], feSeries;
+    let adRef: any[] = [], srasRef: any[] = [], feRef: any[] = [], eqRef: any[] = [];
 
-    let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
-    let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
-    let eq = (-(c0 / (cr + ir)) - G / (cr + ir) - i0 / (cr + ir) + l0 / lr - M / (lr * P) - piE + (cy * t0) / (cr + ir)) / (-(ly / lr) - (1 - cy + cy * t) / (cr + ir));
+    let eq = (cr * M + ir * M - cr * l0 * P - ir * l0 * P + c0 * lr * P + G * lr * P + i0 * lr * P +
+      cr * lr * P * piE + ir * lr * P * piE -
+      cy * lr * P * t0) / (P * (lr - cy * lr + cr * ly + ir * ly + cy * lr * t));
 
     let ad = (x: number) => {
       return (cr * M + ir * M) / (cr * l0 + ir * l0 - c0 * lr - G * lr - i0 * lr - cr * lr * piE -
@@ -210,43 +336,64 @@ export class KeyDiagram7Component {
         x: x,
         y: ad(x)
       };
-      let point2 = {
-        name: 'LM',
-        x: x,
-        y: lm(x)
-      }
 
       adSeries.push(point);
-      lmSeries.push(point2);
       x = x + 25;
     } while (x < 6500);
 
+    srasSeries = [
+      { x: 2000, y: P, marker: { enabled: false, radius: 0 } },
+      { x: 6500, y: P, marker: { enabled: false, radius: 0 } },
+    ]
+
     // equilibrium series
     eqSeries = [
-      { x: 0, y: is(eq), marker: { enabled: false, radius: 0 } },
       {
         name: 'Equilibrium',
         x: eq,
-        y: is(eq),
+        y: ad(eq),
         color: 'blue',
         marker: {
           symbol: 'circle',
           enabled: true
         }
       },
-      { x: eq, y: -3, marker: { enabled: false } }
+      { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
     ];
 
     feSeries = [
-      [ybar, -3],
-      [ybar, 5]
+      { x: ybar, y: 0, marker: { enabled: false, radius: 0 } },
+      { x: ybar, y: 250, marker: { enabled: false, radius: 0 } },
     ]
+
+    if (addRef) {
+      adRef = adSeries;
+      srasRef = srasSeries;
+      feRef = feSeries;
+      eqRef =  [
+        {
+          name: 'Equilibrium',
+          x: eq,
+          y: ad(eq),
+          color: 'rgba(93, 93, 93, 1)',
+          marker: {
+            symbol: 'circle',
+            enabled: true
+          }
+        },
+        { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
+      ];
+    }
 
     return {
       AD: adSeries,
-      LM: lmSeries,
+      SRAS: srasSeries,
       EQ: eqSeries,
-      FE: feSeries
+      FE: feSeries,
+      adRef: adRef,
+      srasRef: srasRef,
+      feRef: feRef,
+      eqRef: eqRef
     }
 
   }
