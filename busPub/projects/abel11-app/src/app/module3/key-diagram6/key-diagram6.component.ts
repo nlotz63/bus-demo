@@ -11,6 +11,7 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -37,6 +38,8 @@ HC_accessibility(Highcharts);
 export class KeyDiagram6Component implements OnInit, AfterViewInit {
   mode: number = 0;
   showPlayer: boolean = false;
+  shortRunEquilibrium = 4000;
+  longRunEquilibrium = 4000;
 
   slider = new FormGroup({
     expectedOutput: new FormControl(75),
@@ -61,7 +64,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
   chart!: Highcharts.Chart;
 
 
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.ActiveRoute.queryParams.subscribe((params) => {
@@ -77,62 +80,78 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
 
   public updateChart(value: any) {
     this.slider.patchValue(value);
-   let series = this._createSeries(false);
+    let series = this._createSeries(false);
+    let difference = series.FE[0].x - series.EQ[1].x;
+    let eqLabel = Math.abs(difference) < 1 ? 'Long-run' : 'Short-run';
+
     this.chart.series[0].setData(series.IS);
     this.chart.series[1].setData(series.LM);
     this.chart.series[2].setData(series.FE);
     this.chart.series[3].setData(series.EQ);
-
-
+    this.chart.series[3].update(
+      {
+        type: 'line',
+        label: {
+          useHTML: true,
+          style: { fontSize: '11px', fontWeight: '400' },
+          formatter: (): any => {
+            return `${eqLabel}:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>Price level = ${series.EQ[1].y.toPrecision(3)}%`;
+          }
+        }
+      }
+    );
+    this.announcer.announce(`The graph has been updated`);
   }
 
   public playStep(mode: number) {
     this.mode = mode;
     this.slider.setValue({
-    expectedOutput: 75,
-    wealth: 100,
-    govPurchases: 600,
-    taxes: 400,
-    expectedTFP: 3558,
-    effTax: 0.12,
+      expectedOutput: 75,
+      wealth: 100,
+      govPurchases: 600,
+      taxes: 400,
+      expectedTFP: 3558,
+      effTax: 0.12,
 
-    money: 255000,
-    priceLevel: 100,
-    expectedInflation: 0.05,
-    nominalRate:0.02,
+      money: 255000,
+      priceLevel: 100,
+      expectedInflation: 0.05,
+      nominalRate: 0.02,
 
-    supplyShock: 0,
-    laborSupply: 0,
-    capitalStock: 0
-    })
+      supplyShock: 0,
+      laborSupply: 0,
+      capitalStock: 0
+    });
+    this._snackBar.dismiss();
     this._setupChart();
-
+    this.announcer.announce(`Step ${mode + 1} has loaded.`);
   }
 
   public restoreEquilibrium() {
     let newPrice: number;
-     const subscription = this.playInterval.subscribe(() => {
+    this._messageBuilder();
+    const subscription = this.playInterval.subscribe(() => {
       let series = this._createSeries(false);
-      let difference = series.FE[0][0] - series.EQ[1].x;
+      let difference = series.FE[0].x - series.EQ[1].x;
       if (Math.abs(difference) > 60) {
         if (difference < 0) {
           newPrice = this.slider.value.priceLevel! + 1;
         } else {
-         newPrice = this.slider.value.priceLevel! - 1;
+          newPrice = this.slider.value.priceLevel! - 1;
         }
         this.updateChart({ priceLevel: newPrice });
       } else if (Math.abs(difference) > 5 && Math.abs(difference) < 60) {
         if (difference < 0) {
           newPrice = this.slider.value.priceLevel! + .25;
         } else {
-         newPrice = this.slider.value.priceLevel! - .25;
+          newPrice = this.slider.value.priceLevel! - .25;
         }
         this.updateChart({ priceLevel: newPrice });
-      }  else if (Math.abs(difference) >= 1 && Math.abs(difference) < 5) {
+      } else if (Math.abs(difference) >= .9 && Math.abs(difference) < 5) {
         if (difference < 0) {
           newPrice = this.slider.value.priceLevel! + .05;
         } else {
-         newPrice = this.slider.value.priceLevel! - .05;
+          newPrice = this.slider.value.priceLevel! - .05;
         }
         this.updateChart({ priceLevel: newPrice });
       } else {
@@ -140,8 +159,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
 
         return;
       }
-      })
-
+    });
   }
 
   private _setupChart() {
@@ -185,7 +203,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: '',
+          name: 'Equilibrium',
           color: 'black',
           dashStyle: 'Dot',
           lineWidth: 1,
@@ -195,8 +213,69 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
           data: series.EQ,
           marker: {
             enabled: true,
+          },
+          label: {
+            useHTML: true,
+            style: { fontSize: '11px', fontWeight: '400' },
+            connectorAllowed: true,
+            formatter: (): any => {
+              return `Long-run:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`;
+            }
           }
         },
+        {
+          type: 'line',
+          name: 'Initial IS',
+          dashStyle: 'Dash',
+          color: 'rgba(93, 93, 93, 1)',
+          lineWidth: 1,
+          zIndex: -1,
+          label: { enabled: false },
+          visible: true,
+          animation: false,
+          data: series.isRef,
+        },
+        {
+          type: 'line',
+          name: 'Initial LM',
+          dashStyle: 'Dash',
+          color: 'rgba(93, 93, 93, 1)',
+          lineWidth: 1,
+          zIndex: -1,
+          label: { enabled: false },
+          visible: true,
+          animation: false,
+          data: series.lmRef,
+        },
+        {
+          type: 'line',
+          name: 'Initial FE',
+          dashStyle: 'Dash',
+          color: 'rgba(93, 93, 93, 1)',
+          lineWidth: 1,
+          zIndex: -1,
+          label: { enabled: false },
+          visible: true,
+          animation: false,
+          data: series.feRef,
+        },
+        {
+          type: 'line',
+          name: 'Initial equilibrium',
+          color: 'rgba(93, 93, 93, 1)',
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          zIndex: 1,
+          allowPointSelect: false,
+          animation: false,
+          data: series.eqRef,
+          marker: {
+            enabled: true,
+          },
+          label: {enabled: false}
+
+        },
+
       ],
       xAxis: {
         lineColor: '#757575',
@@ -244,6 +323,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
     let ybar = 4000 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
 
     let x: number = 900, isSeries = [], lmSeries = [], eqSeries = [], feSeries;
+    let isRef: any[] = [], lmRef: any[] = [], eqRef: any[] = [], feRef: any[] = [];
 
     let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
     let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
@@ -281,19 +361,57 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
       },
       { x: eq, y: -3, marker: {enabled: false}}
     ];
-
     feSeries = [
-      [ybar, -3],
-      [ybar, 5]
-    ]
+      { x: ybar, y: -3, marker: { enabled: false, radius: 0 } },
+      { x: ybar, y: 5, marker: { enabled: false, radius: 0 } },
+    ];
+
+    this.shortRunEquilibrium = eq;
+    this.longRunEquilibrium = ybar;
+
+    if (addRef) {
+      isRef = isSeries;
+      lmRef = lmSeries;
+      eqRef = [
+        { x: 0, y: is(eq), marker: {enabled: false, radius: 0 } },
+        {
+          name: 'Equilibrium',
+          x: eq,
+          y: is(eq),
+          color: 'rgba(93, 93, 93, 1)',
+          marker: {
+            symbol: 'circle',
+            enabled: true
+          }
+        },
+        { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
+      ];
+      feRef = feSeries;
+    }
 
     return {
       IS: isSeries,
       LM: lmSeries,
       EQ: eqSeries,
-      FE: feSeries
+      FE: feSeries,
+      isRef: isRef,
+      lmRef: lmRef,
+      eqRef: eqRef,
+      feRef: feRef
     }
 
 }
 
+  private _messageBuilder() {
+    let message = ``;
+    if (this.shortRunEquilibrium > this.longRunEquilibrium + 0.5) {
+      message = `To restore long-run equilibrium, the price level will rise, shifting the LM curve up and to the left.`;
+    } else if (this.shortRunEquilibrium < this.longRunEquilibrium - 0.5) {
+      message = `To restore long-run equilibrium, the price level will fall, shifting the LM curve down and to the right.`;
+    } else {
+      message = `The economy is in long-rung equilibrium`;
+    }
+    this._snackBar.open(message, 'Close', { panelClass: 'econ-message', horizontalPosition: 'left', verticalPosition: 'top' });
+
+  }
 }
