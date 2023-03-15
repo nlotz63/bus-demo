@@ -114,18 +114,23 @@ caption {
   margin-left: 5px;
 }
 
-
-.econ-message {
+ .econ-message div.mdc-snackbar__surface {
   background-color: white;
   color: black;
+  width: 450px !important;
+  }
 
-}
+  .econ-message div.mdc-snackbar__label  {
+    color: black;
+  }
+
 .econ-message button span {
   color: rgb(4, 123, 156);
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 1.2em;
 }
 
 .wrapper {
   width: 100%;
 }
+
