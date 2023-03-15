@@ -12,6 +12,7 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -40,6 +41,8 @@ export class KeyDiagram7Component {
 
   mode: number = 0;
   showPlayer: boolean = false;
+  shortRunEquilibrium = 4000;
+  longRunEquilibrium = 4000;
 
   slider = new FormGroup({
     expectedOutput: new FormControl(75),
@@ -63,7 +66,7 @@ export class KeyDiagram7Component {
   chart!: Highcharts.Chart;
 
 
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.ActiveRoute.queryParams.subscribe((params) => {
@@ -92,14 +95,14 @@ export class KeyDiagram7Component {
         type: 'line',
         label: {
           useHTML: true,
-          style: {fontSize: '11px', fontWeight: '400'},
+          style: { fontSize: '11px', fontWeight: '400' },
           formatter: (): any => {
             return `${eqLabel}:</br>Y = $${series.EQ[0].x.toFixed(0)}</br>Price level = ${series.EQ[0].y.toFixed(0)}`;
           }
         }
       }
-    )
-
+    );
+    this.announcer.announce(`The graph has been updated`);
   }
 
   public playStep(mode: number) {
@@ -115,18 +118,20 @@ export class KeyDiagram7Component {
       money: 255000,
       priceLevel: 100,
       expectedInflation: 0.05,
-      nominalRate:0.02,
+      nominalRate: 0.02,
 
       supplyShock: 0,
       laborSupply: 0,
       capitalStock: 0
-      })
-      this._setupChart();
-
+    });
+    this._snackBar.dismiss();
+    this._setupChart();
+    this.announcer.announce(`Step ${mode + 1} has loaded.`);
   }
 
   public restoreEquilibrium() {
     let newPrice: number;
+    this._messageBuilder();
     const subscription = this.playInterval.subscribe(() => {
       let series = this._createSeries(false);
       let difference = series.FE[0].x - series.EQ[1].x;
@@ -364,7 +369,10 @@ export class KeyDiagram7Component {
     feSeries = [
       { x: ybar, y: 0, marker: { enabled: false, radius: 0 } },
       { x: ybar, y: 250, marker: { enabled: false, radius: 0 } },
-    ]
+    ];
+
+    this.shortRunEquilibrium = eq;
+    this.longRunEquilibrium = ybar;
 
     if (addRef) {
       adRef = adSeries;
@@ -395,6 +403,19 @@ export class KeyDiagram7Component {
       feRef: feRef,
       eqRef: eqRef
     }
+
+  }
+
+  private _messageBuilder() {
+    let message = ``;
+    if (this.shortRunEquilibrium > this.longRunEquilibrium + 0.5) {
+      message = `To restore long-run equilibrium, the price level will rise, shifting the LM curve up and to the left.`;
+    } else if (this.shortRunEquilibrium < this.longRunEquilibrium - 0.5) {
+      message = `To restore long-run equilibrium, the price level will fall, shifting the LM curve down and to the right.`;
+    } else {
+      message = `The economy is in long-rung equilibrium`;
+    }
+    this._snackBar.open(message, 'Close', { panelClass: 'econ-message', horizontalPosition: 'left', verticalPosition: 'top' });
 
   }
 
