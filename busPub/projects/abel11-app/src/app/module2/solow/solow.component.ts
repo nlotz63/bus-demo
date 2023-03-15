@@ -33,29 +33,19 @@ HC_accessibility(Highcharts);
     ])
   ]
 })
-  
+
 export class SolowComponent {
   mode: number = 0;
   showPlayer: boolean = false;
 
   slider = new FormGroup({
-    expectedOutput: new FormControl(1200),
-    wealth: new FormControl(150),
-    govPurchases: new FormControl(600),
-    taxes: new FormControl(400),
-    expectedTFP: new FormControl(385),
-    effTax: new FormControl(0.12),
-
-    money: new FormControl(133200),
-    priceLevel: new FormControl(120),
-    expectedInflation: new FormControl(0.05),
-    nominalRate: new FormControl(0.02),
-
-    supplyShock: new FormControl(0),
-    laborSupply: new FormControl(0),
-    capitalStock: new FormControl(0)
-
-
+    popRate: new FormControl(.02),
+    depreciationRate: new FormControl(.04),
+    capital: new FormControl(23539),
+    savingRate: new FormControl(.25),
+    productivity: new FormControl(25.99),
+    labor: new FormControl(157.5),
+    population: new FormControl(1500)
   });
 
   chart!: Highcharts.Chart;
@@ -77,9 +67,7 @@ export class SolowComponent {
   public updateChart(value: any) {
     this.slider.patchValue(value);
     let series = this._createSeries(false);
-    this.chart.series[0].setData(series.NS);
-    this.chart.series[1].setData(series.Invest);
-    this.chart.series[2].setData(series.EQ);
+    this.chart.series[0].setData(series.invest);
 
     this.chart.series[0].update(
       {
@@ -92,7 +80,7 @@ export class SolowComponent {
             fontWeight: '400'
           },
           formatter: () => {
-            return `Saving, S(Y = ${series.FE[0][0]})`;
+            return `Saving, S(Y = ${series.invest[0].y})`;
           }
 
         }
@@ -112,21 +100,13 @@ export class SolowComponent {
   public playStep(mode: number) {
     this.mode = mode;
     this.slider.setValue({
-      expectedOutput: 1200,
-      wealth: 150,
-      govPurchases: 600,
-      taxes: 400,
-      expectedTFP: 385,
-      effTax: 0.12,
-
-      money: 133200,
-      priceLevel: 120,
-      expectedInflation: 0.05,
-      nominalRate: 0.02,
-
-      supplyShock: 0,
-      laborSupply: 0,
-      capitalStock: 0
+      popRate: 1,
+      depreciationRate: 2,
+      capital: 23539,
+      savingRate: 400,
+      productivity: 25.99,
+      labor: 157.5,
+      population: 1500
     })
     this._setupChart();
 
@@ -134,6 +114,7 @@ export class SolowComponent {
 
   private _setupChart() {
     let series = this._createSeries(true);
+    console.log(series.prod);
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
         type: 'spline',
@@ -141,7 +122,7 @@ export class SolowComponent {
         height: 425,
         ignoreHiddenSeries: true,
       },
-      tooltip: { enabled: false },
+      tooltip: { enabled: true },
       credits: {
         text: 'Pearson Education',
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
@@ -154,7 +135,7 @@ export class SolowComponent {
           name: 'Saving, S(Y = 1200)',
           zIndex: -1,
           animation: false,
-          data: series.NS,
+          data: series.prod,
           accessibility: {
             description: 'An upward-sloping straight line'
           },
@@ -170,7 +151,7 @@ export class SolowComponent {
           name: 'Investment, I',
           zIndex: -1,
           animation: false,
-          data: series.Invest,
+          data: series.invest,
           accessibility: {
             description: 'A downward-sloping straight line'
           },
@@ -214,8 +195,6 @@ export class SolowComponent {
         lineWidth: 1.,
         tickColor: '#757575',
         title: { useHTML: true, text: 'Desired national saving, and desired investment' },
-        min: 750,
-        max: 2500
 
       },
       yAxis: {
@@ -225,14 +204,10 @@ export class SolowComponent {
         tickColor: '#757575',
         tickWidth: 1,
         title: { useHTML: true, text: 'Real interest rate, r' },
-        min: 0,
-        max: 7,
-        tickInterval: 1
-
       },
       plotOptions: {
         series: {
-          enableMouseTracking: false,
+          enableMouseTracking: true,
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
@@ -242,7 +217,7 @@ export class SolowComponent {
             enabled: true
           },
           marker: {
-            radius: 0
+            radius: 4
           },
 
         }
@@ -256,105 +231,41 @@ export class SolowComponent {
     // slider values
     let slider = this.slider.value;
     // model parameters
-    let c0: number = 300, cy: number = .75, cr: number = 300, t0: number = 0.25 * slider.taxes!, t: number = 0.2,
-      i0: number = 2000, ir: number = 200, G: number = slider.govPurchases!;
-    let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
+    let K = slider.capital!, N = slider.labor!, max = K / N, step = max/500;
+    let x = 0, n = slider.popRate!, d = slider.depreciationRate!, s = slider.savingRate, A = slider.productivity!, alpha = 0.3;
+    let investSeries: any[] = [], prodSeries: any[] = [], savingSeries: any[] = [], eqSeries: any[] = [], eq2Series: any[] = [];
 
-    let ybar = slider.expectedOutput! + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
-
-    let x: number = 300, isSeries = [], lmSeries = [], eqSeries = [], eq2Series = [], feSeries, nsSeries = [], investSeries = [];
-
-    let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
-    let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
-    let ns = (x: number) => { return (c0 + G - cy * t0 + x - ybar + cy * ybar - cy * t * ybar) / cr }
-    let invest = (x: number) => { return (i0 - x) / ir }
-    let eq = (cr * i0 - c0 * ir - G * ir + cy * ir * t0 + ir * ybar - cy * ir * ybar +
-      cy * ir * t * ybar) / (cr + ir);
+    let production = (x: number) => {
+      return A * Math.pow(x, alpha);
+    };
+    let invest = (x: number) => {
+      return x * (n + d);
+    }
 
     do {
       let point = {
-        name: 'IS',
         x: x,
-        y: is(x)
+        y: production(x)
       };
       let point2 = {
-        name: 'LM',
-        x: x,
-        y: lm(x)
-      }
-
-      isSeries.push(point);
-      lmSeries.push(point2);
-      x = x + 25;
-    } while (x < 6500);
-    x = 50;
-
-    do {
-      let point = {
-        name: 'Saving',
-        x: x,
-        y: ns(x)
-      };
-      let point2 = {
-        name: 'Investment',
         x: x,
         y: invest(x)
-      }
-      nsSeries.push(point);
+      };
+
+      prodSeries.push(point);
       investSeries.push(point2);
 
-      x = x + 5;
-    } while (x < 2000);
+      x += step;
 
-    // equilibrium series
-    eqSeries = [
-      { x: 0, y: invest(eq), marker: { enabled: false, radius: 0 } },
-      {
-        name: 'Equilibrium',
-        x: eq,
-        y: invest(eq),
-        color: '#008000',
-        marker: {
-          symbol: 'circle',
-          radius: 4,
-          enabled: true
+    } while (x <= max);
 
-        }
-      },
-      {
-        x: eq, y: 0, marker: {
-          enabled: false, radius: 0
-          }
-      }
-    ];
-    eq2Series = [
-      { x: 0, y: invest(eq), marker: { enabled: false, radius: 0 } },
-      {
-        name: 'Equilibrium',
-        x: ybar,
-        y: invest(eq),
-        color: '#008000',
-        marker: {
-          symbol: 'circle',
-          enabled: true
-
-        }
-      },
-      { x: ybar, y: 0, marker: { enabled: false } }
-    ];
-    feSeries = [
-      [ybar, 0],
-      [ybar, 2.25]
-    ]
 
     return {
-      IS: isSeries,
-      LM: lmSeries,
+      invest: investSeries,
+      prod: prodSeries,
+      saving: savingSeries,
       EQ: eqSeries,
       EQ2: eq2Series,
-      FE: feSeries,
-      NS: nsSeries,
-      Invest: investSeries
     }
 
   }
