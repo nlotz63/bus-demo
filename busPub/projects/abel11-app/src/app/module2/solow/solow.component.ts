@@ -37,6 +37,7 @@ HC_accessibility(Highcharts);
 export class SolowComponent {
   mode: number = 0;
   showPlayer: boolean = false;
+  hidden: string | null = 'hidden';
 
   slider = new FormGroup({
     popRate: new FormControl(.02),
@@ -49,6 +50,7 @@ export class SolowComponent {
   });
 
   chart!: Highcharts.Chart;
+  chart2!: Highcharts.Chart;
 
   constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
 
@@ -100,21 +102,21 @@ export class SolowComponent {
   public playStep(mode: number) {
     this.mode = mode;
     this.slider.setValue({
-      popRate: 1,
-      depreciationRate: 2,
+      popRate: .01,
+      depreciationRate: .04,
       capital: 23539,
-      savingRate: 400,
+      savingRate: .35,
       productivity: 25.99,
       labor: 157.5,
       population: 1500
-    })
+    });
+    this.hidden = 'hidden';
     this._setupChart();
 
   }
 
   private _setupChart() {
     let series = this._createSeries(true);
-    console.log(series.prod);
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
         type: 'spline',
@@ -132,7 +134,7 @@ export class SolowComponent {
       series: [
         {
           type: 'line',
-          name: 'Saving, S(Y = 1200)',
+          name: 'f(k)',
           zIndex: -1,
           animation: false,
           data: series.prod,
@@ -146,6 +148,23 @@ export class SolowComponent {
             }
           }
         },
+        {
+          type: 'line',
+          name: 'sf(k)',
+          zIndex: -1,
+          animation: false,
+          data: series.saving,
+          accessibility: {
+            description: 'An upward-sloping straight line'
+          },
+          label: {
+            style: {
+              fontSize: '12px',
+              fontWeight: '400'
+            }
+          }
+        },
+
         {
           type: 'line',
           name: 'Investment, I',
@@ -164,7 +183,7 @@ export class SolowComponent {
         },
         {
           type: 'line',
-          name: 'Equilibrium',
+          name: 'saving',
           enableMouseTracking: true,
           color: 'black',
           dashStyle: 'Dot',
@@ -186,8 +205,6 @@ export class SolowComponent {
               return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
             }
           }
-
-
         },
       ],
       xAxis: {
@@ -195,7 +212,6 @@ export class SolowComponent {
         lineWidth: 1.,
         tickColor: '#757575',
         title: { useHTML: true, text: 'Desired national saving, and desired investment' },
-
       },
       yAxis: {
         gridLineWidth: 0,
@@ -219,11 +235,117 @@ export class SolowComponent {
           marker: {
             radius: 4
           },
-
         }
-
       }
     });
+
+
+    switch (this.mode) {
+      case 0:
+
+        break;
+      case 1:
+        this.hidden = null;
+        this.chart.update({
+          chart: {
+            height: 300
+          }
+
+        });
+        this.chart2 = new Highcharts.Chart('chart2', {
+          chart: {
+            type: 'spline',
+            animation: false,
+            height: 300,
+            ignoreHiddenSeries: true,
+          },
+          tooltip: { enabled: true },
+          credits: {
+            text: 'Pearson Education',
+            href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
+          },
+          title: { text: 'National Saving and Investment' },
+          legend: { enabled: false },
+          series: [
+            {
+              type: 'line',
+              name: 'Saving, S(Y = 1200)',
+              zIndex: -1,
+              animation: false,
+              data: series.consumption,
+              accessibility: {
+                description: 'An upward-sloping straight line'
+              },
+              label: {
+                style: {
+                  fontSize: '12px',
+                  fontWeight: '400'
+                }
+              }
+            },
+            {
+              type: 'line',
+              name: 'Equilibrium',
+              enableMouseTracking: true,
+              color: 'black',
+              dashStyle: 'Dot',
+              lineWidth: 1,
+              zIndex: 2,
+              allowPointSelect: true,
+              animation: false,
+              data: series.EQ,
+              marker: {
+                enabled: true,
+              },
+              accessibility: {
+                description: 'A point showing the intersection of the national saving and investment curves'
+              },
+              label: {
+                useHTML: true,
+                style: {fontSize: '11px', fontWeight: '400'},
+                formatter: () => {
+                  return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
+                }
+              }
+            },
+          ],
+          xAxis: {
+            lineColor: '#757575',
+            lineWidth: 1.,
+            tickColor: '#757575',
+            title: { useHTML: true, text: 'Desired national saving, and desired investment' },
+          },
+          yAxis: {
+            gridLineWidth: 0,
+            lineColor: '#757575',
+            lineWidth: 1.,
+            tickColor: '#757575',
+            tickWidth: 1,
+            title: { useHTML: true, text: 'Real interest rate, r' },
+            min: 0
+          },
+          plotOptions: {
+            series: {
+              enableMouseTracking: true,
+              color: '#C31229',
+              tooltip: {
+                headerFormat: '{series.name}<br/>',
+                pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+              },
+              label: {
+                enabled: true
+              },
+              marker: {
+                radius: 4
+              },
+            }
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
 
   }
 
@@ -231,9 +353,9 @@ export class SolowComponent {
     // slider values
     let slider = this.slider.value;
     // model parameters
-    let K = slider.capital!, N = slider.labor!, max = K / N, step = max/500;
-    let x = 0, n = slider.popRate!, d = slider.depreciationRate!, s = slider.savingRate, A = slider.productivity!, alpha = 0.3;
-    let investSeries: any[] = [], prodSeries: any[] = [], savingSeries: any[] = [], eqSeries: any[] = [], eq2Series: any[] = [];
+    let K = slider.capital!, N = slider.labor!/10, max = 6*K / N, step = max/500;
+    let x = 0, n = slider.popRate!, d = slider.depreciationRate!, s = slider.savingRate!, A = slider.productivity!, alpha = 0.3;
+    let investSeries: any[] = [], prodSeries: any[] = [], savingSeries: any[] = [], eqSeries: any[] = [], eq2Series: any[] = [], consumptionSeries: any[] = [];
 
     let production = (x: number) => {
       return A * Math.pow(x, alpha);
@@ -251,9 +373,19 @@ export class SolowComponent {
         x: x,
         y: invest(x)
       };
+      let point3 = {
+        x: x,
+        y: s*production(x)
+      };
+      let point4 = {
+        x: x,
+        y: production(x) - invest(x)
+      };
 
       prodSeries.push(point);
       investSeries.push(point2);
+      savingSeries.push(point3);
+      consumptionSeries.push(point4);
 
       x += step;
 
@@ -264,6 +396,7 @@ export class SolowComponent {
       invest: investSeries,
       prod: prodSeries,
       saving: savingSeries,
+      consumption: consumptionSeries,
       EQ: eqSeries,
       EQ2: eq2Series,
     }

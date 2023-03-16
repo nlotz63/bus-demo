@@ -2,19 +2,64 @@
   <div class="wrapper">
     <div class="item-narrative">
       <div *ngIf="mode === 0" @myAnimationTrigger>
-        <h2>Overview of the ISLM model</h2>
+        <h2>The per-worker production function</h2>
         <ul>
           <li>Bullet point 1</li>
           <li>Bullet point 2</li>
           <li>Bullet point 3</li>
         </ul>
       </div>
+      <div *ngIf="mode === 1" @myAnimationTrigger>
+        <h2>The relationship of consumption per worker to the capital-labor ratio
+          in the steady state</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+      </div>
+      <div *ngIf="mode === 2" @myAnimationTrigger>
+        <h2>TDetermining the capital-labor ratio in the steady state</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+      </div>
+      <div *ngIf="mode === 3" @myAnimationTrigger>
+        <h2>The effect of an increased saving rate on the steady-state capital-labor ratio</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+      </div>
+      <div *ngIf="mode === 4" @myAnimationTrigger>
+        <h2>The effect of a higher population growth rate on the steady-state capital-labor ratio</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+      </div>
+      <div *ngIf="mode === 5" @myAnimationTrigger>
+        <h2>The effect of a productivity improvement on the steady-state capital-labor ratio</h2>
+        <ul>
+          <li>Bullet point 1</li>
+          <li>Bullet point 2</li>
+          <li>Bullet point 3</li>
+        </ul>
+      </div>
+
     </div>
-    <div id="chart1" class="item-chart"></div>
+    <div class="control-column">
+      <div id="chart1" class="item-chart"></div>
+      <div [attr.hidden]="hidden" id="chart2" class="item-chart"></div>
+      </div>
   </div>
     <app-player
     *ngIf="showPlayer"
-    [steps]="4"
+    [steps]="6"
     [mode]="mode"
     (modeChange)="playStep($event)"
     class="player-navigation-container"
