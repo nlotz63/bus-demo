@@ -19,7 +19,7 @@
         </ul>
       </div>
       <div *ngIf="mode === 2" @myAnimationTrigger>
-        <h2>TDetermining the capital-labor ratio in the steady state</h2>
+        <h2>Determining the capital-labor ratio in the steady state</h2>
         <ul>
           <li>Bullet point 1</li>
           <li>Bullet point 2</li>
@@ -33,6 +33,18 @@
           <li>Bullet point 2</li>
           <li>Bullet point 3</li>
         </ul>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Saving rate"
+            showValue="false"
+            displayValue="{{slider.value.savingRate | percent: '0.0-2' }}"
+            [min]=".1"
+            [max]=".4"
+            step=".01"
+            [value]="slider.value.savingRate!"
+            (valueChange)="updateChart({ savingRate: $event })"
+          ></econ-slider>
+        </div>
       </div>
       <div *ngIf="mode === 4" @myAnimationTrigger>
         <h2>The effect of a higher population growth rate on the steady-state capital-labor ratio</h2>
@@ -41,6 +53,18 @@
           <li>Bullet point 2</li>
           <li>Bullet point 3</li>
         </ul>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Population growth rate"
+            showValue="false"
+            displayValue="{{slider.value.popRate | percent: '0.0-2' }}"
+            [min]="0"
+            [max]=".03"
+            step=".0005"
+            [value]="slider.value.popRate!"
+            (valueChange)="updateChart({ popRate: $event })"
+          ></econ-slider>
+        </div>
       </div>
       <div *ngIf="mode === 5" @myAnimationTrigger>
         <h2>The effect of a productivity improvement on the steady-state capital-labor ratio</h2>
