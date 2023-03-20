@@ -186,7 +186,7 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         text: 'Pearson Education',
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
-      title: { text: 'AD/AS Model: misperceptions version' },
+      title: { text: 'AD/AS Model: Misperceptions version' },
       legend: { enabled: false },
       series: [
         {
