@@ -35,9 +35,9 @@ HC_accessibility(Highcharts);
       ])
     ])
   ]
-
 })
-export class KeyDiagram7Component {
+
+export class KeyDiagram7Component implements OnInit, AfterViewInit {
 
   mode: number = 0;
   showPlayer: boolean = false;
@@ -304,7 +304,7 @@ export class KeyDiagram7Component {
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+            pointFormat: 'Output: ${point.x:.0f} billion<br/>Price level: {point.y:.1f}'
           }
         }
 
@@ -409,9 +409,9 @@ export class KeyDiagram7Component {
   private _messageBuilder() {
     let message = ``;
     if (this.shortRunEquilibrium > this.longRunEquilibrium + 0.5) {
-      message = `To restore long-run equilibrium, the price level will rise, shifting the LM curve up and to the left.`;
+      message = `To restore long-run equilibrium, the price level will rise, shifting the SRAS curve up.`;
     } else if (this.shortRunEquilibrium < this.longRunEquilibrium - 0.5) {
-      message = `To restore long-run equilibrium, the price level will fall, shifting the LM curve down and to the right.`;
+      message = `To restore long-run equilibrium, the price level will fall, shifting the SRAS curve down.`;
     } else {
       message = `The economy is in long-rung equilibrium`;
     }
