@@ -1,1 +1,365 @@
-<p>key-diagram8 works!</p>
+<div class="econ-interactive-container">
+  <div class="wrapper">
+    <div class="item-narrative">
+      <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
+        <h2>Overview of the AD/AS model</h2>
+        <ul>
+          <li>
+            The real interest rate, <span econMath="\(r\)"></span>, is on the
+            vertical axis, and output, <span econMath="\(Y\)"></span>, is on the
+            horizontal axis.
+          </li>
+          <li>
+            The full-employment line, <span econMath="\(FE\)"></span>, is
+            vertical at full-employment output.
+          </li>
+          <li>
+            For any level of output, <span econMath="\(Y\)"></span>, the IS
+            curve gives the real interest rate, <span econMath="\(r\)"></span>, that clears the goods
+            market.
+          </li>
+          <li>
+            For given values of the price level and output, the LM curve gives
+            the real interest rate that clears the asset market.
+          </li>
+          <li>
+            The economy is in general equilibrium at the intersection of all
+            three curves.
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="mode === 1" class="econ-narative-block" @myAnimationTrigger>
+        <h2>Factors that shift the AD curve: IS curve shifters (part 1)</h2>
+        <ul>
+          <li>
+            The IS curve shifts up and to the right because of a decline in
+            desired national saving if
+            <ul>
+              <li>Wealth increases,</li>
+              <li>Expected future output increases,</li>
+              <li>Government purchases increase,</li>
+              <li>Taxes decrease.</li>
+            </ul>
+          </li>
+        </ul>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Wealth"
+            showValue="false"
+            [showPercent]="true"
+            [min]="-500"
+            [max]="700"
+            step="10"
+            [value]="slider.value.wealth!"
+            (valueChange)="updateChart({ wealth: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Expected future output"
+            showValue="false"
+            [showPercent]="true"
+            [min]="-525"
+            [max]="675"
+            step="10"
+            [value]="slider.value.expectedOutput!"
+            (valueChange)="updateChart({ expectedOutput: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Government purchases"
+            showValue="false"
+            [showPercent]="true"
+            [min]="-400"
+            [max]="1600"
+            step="10"
+            [showPercent]="true"
+            [value]="slider.value.govPurchases!"
+            #startValue
+            (valueChange)="updateChart({ govPurchases: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Taxes"
+            showValue="false"
+            [showPercent]="true"
+            [min]="-400"
+            [max]="1200"
+            step="10"
+            [showPercent]="true"
+            [value]="slider.value.taxes!"
+            #startValue
+            (valueChange)="updateChart({ taxes: $event })"
+          ></econ-slider>
+        </div>
+        <div>
+          <button
+            class="large-button"
+            mat-raised-button
+            (click)="restoreEquilibrium()"
+            matTooltip="Restores long-run equilibrium"
+          >
+            Restore Equilibrium
+          </button>
+          <button
+            mat-raised-button
+            (click)="playStep(1)"
+            matTooltip="Resets graph and sliders to their initial state"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+      <div *ngIf="mode === 2" class="econ-narative-block" @myAnimationTrigger>
+        <h2>Factors that shift the AD curve: IS curve shifters (part 2)</h2>
+        <ul>
+          <li>
+            The IS curve shifts up and to the right because of an increase in
+            desired investment if
+            <ul>
+              <li>Expected future TFP increases,</li>
+              <li>The effective tax rate on capital decreases.</li>
+            </ul>
+          </li>
+        </ul>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Expected future TFP"
+            showValue="false"
+            [showPercent]="true"
+            [min]="2116"
+            [max]="5000"
+            step="1"
+            [showPercent]="true"
+            [value]="slider.value.expectedTFP!"
+            #startValue
+            (valueChange)="updateChart({ expectedTFP: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Effective tax rate on capital"
+            showValue="false"
+            [showPercent]="true"
+            [min]="0.07"
+            [max]="0.17"
+            step=".0025"
+            [showPercent]="true"
+            [value]="slider.value.effTax!"
+            #startValue
+            (valueChange)="updateChart({ effTax: $event })"
+          ></econ-slider>
+        </div>
+        <div>
+          <button
+            class="large-button"
+            mat-raised-button
+            (click)="restoreEquilibrium()"
+            matTooltip="Restores long-run equilibrium"
+          >
+            Restore Equilibrium
+          </button>
+          <button
+            mat-raised-button
+            (click)="playStep(2)"
+            matTooltip="Resets graph and sliders to their initial state"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+      <div *ngIf="mode === 3" class="econ-narative-block" @myAnimationTrigger>
+        <h2>Factors that shift the AD curve: LM curve shfiters (part 3)</h2>
+        <ul>
+          <li>
+            The LM curve shifts down and to the right because of an increase in
+            the real money supply if
+            <ul>
+              <li>Nominal money supply increases,</li>
+              <li>Price level decreases.</li>
+            </ul>
+          </li>
+          <li>
+            The LM curve shifts down and to the right because of a decrease in
+            real money demand if
+            <ul>
+              <li>Expected inflation increases,</li>
+              <li>Nominal interest rate on monetary assets decreases.</li>
+            </ul>
+          </li>
+        </ul>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Nominal money supply"
+            showValue="false"
+            [showPercent]="true"
+            [min]="185000"
+            [max]="325000"
+            step="100"
+            [value]="slider.value.money!"
+            #startValue
+            (valueChange)="updateChart({ money: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Expected inflation"
+            showValue="false"
+            [showPercent]="true"
+            [min]="0.0"
+            [max]="0.1"
+            step="0.0025"
+            [value]="slider.value.expectedInflation!"
+            (valueChange)="updateChart({ expectedInflation: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Nominal rate on money"
+            showValue="false"
+            [showPercent]="true"
+            [min]="0.0"
+            [max]="0.04"
+            step="0.0025"
+            [value]="slider.value.nominalRate!"
+            (valueChange)="updateChart({ nominalRate: $event })"
+          ></econ-slider>
+        </div>
+        <div>
+          <button
+            class="large-button"
+            mat-raised-button
+            (click)="restoreEquilibrium()"
+            matTooltip="Restores long-run equilibrium"
+          >
+            Restore Equilibrium
+          </button>
+          <button
+            mat-raised-button
+            (click)="playStep(3)"
+            matTooltip="Resets graph and sliders to their initial state"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+      <div *ngIf="mode === 4" class="econ-narative-block" @myAnimationTrigger>
+        <h2>Factors that shift the SRAS curve</h2>
+        <ul>
+          <li>
+            If the LM curve shifts down and to the right because of a shock, the
+            price level will rise, shifting the LM curve up and to the left to
+            restore general equilibrium.
+          </li>
+          <li>
+            If the IS curve shifts up and to the right because of a shock, the
+            price level will rise, shifting the LM curve up and to the left to
+            restore general equilibrium.
+          </li>
+          <li>
+            If the FE line shifts to the right because of a shock, the price
+            level will decline, shifting the LM curve down and to the right to
+            restore general equilibrium.
+          </li>
+        </ul>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Expected price level"
+            showValue="false"
+            [showPercent]="true"
+            [min]="50"
+            [max]="150"
+            step="1"
+            [value]="slider.value.expectedPrice!"
+            #startValue
+            (valueChange)="updateChart({ expectedPrice: $event })"
+          ></econ-slider>
+        </div>
+        <div>
+          <button
+            class="large-button"
+            mat-raised-button
+            (click)="restoreEquilibrium()"
+            matTooltip="Restores long-run equilibrium"
+          >
+            Restore Equilibrium
+          </button>
+          <button
+            mat-raised-button
+            (click)="playStep(4)"
+            matTooltip="Resets graph and sliders to their initial state"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+      <div *ngIf="mode === 5" class="econ-narative-block" @myAnimationTrigger>
+        <h2>Factors that shift the LRAS curve</h2>
+        <ul>
+          <li>
+            The FE line shifts to the right because of an increase in the
+            full-employment level of output caused by
+            <ul>
+              <li>
+                A beneficial supply shock that causes an increase in total
+                factor productivity,
+              </li>
+              <li>An increase in labor supply,</li>
+              <li>An increase in the capital stock.</li>
+            </ul>
+          </li>
+        </ul>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Supply shock"
+            showValue="false"
+            [showPercent]="true"
+            [min]="-400"
+            [max]="400"
+            step="10"
+            [value]="slider.value.supplyShock!"
+            #startValue
+            (valueChange)="updateChart({ supplyShock: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Labor supply"
+            showValue="false"
+            [showPercent]="true"
+            [min]="-400"
+            [max]="400"
+            step="1"
+            [value]="slider.value.laborSupply!"
+            #startValue
+            (valueChange)="updateChart({ laborSupply: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Capital stock"
+            showValue="false"
+            [showPercent]="true"
+            [min]="-400"
+            [max]="400"
+            step="1"
+            [value]="slider.value.capitalStock!"
+            #startValue
+            (valueChange)="updateChart({ capitalStock: $event })"
+          ></econ-slider>
+        </div>
+        <div>
+          <button
+            class="large-button"
+            mat-raised-button
+            (click)="restoreEquilibrium()"
+            matTooltip="Restores long-run equilibrium"
+          >
+            Restore Equilibrium
+          </button>
+          <button
+            mat-raised-button
+            (click)="playStep(5)"
+            matTooltip="Resets graph and sliders to their initial state"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="chart1" class="item-chart"></div>
+  </div>
+  <app-player
+    *ngIf="showPlayer"
+    [steps]="6"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
+</div>
