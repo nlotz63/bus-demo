@@ -156,11 +156,11 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         } else {
           newPrice = this.slider.value.expectedPrice! - .253;
         }
-      } else if (Math.abs(difference) >= .05 && Math.abs(difference) <.25) {
+      } else if (Math.abs(difference) >= .01 && Math.abs(difference) <.25) {
         if (difference > 0) {
-          newPrice = this.slider.value.expectedPrice! + .05;
+          newPrice = this.slider.value.expectedPrice! + .02;
         } else {
-          newPrice = this.slider.value.expectedPrice! - .053;
+          newPrice = this.slider.value.expectedPrice! - .0215;
         }
       } else {
         subscription.unsubscribe();
