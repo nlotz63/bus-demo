@@ -1,1 +1,63 @@
-<p>key-diagram5 works!</p>
+<div class="econ-interactive-container">
+  <div class="wrapper">
+    <div id="chart1" class="item-chart"></div>
+    <div id="chart2" class="item-chart"></div>
+  </div>
+  <div class="wrapper">
+    <div *ngIf="mode ===0" class="econ-narative-block" @myAnimationTrigger>
+      <ul>
+        <li>
+          The IS curve is derived from the curves depicting desired national
+          saving and desired investment.
+        </li>
+        <li>
+          Higher levels of output (income) increase desired national saving and
+          shift the saving curve to the right.
+        </li>
+        <li>
+          The real interest rate at equilibrium between saving and investment in
+          the diagram on the left is plotted in the diagram on the right along
+          with the level of output on the horizontal axis.
+        </li>
+      </ul>
+      <div class="econ-slider">
+        <econ-slider
+          label="real interest rate"
+          econMath
+          showValue="false"
+          displayValue="{{ slider.value.rRate }}"
+          [min]="0"
+          [max]="2.75"
+          step=".01"
+          [value]="slider.value.rRate!"
+          (valueChange)="updateChart({ rRate: $event })"
+        ></econ-slider>
+        </div>
+
+    </div>
+  </div>
+  <div *ngIf="mode ===1" class="econ-narative-block" @myAnimationTrigger>
+    <h2>Factors that shift the LRAS curve</h2>
+    <ul>
+      <li>
+        The FE line shifts to the right because of an increase in the
+        full-employment level of output caused by
+        <ul>
+          <li>
+            A beneficial supply shock that causes an increase in total
+            factor productivity,
+          </li>
+          <li>An increase in labor supply,</li>
+          <li>An increase in the capital stock.</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <app-player
+  *ngIf="showPlayer"
+  [steps]="6"
+  [mode]="mode"
+  (modeChange)="playStep($event)"
+  class="player-navigation-container"
+></app-player>
+</div>
