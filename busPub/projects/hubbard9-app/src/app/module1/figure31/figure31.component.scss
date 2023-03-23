@@ -1,16 +1,16 @@
-@import '../../../app-mixins';
+@import "../../../app-mixins";
 
 .wrapper {
   @include flexbox();
   flex-flow: row;
-  justify-content:space-between;
+  justify-content: space-between;
 }
 .item-chart {
-  @include flex(5.5 );
+  @include flex(5.5);
 }
 
 .item-narrative {
-  @include flex(4.5 );
+  @include flex(4.5);
 }
 .econ-narative-block {
   margin-right: 7px;
@@ -21,7 +21,6 @@
   flex-flow: column;
   margin-left: 5px;
 }
-
 
 @media all and (max-width: 750px) {
   .wrapper {
@@ -36,7 +35,6 @@
   .item-narative {
     @include flex(0 0 100%);
   }
-
 }
 
 .large-button {
@@ -60,4 +58,20 @@ button {
   justify-content: space-between;
   align-items: center;
   margin: 5px 5px;
+}
+
+/* Table sytles */
+
+table {
+  table-layout: fixed;
+  width: 75%;
+  border-collapse: collapse;
+  border: 2px solid darkblue;
+  box-shadow: inset;
+  background-color: white;
+}
+td {
+  text-align: right;
+  padding-right: 20%;
+  border: solid 1px darkblue;
 }
