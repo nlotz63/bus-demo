@@ -1,0 +1,136 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+$hubbard-palette: (
+  50: #00c8ff,
+  100: #00b2e2,
+  200: #00aad8,
+  300: #51aacd,
+  400: #007fa3,
+  500: #257D46,
+  600: #006f89,
+  700: #00748f,
+  800: #214876,
+  900: #003145,
+  contrast: (
+  50: rgba(black, 0.87),
+  100: rgba(black, 0.87),
+  200: rgba(black, 0.87),
+  300: rgba(black, 0.87),
+  400: rgba(black, 0.87),
+  500: white,
+  600: white,
+  700: white,
+  800: white,
+  900: white,
+  ),
+);
+
+@include mat.strong-focus-indicators((
+  border-style: solid,
+  border-width: 1px,
+  border-radius: 2px,
+));
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$hubbard9-app-primary: mat.define-palette($hubbard-palette);
+$hubbard9-app-accent: mat.define-palette($hubbard-palette);
+
+// The warn palette is optional (defaults to red).
+$hubbard9-app-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$hubbard9-app-theme: mat.define-light-theme((
+  color: (
+    primary: $hubbard9-app-primary,
+    accent: $hubbard9-app-accent,
+    warn: $hubbard9-app-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($hubbard9-app-theme);
+@include mat.strong-focus-indicators-theme($hubbard9-app-theme);
+
+
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.econ-interactive-container {
+  max-width: 1000px;
+  //min-height: 550px;
+  background-color: rgb(218, 237, 250);
+  margin-left: 5px;
+  padding: 0.25rem;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  //border-bottom-left-radius: 0px;
+  box-shadow: 2px 4px 4px rgba(211, 211, 211, 0.877);
+}
+
+
+.econ-control {
+  position: relative;
+  left: 10%;
+}
+.model-container:focus-within {
+  border: solid rgb(4, 123, 156) 2px;
+}
+.model-container {
+  overflow: hidden;
+}
+
+h1 {
+  font-size: large;
+  color: #214876;
+  text-align: center;
+}
+
+h2 {
+  color: rgb(0, 118, 124);
+  font-size: 18pt;
+  font-weight: 500;
+  margin-left: 5px;
+}
+caption {
+  color: #00245D;
+  font-size: 14pt;
+  font-weight: 600;
+  text-align: left;
+  margin-left: 5px;
+}
+
+ .econ-message div.mdc-snackbar__surface {
+  background-color: white;
+  color: black;
+  width: 450px !important;
+  }
+
+  .econ-message div.mdc-snackbar__label  {
+    color: black;
+  }
+
+.econ-message button span {
+  color: rgb(4, 123, 156);
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.wrapper {
+  width: 100%;
+}

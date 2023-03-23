@@ -1,0 +1,21 @@
+<div class="econ-interactive-container">
+  <div class="wrapper">
+    <div class="item-narrative">
+      <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
+        <h2>Demand schedule</h2>
+        <table>
+
+        </table>
+
+      </div>
+      </div>
+    <div id="chart1" class="item-chart"></div>
+  </div>
+  <app-player
+    *ngIf="showPlayer"
+    [steps]="6"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
+</div>
