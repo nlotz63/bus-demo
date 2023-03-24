@@ -58,22 +58,51 @@ export class Figure31Component implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
     this.playStep(this.mode);
-    this.slider.setValue(
-      {
-        price: 150
-      }
-    );
 
   }
 
   public playStep(mode: number) {
     this.mode = mode;
+    this.slider.setValue(
+      {
+        price: 175
+      }
+    );
 
     this._setupChart(mode);
 
   }
 
   public updateChart(value: any) {
+    this.slider.setValue(value);
+    let series = this._createSeries(false);
+    console.log(series);
+    this.chart.update({
+      yAxis: {
+        labels: {
+          formatter: (el) => {
+            if (el.value === this.slider.value.price) {
+              return '<span style="fill: rgb(233, 30, 99);font-weight: 800;font-size: 12px;">' + '$' + el.value + '</span>';
+            }
+            return '$' + el.value;
+          }
+
+        }
+
+      },
+      xAxis: {
+        labels: {
+          formatter: (el) => {
+            if (el.value === series.point[1].x) {
+             return '<span style="fill: rgb(233, 30, 99);font-weight: 800;font-size: 12px;">' + el.value + '</span>';
+            }
+            return el.value.toString();
+          }
+        }
+      }
+    });
+    this.chart.series[1].setData(series.point);
+
 
   }
 
@@ -107,12 +136,31 @@ export class Figure31Component implements OnInit, AfterViewInit {
           },
           marker: {
             fillColor: 'black',
-            radius: 6
+            radius: 4,
+            enabled: true
           },
           accessibility: {
             description: 'A downward sloping straight line with 7 points'
           }
-  
+
+        },
+        {
+          type: 'line',
+          name: 'Quantity demanded',
+          zIndex: 1,
+          color: 'black',
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          data: series.point,
+          label: {
+            enabled: false
+          },
+          marker: {
+            symbol: 'circle',
+            fillColor: 'rgb(233, 30, 99)',
+            radius: 6,
+            enabled: true
+          }
         }
       ],
       xAxis: {
@@ -121,8 +169,16 @@ export class Figure31Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         title: { useHTML: true, text: 'Quantity (millions of pairs of shoes per week)' },
         min: 6,
-        max: 15
-
+        max: 15,
+        tickInterval: 1,
+        labels: {
+          formatter: (el) => {
+            if (el.value === 8) {
+             return '<span style="fill: rgb(233, 30, 99);font-weight: 800;font-size: 12px;">' + el.value + '</span>';
+            }
+            return el.value.toString();
+          }
+        }
       },
       yAxis: {
         gridLineWidth: 0,
@@ -133,7 +189,17 @@ export class Figure31Component implements OnInit, AfterViewInit {
         title: { useHTML: true, text: 'Price (dollars per pair of shoes)' },
         min: 0,
         max: 200,
-        tickInterval: 25
+        tickInterval: 25,
+        labels: {
+          formatter: (el) => {
+            if (el.value === this.slider.value.price) {
+              console.log('I was called');
+             return '<span style="fill: rgb(233, 30, 99);font-weight: 800;font-size: 12px;">' + '$' + el.value + '</span>';
+            }
+            return '$' + el.value;
+          }
+
+        }
 
       },
       plotOptions: {
@@ -153,11 +219,14 @@ export class Figure31Component implements OnInit, AfterViewInit {
 
   private _createSeries(addRef: boolean) {
     let slider = this.slider.value, demandSeries: any[] = [];
-    let x = 7, price = slider.price;
+    let x = 7, price = slider.price!;
     let demandShift = 350, b = 25;
 
     let demand = (x: number) => {
       return demandShift - b * x;
+    }
+    let inverseDemand = (x: number) => {
+      return (demandShift - x) / b;
     }
 
     do {
@@ -171,8 +240,15 @@ export class Figure31Component implements OnInit, AfterViewInit {
 
     } while (x <= 13);
 
+    let pointSeries: any[] = [
+      { x: 6, y: price, marker: {enabled: false, radius: 0} },
+      { x: inverseDemand(price), y: price },
+      { x: inverseDemand(price), y: 0, marker: {enabled: false, radius: 0} }
+    ];
+
     return {
-      demand: demandSeries
+      demand: demandSeries,
+      point: pointSeries
     }
 
 }

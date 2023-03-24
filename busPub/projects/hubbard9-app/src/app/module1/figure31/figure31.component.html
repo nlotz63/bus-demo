@@ -9,6 +9,10 @@
           </thead>
           <tbody>
             <tr>
+              <td>175</td><td>7</td>
+            </tr>
+
+            <tr>
               <td>150</td><td>8</td>
             </tr>
             <tr>
@@ -23,9 +27,25 @@
             <tr>
               <td>50</td><td>12</td>
             </tr>
+            <tr>
+              <td>25</td><td>13</td>
+            </tr>
+
           </tbody>
 
         </table>
+
+        <econ-slider
+        label="Price"
+        showValue="false"
+        displayValue="{{slider.value.price}}"
+        [min]="25"
+        [max]="175"
+        step="25"
+        [value]="slider.value.price!"
+        (valueChange)="updateChart({ price: $event })"
+      ></econ-slider>
+
 
       </div>
       </div>
