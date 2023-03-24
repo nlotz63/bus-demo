@@ -8,26 +8,26 @@
             <th>Price (dollars per pair of shoes)</th><th>Quantity (millions of pairs of shoes per week)</th>
           </thead>
           <tbody>
-            <tr>
+            <tr [class.highlight]="slider.value.price === 175">
               <td>175</td><td>7</td>
             </tr>
 
-            <tr>
+            <tr [class.highlight]="slider.value.price === 150">
               <td>150</td><td>8</td>
             </tr>
-            <tr>
+            <tr [class.highlight]="slider.value.price === 125">
               <td>125</td><td>9</td>
             </tr>
-            <tr>
+            <tr [class.highlight]="slider.value.price === 100">
               <td>100</td><td>10</td>
             </tr>
-            <tr>
+            <tr [class.highlight]="slider.value.price === 75">
               <td>75</td><td>11</td>
             </tr>
-            <tr>
+            <tr [class.highlight]="slider.value.price === 50">
               <td>50</td><td>12</td>
             </tr>
-            <tr>
+            <tr [class.highlight]="slider.value.price === 25">
               <td>25</td><td>13</td>
             </tr>
 
