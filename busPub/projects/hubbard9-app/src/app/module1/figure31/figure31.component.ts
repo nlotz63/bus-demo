@@ -76,7 +76,6 @@ export class Figure31Component implements OnInit, AfterViewInit {
   public updateChart(value: any) {
     this.slider.setValue(value);
     let series = this._createSeries(false);
-    console.log(series);
     this.chart.update({
       yAxis: {
         labels: {
@@ -173,7 +172,7 @@ export class Figure31Component implements OnInit, AfterViewInit {
         tickInterval: 1,
         labels: {
           formatter: (el) => {
-            if (el.value === 8) {
+            if (el.value === series.point[1].x) {
              return '<span style="fill: rgb(233, 30, 99);font-weight: 800;font-size: 12px;">' + el.value + '</span>';
             }
             return el.value.toString();
@@ -193,7 +192,6 @@ export class Figure31Component implements OnInit, AfterViewInit {
         labels: {
           formatter: (el) => {
             if (el.value === this.slider.value.price) {
-              console.log('I was called');
              return '<span style="fill: rgb(233, 30, 99);font-weight: 800;font-size: 12px;">' + '$' + el.value + '</span>';
             }
             return '$' + el.value;
