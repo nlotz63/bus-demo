@@ -161,7 +161,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
     let series = this._createSeries(true);
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
-        type: 'spline',
+        type: 'line',
         animation: false,
         height: 425,
         ignoreHiddenSeries: true,
@@ -177,7 +177,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'MS',
-          zIndex: -1,
+          zIndex: 0,
           animation: false,
           data: series.MS,
           accessibility: {
@@ -193,7 +193,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'MD (Y = 900)',
-          zIndex: -1,
+          zIndex: 0,
           animation: false,
           data: series.MD,
           accessibility: {
@@ -209,11 +209,10 @@ export class Fig94Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Equilibrium',
-          enableMouseTracking: true,
           color: 'black',
           dashStyle: 'Dot',
           lineWidth: 1,
-          zIndex: 2,
+          zIndex: 1,
           allowPointSelect: true,
           animation: false,
           data: series.EQ,
@@ -267,6 +266,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
             enabled: true
           },
           marker: {
+            enabled: false,
             radius: 0
           },
 
@@ -287,6 +287,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
       },
       title: { text: 'LM Curve' },
       legend: { enabled: false },
+      tooltip: { enabled: false },
       series: [
         {
           type: 'line',
@@ -354,7 +355,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
       },
       plotOptions: {
         series: {
-          enableMouseTracking: true,
+          enableMouseTracking: false,
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
