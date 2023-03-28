@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { interval } from 'rxjs';
 
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -10,10 +9,12 @@ import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
+import HC_annotate from 'highcharts/modules/annotations';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+HC_annotate(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
 HC_seriesLabel(Highcharts);
@@ -47,6 +48,9 @@ export class Figure31Component implements OnInit, AfterViewInit {
     price: new FormControl(150)
   });
 
+  previousPrice = 175;
+  previousQd = 7;
+
   constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private _snackBar: MatSnackBar) {}
 
   ngOnInit() {
@@ -75,8 +79,25 @@ export class Figure31Component implements OnInit, AfterViewInit {
 
   public updateChart(value: any) {
     this.slider.setValue(value);
-    let series = this._createSeries(false);
+    let series = this._createSeries(false), price = this.slider.value.price!;
+    let qd = series.invDemand(price);
+    let direction = this.previousPrice > price ? 'decrease' : 'increase', direction2 = this.previousPrice < price ? 'decrease' : 'increase';
+    let xPos = price < 100 ? -45 : 35, yPos = price < 100 ? 35 : -30, align: Highcharts.AlignValue = price < 100 ? 'right' : 'left';
+
     this.chart.update({
+      annotations: [
+        {
+          animation: false,
+          labelOptions: { backgroundColor: 'rgba(255,255,255,0.65)', align: align, x: xPos, y: yPos, allowOverlap: false, borderRadius: 8, padding: 4, shadow: true, borderColor: 'rgba(54, 54, 54, 0.8)' },
+          labels: [
+         { point: {x: qd, y: price, xAxis: 0, yAxis: 0},
+              text: `When the price ${direction}s from $${this.previousPrice}</br>to $${price}, the quantity demanded</br> ${direction2}s from ${this.previousQd}M to ${qd}M pairs of</br>shoes per week.`,
+              accessibility: {
+                description: `When the price ${direction}s from $${this.previousPrice} to $${price}, the quantity demanded ${direction2}s from ${this.previousQd} million to ${qd} million pairs of shoes per week.`
+              }
+            }
+          ]}
+      ],
       yAxis: {
         labels: {
           formatter: (el) => {
@@ -101,6 +122,11 @@ export class Figure31Component implements OnInit, AfterViewInit {
       }
     });
     this.chart.series[1].setData(series.point);
+    let message = `The current price and quantity is highlighted in both the table and graph. The price ${direction}d from $${this.previousPrice} to $${price}, the quantity demanded ${direction2}d from ${this.previousQd} million to ${qd} million pairs of shoes per week.`;
+    this.announcer.announce(message);
+
+    this.previousPrice = price;
+    this.previousQd = qd;
 
 
   }
@@ -140,8 +166,7 @@ export class Figure31Component implements OnInit, AfterViewInit {
           },
           accessibility: {
             description: 'A downward sloping straight line with 7 points'
-          }
-
+          },
         },
         {
           type: 'line',
@@ -161,6 +186,18 @@ export class Figure31Component implements OnInit, AfterViewInit {
             enabled: true
           }
         }
+      ],
+      annotations: [
+        {
+          labelOptions: { backgroundColor: 'rgba(255,255,255,0.65)', align: 'left', x: 25, y: -25, allowOverlap: true, borderRadius: 8, padding: 4, shadow: true, borderColor: 'rgba(54, 54, 54, 0.7)' },
+          labels: [
+         { point: {x: 7, y: 175, xAxis: 0, yAxis: 0},
+              text: 'Use the slider to see the relationship between</br>the demand schedule and demand curve.',
+              accessibility: {
+                description: 'Use the slider to see the relationship between the demand schedule and demand curve.'
+              }
+            }
+        ]}
       ],
       xAxis: {
         lineColor: '#757575',
@@ -205,11 +242,11 @@ export class Figure31Component implements OnInit, AfterViewInit {
           enableMouseTracking: true,
           color: '#C31229',
           tooltip: {
-            headerFormat: '{series.name}<br/>',
-            pointFormat: 'Output: ${point.x:.0f} billion<br/>Price level: {point.y:.1f}'
+
           }
         }
-      }
+      },
+      tooltip: {enabled: false}
     });
 
 
@@ -246,7 +283,8 @@ export class Figure31Component implements OnInit, AfterViewInit {
 
     return {
       demand: demandSeries,
-      point: pointSeries
+      point: pointSeries,
+      invDemand: inverseDemand
     }
 
 }
