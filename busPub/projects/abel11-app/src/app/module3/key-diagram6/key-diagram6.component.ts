@@ -178,20 +178,27 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
       },
       title: { text: 'ISLM Model' },
       legend: { enabled: false },
+      tooltip: { enabled: false },
       series: [
         {
           type: 'line',
           name: 'IS curve',
           zIndex: 1,
           animation: false,
-          data: series.IS
+          data: series.IS,
+          accessibility: {
+            description: `A downward sloping straight line.`
+          }
         },
         {
           type: 'line',
           name: 'LM curve',
           zIndex: 1,
           animation: false,
-          data: series.LM
+          data: series.LM,
+          accessibility: {
+            description: `An upward sloping straight line.`
+          }
         },
         {
           type: 'line',
@@ -200,6 +207,9 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
           zIndex: 0,
           animation: false,
           data: series.FE,
+          accessibility: {
+            description: `A vertical line.`
+          }
         },
         {
           type: 'line',
@@ -211,9 +221,6 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
           allowPointSelect: true,
           animation: false,
           data: series.EQ,
-          marker: {
-            enabled: true,
-          },
           label: {
             useHTML: true,
             style: { fontSize: '11px', fontWeight: '400' },
@@ -221,6 +228,9 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
             formatter: (): any => {
               return `Long-run:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`;
             }
+          },
+          accessibility: {
+            description: `Long-run:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`
           }
         },
         {
@@ -269,10 +279,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
           allowPointSelect: false,
           animation: false,
           data: series.eqRef,
-          marker: {
-            enabled: true,
-          },
-          label: {enabled: false}
+          label: { enabled: false }
 
         },
 
@@ -304,7 +311,8 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
           tooltip: {
             headerFormat: '{series.name}<br/>',
             pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
-          }
+          },
+          marker: { enabled: false, radius: 0 }
         }
 
       }
@@ -317,7 +325,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
     let slider = this.slider.value;
     // model parameters
     let c0: number = slider.expectedOutput! + slider.wealth!, cy: number = .6, cr: number = 300, t0: number = 0.5 * slider.taxes!, t: number = 0.2,
-    i0: number = slider.expectedTFP!*(1 - 4*slider.effTax!), ir: number = 200, G: number = slider.govPurchases!;
+      i0: number = slider.expectedTFP! * (1 - 4 * slider.effTax!), ir: number = 200, G: number = slider.govPurchases!;
     let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
 
     let ybar = 4000 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
@@ -348,18 +356,22 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
 
     // equilibrium series
     eqSeries = [
-      { x: 0, y: is(eq), marker: {enabled: false, radius: 0 } },
+      { x: 0, y: is(eq), marker: { enabled: false, radius: 0 } },
       {
         name: 'Equilibrium',
         x: eq,
         y: is(eq),
         color: 'blue',
         marker: {
-          symbol: 'circle',
-          enabled: true
-        }
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        },
       },
-      { x: eq, y: -3, marker: {enabled: false}}
+      { x: eq, y: -3, marker: { enabled: false } }
     ];
     feSeries = [
       { x: ybar, y: -3, marker: { enabled: false, radius: 0 } },
@@ -373,15 +385,16 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
       isRef = isSeries;
       lmRef = lmSeries;
       eqRef = [
-        { x: 0, y: is(eq), marker: {enabled: false, radius: 0 } },
+        { x: 0, y: is(eq), marker: { enabled: false, radius: 0 } },
         {
-          name: 'Equilibrium',
+          name: 'Initial equilibrium',
           x: eq,
           y: is(eq),
           color: 'rgba(93, 93, 93, 1)',
           marker: {
             symbol: 'circle',
-            enabled: true
+            enabled: true,
+            radius: 4
           }
         },
         { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
@@ -400,7 +413,7 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
       feRef: feRef
     }
 
-}
+  }
 
   private _messageBuilder() {
     let message = ``;
