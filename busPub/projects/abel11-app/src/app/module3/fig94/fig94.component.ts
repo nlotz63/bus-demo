@@ -218,6 +218,10 @@ export class Fig94Component implements OnInit, AfterViewInit {
           data: series.EQ,
           marker: {
             enabled: true,
+            fillColor: 'orange',
+            lineColor: 'black',
+            lineWidth: 1
+
           },
           accessibility: {
             description: 'A point showing the intersection of the real money demand and real money supply curves'
@@ -318,6 +322,9 @@ export class Fig94Component implements OnInit, AfterViewInit {
           data: series.EQ2,
           marker: {
             enabled: true,
+            fillColor: 'orange',
+            lineColor: 'black',
+            lineWidth: 1
           },
           accessibility: {
             description: 'A point that moves along the LM curve the corresponds to the intersection of the real money demand and real money supply curves.'
