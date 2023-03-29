@@ -21,17 +21,16 @@
       <div *ngIf="mode === 2" @myAnimationTrigger>
         <h2>Determining the capital-labor ratio in the steady state</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>The steady-state capital-labor ratio is determined by the condition that saving per worker, <span econMath="\( sf(k) \)"></span>, equals steady-state investment per worker, <span econMath="\( (n + d)k \)"></span>.</li>
+          <li>The steady-state capital-labor ratio is where the saving curve and the steady-state investment line cross.</li>
         </ul>
       </div>
       <div *ngIf="mode === 3" @myAnimationTrigger>
         <h2>The effect of an increased saving rate on the steady-state capital-labor ratio</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>An increase in the saving rate shifts the saving curve upwards.</li>
+          <li>The point where saving per worker equals steady-state investment per worker corresponds to a higher capital-labor ratio.</li>
+          <li>Thus, a higher saving rate raises the steady-state capital-labor ratio.</li>
         </ul>
         <div class="control-column econ-control">
           <econ-slider
@@ -49,9 +48,9 @@
       <div *ngIf="mode === 4" @myAnimationTrigger>
         <h2>The effect of a higher population growth rate on the steady-state capital-labor ratio</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>An increase in the population growth rate increases steady-state investment per worker, causing the steady-state investment curve to pivot up and to the left, with a higher slope.</li>
+          <li>The point where saving per worker equals steady-state investment per worker corresponds to a lower capital-labor ratio.</li>
+          <li>Thus, a higher population growth rate reduces the steady-state capital-labor ratio.</li>
         </ul>
         <div class="control-column econ-control">
           <econ-slider
@@ -69,9 +68,9 @@
       <div *ngIf="mode === 5" @myAnimationTrigger>
         <h2>The effect of a productivity improvement on the steady-state capital-labor ratio</h2>
         <ul>
-          <li>Bullet point 1</li>
-          <li>Bullet point 2</li>
-          <li>Bullet point 3</li>
+          <li>A productivity improvement shifts the production function and the saving curve upwards.</li>
+          <li>The point where saving per worker equals steady-state investment per worker corresponds to a higher capital-labor ratio.</li>
+          <li>Thus, a higher saving rate raises the steady-state capital-labor ratio.</li>
         </ul>
       </div>
 
