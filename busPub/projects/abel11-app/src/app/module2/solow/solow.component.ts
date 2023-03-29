@@ -72,32 +72,32 @@ export class SolowComponent {
     this.chart.series[0].setData(series.saving);
     this.chart.series[1].setData(series.invest);
 
-/*     this.chart.series[0].update(
-      {
-        type: 'line',
-        label: {
-          enabled: true,
-          useHTML: true,
-          style: {
-            fontSize: '12px',
-            fontWeight: '400'
-          },
-          formatter: () => {
-            return `Saving, S(Y = ${series.invest[0].y})`;
-          }
+    /*     this.chart.series[0].update(
+          {
+            type: 'line',
+            label: {
+              enabled: true,
+              useHTML: true,
+              style: {
+                fontSize: '12px',
+                fontWeight: '400'
+              },
+              formatter: () => {
+                return `Saving, S(Y = ${series.invest[0].y})`;
+              }
 
-        }
-      }
-    );
-    this.chart.series[2].update({
-      type: 'line',
-      label: {
-        formatter: () => {
-          return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
-        }
-      }
-    })
- */
+            }
+          }
+        );
+        this.chart.series[2].update({
+          type: 'line',
+          label: {
+            formatter: () => {
+              return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
+            }
+          }
+        })
+     */
   }
 
   public playStep(mode: number) {
@@ -125,7 +125,7 @@ export class SolowComponent {
         height: 425,
         ignoreHiddenSeries: true,
       },
-      tooltip: { enabled: true },
+      tooltip: { enabled: true, useHTML: true },
       credits: {
         text: 'Pearson Education',
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
@@ -156,8 +156,8 @@ export class SolowComponent {
           animation: false,
           color: '#C31229',
           tooltip: {
-            headerFormat: '{series.name}<br/>',
-            pointFormat: 'k = ${point.x:.0f} <br/>{point.name}  = ${point.y:.2f}'
+            headerFormat: '',
+            pointFormat: '{point.name} = ${point.x:.0f} <br/>{series.name}  = ${point.y:.2f}'
           },
           label: {
             enabled: true
@@ -209,6 +209,23 @@ export class SolowComponent {
             data: series.invest
           }
         );
+        this.chart.addSeries(
+          {
+            type: 'line',
+            name: 'f(k)',
+            dashStyle: 'Dot',
+            lineWidth: 1,
+            color: 'black',
+            zIndex: 1,
+            data: series.EQ,
+            label: {
+              useHTML: true,
+              format: 'k<sub>max</sub>'
+
+            }
+          }
+        );
+
 
         this.chart.update({
           chart: {
@@ -350,15 +367,18 @@ export class SolowComponent {
     let invest = (x: number) => {
       return x * (n + d);
     }
+    let eqProd = Math.pow(A / (d + n), 1 / (1 - alpha));
+    let eqSaving = Math.pow((s*A )/ (d + n), 1 / (1 - alpha));
+
 
     do {
       let point = {
-        name: 'Output, y',
+        name: 'k',
         x: x,
         y: production(x)
       };
       let point2 = {
-        name: 'Investment',
+        name: 'k',
         x: x,
         y: invest(x)
       };
@@ -380,6 +400,26 @@ export class SolowComponent {
       x += step;
 
     } while (x <= max);
+
+    // Other series and key points
+    eqSeries = [
+      [0, production(eqProd)],
+      {
+        name: 'k<sub>max</sub>',
+        x: eqProd,
+        y: production(eqProd),
+        marker: {
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        }
+      },
+      [eqProd, 0]
+    ];
+
 
 
     return {
