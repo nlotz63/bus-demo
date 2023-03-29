@@ -204,7 +204,6 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
           accessibility: {
             description: `A horizontal straight line.`
           }
-
         },
         {
           type: 'line',
@@ -228,7 +227,7 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
           animation: false,
           data: series.EQ,
           accessibility: {
-            description: `Long-run: Y = $${series.EQ[1].x.toFixed(0)} P = ${series.EQ[0].y.toFixed(0)}%`
+            description: `Long-run: Y = $${series.EQ[1].x.toFixed(0)} P = ${series.EQ[0].y.toFixed(0)}`
           },
           label: {
             useHTML: true,

@@ -5,41 +5,42 @@
         <h2>Overview of the AD/AS model</h2>
         <ul>
           <li>
-            The real interest rate, <span econMath="\(r\)"></span>, is on the
-            vertical axis, and output, <span econMath="\(Y\)"></span>, is on the
-            horizontal axis.
+            The price level, <span econMath="\(P\)"></span>, is on the vertical axis, and output, <span econMath="\(Y\)"></span>, is on the horizontal axis.
           </li>
           <li>
-            The full-employment line, <span econMath="\(FE\)"></span>, is
-            vertical at full-employment output.
+            The aggregate demand (AD) curve shows the aggregate quantity of output demanded at each price level.
           </li>
           <li>
-            For any level of output, <span econMath="\(Y\)"></span>, the IS
-            curve gives the real interest rate, <span econMath="\(r\)"></span>, that clears the goods
-            market.
+            The short-run aggregate supply (SRAS) curve shows the aggregate quantity of output supplied at each price level, with the expected price level held constant.
           </li>
           <li>
-            For given values of the price level and output, the LM curve gives
-            the real interest rate that clears the asset market.
+            Because an increase in the price level fools producers into supplying more output, the short-run aggregate supply curve slopes upward.
           </li>
           <li>
-            The economy is in general equilibrium at the intersection of all
-            three curves.
+            In the long run, firms produce the amount of output that maximizes their profits, which is the full-employment level of output.
+          </li>
+          <li>
+            So, the long-run aggregate-supply curve, LRAS, is vertical.
+          </li>
+          <li>
+            The economy is in general equilibrium at the intersection of all three curves.
           </li>
         </ul>
       </div>
       <div *ngIf="mode === 1" class="econ-narative-block" @myAnimationTrigger>
-        <h2>Factors that shift the AD curve: IS curve shifters (part 1)</h2>
+        <h2>Factors that shift the AD curve (part 1): IS curve shifters (saving)</h2>
         <ul>
           <li>
-            The IS curve shifts up and to the right because of a decline in
-            desired national saving if
+            The AD curve shifts up and to the right if
             <ul>
               <li>Wealth increases,</li>
               <li>Expected future output increases,</li>
               <li>Government purchases increase,</li>
-              <li>Taxes decrease.</li>
+              <li>Taxes decrease (and Ricardian equivalence does not hold).</li>
             </ul>
+          </li>
+          <li>
+            To restore general equilibrium, the price level changes, causing the SRAS curve to shift.
           </li>
         </ul>
         <div class="control-column econ-control">
@@ -107,11 +108,10 @@
         </div>
       </div>
       <div *ngIf="mode === 2" class="econ-narative-block" @myAnimationTrigger>
-        <h2>Factors that shift the AD curve: IS curve shifters (part 2)</h2>
+        <h2>Factors that shift the AD curve (part 2): IS curve shifters (investment)</h2>
         <ul>
           <li>
-            The IS curve shifts up and to the right because of an increase in
-            desired investment if
+            The AD curve shifts up and to the right if
             <ul>
               <li>Expected future TFP increases,</li>
               <li>The effective tax rate on capital decreases.</li>
@@ -163,23 +163,18 @@
         </div>
       </div>
       <div *ngIf="mode === 3" class="econ-narative-block" @myAnimationTrigger>
-        <h2>Factors that shift the AD curve: LM curve shfiters (part 3)</h2>
+        <h2>Factors that shift the AD curve (part 3): LM curve shfiters</h2>
         <ul>
           <li>
-            The LM curve shifts down and to the right because of an increase in
-            the real money supply if
+            The AD curve shifts up and to the right if
             <ul>
               <li>Nominal money supply increases,</li>
-              <li>Price level decreases.</li>
-            </ul>
-          </li>
-          <li>
-            The LM curve shifts down and to the right because of a decrease in
-            real money demand if
-            <ul>
               <li>Expected inflation increases,</li>
               <li>Nominal interest rate on monetary assets decreases.</li>
             </ul>
+          </li>
+          <li>
+            To restore general equilibrium, the price level changes, causing the SRAS curve to shift.
           </li>
         </ul>
         <div class="control-column econ-control">
@@ -237,19 +232,13 @@
         <h2>Factors that shift the SRAS curve</h2>
         <ul>
           <li>
-            If the LM curve shifts down and to the right because of a shock, the
-            price level will rise, shifting the LM curve up and to the left to
-            restore general equilibrium.
+            An increase in the expected price level will shift the short-run aggregate supply (SRAS) curve up and to the left.
           </li>
           <li>
-            If the IS curve shifts up and to the right because of a shock, the
-            price level will rise, shifting the LM curve up and to the left to
-            restore general equilibrium.
+            Conversely, a decrease in the expected price level will shift the SRAS curve down and to the right.
           </li>
           <li>
-            If the FE line shifts to the right because of a shock, the price
-            level will decline, shifting the LM curve down and to the right to
-            restore general equilibrium.
+            To restore general equilibrium, the price level changes, causing the SRAS curve to shift.
           </li>
         </ul>
         <div class="control-column econ-control">
@@ -287,8 +276,7 @@
         <h2>Factors that shift the LRAS curve</h2>
         <ul>
           <li>
-            The FE line shifts to the right because of an increase in the
-            full-employment level of output caused by
+            Any factor that increases the full-employment level of output shifts the long-run aggregate supply (LRAS) curve to the right 
             <ul>
               <li>
                 A beneficial supply shock that causes an increase in total

@@ -101,6 +101,9 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
             return `${eqLabel}:</br>Y = $${series.EQ[0].x.toFixed(0)}</br>P = ${series.EQ[0].y.toFixed(1)}</br>
             P<sup>e</sup> = ${this.slider.value.expectedPrice?.toFixed(1)}`;
           }
+        },
+        accessibility: {
+          description: `${eqLabel}: Y = $${series.EQ[0].x.toFixed(0)} P = ${series.EQ[0].y.toFixed(0)}`
         }
       }
     );
@@ -188,20 +191,27 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
       },
       title: { text: 'AD/AS Model: Misperceptions version' },
       legend: { enabled: false },
+      tooltip: { enabled: false },
       series: [
         {
           type: 'line',
           name: 'AD',
           zIndex: 1,
           animation: false,
-          data: series.AD
+          data: series.AD,
+          accessibility: {
+            description: `A downward sloping curved line that becomes flatter as output increases.`
+          }
         },
         {
           type: 'line',
           name: 'SRAS',
           zIndex: 1,
           animation: false,
-          data: series.SRAS
+          data: series.SRAS,
+          accessibility: {
+            description: `A horizontal straight line.`
+          }
         },
         {
           type: 'line',
@@ -210,6 +220,9 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
           zIndex: 0,
           animation: false,
           data: series.FE,
+          accessibility: {
+            description: `A vertical straight line.`
+          }
         },
         {
           type: 'line',
@@ -221,8 +234,8 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
           allowPointSelect: false,
           animation: false,
           data: series.EQ,
-          marker: {
-            enabled: true,
+          accessibility: {
+            description: `Long-run: Y = $${series.EQ[1].x.toFixed(0)} P = ${series.EQ[0].y.toFixed(0)}`
           },
           label: {
             useHTML: true,
@@ -386,9 +399,13 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         y: ad(eq),
         color: 'blue',
         marker: {
-          symbol: 'circle',
-          enabled: true
-        }
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        },
       },
       { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
     ];
