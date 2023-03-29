@@ -95,8 +95,11 @@ export class KeyDiagram6Component implements OnInit, AfterViewInit {
           useHTML: true,
           style: { fontSize: '11px', fontWeight: '400' },
           formatter: (): any => {
-            return `${eqLabel}:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>Price level = ${series.EQ[1].y.toPrecision(3)}%`;
+            return `${eqLabel}:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[1].y.toPrecision(3)}%`;
           }
+        },
+        accessibility: {
+          description: `${eqLabel}:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[1].y.toPrecision(3)}%`
         }
       }
     );
