@@ -121,7 +121,13 @@ export class Figure31Component implements OnInit, AfterViewInit {
         }
       }
     });
-    this.chart.series[1].setData(series.point);
+    this.chart.series[1].update({
+      type: 'line',
+      data: series.point,
+      accessibility: {
+        description: `A highlighted point on the demand curve. It's position is controlled by the price slider. It corresponds to the row in the table at the same price. The price equals ${price} and the quantity demanded equals ${qd}.`
+      }
+    });
     let message = `The current price and quantity is highlighted in both the table and graph. The price ${direction}d from $${this.previousPrice} to $${price}, the quantity demanded ${direction2}d from ${this.previousQd} million to ${qd} million pairs of shoes per week.`;
     this.announcer.announce(message);
 
@@ -184,7 +190,10 @@ export class Figure31Component implements OnInit, AfterViewInit {
             fillColor: 'rgb(233, 30, 99)',
             radius: 6,
             enabled: true
-          }
+          },
+          accessibility: {
+            description: `A highlighted point on the demand curve, indicating the current price and quantity demanded. It corresponds to the highlighted row in the table. Quantity equal 7, price equals 175 dollars.`
+          },
         }
       ],
       annotations: [
