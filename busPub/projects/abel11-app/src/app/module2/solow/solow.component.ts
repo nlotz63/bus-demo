@@ -46,7 +46,8 @@ export class SolowComponent {
     savingRate: new FormControl(.25),
     productivity: new FormControl(25.99),
     labor: new FormControl(157.5),
-    population: new FormControl(1500)
+    population: new FormControl(1500),
+    capitalRatio: new FormControl(0)
   });
 
   chart!: Highcharts.Chart;
@@ -109,7 +110,8 @@ export class SolowComponent {
       savingRate: .25,
       productivity: 25.99,
       labor: 157.5,
-      population: 1500
+      population: 1500,
+      capitalRatio: 0
     });
     this.hidden = 'hidden';
     this._setupChart();
@@ -160,7 +162,7 @@ export class SolowComponent {
             pointFormat: '{point.name} = ${point.x:.0f} <br/>{series.name}  = ${point.y:.2f}'
           },
           label: {
-            enabled: true
+            enabled: true,
           },
           marker: {
             radius: 2,
@@ -220,8 +222,8 @@ export class SolowComponent {
             data: series.EQ,
             label: {
               useHTML: true,
-              format: 'k<sub>max</sub>'
-
+              style: {fontWeight: '400', textAlign: 'right'},
+              format: `k<sub>max</sub> = ${series.EQ[1].x.toFixed(0)}</br>f(k) = ${series.EQ[1].y.toFixed(0)}`
             }
           }
         );
@@ -278,7 +280,7 @@ export class SolowComponent {
               zIndex: 2,
               allowPointSelect: true,
               animation: false,
-              data: series.EQ,
+              data: series.EQ2,
               marker: {
                 enabled: true,
               },
@@ -418,6 +420,24 @@ export class SolowComponent {
         }
       },
       [eqProd, 0]
+    ];
+
+    eq2Series = [
+      [0, (1 - s)*production(eqSaving)],
+      {
+        name: 'k<sub>max</sub>',
+        x: eqSaving,
+        y: (1 - s)*production(eqSaving),
+        marker: {
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        }
+      },
+      [eqSaving, 0]
     ];
 
 
