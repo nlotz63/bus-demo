@@ -195,7 +195,9 @@ export class Figure31Component implements OnInit, AfterViewInit {
           marker: {
             symbol: 'circle',
             fillColor: 'rgb(233, 30, 99)',
-            radius: 6,
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 5,
             enabled: true
           },
           accessibility: {
