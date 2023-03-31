@@ -125,7 +125,7 @@ export class Figure31Component implements OnInit, AfterViewInit {
       type: 'line',
       data: series.point,
       accessibility: {
-        description: `A highlighted point on the demand curve. It's position is controlled by the price slider. It corresponds to the row in the table at the same price. The price equals ${price} and the quantity demanded equals ${qd}.`
+        description: `A highlighted point on the demand curve. It's position is controlled by the price slider. It corresponds to the row in the table at the same price.`
       }
     });
     let message = `The current price and quantity is highlighted in both the table and graph. The price ${direction}d from $${this.previousPrice} to $${price}, the quantity demanded ${direction2}d from ${this.previousQd} million to ${qd} million pairs of shoes per week.`;
@@ -153,6 +153,13 @@ export class Figure31Component implements OnInit, AfterViewInit {
       },
       title: { text: 'Demand Curve' },
       legend: { enabled: false },
+      accessibility: {
+        point: {
+          descriptionFormatter: (point): any => {
+            return 'Price equals ' + point.y + ' dollars. Quantity equals ' + point.x + ' million pairs';
+          }
+        }
+      },
       series: [
         {
           type: 'line',
@@ -176,7 +183,7 @@ export class Figure31Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Quantity demanded',
+          name: 'Point of interest',
           zIndex: 1,
           color: 'black',
           dashStyle: 'Dot',
