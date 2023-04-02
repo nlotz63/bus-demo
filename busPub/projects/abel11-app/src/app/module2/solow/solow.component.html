@@ -23,8 +23,8 @@
             showValue="false"
             displayValue="{{slider.value.capitalRatio! | number: '0.0-0' }}"
             [min]="0"
-            [max]="7855"
-            step="5"
+            [max]="7581.6"
+            step=".1"
             [value]="slider.value.capitalRatio!"
             (valueChange)="updateChart({ capitalRatio: $event })"
           ></econ-slider>

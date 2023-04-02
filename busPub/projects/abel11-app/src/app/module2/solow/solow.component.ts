@@ -70,35 +70,51 @@ export class SolowComponent {
   public updateChart(value: any) {
     this.slider.patchValue(value);
     let series = this._createSeries(false);
-    this.chart.series[0].setData(series.saving);
-    this.chart.series[1].setData(series.invest);
-
-    /*     this.chart.series[0].update(
-          {
-            type: 'line',
-            label: {
-              enabled: true,
-              useHTML: true,
-              style: {
-                fontSize: '12px',
-                fontWeight: '400'
-              },
-              formatter: () => {
-                return `Saving, S(Y = ${series.invest[0].y})`;
-              }
-
-            }
-          }
-        );
-        this.chart.series[2].update({
+    if (this.mode > 1) {
+      this.chart.series[0].setData(series.saving);
+      this.chart.series[1].setData(series.invest);
+    } else if (this.mode === 1) {
+      this.chart.series[2].update(
+        {
           type: 'line',
+          data: series.EQ,
+
           label: {
+            enabled: true,
+            useHTML: true,
+            style: {
+              fontSize: '12px',
+              fontWeight: '400'
+            },
             formatter: () => {
-              return `Equilibrium:</br>I = $${series.EQ[1].x}</br>r = ${series.EQ[1].y}%`;
+              return `c(Y = ${series.invest[0].y})`;
             }
+
           }
-        })
-     */
+        }
+      );
+
+      this.chart2.series[1].update(
+        {
+          type: 'line',
+          data: series.EQ2,
+
+          label: {
+            enabled: true,
+            useHTML: true,
+            style: {
+              fontSize: '12px',
+              fontWeight: '400'
+            },
+            formatter: () => {
+              return `c(k = ${series.EQ2[1].x}) = ${series.EQ2[1].y.toFixed(2)}`;
+            }
+
+          }
+        }
+      );
+    }
+
   }
 
   public playStep(mode: number) {
@@ -132,7 +148,7 @@ export class SolowComponent {
         text: 'Pearson Education',
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
-      title: { text: 'Production' },
+      title: { text: 'Solow Model' },
       legend: { enabled: false },
       series: [
       ],
@@ -220,12 +236,12 @@ export class SolowComponent {
             color: 'black',
             zIndex: 1,
             data: series.EQ,
-            label: {
+/*             label: {
               useHTML: true,
-              style: {fontWeight: '400', textAlign: 'right'},
+              style: { fontWeight: '400', textAlign: 'right' },
               format: `k<sub>max</sub> = ${series.EQ[1].x.toFixed(0)}</br>f(k) = ${series.EQ[1].y.toFixed(0)}`
             }
-          }
+ */          }
         );
 
 
@@ -251,7 +267,7 @@ export class SolowComponent {
             text: 'Pearson Education',
             href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
           },
-          title: { text: 'Consumption' },
+          title: { text: 'Consumption Per Worker' },
           legend: { enabled: false },
           series: [
             {
@@ -369,8 +385,10 @@ export class SolowComponent {
     let invest = (x: number) => {
       return x * (n + d);
     }
-    let eqProd = Math.pow(A / (d + n), 1 / (1 - alpha));
-    let eqSaving = Math.pow((s*A )/ (d + n), 1 / (1 - alpha));
+
+    let consumption = (x: number) => { return production(x) - invest(x); }
+    let eqProd = this.mode === 1 ? slider.capitalRatio! : Math.pow(A / (d + n), 1 / (1 - alpha));
+    let eqSaving = Math.pow((s * A) / (d + n), 1 / (1 - alpha));
 
 
     do {
@@ -419,15 +437,24 @@ export class SolowComponent {
           symbol: 'circle'
         }
       },
-      [eqProd, 0]
+      {
+        x: eqProd, y: invest(eqProd), marker: {
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        }
+      }
     ];
 
     eq2Series = [
-      [0, (1 - s)*production(eqSaving)],
+      { x: 0, y: consumption(slider.capitalRatio!), marker: { enabled: false } },
       {
         name: 'k<sub>max</sub>',
-        x: eqSaving,
-        y: (1 - s)*production(eqSaving),
+        x: slider.capitalRatio!,
+        y: consumption(slider.capitalRatio!),
         marker: {
           enabled: true,
           fillColor: 'orange',
@@ -437,8 +464,9 @@ export class SolowComponent {
           symbol: 'circle'
         }
       },
-      [eqSaving, 0]
+      [slider.capitalRatio!, -10]
     ];
+    console.log(eq2Series);
 
 
 
