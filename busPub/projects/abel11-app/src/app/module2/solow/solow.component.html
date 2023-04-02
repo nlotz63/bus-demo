@@ -18,7 +18,7 @@
           <li>Steady-state consumption per worker, <span econMath="\( c \)"></span>, is the difference between output per worker and investment per worker.</li>
         </ul>
         <div class="control-column econ-control">
-          <econ-slider
+<!--           <econ-slider
             label="Capital, k"
             showValue="false"
             displayValue="{{slider.value.capitalRatio! | number: '0.0-0' }}"
@@ -28,6 +28,15 @@
             [value]="slider.value.capitalRatio!"
             (valueChange)="updateChart({ capitalRatio: $event })"
           ></econ-slider>
+ -->            <mat-form-field appearance="outline" class="econ-select-field">
+              <mat-label>Select a key capital-labor ratio</mat-label>
+              <mat-select title="capital labor ratio" (selectionChange)="updateChart({ capitalRatio: $event.value})" >
+                <mat-option value="350">k < k<sub>gold</sub></mat-option>
+                <mat-option value="1357.6">k<sub>gold</sub></mat-option>
+                <mat-option value="3500">k > k<sub>gold</sub></mat-option>
+                <mat-option value="7581.691">k<sub>max</sub></mat-option>
+              </mat-select>
+            </mat-form-field>
         </div>
       </div>
       <div *ngIf="mode === 2" @myAnimationTrigger>
@@ -90,7 +99,7 @@
     <div class="control-column">
       <div id="chart1" class="item-chart"></div>
       <div [attr.hidden]="hidden" id="chart2" class="item-chart"></div>
-      </div>
+    </div>
   </div>
     <app-player
     *ngIf="showPlayer"

@@ -12,6 +12,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { KeyDiagram4Component } from './key-diagram4/key-diagram4.component';
 import { KeyDiagram5Component } from './key-diagram5/key-diagram5.component';
 import { SolowComponent } from './solow/solow.component';
+import { MatSelectModule } from '@angular/material/select';
 
 
 
@@ -30,7 +31,8 @@ import { SolowComponent } from './solow/solow.component';
     MatButtonModule,
     BusPubLibModule,
     MatCheckboxModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSelectModule
   ]
 })
 export class Module2Module { }

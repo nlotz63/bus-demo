@@ -34,7 +34,7 @@ HC_accessibility(Highcharts);
   ]
 })
 
-export class SolowComponent {
+export class SolowComponent implements OnInit, AfterViewInit {
   mode: number = 0;
   showPlayer: boolean = false;
   hidden: string | null = 'hidden';
@@ -70,6 +70,7 @@ export class SolowComponent {
   public updateChart(value: any) {
     this.slider.patchValue(value);
     let series = this._createSeries(false);
+    let kRatio = this.slider.value.capitalRatio! < 7581.5 ? 'k' : 'k<sub>max</sub>';
     if (this.mode > 1) {
       this.chart.series[0].setData(series.saving);
       this.chart.series[1].setData(series.invest);
@@ -87,7 +88,7 @@ export class SolowComponent {
               fontWeight: '400'
             },
             formatter: () => {
-              return `c(Y = ${series.invest[0].y})`;
+              return `c(${kRatio}) = ${series.EQ2[1].y.toFixed(0)}`;
             }
 
           }
@@ -107,7 +108,9 @@ export class SolowComponent {
               fontWeight: '400'
             },
             formatter: () => {
-              return `c(k = ${series.EQ2[1].x}) = ${series.EQ2[1].y.toFixed(2)}`;
+              let k = series.EQ2[1].x.toFixed(0);
+              console.log(k);
+              return `c(${kRatio} = ${k}) = ${series.EQ2[1].y.toFixed(0)}`;
             }
 
           }
@@ -230,7 +233,7 @@ export class SolowComponent {
         this.chart.addSeries(
           {
             type: 'line',
-            name: 'f(k)',
+            name: 'c(k)',
             dashStyle: 'Dot',
             lineWidth: 1,
             color: 'black',
@@ -280,6 +283,7 @@ export class SolowComponent {
                 description: 'An upward-sloping straight line'
               },
               label: {
+                enabled: false,
                 style: {
                   fontSize: '12px',
                   fontWeight: '400'
@@ -446,14 +450,15 @@ export class SolowComponent {
           radius: 4,
           symbol: 'circle'
         }
-      }
+      },
+      {x: eqProd, y: 0, marker: {enabled: false}}
     ];
 
     eq2Series = [
       { x: 0, y: consumption(slider.capitalRatio!), marker: { enabled: false } },
       {
         name: 'k<sub>max</sub>',
-        x: slider.capitalRatio!,
+        x: +slider.capitalRatio!,
         y: consumption(slider.capitalRatio!),
         marker: {
           enabled: true,
@@ -464,10 +469,8 @@ export class SolowComponent {
           symbol: 'circle'
         }
       },
-      [slider.capitalRatio!, -10]
+      { x: slider.capitalRatio!, y: 0, marker: { enabled: false } },
     ];
-    console.log(eq2Series);
-
 
 
     return {
