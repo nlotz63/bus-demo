@@ -6,11 +6,13 @@ import { transition, trigger, style, animate } from '@angular/animations';
 
 
 import * as Highcharts from 'highcharts';
+import HC_annotate from 'highcharts/modules/annotations';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 
+HC_annotate(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
 HC_seriesLabel(Highcharts);
@@ -38,6 +40,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
   mode: number = 0;
   showPlayer: boolean = false;
   hidden: string | null = 'hidden';
+  steadyState!: number;
 
   slider = new FormGroup({
     popRate: new FormControl(.01),
@@ -59,6 +62,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
     this.ActiveRoute.queryParams.subscribe((params) => {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
+      this.hidden = this.mode === 1 ? null : 'hidden';
     });
   }
 
@@ -70,11 +74,64 @@ export class SolowComponent implements OnInit, AfterViewInit {
   public updateChart(value: any) {
     this.slider.patchValue(value);
     let series = this._createSeries(false);
-    let kRatio = this.slider.value.capitalRatio! < 7581.5 ? 'k' : 'k<sub>max</sub>';
+    let eqSeries = this.mode === 2 ? series.EQ4 : series.EQ3;
+    let kRatio = 'k<sub>ss</sub>';
+
+    if (this.mode == 2) {
+      kRatio = this.slider.value.capitalRatio!== 1046 ? 'k' : 'k<sub>ss</sub>';
+    }
+
+
     if (this.mode > 1) {
       this.chart.series[0].setData(series.saving);
       this.chart.series[1].setData(series.invest);
+      this.chart.series[2].update(
+        {
+          type: 'line',
+          data: eqSeries,
+
+          label: {
+            enabled: true,
+            useHTML: true,
+            style: {
+              fontSize: '12px',
+              fontWeight: '400'
+            },
+            formatter: () => {
+              let k = eqSeries[1].x.toFixed(0);
+              return `${kRatio} = ${k}</br>sf(${kRatio}) = ${eqSeries[1].y.toFixed(0)}`;
+            }
+          }
+        }
+      );
+      if (this.mode === 2 && this.slider.value.capitalRatio! === 1046) {
+        this.chart.addAnnotation({
+          id: 'ss',
+          labelOptions: { backgroundColor: 'rgba(255,255,255,0.65)', align: 'right', x: -165, y: -35, allowOverlap: true, borderRadius: 8, padding: 4, shadow: true, borderColor: 'rgba(54, 54, 54, 0.7)' },
+          visible: true,
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: eqSeries[1].x,
+                y: eqSeries[1].y,
+              },
+              text: `You reached the steady-state<br/>capital-labor ratio. The point<br/>where the saving curve and the <br/>steady-state investment line cross.`,
+              accessibility: {
+                description: `You reached the steady-state capital-labor ratio. The point where the saving curve and the steady-state investment line cross.`
+              }
+
+            }
+
+          ]
+
+        }, true );
+      } else { this.chart.removeAnnotation('ss'); }
+
+
     } else if (this.mode === 1) {
+      let kRatio = this.slider.value.capitalRatio! < 7581.5 ? 'k' : 'k<sub>max</sub>';
       this.chart.series[2].update(
         {
           type: 'line',
@@ -88,9 +145,9 @@ export class SolowComponent implements OnInit, AfterViewInit {
               fontWeight: '400'
             },
             formatter: () => {
-              return `c(${kRatio}) = ${series.EQ2[1].y.toFixed(0)}`;
+              let k = series.EQ2[1].x.toFixed(0);
+              return `${kRatio} = ${k}</br>c(${kRatio}) = ${series.EQ2[1].y.toFixed(0)}`;
             }
-
           }
         }
       );
@@ -109,8 +166,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
             },
             formatter: () => {
               let k = series.EQ2[1].x.toFixed(0);
-              console.log(k);
-              return `c(${kRatio} = ${k}) = ${series.EQ2[1].y.toFixed(0)}`;
+              return `${kRatio} = ${k}</br>c(${kRatio}) = ${series.EQ2[1].y.toFixed(0)}`;
             }
 
           }
@@ -139,6 +195,13 @@ export class SolowComponent implements OnInit, AfterViewInit {
 
   private _setupChart() {
     let series = this._createSeries(true);
+    let eqSeries = this.mode === 2 ? series.EQ4 : series.EQ3;
+    let kRatio = 'k<sub>ss</sub>';
+
+    if (this.mode == 2) {
+      kRatio = this.slider.value.capitalRatio!== 1046 ? 'k' : 'k<sub>ss</sub>';
+    }
+
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
         type: 'spline',
@@ -159,6 +222,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
+        min: 0,
         title: { useHTML: true, text: 'Capital-labor ratio, k<sub>t</sub>' },
       },
       yAxis: {
@@ -239,12 +303,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
             color: 'black',
             zIndex: 1,
             data: series.EQ,
-/*             label: {
-              useHTML: true,
-              style: { fontWeight: '400', textAlign: 'right' },
-              format: `k<sub>max</sub> = ${series.EQ[1].x.toFixed(0)}</br>f(k) = ${series.EQ[1].y.toFixed(0)}`
-            }
- */          }
+         }
         );
 
 
@@ -320,6 +379,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
             lineColor: '#757575',
             lineWidth: 1.,
             tickColor: '#757575',
+            min: 0,
             title: { useHTML: true, text: 'Capital-labor ratio, k<sub>t</sub>' },
           },
           yAxis: {
@@ -367,6 +427,32 @@ export class SolowComponent implements OnInit, AfterViewInit {
             data: series.invest
           }
         );
+        this.chart.addSeries(
+          {
+            type: 'line',
+            name: 'point',
+            lineWidth: 1,
+            dashStyle: 'Dot',
+            color: 'black',
+            zIndex: 1,
+            data: eqSeries,
+            label: {
+              enabled: true,
+              useHTML: true,
+              style: {
+                fontSize: '12px',
+                fontWeight: '400'
+              },
+              formatter: () => {
+                let k = eqSeries[1].x.toFixed(0);
+                return `${kRatio} = ${k}</br>sf(${kRatio}) = ${eqSeries[1].y.toFixed(0)}`;
+                }
+
+            }
+
+          }
+        );
+
 
         break;
     }
@@ -381,7 +467,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
     let max = this.mode < 2 ? 8500 : 3000;
     let K = slider.capital!, N = slider.labor! / 10, step = max / 500;
     let x = 0, n = slider.popRate!, d = slider.depreciationRate!, s = slider.savingRate!, A = slider.productivity!, alpha = 0.3;
-    let investSeries: any[] = [], prodSeries: any[] = [], savingSeries: any[] = [], eqSeries: any[] = [], eq2Series: any[] = [], consumptionSeries: any[] = [];
+    let investSeries: any[] = [], prodSeries: any[] = [], savingSeries: any[] = [], eqSeries: any[] = [], eq2Series: any[] = [], eq3Series: any[] = [], eq4Series: any[] = [], consumptionSeries: any[] = [];
 
     let production = (x: number) => {
       return A * Math.pow(x, alpha);
@@ -389,6 +475,9 @@ export class SolowComponent implements OnInit, AfterViewInit {
     let invest = (x: number) => {
       return x * (n + d);
     }
+    let saving = (x: number) => {
+      return s*A * Math.pow(x, alpha);
+    };
 
     let consumption = (x: number) => { return production(x) - invest(x); }
     let eqProd = this.mode === 1 ? slider.capitalRatio! : Math.pow(A / (d + n), 1 / (1 - alpha));
@@ -472,6 +561,55 @@ export class SolowComponent implements OnInit, AfterViewInit {
       { x: slider.capitalRatio!, y: 0, marker: { enabled: false } },
     ];
 
+    eq3Series = [
+      [0, saving(eqSaving)],
+      {
+        name: 'k<sub>max</sub>',
+        x: eqSaving,
+        y: saving(eqSaving),
+        marker: {
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        }
+      },
+      {
+        x: eqSaving, y: invest(eqSaving), marker: {
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        }
+      },
+      {x: eqSaving, y: 0, marker: {enabled: false}}
+    ];
+
+    eq4Series = [
+      { x: 0, y: saving(slider.capitalRatio!), marker: { enabled: false } },
+      {
+        name: 'k<sub>max</sub>',
+        x: +slider.capitalRatio!,
+        y: saving(slider.capitalRatio!),
+        marker: {
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        }
+      },
+      { x: slider.capitalRatio!, y: 0, marker: { enabled: false } },
+    ];
+
+    // set key properties
+    this.steadyState = eq3Series[1].x;
+
 
     return {
       invest: investSeries,
@@ -480,6 +618,8 @@ export class SolowComponent implements OnInit, AfterViewInit {
       consumption: consumptionSeries,
       EQ: eqSeries,
       EQ2: eq2Series,
+      EQ3: eq3Series,
+      EQ4: eq4Series
     }
 
   }

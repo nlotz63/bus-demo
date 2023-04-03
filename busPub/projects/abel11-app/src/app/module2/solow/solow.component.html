@@ -4,62 +4,111 @@
       <div *ngIf="mode === 0" @myAnimationTrigger>
         <h2>The per-worker production function</h2>
         <ul>
-          <li>The per-worker production function relates the amount of output produced per worker to the capital–labor ratio.</li>
-          <li>The per-worker production function slopes upward from left to right because an increase in the capital–labor ratio raises the amount of output produced per worker.</li>
-          <li>The bowed shape of the production function reflects the diminishing marginal productivity of capital.</li>
+          <li>
+            The per-worker production function relates the amount of output
+            produced per worker to the capital–labor ratio.
+          </li>
+          <li>
+            The per-worker production function slopes upward from left to right
+            because an increase in the capital–labor ratio raises the amount of
+            output produced per worker.
+          </li>
+          <li>
+            The bowed shape of the production function reflects the diminishing
+            marginal productivity of capital.
+          </li>
         </ul>
       </div>
       <div *ngIf="mode === 1" @myAnimationTrigger>
-        <h2>The relationship of consumption per worker to the capital-labor ratio
-          in the steady state</h2>
+        <h2>
+          The relationship of consumption per worker to the capital-labor ratio
+          in the steady state
+        </h2>
         <ul>
-          <li>For each value of the capital–labor ratio, <span econMath="\( k \)"></span>, steady-state output per worker, <span econMath="\(y \)"></span>, is given by the per-worker production function, <span econMath="\( f(k) \)"></span>.</li>
-          <li>Steady-state investment per worker, <span econMath="\( (n + d)k \)"></span>, is a straight line with slope <span econMath="\( n + d \)"></span>.</li>
-          <li>Steady-state consumption per worker, <span econMath="\( c \)"></span>, is the difference between output per worker and investment per worker.</li>
+          <li>
+            For each value of the capital–labor ratio,
+            <span econMath="\( k \)"></span>, steady-state output per worker,
+            <span econMath="\(y \)"></span>, is given by the per-worker
+            production function, <span econMath="\( f(k) \)"></span>.
+          </li>
+          <li>
+            Steady-state investment per worker,
+            <span econMath="\( (n + d)k \)"></span>, is a straight line with
+            slope <span econMath="\( n + d \)"></span>.
+          </li>
+          <li>
+            Steady-state consumption per worker,
+            <span econMath="\( c \)"></span>, is the difference between output
+            per worker and investment per worker.
+          </li>
         </ul>
         <div class="control-column econ-control">
-<!--           <econ-slider
-            label="Capital, k"
-            showValue="false"
-            displayValue="{{slider.value.capitalRatio! | number: '0.0-0' }}"
-            [min]="0"
-            [max]="7581.6"
-            step=".1"
-            [value]="slider.value.capitalRatio!"
-            (valueChange)="updateChart({ capitalRatio: $event })"
-          ></econ-slider>
- -->            <mat-form-field appearance="outline" class="econ-select-field">
-              <mat-label>Select a key capital-labor ratio</mat-label>
-              <mat-select title="capital labor ratio" (selectionChange)="updateChart({ capitalRatio: $event.value})" >
-                <mat-option value="350">k < k<sub>gold</sub></mat-option>
-                <mat-option value="1357.6">k<sub>gold</sub></mat-option>
-                <mat-option value="3500">k > k<sub>gold</sub></mat-option>
-                <mat-option value="7581.691">k<sub>max</sub></mat-option>
-              </mat-select>
-            </mat-form-field>
+          <mat-form-field appearance="outline" class="econ-select-field">
+            <mat-label>Select a key capital-labor ratio</mat-label>
+            <mat-select
+              title="capital labor ratio"
+              (selectionChange)="updateChart({ capitalRatio: $event.value })"
+            >
+              <mat-option value="350">k < k<sub>gold</sub></mat-option>
+              <mat-option value="1357.6">k<sub>gold</sub></mat-option>
+              <mat-option value="3500">k > k<sub>gold</sub></mat-option>
+              <mat-option value="7581.691">k<sub>max</sub></mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
       </div>
       <div *ngIf="mode === 2" @myAnimationTrigger>
         <h2>Determining the capital-labor ratio in the steady state</h2>
         <ul>
-          <li>The steady-state capital-labor ratio is determined by the condition that saving per worker, <span econMath="\( sf(k) \)"></span>, equals steady-state investment per worker, <span econMath="\( (n + d)k \)"></span>.</li>
-          <li>The steady-state capital-labor ratio is where the saving curve and the steady-state investment line cross.</li>
+          <li>
+            The steady-state capital-labor ratio is determined by the condition
+            that saving per worker, <span econMath="\( sf(k) \)"></span>, equals
+            steady-state investment per worker,
+            <span econMath="\( (n + d)k \)"></span>.
+          </li>
+          <li>
+            The steady-state capital-labor ratio is where the saving curve and
+            the steady-state investment line cross.
+          </li>
+          <li>Use the slider to find the steady-state capital-labor ratio.</li>
         </ul>
+        <econ-slider
+            class="econ-control"
+            label="Capital, k"
+            showValue="false"
+            displayValue="{{slider.value.capitalRatio! | number: '0.0-0' }}"
+            [min]="0"
+            [max]="2092"
+            step="104.6"
+            [value]="slider.value.capitalRatio!"
+            (valueChange)="updateChart({ capitalRatio: $event })"
+          ></econ-slider>
       </div>
       <div *ngIf="mode === 3" @myAnimationTrigger>
-        <h2>The effect of an increased saving rate on the steady-state capital-labor ratio</h2>
+        <h2>
+          The effect of an increased saving rate on the steady-state
+          capital-labor ratio
+        </h2>
         <ul>
-          <li>An increase in the saving rate shifts the saving curve upwards.</li>
-          <li>The point where saving per worker equals steady-state investment per worker corresponds to a higher capital-labor ratio.</li>
-          <li>Thus, a higher saving rate raises the steady-state capital-labor ratio.</li>
+          <li>
+            An increase in the saving rate shifts the saving curve upwards.
+          </li>
+          <li>
+            The point where saving per worker equals steady-state investment per
+            worker corresponds to a higher capital-labor ratio.
+          </li>
+          <li>
+            Thus, a higher saving rate raises the steady-state capital-labor
+            ratio.
+          </li>
         </ul>
         <div class="control-column econ-control">
           <econ-slider
             label="Saving rate"
             showValue="false"
-            displayValue="{{slider.value.savingRate | percent: '0.0-2' }}"
-            [min]=".1"
-            [max]=".4"
+            displayValue="{{ slider.value.savingRate | percent : '0.0-2' }}"
+            [min]="0.1"
+            [max]="0.4"
             step=".01"
             [value]="slider.value.savingRate!"
             (valueChange)="updateChart({ savingRate: $event })"
@@ -67,19 +116,32 @@
         </div>
       </div>
       <div *ngIf="mode === 4" @myAnimationTrigger>
-        <h2>The effect of a higher population growth rate on the steady-state capital-labor ratio</h2>
+        <h2>
+          The effect of a higher population growth rate on the steady-state
+          capital-labor ratio
+        </h2>
         <ul>
-          <li>An increase in the population growth rate increases steady-state investment per worker, causing the steady-state investment curve to pivot up and to the left, with a higher slope.</li>
-          <li>The point where saving per worker equals steady-state investment per worker corresponds to a lower capital-labor ratio.</li>
-          <li>Thus, a higher population growth rate reduces the steady-state capital-labor ratio.</li>
+          <li>
+            An increase in the population growth rate increases steady-state
+            investment per worker, causing the steady-state investment curve to
+            pivot up and to the left, with a higher slope.
+          </li>
+          <li>
+            The point where saving per worker equals steady-state investment per
+            worker corresponds to a lower capital-labor ratio.
+          </li>
+          <li>
+            Thus, a higher population growth rate reduces the steady-state
+            capital-labor ratio.
+          </li>
         </ul>
         <div class="control-column econ-control">
           <econ-slider
             label="Population growth rate"
             showValue="false"
-            displayValue="{{slider.value.popRate | percent: '0.0-2' }}"
+            displayValue="{{ slider.value.popRate | percent : '0.0-2' }}"
             [min]="0"
-            [max]=".03"
+            [max]="0.03"
             step=".0005"
             [value]="slider.value.popRate!"
             (valueChange)="updateChart({ popRate: $event })"
@@ -87,21 +149,45 @@
         </div>
       </div>
       <div *ngIf="mode === 5" @myAnimationTrigger>
-        <h2>The effect of a productivity improvement on the steady-state capital-labor ratio</h2>
+        <h2>
+          The effect of a productivity improvement on the steady-state
+          capital-labor ratio
+        </h2>
         <ul>
-          <li>A productivity improvement shifts the production function and the saving curve upwards.</li>
-          <li>The point where saving per worker equals steady-state investment per worker corresponds to a higher capital-labor ratio.</li>
-          <li>Thus, a higher saving rate raises the steady-state capital-labor ratio.</li>
+          <li>
+            A productivity improvement shifts the production function and the
+            saving curve upwards.
+          </li>
+          <li>
+            The point where saving per worker equals steady-state investment per
+            worker corresponds to a higher capital-labor ratio.
+          </li>
+          <li>
+            Thus, higher productivity raises the steady-state capital-labor
+            ratio.
+          </li>
         </ul>
-      </div>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Productivity"
+            showValue="false"
+            displayValue="{{ slider.value.productivity | number : '0.0-2' }}"
+            [min]="10"
+            [max]="40"
+            step=".1"
+            [value]="slider.value.productivity!"
+            (valueChange)="updateChart({ productivity: $event })"
+          ></econ-slider>
+        </div>
 
+      </div>
     </div>
     <div class="control-column">
       <div id="chart1" class="item-chart"></div>
       <div [attr.hidden]="hidden" id="chart2" class="item-chart"></div>
     </div>
   </div>
-    <app-player
+  <app-player
     *ngIf="showPlayer"
     [steps]="6"
     [mode]="mode"
