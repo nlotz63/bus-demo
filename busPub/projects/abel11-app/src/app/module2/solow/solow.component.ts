@@ -131,18 +131,29 @@ export class SolowComponent implements OnInit, AfterViewInit {
 
 
     } else if (this.mode === 1) {
-      let kRatio = this.slider.value.capitalRatio! < 7581.5 ? 'k' : 'k<sub>max</sub>';
+      let kRatio = '';
+      switch (+this.slider.value.capitalRatio!) {
+        case 7581.691:
+          kRatio = 'k<sub>max</sub>';
+          break;
+        case 1357.6:
+          kRatio = 'k<sub>gold</sub>';
+          break;
+        default:
+          kRatio = 'k';
+          break;
+      }
       this.chart.series[2].update(
         {
           type: 'line',
           data: series.EQ,
 
           label: {
-            enabled: true,
+            enabled: false,
             useHTML: true,
             style: {
               fontSize: '12px',
-              fontWeight: '400'
+              fontWeight: '400',
             },
             formatter: () => {
               let k = series.EQ2[1].x.toFixed(0);
@@ -151,7 +162,6 @@ export class SolowComponent implements OnInit, AfterViewInit {
           }
         }
       );
-
       this.chart2.series[1].update(
         {
           type: 'line',
@@ -172,6 +182,64 @@ export class SolowComponent implements OnInit, AfterViewInit {
           }
         }
       );
+      let position = this._positioner(this.chart, series.EQ[1].x, series.EQ[1].y)
+      let position2 = this._positioner(this.chart, series.EQ[2].x, series.EQ[2].y)
+
+      this.chart.removeAnnotation('annote1');
+      this.chart.addAnnotation({
+        id: 'annote1',
+        draggable: '',
+        labelOptions: { backgroundColor: 'rgba(255,255,255,1)', align: 'left', x: position.xOffset, y: position.yOffset, allowOverlap: true, borderRadius: 8, borderWidth: 0, padding: 4, shadow: false, borderColor: 'white' },
+        visible: true,
+        labels: [
+          {
+            point: {
+              xAxis: 0,
+              yAxis: 0,
+              x: series.EQ[1].x,
+              y: series.EQ[1].y,
+            },
+            text: `Consumption per worker is the<br/>vertical height between output per<br/>worker and investment per worker.<br/>
+            <i><b>c</b></i> = ${series.EQ[1].y.toFixed(0)} - ${series.EQ[2].y.toFixed(0) } = ${series.EQ2[1].y.toFixed(0)}`,
+            accessibility: {
+              description: `Consumption per worker is the vertical height between output per worker and investment per worker.
+              c = ${series.EQ[1].y.toFixed(0)} - ${series.EQ[2].y.toFixed(0) } = ${series.EQ2[1].y.toFixed(0)}`
+            }
+
+          }
+
+        ],
+        shapes: [
+          {
+            type: 'path',
+            strokeWidth: 1,
+            fill: 'rgba(0, 0, 0, 0)',
+            points: [
+              {
+                x: series.EQ[1].x,
+                y: series.EQ[1].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+              {
+                x: 4300,
+                y: 78,
+                xAxis: 0,
+                yAxis: 0
+              },
+              {
+                x: series.EQ[2].x,
+                y: series.EQ[2].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+
+            ]
+          }
+        ]
+
+      }, true);
+
     }
 
   }
@@ -283,7 +351,10 @@ export class SolowComponent implements OnInit, AfterViewInit {
             type: 'line',
             name: 'f(k)',
             zIndex: 0,
-            data: series.prod
+            data: series.prod,
+            label: {
+              enabled: false,
+            }
           }
         );
         this.chart.addSeries(
@@ -291,7 +362,11 @@ export class SolowComponent implements OnInit, AfterViewInit {
             type: 'line',
             name: '(n + d)k',
             zIndex: 0,
-            data: series.invest
+            data: series.invest,
+            label: {
+              enabled: false,
+
+            }
           }
         );
         this.chart.addSeries(
@@ -496,6 +571,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
         y: invest(x)
       };
       let point3 = {
+        name: 'k',
         x: x,
         y: s * production(x)
       };
@@ -621,6 +697,19 @@ export class SolowComponent implements OnInit, AfterViewInit {
       EQ3: eq3Series,
       EQ4: eq4Series
     }
+
+  }
+
+  private _positioner(chart: Highcharts.Chart, pointX: number, pointY: number) {
+    let xOffset = chart.chartWidth*.75 - chart.xAxis[0].toPixels(pointX, true);
+    let yOffset = chart.chartHeight*.59 - chart.yAxis[0].toPixels(pointY, true);
+
+
+    return {
+      xOffset: xOffset,
+      yOffset: yOffset,
+    }
+
 
   }
 
