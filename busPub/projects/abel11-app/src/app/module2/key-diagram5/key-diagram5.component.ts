@@ -373,8 +373,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             format: 'S<sup>d</sup>'
           },
           marker: {
-            symbol: 'circle',
-            radius: 4
+            enabled: true,
+            fillColor: 'orange',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 4,
+            symbol: 'circle'
           }
         },
         {
@@ -390,8 +394,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             format: 'I<sup>d</sup>'
           },
           marker: {
-            symbol: 'circle',
-            radius: 4
+            enabled: true,
+            fillColor: 'orange',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 4,
+            symbol: 'circle'
           }
         }
 
@@ -501,10 +509,13 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             format: 'S<sup>d</sup>'
           },
           marker: {
-            symbol: 'circle',
-            radius: 4
-          }
-        },
+            enabled: true,
+            fillColor: 'orange',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 4,
+            symbol: 'circle'
+          }        },
         {
           type: 'line',
           name: 'Id',
@@ -518,10 +529,13 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             format: 'I<sup>d</sup>'
           },
           marker: {
-            symbol: 'circle',
-            radius: 4
-          }
-        }
+            enabled: true,
+            fillColor: 'orange',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 4,
+            symbol: 'circle'
+          }        }
       ],
       xAxis: {
         lineColor: '#757575',
@@ -616,21 +630,26 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         name: 'desired investment',
         x: inverseInvestment(rRate),
         y: rRate,
-        color: 'blue',
         marker: {
-          symbol: 'circle',
-
-        }
-      },
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        }      },
       {
         name: 'desired saving',
         x: inverseSaving(rRate),
         y: rRate,
-        color: 'blue',
         marker: {
-          symbol: 'circle',
-        }
-      },
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 4,
+          symbol: 'circle'
+        }      },
       [2500, rRate]
     ];
     qSaving = [
