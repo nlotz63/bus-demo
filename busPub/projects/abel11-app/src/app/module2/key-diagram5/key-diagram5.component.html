@@ -4,24 +4,26 @@
     <div id="chart2" class="item-chart"></div>
   </div>
   <div class="wrapper">
-    <div *ngIf="mode ===0" class="econ-narative-block" @myAnimationTrigger>
-      <h2>Overview of the Model</h2>
-      <ul>
-        <li>
-          The IS curve is derived from the curves depicting desired national
-          saving and desired investment.
-        </li>
-        <li>
-          Higher levels of output (income) increase desired national saving and
-          shift the saving curve to the right.
-        </li>
-        <li>
-          The real interest rate at equilibrium between saving and investment in
-          the diagram on the left is plotted in the diagram on the right along
-          with the level of output on the horizontal axis.
-        </li>
-      </ul>
-      <div class="econ-slider">
+    <div *ngIf="mode ===0" class="wrapper" @myAnimationTrigger>
+      <div class="item-narrative">
+        <h2>Overview of the Model</h2>
+        <ul>
+          <li>
+            The IS curve is derived from the curves depicting desired national
+            saving and desired investment.
+          </li>
+          <li>
+            Higher levels of output (income) increase desired national saving and
+            shift the saving curve to the right.
+          </li>
+          <li>
+            The real interest rate at equilibrium between saving and investment in
+            the diagram on the left is plotted in the diagram on the right along
+            with the level of output on the horizontal axis.
+          </li>
+        </ul>
+        </div>
+      <div class="econ-slider item-narrative">
         <econ-slider
           label="real interest rate"
           econMath
@@ -29,80 +31,171 @@
           displayValue="{{ slider.value.rRate }}"
           [min]="0"
           [max]="2.75"
-          step=".01"
+          step=".001"
           [value]="slider.value.rRate!"
-          (valueChange)="updateChart({ rRate: $event })"
+          (valueChange)="updateChart({ rRate: $event }, 1)"
         ></econ-slider>
         </div>
 
     </div>
-    <div *ngIf="mode ===1" class="econ-narative-block" @myAnimationTrigger>
-      <h2>Goods Market Equilibrium</h2>
-      <ul>
-        <li>
-          The IS curve is derived from the curves depicting desired national
-          saving and desired investment.
-        </li>
-        <li>
-          Higher levels of output (income) increase desired national saving and
-          shift the saving curve to the right.
-        </li>
-        <li>
-          The real interest rate at equilibrium between saving and investment in
-          the diagram on the left is plotted in the diagram on the right along
-          with the level of output on the horizontal axis.
-        </li>
-      </ul>
-      <div class="econ-slider">
+    <div *ngIf="mode ===1" class="wrapper" @myAnimationTrigger>
+      <div class="item-narrative">
+        <h2>Goods Market Equilibrium</h2>
+        <ul>
+          <li>
+            The IS curve is derived from the curves depicting desired national
+            saving and desired investment.
+          </li>
+          <li>
+            Higher levels of output (income) increase desired national saving and
+            shift the saving curve to the right.
+          </li>
+          <li>
+            The real interest rate at equilibrium between saving and investment in
+            the diagram on the left is plotted in the diagram on the right along
+            with the level of output on the horizontal axis.
+          </li>
+        </ul>
+        </div>
+      <div class="item-narrative">
+        <ul>
+          <li>
+            Use the slider to find the goods market equilibrium world real interest rate.
+          </li>
+        </ul>
         <econ-slider
-          label="real interest rate"
-          econMath
+          label="World real interest rate"
+          class="econ-control"
           showValue="false"
-          displayValue="{{ slider.value.rRate }}"
+          displayValue="{{ +slider.value.rRate!/100 | percent: '0.0-3' }}"
           [min]="0"
           [max]="2.75"
-          step=".01"
+          step=".0005"
           [value]="slider.value.rRate!"
-          (valueChange)="updateChart({ rRate: $event })"
+          (valueChange)="updateChart({ rRate: $event }, 1)"
         ></econ-slider>
+        <div class="econ-slider">
+          <p class="econ-data">Desired lending (home): {{desiredLending | currency: 'USD' : 'symbol' : '0.2-2'}}<br/>Desired borrowing (foreign): {{desiredBorrow | currency: 'USD' : 'symbol' : '0.2-2'}}</p>
+          <p>{{message}}</p>
+          </div>
         </div>
 
     </div>
-    <div *ngIf="mode ===2" class="econ-narative-block" @myAnimationTrigger>
-      <h2>Changes in Desired Saving or Desired Investment (Home)</h2>
-      <ul>
-        <li>
-          The FE line shifts to the right because of an increase in the
-          full-employment level of output caused by
-          <ul>
-            <li>
-              A beneficial supply shock that causes an increase in total
-              factor productivity,
-            </li>
-            <li>An increase in labor supply,</li>
-            <li>An increase in the capital stock.</li>
-          </ul>
-        </li>
-      </ul>
+    <div *ngIf="mode ===2" class="wrapper" @myAnimationTrigger>
+      <div class="item-narrative">
+        <h2>Changes in Desired Saving or Desired Investment (Home)</h2>
+        <ul>
+          <li>
+            Bullet one.
+          </li>
+          <li>
+            Bullet two.
+          </li>
+          <li>
+            Use the sliders to shift one of the curves and then use the world real interest rate slider to restore equilibrium.
+          </li>
+        </ul>
+        </div>
+      <div class="item-narrative control-column">
+        <econ-slider
+        label="Wealth"
+        class="econ-control"
+        showValue="false"
+        [showPercent]="true"
+        [min]="-1"
+        [max]="1"
+        step=".1"
+        [value]="slider.value.wealth!"
+        (valueChange)="updateChart({ wealth: $event }, 1)"
+      ></econ-slider>
+      <econ-slider
+      label="Effective tax rate on capital"
+      class="econ-control"
+      showValue="false"
+      [showPercent]="true"
+      [min]="-1"
+      [max]="1"
+      step=".1"
+      [value]="slider.value.taxRate!"
+      (valueChange)="updateChart({ taxRate: $event }, 1)"
+    ></econ-slider>
+
+        <econ-slider
+          label="World real interest rate"
+          class="econ-control"
+          showValue="false"
+          displayValue="{{ +slider.value.rRate!/100 | percent: '0.0-3' }}"
+          [min]="0"
+          [max]="2.75"
+          step=".0005"
+          [value]="slider.value.rRate!"
+          (valueChange)="updateChart({ rRate: $event }, 1)"
+        ></econ-slider>
+        <div class="econ-slider">
+          <p class="econ-data">Desired lending (home): {{desiredLending | currency: 'USD' : 'symbol' : '0.2-2'}}<br/>Desired borrowing (foreign): {{desiredBorrow | currency: 'USD' : 'symbol' : '0.2-2'}}</p>
+          <p>{{message}}</p>
+          </div>
+        </div>
+
     </div>
-    <div *ngIf="mode ===3" class="econ-narative-block" @myAnimationTrigger>
-      <h2>Changes in Desired Saving or Desired Investment (Foreign)</h2>
-      <ul>
-        <li>
-          The FE line shifts to the right because of an increase in the
-          full-employment level of output caused by
-          <ul>
-            <li>
-              A beneficial supply shock that causes an increase in total
-              factor productivity,
-            </li>
-            <li>An increase in labor supply,</li>
-            <li>An increase in the capital stock.</li>
-          </ul>
-        </li>
-      </ul>
+    <div *ngIf="mode ===3" class="wrapper" @myAnimationTrigger>
+      <div class="item-narrative">
+        <h2>Changes in Desired Saving or Desired Investment (Foreign)</h2>
+        <ul>
+          <li>
+            Bullet one.
+          </li>
+          <li>
+            Bullet two.
+          </li>
+          <li>
+            Use the sliders to shift one of the curves and then use the world real interest rate slider to restore equilibrium.
+          </li>
+        </ul>
+        </div>
+      <div class="item-narrative control-column">
+        <econ-slider
+        label="Wealth"
+        class="econ-control"
+        showValue="false"
+        [showPercent]="true"
+        [min]="-1"
+        [max]="1"
+        step=".1"
+        [value]="sliderF.value.wealth!"
+        (valueChange)="updateChart({ wealth: $event }, 2)"
+      ></econ-slider>
+      <econ-slider
+      label="Effective tax rate on capital"
+      class="econ-control"
+      showValue="false"
+      [showPercent]="true"
+      [min]="-1"
+      [max]="1"
+      step=".1"
+      [value]="sliderF.value.taxRate!"
+      (valueChange)="updateChart({ taxRate: $event }, 2)"
+    ></econ-slider>
+
+        <econ-slider
+          label="World real interest rate"
+          class="econ-control"
+          showValue="false"
+          displayValue="{{ +slider.value.rRate!/100 | percent: '0.0-3' }}"
+          [min]="0"
+          [max]="2.75"
+          step=".0005"
+          [value]="slider.value.rRate!"
+          (valueChange)="updateChart({ rRate: $event }, 1)"
+        ></econ-slider>
+        <div class="econ-slider">
+          <p class="econ-data">Desired lending (home): {{desiredLending | currency: 'USD' : 'symbol' : '0.2-2'}}<br/>Desired borrowing (foreign): {{desiredBorrow | currency: 'USD' : 'symbol' : '0.2-2'}}</p>
+          <p>{{message}}</p>
+          </div>
+        </div>
+
     </div>
-  
+
     </div>
   <app-player
   *ngIf="showPlayer"

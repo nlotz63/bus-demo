@@ -11,7 +11,8 @@
 }
 
 .item-narrative {
-  @include flex(6.5 1 65%) ;
+  @include flex(5 1 50%) ;
+  font-size: .9em;
 
 }
 
@@ -43,7 +44,7 @@
 }
 
 ul {
-  line-height: 1.75em;
+  line-height: 1.5em;
 }
 
 button {
@@ -59,4 +60,8 @@ button {
   justify-content: space-between;
   align-items: center;
   margin: 5px 5px;
+}
+
+.econ-slider .econ-data {
+  margin-left: 10%;
 }

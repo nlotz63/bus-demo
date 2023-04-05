@@ -45,7 +45,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
 
 // Home slider group
   slider = new FormGroup({
-    rRate: new FormControl(1.75),
+    rRate: new FormControl(0),
     taxRate: new FormControl(0),
     expectedMPK: new FormControl(0),
     output: new FormControl(0),
@@ -71,6 +71,10 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   chart!: Highcharts.Chart;
   chart2!: Highcharts.Chart;
 
+  desiredLending!: number;
+  desiredBorrow!: number;
+  message: string = `Raise the interest rate to increase desired lending at home and decrease desired borrowing in the foreign country.`;
+
   ngOnInit(): void {
     this.ActiveRoute.queryParams.subscribe((params) => {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
@@ -86,7 +90,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   public playStep(value: any) {
     this.mode = value;
     this.slider.setValue({
-      rRate: 1.75,
+      rRate: 0,
       taxRate: 0,
       expectedMPK: 0,
       output: 0,
@@ -96,15 +100,22 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       govPurchases: 0,
       taxes: 0
     });
+
+    if(value > 1) this.slider.patchValue({rRate: 1.323})
     this._setupChart(true);
-   // this.updateChart(2);
 
   }
 
-  public updateChart(value: any) {
-    this.slider.patchValue(value);
+  public updateChart(value: any, chart: number) {
+    if (chart === 1) {
+      this.slider.patchValue(value);
+    } else {
+      this.sliderF.patchValue(value);
+    }
     let series = this._createSeries(false);
     let seriesF = this._createSeriesForeign(false);
+
+    this._setMessage();
 
     this.chart.update({
       series: [
@@ -295,7 +306,6 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   }
 
   public messageBuilder(slider: string, startValue: any) {
-    console.log(startValue);
   }
 
   // Private methods
@@ -303,6 +313,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   private _setupChart(addRef: boolean) {
     let series = this._createSeries(addRef);
     let seriesF = this._createSeriesForeign(addRef);
+    this._setMessage();
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
         type: 'spline',
@@ -671,6 +682,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       [inverseInvestment(rRate), -3]
     ];
 
+    this.desiredLending = inverseSaving(rRate) - inverseInvestment(rRate);
+
 
     this.savingDesired = inverseSaving(rRate);
     this.investmentDesired = inverseInvestment(rRate);
@@ -784,6 +797,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       [inverseInvestment(rRate), -3]
     ];
 
+    this.desiredBorrow = inverseInvestment(rRate) - inverseSaving(rRate);
 
     this.savingDesired = inverseSaving(rRate);
     this.investmentDesired = inverseInvestment(rRate);
@@ -791,8 +805,6 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       this.saveRef = saving;
       this.investRef = investment;
     }
-    console.log(nx);
-
     return {
       seriesSaving: saving,
       seriesInvestment: investment,
@@ -805,5 +817,19 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       investmentRef: investmentRef
 
     }
+  }
+
+  private _setMessage() {
+
+    // update equilibrium message
+if ( Math.abs(this.desiredBorrow - this.desiredLending ) < .15) {
+  this.message = `Yay! You've found the equilibrium world real interest rate that clears the goods market.`;
+} else if (this.desiredBorrow - this.desiredLending <= .15) {
+  this.message = `Lower the interest rate to decrease desired lending at home and increase desired borrowing in the foreign country.`
+} else {
+  this.message = `Raise the interest rate to increase desired lending at home and decrease desired borrowing in the foreign country.`;
+
+}
+
   }
 }
