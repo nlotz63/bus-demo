@@ -40,6 +40,13 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   savingDesired: number = 1067;
   saveRef: any[] = []
   investRef: any[] = [];
+  saveRefF: any[] = []
+  investRefF: any[] = [];
+  qSaveRef: any[] = [];
+  qInvestRef: any[] = [];
+  qSaveRefF: any[] = [];
+  qInvestRefF: any[] = [];
+
 
   constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
 
@@ -101,7 +108,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       taxes: 0
     });
 
-    if(value > 1) this.slider.patchValue({rRate: 1.323})
+    if(value !== 1) this.slider.patchValue({rRate: 1.323})
     this._setupChart(true);
 
   }
@@ -188,26 +195,6 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           }
         },
 
-        {
-          type: 'spline',
-          name: 'initial saving',
-          data: this.saveRef,
-          dashStyle: 'Dash',
-          lineWidth: 1,
-          color: '#797979',
-          visible: this.slider.value.govPurchases !== 0 ? true : false
-        },
-        {
-          type: 'spline',
-          name: 'initial investment',
-          data: this.investRef,
-          dashStyle: 'Dash',
-          lineWidth: 1,
-          color: '#797979',
-          visible: this.slider.value.taxRate !== 0 ? true : false
-
-        }
-
       ],
     });
     this.chart2.update({
@@ -281,26 +268,6 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           }
         },
 
-        {
-          type: 'spline',
-          name: 'initial saving',
-          data: this.saveRef,
-          dashStyle: 'Dash',
-          lineWidth: 1,
-          color: '#797979',
-          visible: this.slider.value.govPurchases !== 0 ? true : false
-        },
-        {
-          type: 'spline',
-          name: 'initial investment',
-          data: this.investRef,
-          dashStyle: 'Dash',
-          lineWidth: 1,
-          color: '#797979',
-          visible: this.slider.value.taxRate !== 0 ? true : false
-
-        }
-
       ],
     });
   }
@@ -353,8 +320,9 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Desired lending',
-          color: 'black',
+          color: 'rgb(143, 36, 105)',
           zIndex: 1,
+          lineWidth: 1.5,
           animation: false,
           marker: {enabled: false},
           data: series.seriesNX,
@@ -377,6 +345,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
+          lineWidth: 1,
           color: 'black',
           data: series.qSaving,
           label: {
@@ -398,6 +367,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
+          lineWidth: 1,
           color: 'black',
           data: series.qInvestment,
           label: {
@@ -412,9 +382,73 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             radius: 4,
             symbol: 'circle'
           }
-        }
-
-
+        },
+        {
+          type: 'line',
+          name: 'Initial saving',
+          dashStyle: 'Dash',
+          color: 'rgb(112, 112, 112)',
+          lineWidth: 1,
+          zIndex: -1,
+          data: series.savingRef,
+          label: {
+            enabled: false
+          }
+        },
+        {
+          type: 'line',
+          name: 'Initial investment',
+          dashStyle: 'Dash',
+          color: 'rgb(112, 112, 112)',
+          lineWidth: 1,
+          zIndex: -1,
+          data: series.investmentRef,
+          label: {
+            enabled: false
+          }
+        },
+        {
+          type: 'line',
+          name: 'Sd Reference',
+          zIndex: -1,
+          animation: false,
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          color: 'rgb(112, 112, 112)',
+          data: series.qSavingRef,
+          label: {
+            enabled: false
+          },
+          marker: {
+            enabled: true,
+            fillColor: 'rgb(112, 112, 112)',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 3,
+            symbol: 'circle'
+          }
+        },
+        {
+          type: 'line',
+          name: 'Id Reference',
+          zIndex: -1,
+          animation: false,
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          color: 'rgb(112, 112, 112)',
+          data: series.qInvestmentRef,
+          label: {
+              enabled: false
+          },
+          marker: {
+            enabled: true,
+            fillColor: 'rgb(112, 112, 112)',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 3,
+            symbol: 'circle'
+          }
+        },
       ],
       xAxis: {
         lineColor: '#757575',
@@ -489,8 +523,9 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Desired borrowing',
-          color: 'black',
+          color: 'rgb(143, 36, 105)',
           zIndex: 1,
+          lineWidth: 1.5,
           animation: false,
           marker: {enabled: false},
           data: seriesF.seriesNX,
@@ -513,6 +548,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
+          lineWidth: 1,
           color: 'black',
           data: seriesF.qSaving,
           label: {
@@ -533,6 +569,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
+          lineWidth: 1,
           color: 'black',
           data: seriesF.qInvestment,
           label: {
@@ -546,7 +583,75 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             radius: 4,
             symbol: 'circle'
-          }        }
+          }
+        },
+        {
+          type: 'line',
+          name: 'Initial saving',
+          dashStyle: 'Dash',
+          color: 'rgb(112, 112, 112)',
+          lineWidth: 1,
+          zIndex: -1,
+          data: seriesF.savingRef,
+          label: {
+            enabled: false
+          }
+        },
+        {
+          type: 'line',
+          name: 'Initial investment',
+          dashStyle: 'Dash',
+          color: 'rgb(112, 112, 112)',
+          lineWidth: 1,
+          zIndex: -1,
+          data: seriesF.investmentRef,
+          label: {
+            enabled: false
+          }
+        },
+        {
+          type: 'line',
+          name: 'Sd Reference',
+          zIndex: -1,
+          animation: false,
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          color: 'rgb(112, 112, 112)',
+          data: seriesF.qSavingRef,
+          label: {
+            enabled: false
+          },
+          marker: {
+            enabled: true,
+            fillColor: 'rgb(112, 112, 112)',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 3,
+            symbol: 'circle'
+          }
+        },
+        {
+          type: 'line',
+          name: 'Id Reference',
+          zIndex: -1,
+          animation: false,
+          dashStyle: 'Dot',
+          lineWidth: 1,
+          color: 'rgb(112, 112, 112)',
+          data: seriesF.qInvestmentRef,
+          label: {
+              enabled: false
+          },
+          marker: {
+            enabled: true,
+            fillColor: 'rgb(112, 112, 112)',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 3,
+            symbol: 'circle'
+          }
+        },
+
       ],
       xAxis: {
         lineColor: '#757575',
@@ -687,22 +792,24 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
 
     this.savingDesired = inverseSaving(rRate);
     this.investmentDesired = inverseInvestment(rRate);
+
     if (addRef) {
       this.saveRef = saving;
       this.investRef = investment;
-    }
+      this.qInvestRef = qInvestment;
+      this.qSaveRef = qSaving
 
+    }
     return {
       seriesSaving: saving,
       seriesInvestment: investment,
       seriesNX: nx,
       qSaving: qSaving,
       qInvestment: qInvestment,
-      //equilibrium: eq,
-      eqRef: eqRef,
-      savingRef: savingRef,
-      investmentRef: investmentRef
-
+      savingRef: this.saveRef,
+      investmentRef: this.investRef,
+      qInvestmentRef: this.qInvestRef,
+      qSavingRef: this.qSaveRef
     }
   }
 
@@ -802,8 +909,11 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     this.savingDesired = inverseSaving(rRate);
     this.investmentDesired = inverseInvestment(rRate);
     if (addRef) {
-      this.saveRef = saving;
-      this.investRef = investment;
+      this.saveRefF = saving;
+      this.investRefF = investment;
+      this.qInvestRefF = qInvestment;
+      this.qSaveRefF = qSaving
+
     }
     return {
       seriesSaving: saving,
@@ -811,11 +921,10 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       seriesNX: nx,
       qSaving: qSaving,
       qInvestment: qInvestment,
-      //equilibrium: eq,
-      eqRef: eqRef,
-      savingRef: savingRef,
-      investmentRef: investmentRef
-
+      savingRef: this.saveRefF,
+      investmentRef: this.investRefF,
+      qInvestmentRef: this.qInvestRefF,
+      qSavingRef: this.qSaveRefF
     }
   }
 
