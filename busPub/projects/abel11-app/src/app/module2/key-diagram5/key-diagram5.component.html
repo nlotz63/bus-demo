@@ -4,182 +4,235 @@
     <div id="chart2" class="item-chart"></div>
   </div>
   <div class="wrapper">
-    <div *ngIf="mode ===0" class="wrapper" @myAnimationTrigger>
+    <div *ngIf="mode === 0" class="wrapper" @myAnimationTrigger>
       <div class="item-narrative">
         <h2>Overview of the Model</h2>
         <ul>
           <li>
-            The figure consists of two saving-investment diagrams, one for the home country and one for the foreign country.
+            The figure consists of two saving-investment diagrams, one for the
+            home country and one for the foreign country.
           </li>
           <li>
-            The world real interest rate, measured on the vertical axis, is the real interest rate faced by both countries.
-          </li>
-          <li>The world real interest rate adjusts to achieve equilibrium in the goods market, such that one country's desired international lending equals the other countr's desired international borrowing.
+            The world real interest rate, measured on the vertical axis, is the
+            real interest rate faced by both countries.
           </li>
         </ul>
-        </div>
-      <div class="econ-slider item-narrative">
-        </div>
+      </div>
+      <div class="item-narrative">
+        <ul class="column-two-align">
+          <li>
+            The world real interest rate adjusts to achieve equilibrium in the
+            goods market, such that one country's desired international lending
+            equals the other countr's desired international borrowing.
+          </li>
 
+        </ul>
+      </div>
     </div>
-    <div *ngIf="mode ===1" class="wrapper" @myAnimationTrigger>
+    <div *ngIf="mode === 1" class="wrapper" @myAnimationTrigger>
       <div class="item-narrative">
         <h2>Goods Market Equilibrium</h2>
         <ul>
           <li>
-            To restore general equilibrium, move the world real interest rate slider so that desired lending in the home country equals desired borrowing in the foreign country.
+            To restore general equilibrium, move the world real interest rate
+            slider so that desired lending in the home country equals desired
+            borrowing in the foreign country.
           </li>
           <li>
-            Note that as the world real interest rate rises, desired lending in the home country increases and desired borrowing in the foreign country declines.
+            Note that as the world real interest rate rises, desired lending in
+            the home country increases and desired borrowing in the foreign
+            country declines.
           </li>
         </ul>
-        </div>
+      </div>
       <div class="item-narrative">
+        <br/>
         <econ-slider
           label="World real interest rate"
           class="econ-control"
           showValue="false"
-          displayValue="{{ +slider.value.rRate!/100 | percent: '0.0-3' }}"
+          displayValue="{{ +slider.value.rRate! / 100 | percent : '0.0-4' }}"
           [min]="0"
           [max]="2.75"
-          step=".0005"
+          [step]="rwStep"
           [value]="slider.value.rRate!"
           (valueChange)="updateChart({ rRate: $event }, 1)"
         ></econ-slider>
         <div class="econ-slider">
-          <p class="econ-data">Desired lending (home): {{desiredLending | currency: 'USD' : 'symbol' : '0.2-2'}}<br/>Desired borrowing (foreign): {{desiredBorrow | currency: 'USD' : 'symbol' : '0.2-2'}}</p>
-          <p>{{message}}</p>
-          </div>
+          <p class="econ-data">
+            Desired lending (home):
+            {{ desiredLending | currency : "USD" : "symbol" : "0.0-0"
+            }}<br />Desired borrowing (foreign):
+            {{ desiredBorrow | currency : "USD" : "symbol" : "0.0-0" }}
+          </p>
+          <p>{{ message }}</p>
         </div>
-
+      </div>
     </div>
-    <div *ngIf="mode ===2" class="wrapper" @myAnimationTrigger>
+    <div *ngIf="mode === 2" class="wrapper" @myAnimationTrigger>
       <div class="item-narrative">
         <h2>Changes in Desired Saving or Desired Investment (Home)</h2>
         <ul>
           <li>
-            The home country's desired saving curve shifts up and to the left if wealth increases.
+            The home country's desired saving curve shifts up and to the left if
+            wealth increases.
           </li>
           <li>
-            The home country's desired investment curve shifts down and to the left if the effective tax rate on capital increases.
+            The home country's desired investment curve shifts down and to the
+            left if the effective tax rate on capital increases.
           </li>
           <li>
-            Change the level of either wealth or the effective tax rate on capital to see what happens.
-          </li>
-          <li>
-            To restore general equilibrium, move the world real interest rate slider so that desired lending in the home country equals desired borrowing in the foreign country.
+            Change the level of either wealth or the effective tax rate on
+            capital to see what happens.
           </li>
         </ul>
-        </div>
+      </div>
       <div class="item-narrative control-column">
+        <br/>
         <econ-slider
-        label="Wealth"
-        class="econ-control"
-        showValue="false"
-        [showPercent]="true"
-        [min]="-1"
-        [max]="1"
-        step=".1"
-        [value]="slider.value.wealth!"
-        (valueChange)="updateChart({ wealth: $event }, 1)"
-      ></econ-slider>
-      <econ-slider
-      label="Effective tax rate on capital"
-      class="econ-control"
-      showValue="false"
-      [showPercent]="true"
-      [min]="-1"
-      [max]="1"
-      step=".1"
-      [value]="slider.value.taxRate!"
-      (valueChange)="updateChart({ taxRate: $event }, 1)"
-    ></econ-slider>
-
+          label="Wealth"
+          class="econ-control"
+          showValue="false"
+          [showPercent]="true"
+          [min]="-1"
+          [max]="1"
+          step=".1"
+          [value]="slider.value.wealth!"
+          (valueChange)="updateChart({ wealth: $event }, 1)"
+        ></econ-slider>
+        <econ-slider
+          label="Effective tax rate on capital"
+          class="econ-control"
+          showValue="false"
+          [showPercent]="true"
+          [min]="-1"
+          [max]="1"
+          step=".1"
+          [value]="slider.value.taxRate!"
+          (valueChange)="updateChart({ taxRate: $event }, 1)"
+        ></econ-slider>
+     </div>
+    </div>
+    <div *ngIf="mode === 3" class="wrapper" @myAnimationTrigger>
+      <div class="item-narrative">
+        <h2>Restore Equilibrium</h2>
+        <ul>
+          <li>
+            To restore general equilibrium, move the world real interest rate
+            slider so that desired lending in the home country equals desired
+            borrowing in the foreign country.
+          </li>
+        </ul>
+      </div>
+      <div class="item-narrative control-column">
+        <br/>
         <econ-slider
           label="World real interest rate"
           class="econ-control"
           showValue="false"
-          displayValue="{{ +slider.value.rRate!/100 | percent: '0.0-3' }}"
+          displayValue="{{ +slider.value.rRate! / 100 | percent : '0.0-4' }}"
           [min]="0"
           [max]="2.75"
-          step=".0005"
+          [step]="rwStep"
           [value]="slider.value.rRate!"
           (valueChange)="updateChart({ rRate: $event }, 1)"
         ></econ-slider>
         <div class="econ-slider">
-          <p class="econ-data">Desired lending (home): {{desiredLending | currency: 'USD' : 'symbol' : '0.2-2'}}<br/>Desired borrowing (foreign): {{desiredBorrow | currency: 'USD' : 'symbol' : '0.2-2'}}</p>
-          <p>{{message}}</p>
-          </div>
+          <p class="econ-data">
+            Desired lending (home):
+            {{ desiredLending | currency : "USD" : "symbol" : "0.0-0"
+            }}<br />Desired borrowing (foreign):
+            {{ desiredBorrow | currency : "USD" : "symbol" : "0.0-0" }}
+          </p>
+          <p>{{ message }}</p>
         </div>
-
+      </div>
     </div>
-    <div *ngIf="mode ===3" class="wrapper" @myAnimationTrigger>
+    <div *ngIf="mode === 4" class="wrapper" @myAnimationTrigger>
       <div class="item-narrative">
         <h2>Changes in Desired Saving or Desired Investment (Foreign)</h2>
         <ul>
           <li>
-            The foreign country's desired saving curve shifts up and to the left if wealth increases.
+            The foreign country's desired saving curve shifts up and to the left
+            if wealth increases.
           </li>
           <li>
-            The foreign country's desired investment curve shifts down and to the left if the effective tax rate on capital increases.
+            The foreign country's desired investment curve shifts down and to
+            the left if the effective tax rate on capital increases.
           </li>
           <li>
-            Change the level of either wealth or the effective tax rate on capital to see what happens.
-          </li>
-          <li>
-            To restore general equilibrium, move the world real interest rate slider so that desired lending in the home country equals desired borrowing in the foreign country.
+            Change the level of either wealth or the effective tax rate on
+            capital to see what happens.
           </li>
         </ul>
-        </div>
+      </div>
       <div class="item-narrative control-column">
+        <br/>
         <econ-slider
-        label="Wealth"
-        class="econ-control"
-        showValue="false"
-        [showPercent]="true"
-        [min]="-1"
-        [max]="1"
-        step=".1"
-        [value]="sliderF.value.wealth!"
-        (valueChange)="updateChart({ wealth: $event }, 2)"
-      ></econ-slider>
-      <econ-slider
-      label="Effective tax rate on capital"
-      class="econ-control"
-      showValue="false"
-      [showPercent]="true"
-      [min]="-1"
-      [max]="1"
-      step=".1"
-      [value]="sliderF.value.taxRate!"
-      (valueChange)="updateChart({ taxRate: $event }, 2)"
-    ></econ-slider>
-
+          label="Wealth"
+          class="econ-control"
+          showValue="false"
+          [showPercent]="true"
+          [min]="-1"
+          [max]="1"
+          step=".1"
+          [value]="sliderF.value.wealth!"
+          (valueChange)="updateChart({ wealth: $event }, 2)"
+        ></econ-slider>
+        <econ-slider
+          label="Effective tax rate on capital"
+          class="econ-control"
+          showValue="false"
+          [showPercent]="true"
+          [min]="-1"
+          [max]="1"
+          step=".1"
+          [value]="sliderF.value.taxRate!"
+          (valueChange)="updateChart({ taxRate: $event }, 2)"
+        ></econ-slider>
+      </div>
+    </div>
+    <div *ngIf="mode === 5" class="wrapper" @myAnimationTrigger>
+      <div class="item-narrative">
+        <h2>Restore Equilibrium</h2>
+        <ul>
+          <li>
+            To restore general equilibrium, move the world real interest rate
+            slider so that desired lending in the home country equals desired
+            borrowing in the foreign country.
+          </li>
+        </ul>
+      </div>
+      <div class="item-narrative control-column">
+        <br/>
         <econ-slider
           label="World real interest rate"
           class="econ-control"
           showValue="false"
-          displayValue="{{ +slider.value.rRate!/100 | percent: '0.0-3' }}"
+          displayValue="{{ +slider.value.rRate! / 100 | percent : '0.0-4' }}"
           [min]="0"
           [max]="2.75"
-          step=".0005"
+          [step]="rwStep"
           [value]="slider.value.rRate!"
           (valueChange)="updateChart({ rRate: $event }, 1)"
         ></econ-slider>
         <div class="econ-slider">
-          <p class="econ-data">Desired lending (home): {{desiredLending | currency: 'USD' : 'symbol' : '0.2-2'}}<br/>Desired borrowing (foreign): {{desiredBorrow | currency: 'USD' : 'symbol' : '0.2-2'}}</p>
-          <p>{{message}}</p>
-          </div>
+          <p class="econ-data">
+            Desired lending (home):
+            {{ desiredLending | currency : "USD" : "symbol" : "0.0-0"
+            }}<br />Desired borrowing (foreign):
+            {{ desiredBorrow | currency : "USD" : "symbol" : "0.0-0" }}
+          </p>
+          <p>{{ message }}</p>
         </div>
-
+      </div>
     </div>
-
-    </div>
+  </div>
   <app-player
-  *ngIf="showPlayer"
-  [steps]="4"
-  [mode]="mode"
-  (modeChange)="playStep($event)"
-  class="player-navigation-container"
-></app-player>
+    *ngIf="showPlayer"
+    [steps]="6"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
 </div>

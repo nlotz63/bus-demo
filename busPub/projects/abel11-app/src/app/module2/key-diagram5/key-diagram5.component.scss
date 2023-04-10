@@ -13,6 +13,7 @@
 .item-narrative {
   @include flex(5 1 50%) ;
   font-size: .9em;
+  min-height: 200px;
 
 }
 
@@ -64,4 +65,8 @@ button {
 
 .econ-slider .econ-data {
   margin-left: 10%;
+}
+
+.column-two-align {
+  padding-top: 40px;
 }

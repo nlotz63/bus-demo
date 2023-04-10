@@ -35,6 +35,8 @@ HC_accessibility(Highcharts);
 })
 export class KeyDiagram5Component implements OnInit, AfterViewInit {
   mode: number = 0;
+  previousMode: number = 0;
+  rwStep = .001
   showPlayer: boolean = false;
   investmentDesired: number = 625;
   savingDesired: number = 1067;
@@ -47,10 +49,9 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   qSaveRefF: any[] = [];
   qInvestRefF: any[] = [];
 
-
   constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
 
-// Home slider group
+  // Home slider group
   slider = new FormGroup({
     rRate: new FormControl(0),
     taxRate: new FormControl(0),
@@ -62,7 +63,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     govPurchases: new FormControl(0),
     taxes: new FormControl(0)
   });
-// Foreign slider group
+  // Foreign slider group
   sliderF = new FormGroup({
     rRate: new FormControl(1.75),
     taxRate: new FormControl(0),
@@ -86,6 +87,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     this.ActiveRoute.queryParams.subscribe((params) => {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
+      this.previousMode = this.mode;
     });
   }
 
@@ -96,6 +98,10 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   // Public methods
   public playStep(value: any) {
     this.mode = value;
+    if (value === 3 && this.previousMode === 2 || value === 5 && this.previousMode === 4) {
+      this.previousMode = value;
+      return;
+    }
     this.slider.setValue({
       rRate: 0,
       taxRate: 0,
@@ -108,9 +114,11 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       taxes: 0
     });
 
-    if(value !== 1) this.slider.patchValue({rRate: 1.323})
+    if (value !== 1) this.slider.patchValue({ rRate: 1.323 });
     this._setupChart(true);
 
+
+    this.previousMode = value;
   }
 
   public updateChart(value: any, chart: number) {
@@ -324,7 +332,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           zIndex: 1,
           lineWidth: 1.5,
           animation: false,
-          marker: {enabled: false},
+          marker: { enabled: false },
           data: series.seriesNX,
           zoneAxis: 'x',
           zones: [
@@ -336,7 +344,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
               value: series.qSaving[0].x,
               dashStyle: 'Solid'
             },
-            {value: 2500, dashStyle: 'Dot'}
+            { value: 2500, dashStyle: 'Dot' }
           ]
         },
         {
@@ -438,7 +446,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           color: 'rgb(112, 112, 112)',
           data: series.qInvestmentRef,
           label: {
-              enabled: false
+            enabled: false
           },
           marker: {
             enabled: true,
@@ -479,8 +487,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
           },
           label: {
-            style: { fontWeight: '400'}
-         }
+            style: { fontWeight: '400' }
+          }
         }
       }
     });
@@ -527,7 +535,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           zIndex: 1,
           lineWidth: 1.5,
           animation: false,
-          marker: {enabled: false},
+          marker: { enabled: false },
           data: seriesF.seriesNX,
           zoneAxis: 'x',
           zones: [
@@ -539,7 +547,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
               value: this.savingDesired,
               dashStyle: 'Solid'
             },
-            {value: 2500, dashStyle: 'Dot'}
+            { value: 2500, dashStyle: 'Dot' }
           ]
         },
         {
@@ -562,7 +570,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             radius: 4,
             symbol: 'circle'
-          }        },
+          }
+        },
         {
           type: 'line',
           name: 'Id',
@@ -640,7 +649,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           color: 'rgb(112, 112, 112)',
           data: seriesF.qInvestmentRef,
           label: {
-              enabled: false
+            enabled: false
           },
           marker: {
             enabled: true,
@@ -682,8 +691,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
           },
           label: {
-            style: { fontWeight: '400'}
-         }
+            style: { fontWeight: '400' }
+          }
 
         }
 
@@ -691,7 +700,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     });
 
   }
-// Create series for home country
+  // Create series for home country
   private _createSeries(addRef: boolean) {
     // math generate all curves and key points in the chart returns an object of arrays
     let rRate = this.slider.value.rRate!, taxRate = this.slider.value.taxRate!, eMPK = this.slider.value.expectedMPK!, output = this.slider.value.output!, eOutput = this.slider.value.expectedOutput!, wealth = this.slider.value.wealth!, eRealRate = this.slider.value.expectedRealRate!, govPurchase = this.slider.value.govPurchases!, taxes = this.slider.value.taxes!;
@@ -753,7 +762,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           lineWidth: 1,
           radius: 4,
           symbol: 'circle'
-        }      },
+        }
+      },
       {
         name: 'desired saving',
         x: inverseSaving(rRate),
@@ -765,7 +775,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           lineWidth: 1,
           radius: 4,
           symbol: 'circle'
-        }      },
+        }
+      },
       [2500, rRate]
     ];
     qSaving = [
@@ -813,7 +824,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     }
   }
 
-      // create foreign country series
+  // create foreign country series
   private _createSeriesForeign(addRef: boolean) {
     // math generate all curves and key points in the chart returns an object of arrays
     let rRate = this.slider.value.rRate!, taxRate = this.sliderF.value.taxRate!, eMPK = this.sliderF.value.expectedMPK!, output = this.sliderF.value.output!, eOutput = this.sliderF.value.expectedOutput!, wealth = this.sliderF.value.wealth!, eRealRate = this.sliderF.value.expectedRealRate!, govPurchase = this.sliderF.value.govPurchases!, taxes = this.sliderF.value.taxes!;
@@ -929,16 +940,18 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   }
 
   private _setMessage() {
+    let difference = this.desiredBorrow - this.desiredLending;
+    this.rwStep = Math.abs(difference) < 2 ? .0001 : .001;
 
     // update equilibrium message
-if ( Math.abs(this.desiredBorrow - this.desiredLending ) < .15) {
-  this.message = `Yay! You've found the equilibrium world real interest rate that clears the goods market.`;
-} else if (this.desiredBorrow - this.desiredLending <= .15) {
-  this.message = `Lower the interest rate to decrease desired lending at home and increase desired borrowing in the foreign country.`
-} else {
-  this.message = `Raise the interest rate to increase desired lending at home and decrease desired borrowing in the foreign country.`;
+    if (Math.abs(difference) < .05) {
+      this.message = `Yay! You've found the equilibrium world real interest rate that clears the goods market.`;
+    } else if ( difference <= .05) {
+      this.message = `Lower the interest rate to decrease desired lending at home and increase desired borrowing in the foreign country.`
+    } else {
+      this.message = `Raise the interest rate to increase desired lending at home and decrease desired borrowing in the foreign country.`;
 
-}
+    }
 
   }
 }
