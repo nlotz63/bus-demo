@@ -708,7 +708,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     let saving = [], investment = [], qSaving: any[] = [], qInvestment: any[] = [], eq = [], savingRef: any[] = [], investmentRef: any[] = [], qSavingRef = [], qInvestmentRef = [], eqRef: any[] = [];
 
     let alpha = .00006, exponent = 1.6, exp1 = .5, beta = .23, x = 50,
-      investShift = 7 - taxRate + eMPK, savingShift = -3.5 - output + eOutput + wealth - .25 * eRealRate + govPurchase - .3 * taxes;
+      investShift = 7 - taxRate + eMPK, savingShift = -3.35 - output + eOutput + wealth - .25 * eRealRate + govPurchase - .3 * taxes;
 
     let savingCurve = (x: number) => { return savingShift + alpha * Math.pow(x, exponent); };
     let investmentCurve = (x: number) => { return investShift - beta * Math.pow(x, exp1); }
@@ -941,7 +941,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
 
   private _setMessage() {
     let difference = this.desiredBorrow - this.desiredLending;
-    this.rwStep = Math.abs(difference) < 2 ? .0001 : .001;
+    this.rwStep = Math.abs(difference) < 4 ? .0001 : .005;
 
     // update equilibrium message
     if (Math.abs(difference) < .05) {
