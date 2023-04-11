@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 import { Module2RoutingModule } from './module2-routing.module';
 import { KeyDiagram3Component } from './key-diagram3/key-diagram3.component';
@@ -13,6 +13,7 @@ import { KeyDiagram4Component } from './key-diagram4/key-diagram4.component';
 import { KeyDiagram5Component } from './key-diagram5/key-diagram5.component';
 import { SolowComponent } from './solow/solow.component';
 import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 
 
@@ -32,7 +33,9 @@ import { MatSelectModule } from '@angular/material/select';
     BusPubLibModule,
     MatCheckboxModule,
     MatTooltipModule,
-    MatSelectModule
+    MatSelectModule,
+    MatInputModule,
+    FormsModule
   ]
 })
 export class Module2Module { }

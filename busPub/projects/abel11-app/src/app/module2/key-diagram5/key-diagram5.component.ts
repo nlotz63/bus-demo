@@ -31,7 +31,7 @@ HC_accessibility(Highcharts);
         animate('0s', style({ opacity: 0 }))
       ])
     ])
-  ]
+  ],
 })
 export class KeyDiagram5Component implements OnInit, AfterViewInit {
   mode: number = 0;
@@ -89,6 +89,9 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
       this.previousMode = this.mode;
     });
+    this._createSeries(false);
+    this._createSeriesForeign(false);
+    this._setMessage();
   }
 
   ngAfterViewInit(): void {
@@ -114,7 +117,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       taxes: 0
     });
 
-    if (value !== 1) this.slider.patchValue({ rRate: 1.323 });
+    if (value !== 1) this.slider.patchValue({ rRate: 1.351 });
     this._setupChart(true);
 
 
@@ -127,6 +130,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     } else {
       this.sliderF.patchValue(value);
     }
+
     let series = this._createSeries(false);
     let seriesF = this._createSeriesForeign(false);
 
@@ -618,49 +622,49 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             enabled: false
           }
         },
-/*         {
-          type: 'line',
-          name: 'Sd Reference',
-          zIndex: -1,
-          animation: false,
-          dashStyle: 'Dot',
-          lineWidth: 1,
-          color: 'rgb(112, 112, 112)',
-          data: seriesF.qSavingRef,
-          label: {
-            enabled: false
-          },
-          marker: {
-            enabled: true,
-            fillColor: 'rgb(112, 112, 112)',
-            lineColor: 'black',
-            lineWidth: 1,
-            radius: 3,
-            symbol: 'circle'
-          }
-        },
-        {
-          type: 'line',
-          name: 'Id Reference',
-          zIndex: -1,
-          animation: false,
-          dashStyle: 'Dot',
-          lineWidth: 1,
-          color: 'rgb(112, 112, 112)',
-          data: seriesF.qInvestmentRef,
-          label: {
-            enabled: false
-          },
-          marker: {
-            enabled: true,
-            fillColor: 'rgb(112, 112, 112)',
-            lineColor: 'black',
-            lineWidth: 1,
-            radius: 3,
-            symbol: 'circle'
-          }
-        },
- */
+        /*         {
+                  type: 'line',
+                  name: 'Sd Reference',
+                  zIndex: -1,
+                  animation: false,
+                  dashStyle: 'Dot',
+                  lineWidth: 1,
+                  color: 'rgb(112, 112, 112)',
+                  data: seriesF.qSavingRef,
+                  label: {
+                    enabled: false
+                  },
+                  marker: {
+                    enabled: true,
+                    fillColor: 'rgb(112, 112, 112)',
+                    lineColor: 'black',
+                    lineWidth: 1,
+                    radius: 3,
+                    symbol: 'circle'
+                  }
+                },
+                {
+                  type: 'line',
+                  name: 'Id Reference',
+                  zIndex: -1,
+                  animation: false,
+                  dashStyle: 'Dot',
+                  lineWidth: 1,
+                  color: 'rgb(112, 112, 112)',
+                  data: seriesF.qInvestmentRef,
+                  label: {
+                    enabled: false
+                  },
+                  marker: {
+                    enabled: true,
+                    fillColor: 'rgb(112, 112, 112)',
+                    lineColor: 'black',
+                    lineWidth: 1,
+                    radius: 3,
+                    symbol: 'circle'
+                  }
+                },
+         */
       ],
       xAxis: {
         lineColor: '#757575',
@@ -940,13 +944,27 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   }
 
   private _setMessage() {
-    let difference = this.desiredBorrow - this.desiredLending;
-    this.rwStep = Math.abs(difference) < 4 ? .0001 : .005;
+    let difference = this.desiredBorrow - this.desiredLending, absDifference = Math.abs(difference);
+    const rwRate = this.slider.value.rRate!;
+
+    if (absDifference > 15) {
+      this.rwStep = .01;
+    } else if (absDifference > 5) {
+      this.rwStep = .001;
+    } else if (absDifference > 1) {
+      this.rwStep = .0005;
+
+    } else {
+      this.rwStep = .0004;
+    }
+
+
+
 
     // update equilibrium message
-    if (Math.abs(difference) < .05) {
+    if (Math.abs(difference) < .49) {
       this.message = `Yay! You've found the equilibrium world real interest rate that clears the goods market.`;
-    } else if ( difference <= .05) {
+    } else if (difference <= .49) {
       this.message = `Lower the interest rate to decrease desired lending at home and increase desired borrowing in the foreign country.`
     } else {
       this.message = `Raise the interest rate to increase desired lending at home and decrease desired borrowing in the foreign country.`;

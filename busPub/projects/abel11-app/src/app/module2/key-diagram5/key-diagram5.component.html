@@ -25,7 +25,6 @@
             goods market, such that one country's desired international lending
             equals the other countr's desired international borrowing.
           </li>
-
         </ul>
       </div>
     </div>
@@ -34,9 +33,9 @@
         <h2>Goods Market Equilibrium</h2>
         <ul>
           <li>
-            To restore general equilibrium, move the world real interest rate
-            slider so that desired lending in the home country equals desired
-            borrowing in the foreign country.
+            To restore general equilibrium, change the world real interest rate
+            so that desired lending in the home country equals desired borrowing
+            in the foreign country. Use the spinner to fine tune your input.
           </li>
           <li>
             Note that as the world real interest rate rises, desired lending in
@@ -46,18 +45,19 @@
         </ul>
       </div>
       <div class="item-narrative">
-        <br/>
-        <econ-slider
-          label="World real interest rate"
-          class="econ-control"
-          showValue="false"
-          displayValue="{{ +slider.value.rRate! / 100 | percent : '0.0-4' }}"
-          [min]="0"
-          [max]="2.75"
-          [step]="rwStep"
-          [value]="slider.value.rRate!"
-          (valueChange)="updateChart({ rRate: $event }, 1)"
-        ></econ-slider>
+        <p class="econ-slider">{{ message }}</p>
+        <mat-form-field class="abel-input" appearance="outline">
+          <mat-label>World real interest rate:</mat-label>
+          <input
+            title="world interest rate"
+            [(ngModel)]="slider.value.rRate!"
+            [step]="rwStep"
+            type="number"
+            matInput
+            (input)="updateChart({ rRate: slider.value.rRate! }, 1)"
+          />
+          <span matSuffix>&nbsp;percent&nbsp;&nbsp;</span>
+        </mat-form-field>
         <div class="econ-slider">
           <p class="econ-data">
             Desired lending (home):
@@ -65,7 +65,6 @@
             }}<br />Desired borrowing (foreign):
             {{ desiredBorrow | currency : "USD" : "symbol" : "0.0-0" }}
           </p>
-          <p>{{ message }}</p>
         </div>
       </div>
     </div>
@@ -88,7 +87,7 @@
         </ul>
       </div>
       <div class="item-narrative control-column">
-        <br/>
+        <br />
         <econ-slider
           label="Wealth"
           class="econ-control"
@@ -111,7 +110,7 @@
           [value]="slider.value.taxRate!"
           (valueChange)="updateChart({ taxRate: $event }, 1)"
         ></econ-slider>
-     </div>
+      </div>
     </div>
     <div *ngIf="mode === 3" class="wrapper" @myAnimationTrigger>
       <div class="item-narrative">
@@ -124,19 +123,20 @@
           </li>
         </ul>
       </div>
-      <div class="item-narrative control-column">
-        <br/>
-        <econ-slider
-          label="World real interest rate"
-          class="econ-control"
-          showValue="false"
-          displayValue="{{ +slider.value.rRate! / 100 | percent : '0.0-4' }}"
-          [min]="0"
-          [max]="2.75"
-          [step]="rwStep"
-          [value]="slider.value.rRate!"
-          (valueChange)="updateChart({ rRate: $event }, 1)"
-        ></econ-slider>
+      <div class="item-narrative">
+        <p class="econ-slider">{{ message }}</p>
+        <mat-form-field class="abel-input" appearance="outline">
+          <mat-label>World real interest rate:</mat-label>
+          <input
+            title="world interest rate"
+            [(ngModel)]="slider.value.rRate!"
+            [step]="rwStep"
+            type="number"
+            matInput
+            (input)="updateChart({ rRate: slider.value.rRate! }, 1)"
+          />
+          <span matSuffix>&nbsp;percent&nbsp;&nbsp;</span>
+        </mat-form-field>
         <div class="econ-slider">
           <p class="econ-data">
             Desired lending (home):
@@ -144,7 +144,6 @@
             }}<br />Desired borrowing (foreign):
             {{ desiredBorrow | currency : "USD" : "symbol" : "0.0-0" }}
           </p>
-          <p>{{ message }}</p>
         </div>
       </div>
     </div>
@@ -167,7 +166,7 @@
         </ul>
       </div>
       <div class="item-narrative control-column">
-        <br/>
+        <br />
         <econ-slider
           label="Wealth"
           class="econ-control"
@@ -203,19 +202,20 @@
           </li>
         </ul>
       </div>
-      <div class="item-narrative control-column">
-        <br/>
-        <econ-slider
-          label="World real interest rate"
-          class="econ-control"
-          showValue="false"
-          displayValue="{{ +slider.value.rRate! / 100 | percent : '0.0-4' }}"
-          [min]="0"
-          [max]="2.75"
-          [step]="rwStep"
-          [value]="slider.value.rRate!"
-          (valueChange)="updateChart({ rRate: $event }, 1)"
-        ></econ-slider>
+      <div class="item-narrative">
+        <p class="econ-slider">{{ message }}</p>
+        <mat-form-field class="abel-input" appearance="outline">
+          <mat-label>World real interest rate:</mat-label>
+          <input
+            title="world interest rate"
+            [(ngModel)]="slider.value.rRate!"
+            [step]="rwStep"
+            type="number"
+            matInput
+            (input)="updateChart({ rRate: slider.value.rRate! }, 1)"
+          />
+          <span matSuffix>&nbsp;percent&nbsp;&nbsp;</span>
+        </mat-form-field>
         <div class="econ-slider">
           <p class="econ-data">
             Desired lending (home):
@@ -223,7 +223,6 @@
             }}<br />Desired borrowing (foreign):
             {{ desiredBorrow | currency : "USD" : "symbol" : "0.0-0" }}
           </p>
-          <p>{{ message }}</p>
         </div>
       </div>
     </div>
