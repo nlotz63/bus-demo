@@ -415,7 +415,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             enabled: false
           }
         },
-        {
+/*         {
           type: 'line',
           name: 'Sd Reference',
           zIndex: -1,
@@ -457,7 +457,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             symbol: 'circle'
           }
         },
-      ],
+ */      ],
       xAxis: {
         lineColor: '#757575',
         lineWidth: 1.,
@@ -618,7 +618,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             enabled: false
           }
         },
-        {
+/*         {
           type: 'line',
           name: 'Sd Reference',
           zIndex: -1,
@@ -660,7 +660,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             symbol: 'circle'
           }
         },
-
+ */
       ],
       xAxis: {
         lineColor: '#757575',
