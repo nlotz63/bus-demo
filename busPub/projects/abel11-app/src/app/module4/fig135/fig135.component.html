@@ -1,1 +1,78 @@
-<p>fig135 works!</p>
+<div class="econ-interactive-container">
+    <div class="wrapper">
+      <div class="item-narrative">
+  
+        <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
+          <h2>Factors that shift the IS curve (part 1)</h2>
+          <ul>
+            <li>
+              The IS curve shifts up and to the right because of a decline in
+              desired national saving if
+              <ul>
+                <li>Wealth increases,</li>
+                <li>Expected future output increases,</li>
+                <li>Government purchases increase,</li>
+                <li>Taxes decrease and Ricardian equivalence does not hold.</li>
+              </ul>
+            </li>
+          </ul>
+  <!--         <div class="control-column econ-control">
+            <econ-slider
+              label="Wealth"
+              showValue="false"
+              [showPercent]="true"
+              [min]="-500"
+              [max]="700"
+              step="10"
+              [value]="slider.value.wealth!"
+              (valueChange)="updateChart({ wealth: $event })"
+            ></econ-slider>
+            <econ-slider
+              label="Expected future output"
+              showValue="false"
+              [showPercent]="true"
+              [min]="-525"
+              [max]="675"
+              step="10"
+              [value]="slider.value.expectedOutput!"
+              (valueChange)="updateChart({ expectedOutput: $event })"
+            ></econ-slider>
+            <econ-slider
+              label="Government purchases"
+              showValue="false"
+              [showPercent]="true"
+              [min]="-400"
+              [max]="1600"
+              step="10"
+              [showPercent]="true"
+              [value]="slider.value.govPurchases!"
+              #startValue
+              (valueChange)="updateChart({ govPurchases: $event })"
+            ></econ-slider>
+            <econ-slider
+              label="Taxes"
+              showValue="false"
+              [showPercent]="true"
+              [min]="-400"
+              [max]="1200"
+              step="10"
+              [showPercent]="true"
+              [value]="slider.value.taxes!"
+              #startValue
+              (valueChange)="updateChart({ taxes: $event })"
+            ></econ-slider>
+          </div> -->
+  
+        </div>
+      </div>
+      <div id="chart1" class="item-chart"></div>
+    </div>
+    <app-player
+      *ngIf="showPlayer"
+      [steps]="6"
+      [mode]="mode"
+      (modeChange)="playStep($event)"
+      class="player-navigation-container"
+    ></app-player>
+  </div>
+  
