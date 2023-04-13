@@ -1,67 +1,29 @@
 <div class="econ-interactive-container">
   <div class="wrapper">
     <div class="item-narrative">
-
       <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
-        <h2>Factors that shift the IS curve (part 1)</h2>
-        <ul>
-          <li>
-            The IS curve shifts up and to the right because of a decline in
-            desired national saving if
-            <ul>
-              <li>Wealth increases,</li>
-              <li>Expected future output increases,</li>
-              <li>Government purchases increase,</li>
-              <li>Taxes decrease and Ricardian equivalence does not hold.</li>
-            </ul>
-          </li>
-        </ul>
-<!--         <div class="control-column econ-control">
-          <econ-slider
-            label="Wealth"
-            showValue="false"
-            [showPercent]="true"
-            [min]="-500"
-            [max]="700"
-            step="10"
-            [value]="slider.value.wealth!"
-            (valueChange)="updateChart({ wealth: $event })"
-          ></econ-slider>
-          <econ-slider
-            label="Expected future output"
-            showValue="false"
-            [showPercent]="true"
-            [min]="-525"
-            [max]="675"
-            step="10"
-            [value]="slider.value.expectedOutput!"
-            (valueChange)="updateChart({ expectedOutput: $event })"
-          ></econ-slider>
-          <econ-slider
-            label="Government purchases"
-            showValue="false"
-            [showPercent]="true"
-            [min]="-400"
-            [max]="1600"
-            step="10"
-            [showPercent]="true"
-            [value]="slider.value.govPurchases!"
-            #startValue
-            (valueChange)="updateChart({ govPurchases: $event })"
-          ></econ-slider>
-          <econ-slider
-            label="Taxes"
-            showValue="false"
-            [showPercent]="true"
-            [min]="-400"
-            [max]="1200"
-            step="10"
-            [showPercent]="true"
-            [value]="slider.value.taxes!"
-            #startValue
-            (valueChange)="updateChart({ taxes: $event })"
-          ></econ-slider>
-        </div> -->
+        <h2>Exchange rate determination</h2>
+        <p>Choose a scenario to run a simiulation showing its effect on the market for dollars and the exchange rate.</p>
+        <form [formGroup]="scenarioGroup" >
+          <label id="radio-group-label">Pick direction of change:</label>
+            <mat-radio-group aria-labelledby="radio-group-label" formControlName="direction" >
+              <mat-radio-button [checked]="true" value="1">Increases</mat-radio-button>
+              <mat-radio-button value="2">Dececreases</mat-radio-button>
+            </mat-radio-group>
+          <mat-form-field appearance="outline">
+            <mat-label>Choose a scenario</mat-label>
+            <mat-select formControlName="scenario">
+              <mat-option value="1">Domestic income, Y</mat-option>
+              <mat-option value="2">Foreign income, Y<sub>For</sub></mat-option>
+              <mat-option value="3">Domestic real interest rate, r</mat-option>
+              <mat-option value="3">Foreign real interest rate, r<sub>For</sub></mat-option>
+              <mat-option value="4">World demand for domestic goods</mat-option>
+
+
+            </mat-select>
+          </mat-form-field>
+        </form>
+        <button mat-raised-button>Reset</button>
 
       </div>
     </div>

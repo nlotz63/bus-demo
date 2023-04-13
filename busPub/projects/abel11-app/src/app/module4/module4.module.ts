@@ -4,11 +4,13 @@ import { BusPubLibModule } from 'bus-pub-lib';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms'
 import { PlayerModule } from '../player/player.module';
+import {MatRadioModule} from '@angular/material/radio';
 
 import { Module4RoutingModule } from './module4-routing.module';
 import { Fig134Component } from './fig134/fig134.component';
 import { Fig135Component } from './fig135/fig135.component';
 import { Fig139Component } from './fig139/fig139.component';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { Fig139Component } from './fig139/fig139.component';
     ReactiveFormsModule,
     MatButtonModule,
     BusPubLibModule,
-    PlayerModule
+    PlayerModule,
+    MatSelectModule,
+    MatRadioModule,
 
   ]
 })

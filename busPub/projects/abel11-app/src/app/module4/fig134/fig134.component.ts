@@ -39,8 +39,9 @@ export class Fig134Component implements OnInit, AfterViewInit {
   showPlayer: boolean = false;
   chart!: Highcharts.Chart;
 
-  slider = new FormGroup({
-
+  scenarioGroup = new FormGroup({
+    scenario: new FormControl(''),
+    direction: new FormControl('1')
   });
 
 
@@ -50,6 +51,9 @@ export class Fig134Component implements OnInit, AfterViewInit {
     this.ActiveRoute.queryParams.subscribe((params) => {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
+    });
+    this.scenarioGroup.valueChanges.subscribe((el) => {
+      console.log(el);
     });
     this._createSeries(false);
   }
@@ -67,6 +71,7 @@ export class Fig134Component implements OnInit, AfterViewInit {
   }
 
   public updateChart(value: any) {
+    console.log(value);
 
   }
 
@@ -85,39 +90,40 @@ export class Fig134Component implements OnInit, AfterViewInit {
         text: 'Pearson Education',
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
-      title: { text: 'Home Country' },
+      title: { text: 'Market for dollars' },
       legend: { enabled: false },
       series: [
         {
           type: 'spline',
-          name: 'Saving',
+          name: 'Demand',
           zIndex: 0,
           animation: false,
-          data: [1, 2, 4, 10,2],
+          data: series.demand,
           label: {
             useHTML: true,
-            format: 'S'
+            format: 'Demand'
           }
         },
         {
           type: 'spline',
-          name: 'Investment',
+          name: 'Supply',
           zIndex: 0,
           animation: false,
-          data: [],
+          data: series.supply,
           label: {
             useHTML: true,
-            format: 'I'
+            format: 'Supply'
           }
         },
         {
           type: 'line',
-          name: 'Initial saving',
-          dashStyle: 'Dash',
+          name: 'Equilibrium',
+          animation: false,
+          dashStyle: 'Dot',
           color: 'rgb(112, 112, 112)',
           lineWidth: 1,
-          zIndex: -1,
-          data: [],
+          zIndex: 1,
+          data: series.eq,
           label: {
             enabled: false
           }
@@ -125,9 +131,11 @@ export class Fig134Component implements OnInit, AfterViewInit {
        ],
       xAxis: {
         lineColor: '#757575',
-        lineWidth: 1.,
+        lineWidth: 1,
         tickColor: '#757575',
-        title: { useHTML: true, text: 'Desired national<sub></sub> saving S<sup>d</sup>, and desired investment, I<sup>d</sup>' },
+        min: 0,
+        max: 65,
+        title: { useHTML: true, text: 'Number of dollars in foreign exchange market</sup>' },
 
       },
       yAxis: {
@@ -136,7 +144,10 @@ export class Fig134Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         tickWidth: 1,
-        title: { useHTML: true, text: 'World real interest rate, r<sub>w</sub>' },
+        tickInterval: .25,
+        min: 0,
+        max: 2,
+        title: { useHTML: true, text: 'Value of U.S. dollar, <i>e</i><sub>nom</sub>' },
 
       },
       plotOptions: {
@@ -156,6 +167,84 @@ export class Fig134Component implements OnInit, AfterViewInit {
   }
 
   private _createSeries(addRef: boolean) {
+    let demand: any[] = [], supply: any[] = [], eq: any[] = [];
+    let epsilon = .00001, count = 0;
+
+    // model parameters
+    let dShift = 0, demandConst = 1.75 + dShift, demandSlope = .07, exp = .75, x = 0;
+    let sShift = 0, supplyConst = .35 + sShift, supplySlope = 0.0031, expS = 1.5;
+
+    let demandFunc = (x: number) => {
+      return demandConst - demandSlope * Math.pow(x, exp);
+    }
+    let supplyFunc = (x: number) => {
+      return supplyConst + supplySlope * Math.pow(x, expS);
+    }
+
+    let findEq = () => {
+      let xLower = 0, xUpper = 60, xMid = (xUpper + xLower)/2;
+      let difference = 10;
+
+      do {
+        difference = demandFunc(xMid) - supplyFunc(xMid);
+
+        if (difference > 0) {
+          xLower = xMid;
+        } else {
+          xUpper = xMid;
+        }
+        xMid = (xLower + xUpper) / 2;
+        count++;
+      } while (Math.abs(difference) > epsilon && count < 100);
+
+      return xMid;
+
+    }
+
+    do {
+      let point = {
+        name: 'demand',
+        x: x,
+        y: demandFunc(x)
+      }
+      let point2 = {
+        name: 'supply',
+        x: x,
+        y: supplyFunc(x)
+      }
+      demand.push(point);
+      supply.push(point2);
+      x = x + .5;
+
+    } while (x <= 60);
+
+    let eqX = findEq();
+
+    eq = [
+      {
+        x: 0,
+        y: demandFunc(eqX),
+        marker: {enabled: false, radius: 0}
+      },
+      {
+        x: eqX,
+        y: demandFunc(eqX),
+        marker: {enabled: true, fillColor: 'orange', lineColor: 'black', lineWidth: 1, radius: 4, symbol: 'circle'}
+      },
+      {
+        x: eqX,
+        y: 0,
+        marker: {enabled: false, radius: 0}
+
+      }
+    ];
+
+
+    return {
+      demand: demand,
+      supply: supply,
+      eq:eq
+    }
 
   }
 
