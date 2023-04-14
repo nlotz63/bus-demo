@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { transition, trigger, style, animate } from '@angular/animations';
+import { interval } from 'rxjs';
 
 
 import * as Highcharts from 'highcharts';
@@ -36,13 +37,40 @@ HC_accessibility(Highcharts);
 export class Fig134Component implements OnInit, AfterViewInit {
 
   mode: number = 0;
+  showScenario: boolean = true;
   showPlayer: boolean = false;
   chart!: Highcharts.Chart;
+  buttonTitle: string = 'Play';
+  simulationInterval = interval(200);
+
+  shiftDemand = 0;
+  shiftSupply = 0;
 
   scenarioGroup = new FormGroup({
     scenario: new FormControl(''),
     direction: new FormControl('1')
   });
+
+  scenarioData = [
+    [
+      {
+        title: `An increase in domestic income`,
+        demandShift: 0,
+        supplyShift: 0,
+        text: `I wonder if this text will automagically wrap at the end of the line or will it just continue on and on and on and on on a single line.`
+      }
+    ],
+    [
+      {
+        title: `A decrease in domestic income`,
+        demandShift: 0,
+        supplyShift: 0,
+        text: ``
+      }
+
+    ]
+
+  ];
 
 
   constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
@@ -71,8 +99,26 @@ export class Fig134Component implements OnInit, AfterViewInit {
   }
 
   public updateChart(value: any) {
-    console.log(value);
+    let series = this._createSeries(false);
+    this.chart.series[0].setData(series.demand, false, false, false);
+    this.chart.series[1].setData(series.supply, false, false, false);
+    this.chart.series[2].setData(series.eq, true, false, false);
 
+  }
+
+  public runSimulation() {
+    if (this.buttonTitle === 'Reset') {
+      this._reset();
+      return;
+    }
+    // Maniuplate shift paramters and then call update chart. Do this at 200msec intervals until new equilibrium.
+    this.simulationInterval.subscribe(() => {
+      this.shiftDemand += .05;
+      console.log(this.shiftDemand);
+      this.updateChart('test');
+    });
+
+    this.buttonTitle = 'Reset';
   }
 
   // private methods
@@ -128,7 +174,7 @@ export class Fig134Component implements OnInit, AfterViewInit {
             enabled: false
           }
         },
-       ],
+      ],
       xAxis: {
         lineColor: '#757575',
         lineWidth: 1,
@@ -171,8 +217,8 @@ export class Fig134Component implements OnInit, AfterViewInit {
     let epsilon = .00001, count = 0;
 
     // model parameters
-    let dShift = 0, demandConst = 1.75 + dShift, demandSlope = .07, exp = .75, x = 0;
-    let sShift = 0, supplyConst = .35 + sShift, supplySlope = 0.0031, expS = 1.5;
+    let dShift = this.shiftDemand, demandConst = 1.75 + dShift, demandSlope = .07, exp = .75, x = 0;
+    let sShift = this.shiftSupply, supplyConst = .35 + sShift, supplySlope = 0.0031, expS = 1.5;
 
     let demandFunc = (x: number) => {
       return demandConst - demandSlope * Math.pow(x, exp);
@@ -182,7 +228,7 @@ export class Fig134Component implements OnInit, AfterViewInit {
     }
 
     let findEq = () => {
-      let xLower = 0, xUpper = 60, xMid = (xUpper + xLower)/2;
+      let xLower = 0, xUpper = 60, xMid = (xUpper + xLower) / 2;
       let difference = 10;
 
       do {
@@ -224,17 +270,17 @@ export class Fig134Component implements OnInit, AfterViewInit {
       {
         x: 0,
         y: demandFunc(eqX),
-        marker: {enabled: false, radius: 0}
+        marker: { enabled: false, radius: 0 }
       },
       {
         x: eqX,
         y: demandFunc(eqX),
-        marker: {enabled: true, fillColor: 'orange', lineColor: 'black', lineWidth: 1, radius: 4, symbol: 'circle'}
+        marker: { enabled: true, fillColor: 'orange', lineColor: 'black', lineWidth: 1, radius: 4, symbol: 'circle' }
       },
       {
         x: eqX,
         y: 0,
-        marker: {enabled: false, radius: 0}
+        marker: { enabled: false, radius: 0 }
 
       }
     ];
@@ -243,9 +289,18 @@ export class Fig134Component implements OnInit, AfterViewInit {
     return {
       demand: demand,
       supply: supply,
-      eq:eq
+      eq: eq
     }
 
+  }
+
+  private _reset() {
+    this.showScenario = false;
+    this.scenarioGroup.setValue({
+      scenario: '',
+      direction: '1'
+    });
+    this.buttonTitle = 'Play';
   }
 
 }
