@@ -5,7 +5,6 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { transition, trigger, style, animate } from '@angular/animations';
 import { interval } from 'rxjs';
 
-
 import * as Highcharts from 'highcharts';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
@@ -37,18 +36,25 @@ HC_accessibility(Highcharts);
 export class Fig134Component implements OnInit, AfterViewInit {
 
   mode: number = 0;
-  showScenario: boolean = true;
+  showScenario: boolean = false;
   showPlayer: boolean = false;
   chart!: Highcharts.Chart;
   buttonTitle: string = 'Play';
+  buttonDisabled: boolean = true;
+  selectionDisabled: boolean = false;
   simulationInterval = interval(200);
+  subscription!: any;
 
   shiftDemand = 0;
   shiftSupply = 0;
 
+  demandRef!: any[];
+  supplyRef!: any[];
+  eqRef!: any[];
+
   scenarioGroup = new FormGroup({
     scenario: new FormControl(''),
-    direction: new FormControl('1')
+    direction: new FormControl('')
   });
 
   scenarioData = [
@@ -56,20 +62,72 @@ export class Fig134Component implements OnInit, AfterViewInit {
       {
         title: `An increase in domestic income`,
         demandShift: 0,
-        supplyShift: 0,
-        text: `I wonder if this text will automagically wrap at the end of the line or will it just continue on and on and on and on on a single line.`
+        supplyShift: -0.01,
+        text: `Higher domestic output raises demand for imports and increases supply of domestic currency. This is shown in the graph as a rightward shift of the supply curve.`
+      },
+      {
+        title: `A decrease in domestic income`,
+        demandShift: 0,
+        supplyShift: 0.01,
+        text: `Lower domestic output decreases demand for imports and decreases supply of domestic currency. This is shown in the graph as a leftward shift of the supply curve.`
       }
     ],
     [
       {
-        title: `A decrease in domestic income`,
-        demandShift: 0,
+        title: `An increase in foreign income`,
+        demandShift: 0.01,
         supplyShift: 0,
-        text: ``
+        text: `Higher foreign output raises demand for exports and increases demand for domestic currency. This is shown in the graph as a rightward shift of the demand curve.`
+      },
+      {
+        title: `A decrease in foreign income`,
+        demandShift: -0.01,
+        supplyShift: 0,
+        text: `Lower foreign output lowers demand for exports and decreases demand for domestic currency. This is shown in the graph as a leftward shift of the demand curve.`
       }
-
-    ]
-
+    ],
+    [
+      {
+        title: `An increase in the domestic real interest rate`,
+        demandShift: 0.01,
+        supplyShift: 0.01,
+        text: `Higher real interest rate makes domestic assets more attractive and increases demand and decreases supply of domestic currency. This is shown in the graph as a rightward shift of the demand curve and a leftward shift of the supply curve.`
+      },
+      {
+        title: `A decrease in the domestic real interest rate`,
+        demandShift: -0.01,
+        supplyShift: -0.01,
+        text: `Lower real interest rate makes domestic assets less attractive and decreases demand and increases supply of domestic currency. This is shown in the graph as a leftward shift of the demand curve and a rightward shift of the supply curve.`
+      }
+    ],
+    [
+      {
+        title: `An increase in the foreign real interest rate`,
+        demandShift: -0.01,
+        supplyShift: -0.01,
+        text: `Higher foreign real interest rate makes foreign assets more attractive and increases supply and decreases demand for domestic currency. This is shown in the graph as a rightward shift of the supply curve and a leftward shift of the demand curve.`
+      },
+      {
+        title: `A decrease in the foreign real interest rate`,
+        demandShift: 0.01,
+        supplyShift: 0.01,
+        text: `Lower foreign real interest rate makes foreign assets less attractive and decreases supply and increases demand for domestic currency. This is shown in the graph as a leftward shift of the supply curve and a rightward shift of the demand curve.`
+      }
+    ],
+    [
+      {
+        title: `An increase in the world demand for domestic goods`,
+        demandShift: 0.01,
+        supplyShift: 0.01,
+        text: `Higher demand for domestic goods increases foreign demand for domestic currency and reduces supply of domestic currency in foreign exchange market. This is shown in the graph as a rightward shift of the demand curve and a leftward shift of the supply curve.`
+      },
+      {
+        title: `A decrease in the world demand for domestic goods`,
+        demandShift: -0.01,
+        supplyShift: -0.01,
+        text: `Lower demand for domestic goods decreases foreign demand for domestic currency and increases supply of domestic currency in foreign exchange market. This is shown in the graph as a leftward shift of the demand curve and a rightward shift of the supply curve.`
+      }
+    ],
   ];
 
 
@@ -81,7 +139,7 @@ export class Fig134Component implements OnInit, AfterViewInit {
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
     });
     this.scenarioGroup.valueChanges.subscribe((el) => {
-      console.log(el);
+      this.buttonDisabled = el.direction !== '' && el.scenario !== '' ? false : true;
     });
     this._createSeries(false);
   }
@@ -98,7 +156,7 @@ export class Fig134Component implements OnInit, AfterViewInit {
 
   }
 
-  public updateChart(value: any) {
+  public updateChart() {
     let series = this._createSeries(false);
     this.chart.series[0].setData(series.demand, false, false, false);
     this.chart.series[1].setData(series.supply, false, false, false);
@@ -109,15 +167,32 @@ export class Fig134Component implements OnInit, AfterViewInit {
   public runSimulation() {
     if (this.buttonTitle === 'Reset') {
       this._reset();
+      this.subscription.unsubscribe();
       return;
     }
-    // Maniuplate shift paramters and then call update chart. Do this at 200msec intervals until new equilibrium.
-    this.simulationInterval.subscribe(() => {
-      this.shiftDemand += .05;
-      console.log(this.shiftDemand);
-      this.updateChart('test');
-    });
+    this.announcer.announce('The simulation started', 'assertive');
 
+    // set up simulation
+    let scenario = Number(this.scenarioGroup.value.scenario), direction = Number(this.scenarioGroup.value.direction);
+    let demandShift = 0, supplyShift = 0;
+
+    supplyShift = this.scenarioData[scenario][direction].supplyShift;
+    demandShift = this.scenarioData[scenario][direction].demandShift
+
+    // Maniuplate shift paramters and then call update chart. Do this at 200msec intervals until new equilibrium.
+    this.subscription = this.simulationInterval.subscribe(() => {
+      this.shiftDemand += demandShift;
+      this.shiftSupply += supplyShift;
+      if (Math.abs(this.shiftDemand) > .4 || Math.abs(this.shiftSupply) > .4) {
+        this.subscription.unsubscribe();
+        this.announcer.announce('The simulation ended', 'polite');
+
+      }
+
+      this.updateChart();
+    });
+    this.showScenario = true;
+    this.selectionDisabled = true;
     this.buttonTitle = 'Reset';
   }
 
@@ -138,6 +213,13 @@ export class Fig134Component implements OnInit, AfterViewInit {
       },
       title: { text: 'Market for dollars' },
       legend: { enabled: false },
+      accessibility: {
+        point: {
+          descriptionFormatter: (point): any => {
+            return 'Nominal exchange rate equals ' + point.y?.toFixed(2) + ' Quantity equals ' + point.x?.toFixed(0) + ' billion.';
+          },
+        }
+      },
       series: [
         {
           type: 'spline',
@@ -148,7 +230,8 @@ export class Fig134Component implements OnInit, AfterViewInit {
           label: {
             useHTML: true,
             format: 'Demand'
-          }
+          },
+          accessibility: {description: 'A downward sloping curve. It intersects the supply curve.'}
         },
         {
           type: 'spline',
@@ -159,7 +242,8 @@ export class Fig134Component implements OnInit, AfterViewInit {
           label: {
             useHTML: true,
             format: 'Supply'
-          }
+          },
+          accessibility: {description: 'An upward sloping curve. It intersects the demand curve.'}
         },
         {
           type: 'line',
@@ -167,13 +251,51 @@ export class Fig134Component implements OnInit, AfterViewInit {
           animation: false,
           dashStyle: 'Dot',
           color: 'rgb(112, 112, 112)',
+          lineWidth: 2,
+          zIndex: 2,
+          data: series.eq,
+          label: {
+            enabled: false
+          },
+          accessibility: {description: `A point indicating the equilibrium nominal exchange rate and quantity.`}
+        },
+        {
+          type: 'spline',
+          name: 'Initial Demand',
+          animation: false,
+          zIndex: -1,
+          dashStyle: 'Dash',
+          color: 'rgb(112, 112, 112)',
+          lineWidth: 1,
+          data: series.demandRef,
+          label: {enabled: false}
+        },
+        {
+          type: 'spline',
+          name: 'Initial Supply',
+          animation: false,
+          zIndex: -1,
+          dashStyle: 'Dash',
+          color: 'rgb(112, 112, 112)',
+          lineWidth: 1,
+          data: series.supplyRef,
+          label: {enabled: false}
+        },
+        {
+          type: 'line',
+          name: 'Initial equilibrium',
+          animation: false,
+          dashStyle: 'Dot',
+          color: 'rgb(112, 112, 112)',
           lineWidth: 1,
           zIndex: 1,
-          data: series.eq,
+          data: series.eqRef,
           label: {
             enabled: false
           }
         },
+
+
       ],
       xAxis: {
         lineColor: '#757575',
@@ -200,9 +322,10 @@ export class Fig134Component implements OnInit, AfterViewInit {
         series: {
           enableMouseTracking: true,
           color: '#C31229',
+          marker: {enabled: false },
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Nominal exchange rate: {point.y:.2f}'
           },
           label: {
             style: { fontWeight: '400' }
@@ -260,9 +383,9 @@ export class Fig134Component implements OnInit, AfterViewInit {
       }
       demand.push(point);
       supply.push(point2);
-      x = x + .5;
+      x = x + 2;
 
-    } while (x <= 60);
+    } while (x <= 65);
 
     let eqX = findEq();
 
@@ -275,7 +398,11 @@ export class Fig134Component implements OnInit, AfterViewInit {
       {
         x: eqX,
         y: demandFunc(eqX),
-        marker: { enabled: true, fillColor: 'orange', lineColor: 'black', lineWidth: 1, radius: 4, symbol: 'circle' }
+        marker: { enabled: true, fillColor: 'orange', lineColor: 'black', lineWidth: 1, radius: 4, symbol: 'circle' },
+        accessibility: {
+          description: `The equilibrium quantity is ${eqX} and the equilibrium nominal exchange rate is ${demandFunc(eqX)}.`,
+          valueDecimals: 2
+        },
       },
       {
         x: eqX,
@@ -286,10 +413,41 @@ export class Fig134Component implements OnInit, AfterViewInit {
     ];
 
 
+
+
+
+    if (addRef) {
+      this.demandRef = demand;
+      this.supplyRef = supply;
+      this.eqRef = [
+        {
+          x: 0,
+          y: demandFunc(eqX),
+          marker: { enabled: false, radius: 0 }
+        },
+        {
+          x: eqX,
+          y: demandFunc(eqX),
+          marker: { enabled: true, fillColor: 'rgb(112, 112, 112)', lineColor: 'black', lineWidth: 1, radius: 3, symbol: 'circle' }
+        },
+        {
+          x: eqX,
+          y: 0,
+          marker: { enabled: false, radius: 0 }
+
+        }
+      ];
+    }
+
+
     return {
       demand: demand,
       supply: supply,
-      eq: eq
+      eq: eq,
+      demandRef: this.demandRef,
+      supplyRef: this.supplyRef,
+      eqRef: this.eqRef,
+
     }
 
   }
@@ -298,9 +456,14 @@ export class Fig134Component implements OnInit, AfterViewInit {
     this.showScenario = false;
     this.scenarioGroup.setValue({
       scenario: '',
-      direction: '1'
+      direction: ''
     });
+    this.shiftDemand = 0;
+    this.shiftSupply = 0;
+    this.updateChart();
+    this.selectionDisabled = false;
     this.buttonTitle = 'Play';
+    this.announcer.announce('The simulation has been reset.');
   }
 
 }

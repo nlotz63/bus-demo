@@ -5,28 +5,29 @@
         <h2>Exchange rate determination</h2>
         <p>Choose a scenario to run a simiulation showing its effect on the market for dollars and the exchange rate.</p>
         <form [formGroup]="scenarioGroup" >
-          <label id="radio-group-label">Pick direction of change:</label>
-            <mat-radio-group aria-labelledby="radio-group-label" formControlName="direction" >
-              <mat-radio-button [checked]="true" value="1">Increases</mat-radio-button>
-              <mat-radio-button value="2">Decreases</mat-radio-button>
-            </mat-radio-group>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="outline" class="econ-control">
             <mat-label>Choose a scenario</mat-label>
-            <mat-select formControlName="scenario">
+            <mat-select formControlName="scenario" [disabled]="selectionDisabled">
               <mat-option value="0">Domestic income, Y</mat-option>
               <mat-option value="1">Foreign income, Y<sub>For</sub></mat-option>
               <mat-option value="2">Domestic real interest rate, r</mat-option>
               <mat-option value="3">Foreign real interest rate, r<sub>For</sub></mat-option>
               <mat-option value="4">World demand for domestic goods</mat-option>
             </mat-select>
-          </mat-form-field>
+          </mat-form-field><br/>
+          <label id="radio-group-label">Choose the direction of change:</label>
+          <mat-radio-group aria-labelledby="radio-group-label" formControlName="direction" [disabled]="selectionDisabled" >
+            <mat-radio-button value="0">Increases</mat-radio-button>
+            <mat-radio-button value="1">Decreases</mat-radio-button>
+          </mat-radio-group>
         </form>
-        <div *ngIf="showScenario" class="abel-scenario">
-          <h3>{{scenarioData[0][0].title}}</h3>
-          <p>{{scenarioData[0][0].text}}</p>
-        </div>
-
-        <button mat-raised-button (click)="runSimulation()">{{buttonTitle}}</button>
+        <div class="abel-scenario" aria-live="polite">
+          <div *ngIf="showScenario" >
+            <h3>{{scenarioData[+scenarioGroup.value.scenario!][+scenarioGroup.value.direction!].title}}</h3>
+            <p>{{scenarioData[+scenarioGroup.value.scenario!][+scenarioGroup.value.direction!].text}}</p>
+          </div>
+          </div>
+        <button [disabled]="buttonDisabled" mat-raised-button (click)="runSimulation()">{{buttonTitle}}</button>
 
       </div>
     </div>

@@ -43,6 +43,10 @@
   align-self: center;
   padding-left: 55px;
 }
+.econ-control {
+  position: relative;
+  left: 5%;
+}
 
 ul {
   line-height: 1.5em;
@@ -69,4 +73,5 @@ button {
 
 .abel-scenario {
   min-height: 200px;
+  padding: 5px;
 }
