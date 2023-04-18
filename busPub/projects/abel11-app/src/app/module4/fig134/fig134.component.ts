@@ -251,7 +251,7 @@ export class Fig134Component implements OnInit, AfterViewInit {
           animation: false,
           dashStyle: 'Dot',
           color: 'rgb(112, 112, 112)',
-          lineWidth: 2,
+          lineWidth: 1,
           zIndex: 2,
           data: series.eq,
           label: {
