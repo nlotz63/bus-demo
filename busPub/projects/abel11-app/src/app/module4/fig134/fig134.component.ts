@@ -61,29 +61,29 @@ export class Fig134Component implements OnInit, AfterViewInit {
     [
       {
         title: `An increase in domestic income`,
-        demandShift: 0,
+        demandShift: -0.01,
         supplyShift: -0.01,
-        text: `Higher domestic output raises demand for imports and increases supply of domestic currency. This is shown in the graph as a rightward shift of the supply curve.`
+        text: `Higher domestic income raises demand for imports, increasing the supply of and reducing the demand for domestic currency. This is shown in the graph as a shift down and to the right of the supply curve and down and to the left of the demand curve. So, the domestic currency depreciates.`
       },
       {
         title: `A decrease in domestic income`,
-        demandShift: 0,
+        demandShift: 0.01,
         supplyShift: 0.01,
-        text: `Lower domestic output decreases demand for imports and decreases supply of domestic currency. This is shown in the graph as a leftward shift of the supply curve.`
+        text: `Lower domestic income reduces demand for imports, decreasing the supply of and increasing the demand for domestic currency. This is shown in the graph as a shift up and to the left of the supply curve and up and to the right of the demand curve. So, the domestic currency appreciates.`
       }
     ],
     [
       {
         title: `An increase in foreign income`,
         demandShift: 0.01,
-        supplyShift: 0,
-        text: `Higher foreign output raises demand for exports and increases demand for domestic currency. This is shown in the graph as a rightward shift of the demand curve.`
+        supplyShift: 0.01,
+        text: `Higher foreign income raises demand for exports, decreasing the supply of and increasing the demand for domestic currency. This is shown in the graph as a shift up and to the left of the supply curve and up and to the right of the demand curve. So, the domestic currency appreciates.`
       },
       {
         title: `A decrease in foreign income`,
         demandShift: -0.01,
-        supplyShift: 0,
-        text: `Lower foreign output lowers demand for exports and decreases demand for domestic currency. This is shown in the graph as a leftward shift of the demand curve.`
+        supplyShift: -0.01,
+        text: `Lower foreign income reduces demand for exports, increasing the supply of and reducing the demand for domestic currency. This is shown in the graph as a shift down and to the right of the supply curve and down and to the left of the demand curve. So, the domestic currency depreciates.`
       }
     ],
     [
@@ -91,13 +91,13 @@ export class Fig134Component implements OnInit, AfterViewInit {
         title: `An increase in the domestic real interest rate`,
         demandShift: 0.01,
         supplyShift: 0.01,
-        text: `Higher real interest rate makes domestic assets more attractive and increases demand and decreases supply of domestic currency. This is shown in the graph as a rightward shift of the demand curve and a leftward shift of the supply curve.`
+        text: `A higher domestic real interest rate makes domestic assets more attractive, decreasing the supply of and increasing the demand for domestic currency. This is shown in the graph as a shift up and to the left of the supply curve and up and to the right of the demand curve. So, the domestic currency appreciates.`
       },
       {
         title: `A decrease in the domestic real interest rate`,
         demandShift: -0.01,
         supplyShift: -0.01,
-        text: `Lower real interest rate makes domestic assets less attractive and decreases demand and increases supply of domestic currency. This is shown in the graph as a leftward shift of the demand curve and a rightward shift of the supply curve.`
+        text: `A lower domestic real interest rate makes domestic assets less attractive, increasing the supply of and reducing the demand for domestic currency. This is shown in the graph as a shift down and to the right of the supply curve and down and to the left of the demand curve. So, the domestic currency depreciates.`
       }
     ],
     [
@@ -105,13 +105,13 @@ export class Fig134Component implements OnInit, AfterViewInit {
         title: `An increase in the foreign real interest rate`,
         demandShift: -0.01,
         supplyShift: -0.01,
-        text: `Higher foreign real interest rate makes foreign assets more attractive and increases supply and decreases demand for domestic currency. This is shown in the graph as a rightward shift of the supply curve and a leftward shift of the demand curve.`
+        text: `A higher foreign real interest rate makes domestic assets less attractive, increasing the supply of and reducing the demand for domestic currency. This is shown in the graph as a shift down and to the right of the supply curve and down and to the left of the demand curve. So, the domestic currency depreciates.`
       },
       {
         title: `A decrease in the foreign real interest rate`,
         demandShift: 0.01,
         supplyShift: 0.01,
-        text: `Lower foreign real interest rate makes foreign assets less attractive and decreases supply and increases demand for domestic currency. This is shown in the graph as a leftward shift of the supply curve and a rightward shift of the demand curve.`
+        text: `A lower foreign real interest rate makes domestic assets more attractive, decreasing the supply of and increasing the demand for domestic currency. This is shown in the graph as a shift up and to the left of the supply curve and up and to the right of the demand curve. So, the domestic currency appreciates.`
       }
     ],
     [
@@ -119,13 +119,13 @@ export class Fig134Component implements OnInit, AfterViewInit {
         title: `An increase in the world demand for domestic goods`,
         demandShift: 0.01,
         supplyShift: 0.01,
-        text: `Higher demand for domestic goods increases foreign demand for domestic currency and reduces supply of domestic currency in foreign exchange market. This is shown in the graph as a rightward shift of the demand curve and a leftward shift of the supply curve.`
+        text: `Higher world demand for domestic goods raises demand for exports, decreasing the supply of and increasing the demand for domestic currency. This is shown in the graph as a shift up and to the left of the supply curve and up and to the right of the demand curve. So, the domestic currency appreciates.`
       },
       {
         title: `A decrease in the world demand for domestic goods`,
         demandShift: -0.01,
         supplyShift: -0.01,
-        text: `Lower demand for domestic goods decreases foreign demand for domestic currency and increases supply of domestic currency in foreign exchange market. This is shown in the graph as a leftward shift of the demand curve and a rightward shift of the supply curve.`
+        text: `Lower world demand for domestic goods reduces demand for exports, increasing the supply of and reducing the demand for domestic currency. This is shown in the graph as a shift down and to the right of the supply curve and down and to the left of the demand curve. So, the domestic currency depreciates.`
       }
     ],
   ];
