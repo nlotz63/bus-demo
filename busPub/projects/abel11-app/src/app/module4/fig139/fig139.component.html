@@ -1,21 +1,35 @@
 <div class="econ-interactive-container">
     <div class="wrapper">
       <div class="item-narrative">
-  
+
         <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
-          <h2>Factors that shift the IS curve (part 1)</h2>
+          <h2>The effects of government purchases in an open economy</h2>
           <ul>
             <li>
-              The IS curve shifts up and to the right because of a decline in
-              desired national saving if
+              A simulation showing, step-by-step the effect of an increase in government purchases in the home country.
               <ul>
-                <li>Wealth increases,</li>
-                <li>Expected future output increases,</li>
-                <li>Government purchases increase,</li>
-                <li>Taxes decrease and Ricardian equivalence does not hold.</li>
+                <li>IS curve shifts to the right,</li>
+                <li>In the classical model, the full employment line also shifts right</li>
+                <li>Higher income reduces net exports (NX),</li>
+                <li>Lower NX at home, implies higher NX in foreign,</li>
+                <li>shifting foreign's IS curve to the right</li>
+                <li>The LM curve in both countries shift up and to the left to restore long-run equilibrium.</li>
               </ul>
             </li>
           </ul>
+          <econ-slider
+          label="Government purchases"
+          showValue="false"
+          [showPercent]="true"
+          [min]="-400"
+          [max]="1600"
+          step="10"
+          [showPercent]="true"
+          [value]="slider.value.govPurchases!"
+          #startValue
+          (valueChange)="updateChart({ govPurchases: $event })"
+        ></econ-slider>
+
   <!--         <div class="control-column econ-control">
             <econ-slider
               label="Wealth"
@@ -38,18 +52,6 @@
               (valueChange)="updateChart({ expectedOutput: $event })"
             ></econ-slider>
             <econ-slider
-              label="Government purchases"
-              showValue="false"
-              [showPercent]="true"
-              [min]="-400"
-              [max]="1600"
-              step="10"
-              [showPercent]="true"
-              [value]="slider.value.govPurchases!"
-              #startValue
-              (valueChange)="updateChart({ govPurchases: $event })"
-            ></econ-slider>
-            <econ-slider
               label="Taxes"
               showValue="false"
               [showPercent]="true"
@@ -62,7 +64,7 @@
               (valueChange)="updateChart({ taxes: $event })"
             ></econ-slider>
           </div> -->
-  
+
         </div>
       </div>
       <div class="item-chart control-column">
@@ -78,4 +80,3 @@
       class="player-navigation-container"
     ></app-player>
   </div>
-  
