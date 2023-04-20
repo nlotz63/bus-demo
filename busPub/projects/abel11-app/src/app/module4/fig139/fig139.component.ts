@@ -46,6 +46,15 @@ export class Fig139Component implements OnInit, AfterViewInit {
   shortRunEquilibrium = 4000;
   longRunEquilibrium = 4000;
 
+  params = {
+    Y: 4330,
+    Yf: 3200,
+    rf: 1.0,
+    nx0: 50,
+    r: 1.2,
+  }
+
+
   slider = new FormGroup({
     expectedOutput: new FormControl(75),
     wealth: new FormControl(100),
@@ -67,13 +76,13 @@ export class Fig139Component implements OnInit, AfterViewInit {
   sliderF = new FormGroup({
     expectedOutput: new FormControl(75),
     wealth: new FormControl(100),
-    govPurchases: new FormControl(600),
+    govPurchases: new FormControl(300),
     taxes: new FormControl(400),
     expectedTFP: new FormControl(3558),
     effTax: new FormControl(0.12),
 
     money: new FormControl(200000),
-    priceLevel: new FormControl(100),
+    priceLevel: new FormControl(110),
     expectedInflation: new FormControl(0.05),
     nominalRate: new FormControl(0.02),
 
@@ -109,7 +118,19 @@ export class Fig139Component implements OnInit, AfterViewInit {
   }
 
   public updateChart(value: any) {
+    this.slider.patchValue(value);
+    let series = this._createSeries(false);
+    let seriesF = this._createSeriesF(false);
 
+    this.chart.series[0].setData(series.IS, false, false, false);
+    this.chart.series[1].setData(series.LM, false, false, false);
+    this.chart.series[2].setData(series.FE, false, false, false);
+    this.chart.series[3].setData(series.EQ, true, false, false);
+
+    this.chart2.series[0].setData(seriesF.IS, false, false, false);
+    this.chart2.series[1].setData(seriesF.LM, false, false, false);
+    this.chart2.series[2].setData(seriesF.FE, false, false, false);
+    this.chart2.series[3].setData(seriesF.EQ, true, false, false);
   }
 
   // private methods
@@ -431,19 +452,33 @@ export class Fig139Component implements OnInit, AfterViewInit {
   private _createSeries(addRef: boolean) {
     // slider values
     let slider = this.slider.value;
+    let params = this.params;
     // model parameters
     let c0: number = slider.expectedOutput! + slider.wealth!, cy: number = .6, cr: number = 300, t0: number = 0.5 * slider.taxes!, t: number = 0.2,
       i0: number = slider.expectedTFP! * (1 - 4 * slider.effTax!), ir: number = 200, G: number = slider.govPurchases!;
     let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
 
-    let ybar = 4000 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
+    let ybar = 4060 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply! + .4*slider.govPurchases!;
 
     let x: number = 1000, isSeries = [], lmSeries = [], eqSeries = [], feSeries;
     let isRef: any[] = [], lmRef: any[] = [], eqRef: any[] = [], feRef: any[] = [];
 
-    let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
+    // NX curve and parameters
+    let nx0 = 50, nxy = .15, nxyf = 0.25, nxr = 250, nxrf = 400;
+    let NXcurve = (x: number) => {
+      return params.nx0 - nxy * params.Y + nxyf * params.Yf - nxr * x + nxrf * params.rf;
+    }
+    let inverseNX = (x: number) => {
+      return (-x + params.nx0 + nxrf * params.rf - nxy * params.Y + nxyf * params.Yf) / nxr;
+    }
+
+
+    let is = (x: number) => {
+      return (c0 + G + i0 - cy * t0 - x + cy * x - nxy * x - cy * t * x + params.nx0 +
+        nxrf * params.rf + nxyf * params.Yf) / (cr + ir + nxr);
+    }
     let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
-    let eq = (-(c0 / (cr + ir)) - G / (cr + ir) - i0 / (cr + ir) + l0 / lr - M / (lr * P) - piE + (cy * t0) / (cr + ir)) / (-(ly / lr) - (1 - cy + cy * t) / (cr + ir));
+    let eq = (-(l0 / lr) + c0 / (cr + ir + nxr) + G / (cr + ir + nxr) + i0 / (cr + ir + nxr) + M / (lr * P) + piE - (cy * t0) / (cr + ir + nxr) + params.nx0 / (cr + ir + nxr) + (nxrf * params.rf) / (cr + ir + nxr) + (nxyf * params.Yf) / (cr + ir + nxr)) / (ly / lr + 1 / (cr + ir + nxr) - cy / (cr + ir + nxr) + nxy / (cr + ir + nxr) + (cy * t) / (cr + ir + nxr));
 
     do {
       let point = {
@@ -502,14 +537,15 @@ export class Fig139Component implements OnInit, AfterViewInit {
           marker: {
             symbol: 'circle',
             enabled: true,
-            radius: 4
+            radius: 3
           }
         },
-        { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
       ];
       feRef = feSeries;
     }
 
+    this.params.r = eqSeries[1].y;
+    this.params.Y = eqSeries[1].x;
 
     return {
       IS: isSeries,
@@ -528,20 +564,33 @@ export class Fig139Component implements OnInit, AfterViewInit {
   private _createSeriesF(addRef: boolean) {
     // slider values
     let slider = this.sliderF.value;
+    let params = this.params;
     // model parameters
     let c0: number = slider.expectedOutput! + slider.wealth!, cy: number = .6, cr: number = 300, t0: number = 0.5 * slider.taxes!, t: number = 0.2,
       i0: number = slider.expectedTFP! * (1 - 4 * slider.effTax!), ir: number = 200, G: number = slider.govPurchases!;
     let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
 
-    let ybar = 3461
-      + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
+    let ybar = 3207 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
+
+    // NX curve and parameters
+    let nx0 = 50, nxy = .3, nxyf = 0.25, nxr = 250, nxrf = 400;
+    let NXcurve = (x: number) => {
+      return params.nx0 - nxy * params.Y + nxyf * params.Yf - nxr * x + nxrf * params.rf;
+    }
+    let inverseNX = (x: number) => {
+      return (-x + params.nx0 + nxrf * params.rf - nxy * params.Y + nxyf * params.Yf) / nxr;
+    }
+
 
     let x: number = 1000, isSeries = [], lmSeries = [], eqSeries = [], feSeries;
     let isRef: any[] = [], lmRef: any[] = [], eqRef: any[] = [], feRef: any[] = [];
 
-    let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
+    let is = (x: number) => {
+      return (c0 + G + i0 - cy * t0 - x + cy * x - nxyf * x - cy * t * x + params.nx0 +
+        nxr * params.r + nxy * params.Y) / (cr + ir + nxrf);
+    }
     let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
-    let eq = (-(c0 / (cr + ir)) - G / (cr + ir) - i0 / (cr + ir) + l0 / lr - M / (lr * P) - piE + (cy * t0) / (cr + ir)) / (-(ly / lr) - (1 - cy + cy * t) / (cr + ir));
+    let eq = (-(l0 / lr) + c0 / (cr + ir + nxrf) + G / (cr + ir + nxrf) + i0 / (cr + ir + nxrf) + M / (lr * P) + piE - (cy * t0) / (cr + ir + nxrf) + params.nx0 / (cr + ir + nxrf) + (nxr * params.r) / (cr + ir + nxrf) + (nxy * params.Y) / (cr + ir + nxrf)) / (ly / lr + 1 / (cr + ir + nxrf) - cy / (cr + ir + nxrf) + nxyf / (cr + ir + nxrf) + (cy * t) / (cr + ir + nxrf));
 
     do {
       let point = {
@@ -600,13 +649,15 @@ export class Fig139Component implements OnInit, AfterViewInit {
           marker: {
             symbol: 'circle',
             enabled: true,
-            radius: 4
+            radius: 3
           }
         },
-        { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
       ];
       feRef = feSeries;
     }
+
+    this.params.rf = eqSeries[1].y;
+    this.params.Yf = eqSeries[1].x;
 
     return {
       IS: isSeries,
