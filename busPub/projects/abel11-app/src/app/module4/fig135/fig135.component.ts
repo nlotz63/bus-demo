@@ -240,7 +240,6 @@ export class Fig135Component implements OnInit, AfterViewInit {
           midX = (lowX + midX) / 2;
         }
         i++;
-        console.log(diff);
 
       } while (Math.abs((inverseSaving(midX) - inverseInvestment(midX)) - NXcurve(midX)) > epsilon && i < 100);
       return midX;
@@ -308,7 +307,6 @@ export class Fig135Component implements OnInit, AfterViewInit {
       },
       [inverseInvestment(rRate), -3]
     ];
-
 
 
     if (addRef) {
