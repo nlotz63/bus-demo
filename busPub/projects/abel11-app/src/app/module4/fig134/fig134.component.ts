@@ -158,9 +158,9 @@ export class Fig134Component implements OnInit, AfterViewInit {
 
   public updateChart() {
     let series = this._createSeries(false);
-    this.chart.series[0].setData(series.demand, false, false, false);
-    this.chart.series[1].setData(series.supply, false, false, false);
-    this.chart.series[2].setData(series.eq, true, false, false);
+    this.chart.series[1].setData(series.demand, false, false, false);
+    this.chart.series[2].setData(series.supply, false, false, false);
+    this.chart.series[0].setData(series.eq, true, false, false);
 
   }
 
@@ -222,6 +222,20 @@ export class Fig134Component implements OnInit, AfterViewInit {
       },
       series: [
         {
+          type: 'line',
+          name: 'Equilibrium',
+          animation: false,
+          dashStyle: 'Dot',
+          color: 'rgb(112, 112, 112)',
+          lineWidth: 1,
+          zIndex: 2,
+          data: series.eq,
+          label: {
+            enabled: false
+          },
+          accessibility: {description: `A point indicating the equilibrium nominal exchange rate and quantity.`}
+        },
+        {
           type: 'spline',
           name: 'Demand',
           zIndex: 0,
@@ -244,20 +258,6 @@ export class Fig134Component implements OnInit, AfterViewInit {
             format: 'Supply'
           },
           accessibility: {description: 'An upward sloping curve. It intersects the demand curve.'}
-        },
-        {
-          type: 'line',
-          name: 'Equilibrium',
-          animation: false,
-          dashStyle: 'Dot',
-          color: 'rgb(112, 112, 112)',
-          lineWidth: 1,
-          zIndex: 2,
-          data: series.eq,
-          label: {
-            enabled: false
-          },
-          accessibility: {description: `A point indicating the equilibrium nominal exchange rate and quantity.`}
         },
         {
           type: 'spline',
@@ -340,7 +340,7 @@ export class Fig134Component implements OnInit, AfterViewInit {
     let epsilon = .00001, count = 0;
 
     // model parameters
-    let dShift = this.shiftDemand, demandConst = 1.75 + dShift, demandSlope = .07, exp = .75, x = 0;
+    let dShift = this.shiftDemand, demandConst = 1.75 + dShift, demandSlope = .07, exp = .75, x = 0, x2 = 0;
     let sShift = this.shiftSupply, supplyConst = .35 + sShift, supplySlope = 0.0031, expS = 1.5;
 
     let demandFunc = (x: number) => {
@@ -376,16 +376,21 @@ export class Fig134Component implements OnInit, AfterViewInit {
         x: x,
         y: demandFunc(x)
       }
+      demand.push(point);
+      x = x + 5;
+
+    } while (x <= 60);
+    do {
       let point2 = {
         name: 'supply',
-        x: x,
-        y: supplyFunc(x)
+        x: x2,
+        y: supplyFunc(x2)
       }
-      demand.push(point);
       supply.push(point2);
-      x = x + 2;
+      x2 = x2 + 5;
 
-    } while (x <= 65);
+    } while (x2 <= 60);
+
 
     let eqX = findEq();
 
