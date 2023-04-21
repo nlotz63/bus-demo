@@ -1,78 +1,75 @@
 <div class="econ-interactive-container">
-    <div class="wrapper">
-      <div class="item-narrative">
-  
-        <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
-          <h2>Factors that shift the IS curve (part 1)</h2>
-          <ul>
-            <li>
-              The IS curve shifts up and to the right because of a decline in
-              desired national saving if
-              <ul>
-                <li>Wealth increases,</li>
-                <li>Expected future output increases,</li>
-                <li>Government purchases increase,</li>
-                <li>Taxes decrease and Ricardian equivalence does not hold.</li>
-              </ul>
-            </li>
-          </ul>
-  <!--         <div class="control-column econ-control">
-            <econ-slider
-              label="Wealth"
-              showValue="false"
-              [showPercent]="true"
-              [min]="-500"
-              [max]="700"
-              step="10"
-              [value]="slider.value.wealth!"
-              (valueChange)="updateChart({ wealth: $event })"
-            ></econ-slider>
-            <econ-slider
-              label="Expected future output"
-              showValue="false"
-              [showPercent]="true"
-              [min]="-525"
-              [max]="675"
-              step="10"
-              [value]="slider.value.expectedOutput!"
-              (valueChange)="updateChart({ expectedOutput: $event })"
-            ></econ-slider>
-            <econ-slider
-              label="Government purchases"
-              showValue="false"
-              [showPercent]="true"
-              [min]="-400"
-              [max]="1600"
-              step="10"
-              [showPercent]="true"
-              [value]="slider.value.govPurchases!"
-              #startValue
-              (valueChange)="updateChart({ govPurchases: $event })"
-            ></econ-slider>
-            <econ-slider
-              label="Taxes"
-              showValue="false"
-              [showPercent]="true"
-              [min]="-400"
-              [max]="1200"
-              step="10"
-              [showPercent]="true"
-              [value]="slider.value.taxes!"
-              #startValue
-              (valueChange)="updateChart({ taxes: $event })"
-            ></econ-slider>
-          </div> -->
-  
+  <div class="wrapper">
+    <div class="item-narrative">
+      <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
+        <h2>Factors that shift the net exports (NX) curve</h2>
+        <ul>
+          <li>
+            The NX curve shifts up and to the right if
+            <ul>
+              <li>Domestic income decreases,</li>
+              <li>Foreign income increases,</li>
+              <li>The foreign real interest rate increases,</li>
+              <li>The world demand for domestic goods increases.</li>
+            </ul>
+          </li>
+        </ul>
+        <div class="control-column econ-control">
+          <econ-slider
+            label="Domestic Income"
+            showValue="false"
+            displayValue="{{
+              slider.value.Y! | currency : 'USD' : 'symbol' : '0.0-0'
+            }} billion"
+            [min]="1000"
+            [max]="9000"
+            step="10"
+            [value]="slider.value.Y!"
+            (valueChange)="updateChart({ Y: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Foreign Income"
+            showValue="false"
+            displayValue="{{
+              slider.value.Yf! | currency : 'USD' : 'symbol' : '0.0-0'
+            }} billion"
+            [min]="1000"
+            [max]="7000"
+            step="10"
+            [value]="slider.value.Yf!"
+            (valueChange)="updateChart({ Yf: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="Foreign real interest rate"
+            showValue="false"
+            displayValue="{{ slider.value.rf! / 100 | percent : '0.2-2' }}"
+            [min]="0"
+            [max]="3"
+            step=".001"
+            [value]="slider.value.rf!"
+            (valueChange)="updateChart({ rf: $event })"
+          ></econ-slider>
+          <econ-slider
+            label="World demand domestic goods"
+            showValue="false"
+            [showPercent]="true"
+            [min]="-250"
+            [max]="750"
+            step="5"
+            [value]="slider.value.nx0!"
+            (valueChange)="updateChart({ nx0: $event })"
+          ></econ-slider>
+          <button mat-raised-button (click)="playStep(0)">Reset</button>
         </div>
       </div>
-      <div id="chart1" class="item-chart"></div>
     </div>
-    <app-player
-      *ngIf="showPlayer"
-      [steps]="6"
-      [mode]="mode"
-      (modeChange)="playStep($event)"
-      class="player-navigation-container"
-    ></app-player>
+    <div id="chart1" class="item-chart"></div>
   </div>
-  
+  <app-player
+    *ngIf="showPlayer"
+    [steps]="6"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
+</div>

@@ -6,11 +6,13 @@ import { transition, trigger, style, animate } from '@angular/animations';
 
 
 import * as Highcharts from 'highcharts';
+import HC_annotate from 'highcharts/modules/annotations';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 
+HC_annotate(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
 HC_seriesLabel(Highcharts);
@@ -43,15 +45,12 @@ export class Fig135Component implements OnInit, AfterViewInit {
   NXref!: any[];
   eqRef!: any[];
 
-  params = {
-    Y: 5000,
-    Yf: 4000,
-    rf: 1.1351,
-    nx0: 250
-  }
 
   slider = new FormGroup({
-
+    Y: new FormControl(5000),
+    Yf: new FormControl(4000),
+    rf: new FormControl(1.1351),
+    nx0: new FormControl(250)
   });
 
 
@@ -62,7 +61,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
     });
-    this._createSeries(this.params, false);
+    this._createSeries( false);
   }
 
   ngAfterViewInit(): void {
@@ -73,18 +72,51 @@ export class Fig135Component implements OnInit, AfterViewInit {
 
   public playStep(value: number) {
     this.mode = value;
+    this.slider.setValue({
+      Y: 5000,
+      Yf: 4000,
+      rf: 1.1351,
+      nx0: 250
+    });
     this._setupChart(true);
 
   }
 
   public updateChart(value: any) {
+    this.slider.patchValue(value);
+    let series = this._createSeries(false);
+
+    this.chart.series[0].setData(series.EQ, false, false, false);
+    this.chart.series[2].setData(series.NX, true, false, false);
+
+    this.chart.update(
+      {
+        annotations: [
+          {
+            labels: [
+              {
+                point: {
+                  x: series.EQ[0].x,
+                  y: series.EQ[0].y,
+                  xAxis: 0,
+                  yAxis: 0
+                  },
+                text: `<b>Equlilibrium</b><br/>Quantity: $${series.EQ[1].x.toFixed(0)} billion<br/>Real interest rate ${series.EQ[1].y.toFixed(2)}%`,
+                accessibility: {description: 'Equlilibrium Quantity: $${series.EQ[1].x.toFixed(0)} billion Real interest rate ${series.EQ[1].y.toFixed(2)}%' }
+              }
+            ]
+          }
+        ]
+      },
+      true
+    );
 
   }
 
   // private methods
 
   private _setupChart(addRef: boolean) {
-    let series = this._createSeries(this.params, addRef);
+    let series = this._createSeries( addRef);
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
         type: 'spline',
@@ -98,7 +130,35 @@ export class Fig135Component implements OnInit, AfterViewInit {
       },
       title: { text: 'Goods Market Equilibrium (open economy)' },
       legend: { enabled: false },
+      accessibility: {
+        keyboardNavigation: {
+          order: ['series', 'chartMenu'],
+          seriesNavigation: {
+            rememberPointFocus: true,
+          },
+
+        },
+        point: {
+          valueDescriptionFormat: `{point.name} Quantity {point.x:.0f} billion Real interest rate {point.y:.2f}`
+        }
+      },
       series: [
+        {
+          type: 'line',
+          name: 'Equilibrium',
+          zIndex: 2,
+          dashStyle: 'Dot',
+          color: 'rgb(112, 112, 112)',
+          lineWidth: 1,
+          animation: false,
+          data: series.EQ,
+          label: {
+            enabled: false,
+            useHTML: true,
+            format: '<i>NX</i>'
+          }
+        },
+
         {
           type: 'spline',
           name: 'Sd minus Id',
@@ -123,32 +183,29 @@ export class Fig135Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Equilibrium',
-          zIndex: 1,
+          name: 'Initial equilibrium',
           dashStyle: 'Dot',
           color: 'rgb(112, 112, 112)',
           lineWidth: 1,
-          animation: false,
-          data: series.EQ,
+          zIndex: 1,
+          data: series.eqRef,
           label: {
-            enabled: false,
-            useHTML: true,
-            format: '<i>NX</i>'
-          }
+            enabled: false
+          },
         },
-
         {
           type: 'line',
-          name: 'Initial saving',
-          dashStyle: 'Dash',
+          name: 'Initial NX',
+          dashStyle: 'LongDash',
           color: 'rgb(112, 112, 112)',
           lineWidth: 1,
           zIndex: -1,
-          data: [],
+          data: series.NXref,
           label: {
             enabled: false
           }
         },
+
       ],
       xAxis: {
         lineColor: '#757575',
@@ -184,6 +241,9 @@ export class Fig135Component implements OnInit, AfterViewInit {
         title: { useHTML: true, text: 'Domestic real interest rate, r' },
 
       },
+      tooltip: {
+        enabled: false
+      },
       plotOptions: {
         series: {
           enableMouseTracking: true,
@@ -195,15 +255,47 @@ export class Fig135Component implements OnInit, AfterViewInit {
           },
           label: {
             style: { fontWeight: '400' }
-          }
+          },
         }
-      }
+      },
+      annotations: [
+        {
+          animation: false,
+          labelOptions: {
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            borderColor: 'rgba(0, 0, 0, 0)',
+            align: 'left',
+            borderWidth: 0,
+            x: 5,
+            y: -2,
+            useHTML: true,
+            style: {
+              color: 'black'
+            }
+          },
+
+          labels: [
+            {
+              point: {
+                x: series.EQ[0].x,
+                y: series.EQ[0].y,
+                xAxis: 0,
+                yAxis: 0
+                },
+              text: `<b>Equlilibrium</b><br/>Quantity: $${series.EQ[1].x.toFixed(0)} billion<br/>Real interest rate ${series.EQ[1].y.toFixed(2)}%`,
+              accessibility: {description: 'Equlilibrium Quantity: $${series.EQ[1].x.toFixed(0)} billion Real interest rate ${series.EQ[1].y.toFixed(2)}%' }
+
+            }
+          ]
+        }
+      ]
     });
   }
 
-  private _createSeries( params: any, addRef: boolean) {
+  private _createSeries( addRef: boolean) {
     // math generate all curves and key points in the chart returns an object of arrays
-    let rRate = 0, taxRate =0, eMPK = 0, output = 0, eOutput = 0, wealth = 0, eRealRate = 0, govPurchase = 0, taxes = 0;
+    let rRate = 0, taxRate = 0, eMPK = 0, output = 0, eOutput = 0, wealth = 0, eRealRate = 0, govPurchase = 0, taxes = 0;
+    let slider = this.slider.value;
 
     let SminusD = [], NX = [], qSaving: any[] = [], qInvestment: any[] = [];
 
@@ -217,12 +309,12 @@ export class Fig135Component implements OnInit, AfterViewInit {
     let inverseInvestment = (x: number) => { return Math.pow((x - investShift) / beta, 1 / exp1); }
 
     // NX curve and parameters
-    let nx0 = 50, nxy = .15, nxyf = 0.25, nxr = 250, nxrf = 400;
+    let nx0 = 250, nxy = .15, nxyf = 0.25, nxr = 250, nxrf = 400;
     let NXcurve = (x: number) => {
-      return params.nx0 - nxy * params.Y + nxyf * params.Yf - nxr * x + nxrf * params.rf;
+      return slider.nx0! - nxy * slider.Y! + nxyf * slider.Yf! - nxr * x + nxrf * slider.rf!;
     }
     let inverseNX = (x: number) => {
-      return (-x + params.nx0 + nxrf * params.rf - nxy * params.Y + nxyf * params.Yf) / nxr;
+      return (-x + nx0 + nxrf * slider.rf! - nxy * slider.Y! + nxyf * slider.Yf!) / nxr;
     }
 
     let _findEq = (): number => {
@@ -259,8 +351,8 @@ export class Fig135Component implements OnInit, AfterViewInit {
     } while (x <= 8.5);
 
     let eqPt = _findEq();
-    let eq = [
-      [-2000, eqPt],
+    let eq: any[] = [
+      {name: 'equilibrium x intercept', x: -2000, y: eqPt, marker: {radius: 2}},
       {
         name: 'Equilibrium',
         x: NXcurve(eqPt),
@@ -275,7 +367,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
         }
       },
       {
-        name: 'Equilibrium',
+        name: 'Equilibrium y intercept',
         x: NXcurve(eqPt),
         y: -4,
         marker: {
@@ -283,7 +375,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
           fillColor: 'orange',
           lineColor: 'black',
           lineWidth: 1,
-          radius: 4,
+          radius: 1,
           symbol: 'circle'
         }
       },
@@ -312,7 +404,23 @@ export class Fig135Component implements OnInit, AfterViewInit {
     if (addRef) {
       this.SminusDref = SminusD;
       this.NXref = NX;
-      this.eqRef = eq;
+      this.eqRef = [
+        { x: -2000, y: eqPt, marker: { enabled: false, radius: 0 } },
+        {
+          name: 'Equilibrium',
+          x: NXcurve(eqPt),
+          y: eqPt,
+          marker: {
+            enabled: true,
+            fillColor: 'rgb(112, 112, 112)',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 3,
+            symbol: 'circle'
+          },
+        },
+        {x: NXcurve(eqPt), y: -4, marker: {enabled: false, radius: 0}}
+      ];
 
     }
     return {
