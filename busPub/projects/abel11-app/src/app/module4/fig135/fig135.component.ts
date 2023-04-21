@@ -79,7 +79,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
       nx0: 250
     });
     this._setupChart(true);
-
+    this.announcer.announce('The interactive has been reset');
   }
 
   public updateChart(value: any) {
@@ -110,7 +110,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
       },
       true
     );
-
+    this.announcer.announce('The graph has been updated.');
   }
 
   // private methods
@@ -407,7 +407,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
       this.eqRef = [
         { x: -2000, y: eqPt, marker: { enabled: false, radius: 0 } },
         {
-          name: 'Equilibrium',
+          name: 'Initial equilibrium',
           x: NXcurve(eqPt),
           y: eqPt,
           marker: {
