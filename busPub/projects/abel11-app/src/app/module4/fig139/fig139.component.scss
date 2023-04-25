@@ -31,11 +31,11 @@
   }
 
   .item-chart {
-    @include flex(1 0 100%);
+    @include flex(1 1 100%);
   }
 
   .item-narrative {
-    @include flex(0 0 100%);
+    @include flex(1 1 100%);
   }
 }
 .econ-slider {
@@ -65,4 +65,12 @@ button {
 
 .econ-slider .econ-data {
   margin-left: 10%;
+}
+
+p {
+  padding-left: 5px;
+}
+button {
+  position: relative;
+  bottom: -10px !important;
 }

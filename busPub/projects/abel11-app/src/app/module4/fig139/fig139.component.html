@@ -1,82 +1,53 @@
 <div class="econ-interactive-container">
-    <div class="wrapper">
-      <div class="item-narrative">
-
-        <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
-          <h2>The effects of government purchases in an open economy</h2>
+  <div class="wrapper">
+    <div class="item-narrative">
+      <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
+        <h1>The effects of government purchases in an open economy</h1>
+        <p>
+          Click "play" to start a simulation showing the effects of an increase in government purchases in the domestic country.
+        </p>
+        <div  @myAnimationTrigger *ngIf="phase1">
+          <h2>Short-run effects</h2>
           <ul>
+            <li>The IS curve shifts to the right in response to an increase in government purchases in the home country.</li>
             <li>
-              A simulation showing, step-by-step the effect of an increase in government purchases in the home country.
-              <ul>
-                <li>IS curve shifts to the right,</li>
-                <li>In the classical model, the full employment line also shifts right</li>
-                <li>Higher income reduces net exports (NX),</li>
-                <li>Lower NX at home, implies higher NX in foreign,</li>
-                <li>shifting foreign's IS curve to the right</li>
-                <li>The LM curve in both countries shift up and to the left to restore long-run equilibrium.</li>
-              </ul>
+              In the classical model, this also shifts the full employment curve to the right because it increases present or future tax burdens; because higher taxes make workers poorer, they increase their labor supply.
+            </li>
+            <li>
+              The increase in output causes a decrease in net exports in the home country.
+            </li>
+            <li>
+              The effects of this in the foreign country are transmitted through the change in net exports. Net exports in the foreign country increase, which shifts its IS curve to the right increasing output and the interest rate.
             </li>
           </ul>
-          <econ-slider
-          label="Government purchases"
-          showValue="false"
-          [showPercent]="true"
-          [min]="-400"
-          [max]="1600"
-          step="10"
-          [showPercent]="true"
-          [value]="slider.value.govPurchases!"
-          #startValue
-          (valueChange)="updateChart({ govPurchases: $event })"
-        ></econ-slider>
-
-  <!--         <div class="control-column econ-control">
-            <econ-slider
-              label="Wealth"
-              showValue="false"
-              [showPercent]="true"
-              [min]="-500"
-              [max]="700"
-              step="10"
-              [value]="slider.value.wealth!"
-              (valueChange)="updateChart({ wealth: $event })"
-            ></econ-slider>
-            <econ-slider
-              label="Expected future output"
-              showValue="false"
-              [showPercent]="true"
-              [min]="-525"
-              [max]="675"
-              step="10"
-              [value]="slider.value.expectedOutput!"
-              (valueChange)="updateChart({ expectedOutput: $event })"
-            ></econ-slider>
-            <econ-slider
-              label="Taxes"
-              showValue="false"
-              [showPercent]="true"
-              [min]="-400"
-              [max]="1200"
-              step="10"
-              [showPercent]="true"
-              [value]="slider.value.taxes!"
-              #startValue
-              (valueChange)="updateChart({ taxes: $event })"
-            ></econ-slider>
-          </div> -->
-
         </div>
+        <div  @myAnimationTrigger *ngIf="phase2">
+          <h2>Restoring long-run equilibrium</h2>
+          <ul>
+            <li>
+              The increase in output and real interest rate in both countries will put upward pressure on the price level in both countries.
+            </li>
+            <li>
+              This will shift the LM curve in both countries up and to the left until the IS curve, LM curve, and FE curve intersect at the same point.
+            </li>
+          </ul>
+        </div>
+        <button mat-raised-button (click)="playSimulation()">
+          {{ buttonTitle }}
+        </button>
+
       </div>
-      <div class="item-chart control-column">
-        <div id="chart1" ></div>
-        <div id="chart2" ></div>
-        </div>
     </div>
-    <app-player
-      *ngIf="showPlayer"
-      [steps]="6"
-      [mode]="mode"
-      (modeChange)="playStep($event)"
-      class="player-navigation-container"
-    ></app-player>
+    <div class="item-chart control-column">
+      <div id="chart1"></div>
+      <div id="chart2"></div>
+    </div>
   </div>
+  <app-player
+    *ngIf="showPlayer"
+    [steps]="6"
+    [mode]="mode"
+    (modeChange)="playStep($event)"
+    class="player-navigation-container"
+  ></app-player>
+</div>

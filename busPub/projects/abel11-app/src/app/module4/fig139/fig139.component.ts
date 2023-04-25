@@ -5,7 +5,6 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { transition, trigger, style, animate } from '@angular/animations';
 import { interval } from 'rxjs';
 
-
 import * as Highcharts from 'highcharts';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
@@ -43,17 +42,18 @@ export class Fig139Component implements OnInit, AfterViewInit {
   chart!: Highcharts.Chart;
   chart2!: Highcharts.Chart;
 
-  shortRunEquilibrium = 4000;
-  longRunEquilibrium = 4000;
+  buttonTitle: string = 'Play';
+  subscription!: any;
+  phase1: boolean = false;
+  phase2: boolean = false;
 
   params = {
-    Y: 4330,
-    Yf: 3200,
-    rf: 1.0,
+    Y: 4320.051344510579,
+    Yf: 3216,
+    rf: 1.530134879723534,
     nx0: 50,
-    r: 1.2,
+    r: 1.4359281217617639,
   }
-
 
   slider = new FormGroup({
     expectedOutput: new FormControl(75),
@@ -64,7 +64,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
     effTax: new FormControl(0.12),
 
     money: new FormControl(255000),
-    priceLevel: new FormControl(100),
+    priceLevel: new FormControl(105.5),
     expectedInflation: new FormControl(0.05),
     nominalRate: new FormControl(0.02),
 
@@ -78,7 +78,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
     wealth: new FormControl(100),
     govPurchases: new FormControl(300),
     taxes: new FormControl(400),
-    expectedTFP: new FormControl(3558),
+    expectedTFP: new FormControl(3450),
     effTax: new FormControl(0.12),
 
     money: new FormControl(200000),
@@ -91,9 +91,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
     capitalStock: new FormControl(0)
   });
 
-
   playInterval = interval(300);
-
 
   constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
 
@@ -103,6 +101,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
       this.showPlayer = params['showPlayer'] === 'true' ? true : false;
     });
     this._createSeries(false);
+    this._createSeriesF(false);
   }
 
   ngAfterViewInit(): void {
@@ -113,12 +112,55 @@ export class Fig139Component implements OnInit, AfterViewInit {
 
   public playStep(value: number) {
     this.mode = value;
+    this.params = {
+      Y: 4320.051344510579,
+      Yf: 3216,
+      rf: 1.530134879723534,
+      nx0: 50,
+      r: 1.4359281217617639,
+    }
     this._setupChart(true);
 
   }
 
-  public updateChart(value: any) {
-    this.slider.patchValue(value);
+  public playSimulation() {
+    if (this.buttonTitle === 'Play') {
+      const animate = interval(300);
+      this.phase1 = true;
+      let govtPurch = this.slider.value.govPurchases!;
+      let priceD = this.slider.value.priceLevel!, priceF = this.sliderF.value.priceLevel!;
+      this.subscription = animate.subscribe((x) => {
+        if (govtPurch <= 1500) {
+          govtPurch = govtPurch + 30;
+          this.updateChart({ govPurchases: govtPurch }, 1);
+        } else {
+          this.phase2 = true;
+        }
+        if (x > 38 && priceD <= 130) {
+          priceD = priceD + .5;
+          priceF = priceF + .28;
+          this.updateChart({ priceLevel: priceD }, 1);
+          this.updateChart({ priceLevel: priceF }, 2);
+        }
+        if (x > 100) this.subscription.unsubscribe();
+      });
+    } else if (this.buttonTitle === 'Reset') {
+      this.subscription.unsubscribe();
+      this.phase1 = false;
+      this.phase2 = false;
+      this.slider.patchValue({ govPurchases: 600, priceLevel: 105.5 });
+      this.sliderF.patchValue({ priceLevel: 110 });
+      this.playStep(0);
+      this.buttonTitle = 'Play';
+      return;
+    }
+    this.buttonTitle = 'Reset';
+  }
+
+  public updateChart(value: any, model: number) {
+    if (model === 1) this.slider.patchValue(value);
+    if (model === 2) this.sliderF.patchValue(value);
+
     let series = this._createSeries(false);
     let seriesF = this._createSeriesF(false);
 
@@ -136,6 +178,8 @@ export class Fig139Component implements OnInit, AfterViewInit {
   // private methods
 
   private _setupChart(addRef: boolean) {
+    if (this.chart) this.chart.destroy();
+    if (this.chart2) this.chart2.destroy();
     let series = this._createSeries(addRef);
     let seriesF = this._createSeriesF(addRef);
 
@@ -210,7 +254,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Initial IS',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -222,7 +266,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Initial LM',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -234,7 +278,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Initial FE',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -364,7 +408,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Initial IS',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -376,7 +420,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Initial LM',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -388,7 +432,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Initial FE',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -458,7 +502,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
       i0: number = slider.expectedTFP! * (1 - 4 * slider.effTax!), ir: number = 200, G: number = slider.govPurchases!;
     let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
 
-    let ybar = 4060 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply! + .4*slider.govPurchases!;
+    let ybar = 4140.051344510579 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply! + .3 * slider.govPurchases!;
 
     let x: number = 1000, isSeries = [], lmSeries = [], eqSeries = [], feSeries;
     let isRef: any[] = [], lmRef: any[] = [], eqRef: any[] = [], feRef: any[] = [];
@@ -521,9 +565,6 @@ export class Fig139Component implements OnInit, AfterViewInit {
       { x: ybar, y: 5, marker: { enabled: false, radius: 0 } },
     ];
 
-    this.shortRunEquilibrium = eq;
-    this.longRunEquilibrium = ybar;
-
     if (addRef) {
       isRef = isSeries;
       lmRef = lmSeries;
@@ -570,7 +611,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
       i0: number = slider.expectedTFP! * (1 - 4 * slider.effTax!), ir: number = 200, G: number = slider.govPurchases!;
     let M: number = slider.money!, P: number = slider.priceLevel!, l0: number = slider.nominalRate! * 10000 + 800, ly: number = 0.5, lr: number = 500, piE: number = slider.expectedInflation! * 10 - 0.45;
 
-    let ybar = 3207 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
+    let ybar = 3216.498516087168 + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
 
     // NX curve and parameters
     let nx0 = 50, nxy = .3, nxyf = 0.25, nxr = 250, nxrf = 400;
@@ -632,9 +673,6 @@ export class Fig139Component implements OnInit, AfterViewInit {
       { x: ybar, y: -3, marker: { enabled: false, radius: 0 } },
       { x: ybar, y: 5, marker: { enabled: false, radius: 0 } },
     ];
-
-    this.shortRunEquilibrium = eq;
-    this.longRunEquilibrium = ybar;
 
     if (addRef) {
       isRef = isSeries;
