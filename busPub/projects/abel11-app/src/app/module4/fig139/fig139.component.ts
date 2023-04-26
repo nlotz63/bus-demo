@@ -6,12 +6,14 @@ import { transition, trigger, style, animate } from '@angular/animations';
 import { interval } from 'rxjs';
 
 import * as Highcharts from 'highcharts';
+import HC_annotate from 'highcharts/modules/annotations';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 
 HC_export(Highcharts);
+HC_annotate(Highcharts);
 HC_data(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
@@ -46,6 +48,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
   subscription!: any;
   phase1: boolean = false;
   phase2: boolean = false;
+  eqLabel: string = 'Long-run';
 
   params = {
     Y: 4320.051344510579,
@@ -125,10 +128,12 @@ export class Fig139Component implements OnInit, AfterViewInit {
 
   public playSimulation() {
     if (this.buttonTitle === 'Play') {
+      this.announcer.announce('The simulation has started', 'assertive');
       const animate = interval(300);
       this.phase1 = true;
       let govtPurch = this.slider.value.govPurchases!;
       let priceD = this.slider.value.priceLevel!, priceF = this.sliderF.value.priceLevel!;
+      this.eqLabel = 'Short-run';
       this.subscription = animate.subscribe((x) => {
         if (govtPurch <= 1500) {
           govtPurch = govtPurch + 30;
@@ -138,11 +143,17 @@ export class Fig139Component implements OnInit, AfterViewInit {
         }
         if (x > 38 && priceD <= 130) {
           priceD = priceD + .5;
-          priceF = priceF + .28;
+          priceF = priceF + .297;
+          if(priceD > 129.5) this.eqLabel = 'Long-run';
+
           this.updateChart({ priceLevel: priceD }, 1);
           this.updateChart({ priceLevel: priceF }, 2);
         }
-        if (x > 100) this.subscription.unsubscribe();
+        if (x > 100) {
+          this.subscription.unsubscribe();
+          this.announcer.announce('The simulation has ended.');
+
+        }
       });
     } else if (this.buttonTitle === 'Reset') {
       this.subscription.unsubscribe();
@@ -152,6 +163,8 @@ export class Fig139Component implements OnInit, AfterViewInit {
       this.sliderF.patchValue({ priceLevel: 110 });
       this.playStep(0);
       this.buttonTitle = 'Play';
+      this.eqLabel = 'Long-run';
+      this.announcer.announce('The simulation has been reset');
       return;
     }
     this.buttonTitle = 'Reset';
@@ -173,6 +186,63 @@ export class Fig139Component implements OnInit, AfterViewInit {
     this.chart2.series[1].setData(seriesF.LM, false, false, false);
     this.chart2.series[2].setData(seriesF.FE, false, false, false);
     this.chart2.series[3].setData(seriesF.EQ, true, false, false);
+
+    this.chart.update({
+      annotations: [
+        {
+          labelOptions: {
+            backgroundColor: 'white',
+            borderWidth: 0,
+            verticalAlign: 'bottom',
+            y: -5
+          },
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: 3700,
+                y: -3
+              },
+              formatter: (): any => {
+                return `${this.eqLabel}:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`;
+              },
+              accessibility: {
+                description: `${this.eqLabel}:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`
+              }
+            }
+          ]
+        }
+      ]
+    });
+    this.chart2.update({
+      annotations: [
+        {
+          labelOptions: {
+            backgroundColor: 'white',
+            borderWidth: 0,
+            verticalAlign: 'bottom',
+            y: -5
+          },
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: 2700,
+                y: -2
+              },
+              formatter: (): any => {
+                return `${this.eqLabel}:</br>Y<sub>For</sub> = $${seriesF.EQ[1].x.toFixed(0)}</br>r<sub>For</sub> = ${seriesF.EQ[0].y.toPrecision(2)}%`;
+              },
+              accessibility: {
+                description: `${this.eqLabel}:</br>Y subscript foreign = $${seriesF.EQ[1].x.toFixed(0)}</br>r subscript foreign = ${seriesF.EQ[0].y.toPrecision(2)}%`
+              }
+            }
+          ]
+        }
+      ]
+    });
   }
 
   // private methods
@@ -196,7 +266,12 @@ export class Fig139Component implements OnInit, AfterViewInit {
       },
       title: { text: 'ISLM (Home)' },
       legend: { enabled: false },
-      tooltip: { enabled: false },
+      tooltip: { enabled: true },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `domestic output equals {point.x:.0f} billion dollars. Domestic real interest rate equals {point.y:.2f} percent.`
+        }
+      },
       series: [
         {
           type: 'line',
@@ -206,11 +281,15 @@ export class Fig139Component implements OnInit, AfterViewInit {
           data: series.IS,
           accessibility: {
             description: `A downward sloping straight line.`
+          },
+          label: {
+            useHTML: true,
+            format: `IS`,
           }
         },
         {
           type: 'line',
-          name: 'LM curve',
+          name: 'LM',
           zIndex: 1,
           animation: false,
           data: series.LM,
@@ -240,15 +319,10 @@ export class Fig139Component implements OnInit, AfterViewInit {
           animation: false,
           data: series.EQ,
           label: {
-            useHTML: true,
-            style: { fontSize: '11px', fontWeight: '400' },
-            connectorAllowed: true,
-            formatter: (): any => {
-              return `Long-run:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`;
-            }
+            enabled: false
           },
           accessibility: {
-            description: `Long-run:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`
+            description: `${this.eqLabel}</br>Y = $${series.EQ[1].x.toFixed(0)} billion dollars.</br>r = ${series.EQ[0].y.toPrecision(2)} percent.`
           }
         },
         {
@@ -329,12 +403,43 @@ export class Fig139Component implements OnInit, AfterViewInit {
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+            pointFormat: 'Output, Y: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
           },
-          marker: { enabled: false, radius: 0 }
+          marker: { enabled: false, radius: 2, symbol: 'circle' },
+          label: {
+            style: {
+              fontWeight: '400'
+            }
+          }
         }
 
-      }
+      },
+      annotations: [
+        {
+          labelOptions: {
+            backgroundColor: 'white',
+            borderWidth: 0,
+            verticalAlign: 'bottom',
+            y: -5
+          },
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: 3700,
+                y: -3
+              },
+              formatter: (): any => {
+                return `${this.eqLabel}:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`;
+              },
+              accessibility: {
+                description: `${this.eqLabel}:</br>Y = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[0].y.toPrecision(2)}%`
+              }
+            }
+          ]
+        }
+      ]
     });
 
     this.chart2 = new Highcharts.Chart('chart2', {
@@ -350,11 +455,17 @@ export class Fig139Component implements OnInit, AfterViewInit {
       },
       title: { text: 'ISLM (Foreign)' },
       legend: { enabled: false },
-      tooltip: { enabled: false },
+      tooltip: { useHTML: true, enabled: true },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `Foreign output equals {point.x:.0f} billion dollars. Foreign real interest rate equals {point.y:.2f} percent.`
+        }
+      },
+
       series: [
         {
           type: 'line',
-          name: 'IS curve',
+          name: 'IS<sub>For</sub>',
           zIndex: 1,
           animation: false,
           data: seriesF.IS,
@@ -364,7 +475,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'LM curve',
+          name: 'LM<sub>For</sub>',
           zIndex: 1,
           animation: false,
           data: seriesF.LM,
@@ -374,7 +485,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'FE',
+          name: 'FE<sub>For</sub>',
           color: 'black',
           zIndex: 0,
           animation: false,
@@ -394,25 +505,20 @@ export class Fig139Component implements OnInit, AfterViewInit {
           animation: false,
           data: seriesF.EQ,
           label: {
-            useHTML: true,
-            style: { fontSize: '11px', fontWeight: '400' },
-            connectorAllowed: true,
-            formatter: (): any => {
-              return `Long-run:</br>Y = $${seriesF.EQ[1].x.toFixed(0)}</br>r = ${seriesF.EQ[0].y.toPrecision(2)}%`;
-            }
+            enabled: false
           },
           accessibility: {
-            description: `Long-run:</br>Y = $${seriesF.EQ[1].x.toFixed(0)}</br>r = ${seriesF.EQ[0].y.toPrecision(2)}%`
+            description: `${this.eqLabel}:</br>Y subscript foreign = $${seriesF.EQ[1].x.toFixed(0)} billion dollars.</br>r subscript foreign = ${seriesF.EQ[0].y.toPrecision(2)} percent.`
           }
         },
         {
           type: 'line',
-          name: 'Initial IS',
+          name: 'Initial IS<sub>For</sub>',
           dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
-          label: { enabled: false },
+          label: { useHTML: true, enabled: false },
           visible: true,
           animation: false,
           data: seriesF.isRef,
@@ -483,12 +589,44 @@ export class Fig139Component implements OnInit, AfterViewInit {
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+            pointFormat: 'Output, Y: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
           },
-          marker: { enabled: false, radius: 0 }
+          marker: { enabled: false, radius: 2, symbol: 'circle' },
+          label: {
+            useHTML: true,
+            style: {
+              fontWeight: '400'
+            }
+          }
         }
-
-      }
+      },
+      annotations: [
+        {
+          labelOptions: {
+            backgroundColor: 'white',
+            borderWidth: 0,
+            verticalAlign: 'bottom',
+            y: -5,
+            useHTML: true
+          },
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: 2700,
+                y: -2
+              },
+              formatter: (): any => {
+                return `${this.eqLabel}:</br>Y<sub>For</sub> = $${seriesF.EQ[1].x.toFixed(0)}</br>r<sub>For</sub> = ${seriesF.EQ[0].y.toPrecision(2)}%`;
+              },
+              accessibility: {
+                description: `${this.eqLabel}:</br>Y subscript Foreign = $${seriesF.EQ[1].x.toFixed(0)}</br>r subscript foreign = ${seriesF.EQ[0].y.toPrecision(2)}%`
+              }
+            }
+          ]
+        }
+      ]
     });
 
   }

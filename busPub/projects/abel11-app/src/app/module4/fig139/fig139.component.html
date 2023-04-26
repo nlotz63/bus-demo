@@ -1,12 +1,12 @@
 <div class="econ-interactive-container">
   <div class="wrapper">
     <div class="item-narrative">
-      <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger>
+      <div *ngIf="mode === 0" class="econ-narative-block" @myAnimationTrigger aria-live="polite">
         <h1>The effects of government purchases in an open economy</h1>
         <p>
           Click "play" to start a simulation showing the effects of an increase in government purchases in the domestic country.
         </p>
-        <div  @myAnimationTrigger *ngIf="phase1">
+        <div  @myAnimationTrigger *ngIf="phase1" aria-live="polite">
           <h2>Short-run effects</h2>
           <ul>
             <li>The IS curve shifts to the right in response to an increase in government purchases in the home country.</li>
@@ -21,7 +21,7 @@
             </li>
           </ul>
         </div>
-        <div  @myAnimationTrigger *ngIf="phase2">
+        <div  @myAnimationTrigger *ngIf="phase2" aria-live="polite">
           <h2>Restoring long-run equilibrium</h2>
           <ul>
             <li>
