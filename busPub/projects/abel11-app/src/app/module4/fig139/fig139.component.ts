@@ -255,10 +255,9 @@ export class Fig139Component implements OnInit, AfterViewInit {
 
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
-        type: 'spline',
+        type: 'line',
         animation: false,
         height: 350,
-        ignoreHiddenSeries: true,
       },
       credits: {
         text: 'Pearson Education',
@@ -277,6 +276,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
           type: 'line',
           name: 'IS curve',
           zIndex: 1,
+          lineWidth: 2,
           animation: false,
           data: series.IS,
           accessibility: {
@@ -291,6 +291,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
           type: 'line',
           name: 'LM',
           zIndex: 1,
+          lineWidth: 2,
           animation: false,
           data: series.LM,
           accessibility: {
@@ -302,6 +303,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
           name: 'FE',
           color: 'black',
           zIndex: 0,
+          lineWidth: 2,
           animation: false,
           data: series.FE,
           accessibility: {
@@ -321,9 +323,6 @@ export class Fig139Component implements OnInit, AfterViewInit {
           label: {
             enabled: false
           },
-          accessibility: {
-            description: `${this.eqLabel}</br>Y = $${series.EQ[1].x.toFixed(0)} billion dollars.</br>r = ${series.EQ[0].y.toPrecision(2)} percent.`
-          }
         },
         {
           type: 'line',
@@ -447,7 +446,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
         type: 'spline',
         animation: false,
         height: 350,
-        ignoreHiddenSeries: true,
+        borderRadius: 5,
       },
       credits: {
         text: 'Pearson Education',
@@ -467,6 +466,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
           type: 'line',
           name: 'IS<sub>For</sub>',
           zIndex: 1,
+          lineWidth: 2,
           animation: false,
           data: seriesF.IS,
           accessibility: {
@@ -477,6 +477,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
           type: 'line',
           name: 'LM<sub>For</sub>',
           zIndex: 1,
+          lineWidth: 2,
           animation: false,
           data: seriesF.LM,
           accessibility: {
@@ -488,6 +489,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
           name: 'FE<sub>For</sub>',
           color: 'black',
           zIndex: 0,
+          lineWidth: 2,
           animation: false,
           data: seriesF.FE,
           accessibility: {
@@ -681,7 +683,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
 
     // equilibrium series
     eqSeries = [
-      { x: 0, y: is(eq), marker: { enabled: false, radius: 0 } },
+      { x: 0, y: is(eq), marker: { enabled: false, radius: 0 }, accessibility: {enabled: false} },
       {
         name: 'Equilibrium',
         x: eq,
@@ -695,12 +697,15 @@ export class Fig139Component implements OnInit, AfterViewInit {
           radius: 4,
           symbol: 'circle'
         },
+        accessibility: {
+          enabled: true
+        }
       },
-      { x: eq, y: -4, marker: { enabled: false } }
+      { x: eq, y: -4, marker: { enabled: false }, accessibility: {enabled: false} }
     ];
     feSeries = [
-      { x: ybar, y: -4, marker: { enabled: false, radius: 0 } },
-      { x: ybar, y: 5, marker: { enabled: false, radius: 0 } },
+      { x: ybar, y: -3, marker: { enabled: false, radius: .5 } },
+      { x: ybar, y: 5, marker: { enabled: false, radius: .5 } },
     ];
 
     if (addRef) {
