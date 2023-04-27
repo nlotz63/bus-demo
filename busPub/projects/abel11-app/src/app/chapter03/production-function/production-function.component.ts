@@ -227,7 +227,11 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
       },
       plotOptions: {
         series: {
-          animation: false
+          animation: false,
+          color: '#C31229',
+          marker: {
+            symbol: 'circle',
+          }
         }
       },
       annotations: [{
@@ -319,7 +323,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
             },
             data: [
               [0, 18385],
-              { name: 'point', x: 157.5, y: 18385, color: 'blue', marker: { enabled: true, radius: 3, symbol: 'circle'}},
+              { name: 'point', x: 157.5, y: 18385, marker: { enabled: true, radius: 3, symbol: 'circle', lineColor: 'black', lineWidth: 1, fillColor: 'lightgreen'
+            }},
               [157.5, 18385],
               [157.5, 0]
 
@@ -343,7 +348,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
     this.chart.series[1].setData(
         [
           [tanX1-deltaX, tanValues[0] + tanValues[1]*(-deltaX)],
-          {x: tanX1, y: tanValues[0], z: this.slope, color: 'blue', marker: {enabled: true, symbol: 'circle', radius: 3}},
+          {x: tanX1, y: tanValues[0], z: this.slope, marker: {enabled: true, symbol: 'circle', radius: 3, fillColor: 'orange', lineColor: 'black', lineWidth: 1}},
           [tanX1+ deltaX, tanValues[0] + tanValues[1]*(deltaX)]
         ]
     );
@@ -450,25 +455,25 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
 
     this.chart.series[1].setData([
       [0, lowerY],
-      { name: 'point', x: lowerX, y: lowerY, color: 'blue', marker: { enabled: true, radius: 3, symbol: 'circle'}},
+      { name: 'point', x: lowerX, y: lowerY, marker: { enabled: true, radius: 3, symbol: 'circle', fillColor: 'lightgreen', lineColor: 'black', lineWidth: 1}},
       [lowerX, lowerY],
       [lowerX, 0]
     ]);
     this.chart.series[2].setData([
       [0, centerY],
-      { name: 'point', x: centerPoint, y: centerY, color: 'blue', marker: { enabled: true, radius: 4, symbol: 'circle', fillColor: 'orange'}, label: 'Capture'},
+      { name: 'point', x: centerPoint, y: centerY, marker: { enabled: true, radius: 4, symbol: 'circle', fillColor: 'orange', lineColor: 'black', lineWidth: 1}, label: 'Capture'},
       [centerPoint, centerY],
       [centerPoint, 0]
     ]);
     this.chart.series[3].setData([
       [0, upperY],
-      { name: 'point', x: upperX, y: upperY, color: 'blue', marker: { enabled: true, radius: 3, symbol: 'circle'}},
+      { name: 'point', x: upperX, y: upperY, marker: { enabled: true, radius: 3, symbol: 'circle', fillColor: 'lightgreen', lineColor: 'black', lineWidth: 1}},
       [upperX, upperY],
       [upperX, 0]
     ]);
     this.chart.series[4].setData([
       [0, 18385],
-      { name: 'point', x: 23539, y: 18385, color: 'blue', marker: { enabled: true, radius: 3, symbol: 'circle'}},
+      { name: 'point', x: 23539, y: 18385, marker: { enabled: true, radius: 3, symbol: 'circle', fillColor: 'lightgreen', lineColor: 'black', lineWidth: 1}},
       [23539, 18385],
       [23539, 0]
     ]);
