@@ -315,6 +315,7 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
       plotOptions: {
         series: {
           enableMouseTracking: true,
+          lineWidth: 2,
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',

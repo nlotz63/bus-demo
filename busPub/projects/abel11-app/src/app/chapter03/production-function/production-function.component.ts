@@ -201,7 +201,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
             headerFormat: '<b>Production Function</b><br/>',
             pointFormat: `Capital: {point.x:,.2f}<br/>Output: {point.y:,.2f}<br/>Marginal product: {point.slope:.2f}`
           },
-          lineWidth: 1.5,
+          lineWidth: 2,
           states: {hover: {enabled: false}}
         },
 

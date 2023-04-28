@@ -247,6 +247,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
       plotOptions: {
         series: {
           enableMouseTracking: true,
+          lineWidth: 2,
           marker: {enabled: false},
           color: '#C31229',
           tooltip: {

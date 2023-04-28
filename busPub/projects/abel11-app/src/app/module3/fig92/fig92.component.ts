@@ -178,7 +178,8 @@ export class Fig92Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Saving, S(Y = 1200)',
-          zIndex: -1,
+          zIndex: 0,
+          lineWidth: 2,
           animation: false,
           data: series.NS,
           accessibility: {
@@ -194,7 +195,8 @@ export class Fig92Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Investment, I',
-          zIndex: -1,
+          zIndex: 0,
+          lineWidth: 2,
           animation: false,
           data: series.Invest,
           accessibility: {
@@ -292,7 +294,8 @@ export class Fig92Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'IS curve',
-          zIndex: -1,
+          zIndex: 0,
+          lineWidth: 2,
           animation: false,
           data: series.IS,
           accessibility: {

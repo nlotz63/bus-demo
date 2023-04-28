@@ -306,6 +306,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
       plotOptions: {
         series: {
           enableMouseTracking: true,
+          lineWidth: 2,
           animation: false,
           color: '#C31229',
           tooltip: {

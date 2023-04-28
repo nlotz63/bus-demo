@@ -261,6 +261,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
       plotOptions: {
         series: {
           enableMouseTracking: false,
+          lineWidth: 2,
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
@@ -363,6 +364,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
       plotOptions: {
         series: {
           enableMouseTracking: false,
+          lineWidth: 2,
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',

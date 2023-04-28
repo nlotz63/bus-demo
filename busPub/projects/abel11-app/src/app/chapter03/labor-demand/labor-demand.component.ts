@@ -310,6 +310,7 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
       plotOptions: {
         series: {
           enableMouseTracking: false,
+          lineWidth: 2,
           color: '#C31229'
         }
 

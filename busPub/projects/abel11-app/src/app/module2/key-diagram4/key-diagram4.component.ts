@@ -84,6 +84,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
           type: 'spline',
           name: 'Saving',
           zIndex: 1,
+          lineWidth: 2,
           animation: false,
           data: []
         },
@@ -91,6 +92,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
           type: 'spline',
           name: 'Investment',
           zIndex: 1,
+          lineWidth: 2,
           animation: false,
           data: []
         },

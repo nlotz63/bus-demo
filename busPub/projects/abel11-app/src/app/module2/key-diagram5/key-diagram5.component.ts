@@ -311,6 +311,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           type: 'spline',
           name: 'Saving',
           zIndex: 0,
+          lineWidth: 2,
           animation: false,
           data: series.seriesSaving,
           label: {
@@ -322,6 +323,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           type: 'spline',
           name: 'Investment',
           zIndex: 0,
+          lineWidth: 2,
           animation: false,
           data: series.seriesInvestment,
           label: {
@@ -514,6 +516,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           type: 'spline',
           name: 'Saving foreign',
           zIndex: 1,
+          lineWidth: 2,
           animation: false,
           data: seriesF.seriesSaving,
           label: {
@@ -525,6 +528,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           type: 'spline',
           name: 'Investment foreign',
           zIndex: 1,
+          lineWidth: 2,
           animation: false,
           data: seriesF.seriesInvestment,
           label: {
