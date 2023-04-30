@@ -29,8 +29,7 @@
       max="20000"
       step="1000"
       value="3000"
-      (valueChange)="plotDimMarginal($event)"
-      (dragEnd)="messageBuilder($event.value)"
+      (valueChange)="plotDimMarginal($event);messageBuilder($event)"
     ></econ-slider>
 
     <table>
@@ -85,8 +84,7 @@
       max="14000"
       step="1000"
       value="1000"
-      (valueChange)="plotTangent($event)"
-      (dragEnd)="messageBuilder($event.value)"
+      (valueChange)="plotTangent($event);messageBuilder($event)"
     ></econ-slider>
    </div>
   <!--Mode 2-->
@@ -120,8 +118,7 @@
       max="125"
       step="5"
       value="20"
-      (valueChange)="plotTangent($event)"
-      (dragEnd)="messageBuilder($event.value)"
+      (valueChange)="plotTangent($event);messageBuilder($event)"
     ></econ-slider>
    </div>
   <!--Mode 3-->
@@ -150,8 +147,7 @@
       showValue="false"
       [showPercent]="true"
       value="25.99"
-      (valueChange)="shiftPf($event)"
-      (dragEnd)="messageBuilder($event.value)"
+      (valueChange)="shiftPf($event);messageBuilder($event)"
     ></econ-slider>
    </div>
 </div>

@@ -32,6 +32,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   @Input() mode = 0;
   steps = 4;
   showPlayer = false;
+  count = 0;
 
 
   config = [
@@ -141,6 +142,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   }
 
   public playStep(value: any) {
+    this.count = 0;
     this.mode = value;
     this.chart.destroy();
     this.createSeries();
@@ -186,9 +188,14 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
       },
       title: {text: 'Production Function'},
       legend: { enabled: false },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `${this.config[this.mode].xTitle} equals {point.x:.1f}. ${this.config[this.mode].yTitle} equals {point.y:.0f}`
+        }
+      },
       series: [
         {
-          type: 'line',
+          type: 'spline',
           events: {
             click: (e: any) => {
              if( this.mode === 1 || this.mode === 2) this.plotTangent(this.chart.xAxis[0].toValue(e.chartX));
@@ -208,7 +215,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
       ],
       xAxis: {
         lineColor: 'black',
-        lineWidth: 1.5,
+        lineWidth: 1,
         tickColor: 'black',
 
         title: {text: this.config[this.mode].xTitle},
@@ -218,7 +225,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
       yAxis: {
         gridLineWidth: 0,
         lineColor: 'black',
-        lineWidth: 1.5,
+        lineWidth: 1,
         tickColor: 'black',
         tickWidth: 1,
         title: {text: this.config[this.mode].yTitle},
@@ -230,7 +237,9 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
           animation: false,
           color: '#C31229',
           marker: {
+            enabled: true,
             symbol: 'circle',
+            radius: .25
           }
         }
       },
@@ -263,7 +272,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   private createSeries() {
     this.seriesData = [];
     let x = 0;
-    let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = max/200;
+    let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = max/100;
 
     do {
       let point = {};
@@ -511,7 +520,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   public shiftPf(A: any, reference?: boolean) {
     A = typeof A === 'object' ? Number(A.target.value) : A;
     let x = 0;
-    let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = max / 200;
+    let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = max / 100;
     this.seriesData = [];
 
     let xLabel = 'Labor', mpLabel = 'marginal product of labor';
@@ -565,7 +574,6 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   }
 
   public messageBuilder(value: any) {
-    value = Number(value.target.value);
     let message: string = ``;
 
     switch (this.mode) {
@@ -606,6 +614,20 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
         break;
     }
 
-    this.announcer.announce(message);
+    let counter = (count: number) => {
+      count = count + 1;
+      if (count === 3) {
+        this.count = 0;
+        return true;
+      } else {
+        this.count = count;
+        return false;
+      }
+
+    }
+    let announce: boolean = counter(this.count);
+    if (announce) this.announcer.announce(message);
+
+
   }
 }
