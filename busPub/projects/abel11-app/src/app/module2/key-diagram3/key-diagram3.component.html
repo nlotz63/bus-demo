@@ -127,7 +127,7 @@
             [value]="slider.value.taxes!"
             (valueChange)="slider.patchValue({ taxes: $event });_updateChart(false)"
           ></econ-slider>
-          <mat-checkbox (change)="slider.patchValue({ricardian: !slider.value.ricardian})">Ricardian equivalence holds</mat-checkbox>
+          <mat-checkbox [checked]="slider.value.ricardian!" (change)="slider.patchValue({ricardian: !slider.value.ricardian})">Ricardian equivalence holds</mat-checkbox>
           <button mat-raised-button (click)="playStep(4)">Reset</button>
         </div>
       </div>

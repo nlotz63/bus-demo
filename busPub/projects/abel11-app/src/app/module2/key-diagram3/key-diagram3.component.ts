@@ -74,6 +74,11 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     },
     title: { text: 'Saving-Investment Model' },
     legend: { enabled: false },
+    accessibility: {
+      point: {
+        valueDescriptionFormat: `quantity {point.x:.0f} billion dollars, real interest rate: {point.y:.2f} percent.`
+      }
+    },
     series: [
 
     ],
@@ -105,15 +110,17 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         tooltip: {
           headerFormat: '{series.name}<br/>',
           pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+        },
+        marker: {
+          enabled: false,
+          symbol: 'circle',
+          radius: 2
         }
       }
-
     }
   }
 
-
-
-  constructor(private ActiveRoute: ActivatedRoute, private announceer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
 
   ngOnInit() {
     this.ActiveRoute.queryParams.subscribe((params) => {
@@ -131,7 +138,6 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
   // Public methods
   public playStep(value: any) {
     this.mode = value;
-   // this.chart.destroy();
     this.slider.setValue({
       rRate: 0.61,
       taxRate: 0,
@@ -146,7 +152,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     });
 
     this._setupChart(true);
-
+    this.announcer.announce(`Step ${this.mode + 1} has loaded or been reset.`)
   }
 
   public messageBuilder(slider: string, startValue: any) {
@@ -166,19 +172,25 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: 'Saving',
           zIndex: 1,
           animation: false,
-          data: series.seriesSaving
-
+          data: series.seriesSaving,
         });
         this.chart.addSeries({
           type: 'line',
-          name: '',
+          name: 'Point of interest',
           color: 'black',
           lineWidth: 1,
           dashStyle: 'ShortDot',
           zIndex: 2,
           animation: false,
-          data: series.qSaving
-
+          data: series.qSaving,
+          label: {
+            enabled: false
+          },
+          accessibility: {
+            point: {
+              valueDescriptionFormat: `The point is at quantity of saving: {point.x:.0f} billion dollars and real interest rate: {point.y:.2f} percent.`
+            }
+          }
         });
         break;
       case 1:
@@ -191,14 +203,16 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         });
         this.chart.addSeries({
           type: 'line',
-          name: '',
+          name: 'Point of interest',
           color: 'black',
           lineWidth: 1,
           dashStyle: 'ShortDot',
           zIndex: 2,
           animation: false,
-          data: series.qInvestment
-
+          data: series.qInvestment,
+          label: {
+            enabled: false
+          }
         });
 
         break;
@@ -227,37 +241,43 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           lineWidth: 1,
           zIndex: 3,
           animation: false,
-          data: series.equilibrium
+          data: series.equilibrium,
+          label: {
+            enabled: false
+          }
         });
         this.chart.addSeries({
           type: 'line',
-          name: '',
+          name: 'Quantity of savings desired',
           color: 'black',
           lineWidth: 1,
           dashStyle: 'ShortDot',
           zIndex: 2,
           animation: false,
-          data: series.qSaving
+          data: series.qSaving,
+          label: {enabled: false}
         });
         this.chart.addSeries({
           type: 'line',
-          name: '',
+          name: 'Quantity of investment desired',
           color: 'black',
           lineWidth: 1,
           dashStyle: 'ShortDot',
           zIndex: 2,
           animation: false,
-          data: series.qInvestment
+          data: series.qInvestment,
+          label: {enabled: false}
         });
         this.chart.addSeries({
           type: 'line',
-          name: '',
+          name: 'Initial equilibrium',
           color: '#797979',
           dashStyle: 'ShortDot',
           lineWidth: 1,
           zIndex: 2,
           animation: false,
-          data: series.eqRef
+          data: series.eqRef,
+          label: {enabled: false}
         });
         break;
 
@@ -286,39 +306,47 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           lineWidth: 1,
           zIndex: 3,
           animation: false,
-          data: series.equilibrium
+          data: series.equilibrium,
+          label: {
+            enabled: false
+          }
         });
         this.chart.addSeries({
           type: 'line',
-          name: '',
+          name: 'Initial equilibrium',
           color: '#797979',
           dashStyle: 'ShortDot',
           lineWidth: 1,
           zIndex: 2,
           animation: false,
           data: series.eqRef,
-          visible: true
+          visible: true,
+          label: {
+            enabled: false
+          }
         });
         this.chart.addSeries({
           type: 'line',
-          name: '',
+          name: 'Initial saving curve',
           color: '#797979',
-          dashStyle: 'ShortDash',
+          dashStyle: 'LongDash',
           lineWidth: 1,
           zIndex: 1,
           animation: false,
           data: series.savingRef,
+          label: {enabled: false},
           visible: false
         });
         this.chart.addSeries({
           type: 'line',
-          name: '',
+          name: 'Initital investment curve',
           color: '#797979',
-          dashStyle: 'ShortDash',
+          dashStyle: 'LongDash',
           lineWidth: 1,
           zIndex: 1,
           animation: false,
           data: series.investmentRef,
+          label: {enabled: false},
           visible: false
         });
         break;
@@ -384,7 +412,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     let investmentCurve = (x: number) => { return investShift - beta * Math.pow(x, exp1); }
 
     let inverseSaving = (x: number) => { return Math.pow((x - savingShift) / alpha, 1 / exponent); };
-    let inverseInvestment = (x: number) => { return Math.pow((x - investShift) / beta, 1/exp1); }
+    let inverseInvestment = (x: number) => { return Math.pow((x - investShift) / beta, 1 / exp1); }
 
     let _findEq = (): number => {
       let lowX = 0, upX = 2000, midX = (lowX + upX) / 2, epsilon = .0001;
@@ -415,58 +443,52 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       }
       saving.push(point);
       investment.push(point1);
-      x = x + 25;
+      x = x < 400 ? x + 50 : x + 200;
 
     } while (x <= 2000);
 
     // Key point series
     qSaving = [
-      [0, rRate],
+      { x: 0, y: rRate, accessibility: { enabled: false } },
       {
         name: 'saving supplied',
         x: inverseSaving(rRate),
         y: rRate,
-        color: 'green',
-        marker: { enabled: true, symbol: 'circle', radius: 4 }
-
+        marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'orange', lineColor: 'black', lineWidth: 1 }
       },
-      [inverseSaving(rRate), -3]
+      { x: inverseSaving(rRate), y: - 3, accessibility: {enabled: false}}
     ];
     qInvestment = [
-      [0, rRate],
+      { x: 0, y: rRate, accessibility: {enabled: false} },
       {
         name: 'investment supplied',
         x: inverseInvestment(rRate),
         y: rRate,
-        color: 'green',
-        marker: { enabled: true, symbol: 'circle', radius: 4 }
-
+        marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'orange', lineColor: 'black', lineWidth: 1 }
       },
-      [inverseInvestment(rRate), -3]
+      { x: inverseInvestment(rRate), y: -3, accessibility: {enabled: false} }
     ];
     eq = [
-      [0, investmentCurve(_findEq())],
+      { x: 0, y: investmentCurve(_findEq()), accessibility: {enabled: false} },
       {
         name: 'Equilibrium',
         x: _findEq(),
         y: investmentCurve(_findEq()),
-        color: 'green',
-        marker: { enabled: true, symbol: 'circle', radius: 4 },
+        marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'orange', lineColor: 'black', lineWidth: 1 }
       },
-      [_findEq(), -3]
+      { x: _findEq(), y: -3, accessibility: {enabled: false} }
     ];
     //reference series
     if (addRef) {
       eqRef = [
-        [0, investmentCurve(_findEq())],
+        { x: 0, y: investmentCurve(_findEq()), accessibility: {enabled: false} },
         {
           name: 'Equilibrium',
           x: _findEq(),
           y: investmentCurve(_findEq()),
-          color: '#797979',
-          marker: { enabled: true, symbol: 'circle', radius: 4 },
+          marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'lightgrey', lineColor: 'black', lineWidth: 1 },
         },
-        [_findEq(), -3]
+        { x: _findEq(), y: -3, accessibility: {enabled: false} }
       ];
       savingRef = saving;
       investmentRef = investment;
