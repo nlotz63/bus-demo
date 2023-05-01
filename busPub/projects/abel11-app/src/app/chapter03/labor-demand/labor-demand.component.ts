@@ -8,9 +8,9 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 
-HC_accessibility(Highcharts);
 HC_annotate(Highcharts);
 HC_seriesLabel(Highcharts);
+HC_accessibility(Highcharts);
 
 @Component({
   selector: 'app-labor-demand',
@@ -120,16 +120,22 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
       return midX;
     }
 
+    let lsTitle = this.mode === 0 ? 'Real wage' : 'Labor supply',
+        ldTitle = this. mode === 2 ? 'Real wage' : 'Labor demand';
+
+
     do {
       let point = {
+        name: ldTitle,
         x: x, y: marginalProduct(x)
       },
         point2 = {
+          name: lsTitle,
           x: x, y: labor(x)
         }
       this.ldSeries.push(point);
       this.lsSeries.push(point2);
-      x = x + 1;
+      x = x + 20;
     } while (x < 250);
 
     switch (this.mode) {
@@ -149,14 +155,14 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
         xstar = _findEq();
         ystar = marginalProduct(xstar);
         this.NDpoint = [
-          [100, rw],
-          { x: inverseND(rw), y: rw, zIndex: 10, color: 'green', marker: { enabled: true, symbol: 'circle', radius: 4 } },
-          [inverseND(rw), 0]
+          { x: 100, y: rw, accessibility: {enabled: false} },
+          { x: inverseND(rw), y: rw, zIndex: 10, marker: { enabled: true, fillColor: 'lightgreen', symbol: 'circle', radius: 4, lineColor: 'black', lineWidth: 1 }, accessibility: {enabled: true, description: 'Quantity  of labor demanded'}},
+          { x: inverseND(rw), y: 0, accessibility: { enabled: false } }
         ];
         this.NSpoint = [
-          [100, rw],
-          { x: inverseNS(rw), y: rw, zIndex: 10, color: 'green', marker: { enabled: true, symbol: 'circle', radius: 4 } },
-          [inverseNS(rw), 0]
+          { x: 100, y: rw, accessibility: { enabled: false } },
+          { x: inverseNS(rw), y: rw, zIndex: 10, marker: { enabled: true, fillColor: 'lightgreen', symbol: 'circle', radius: 4, lineColor: 'black', lineWidth: 1 }, accessibility: { enabled: true, description: 'Quantity of labor supplied'} },
+          { x: inverseNS(rw), y: 0, accessibility: { enabled: false } }
         ];
         break;
       case 5:
@@ -168,22 +174,27 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
     }
     if (this.mode === 0 || this.mode === 2) {
       this.eqSeries = [{
-        name: 'Current equilibrium',
+        name: 'Point of interest',
         x: xstar,
         y: ystar,
         zIndex: 5,
-        marker: { enabled: true, symbol: 'circle', r: 4, fillColor: '#3096DF' }
-      }, [xstar, 0]];
+        marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'orange', lineColor: 'black', lineWidth: 1 },
+        accessibility: {enabled: true, description: 'Point of interest'}
+      }, { x: xstar, y: 0, accessibility: { enabled: false } }];
 
     } else {
-      this.eqSeries = [[100, ystar],
+      this.eqSeries = [
+        { x: 100, y: ystar, accessibility: { enabled: false } },
       {
         name: 'Current equilibrium',
         x: xstar,
         y: ystar,
         zIndex: 5,
-        marker: { enabled: true, symbol: 'circle', r: 4, fillColor: '#3096DF' }
-      }, [xstar, 0]];
+        marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'orange', lineColor: 'black', lineWidth: 1 },
+        accessibility: {enabled: true, description: 'Current equilibrium'}
+        },
+        { x: xstar, y: 0, accessibility: { enabled: false } }
+      ];
     }
 
     this.xStar = xstar;
@@ -196,13 +207,13 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
     if (addRef) {
       this.ldRef = this.ldSeries;
       this.lsRef = this.lsSeries;
-      this.eqRef = this.mode === 0 ? [
+      this.eqRef = this.mode === 0 || this.mode === 2 ? [
         {
-          name: 'equilibrium',
+          name: 'Initial point of interest',
           x: xstar,
           y: ystar,
           zIndex: 5,
-          marker: { enabled: true, symbol: 'circle', r: 3, fillColor: '#757575' }
+          marker: { enabled: true, symbol: 'circle', radius: 3, fillColor: '#757575' }
         }, [xstar, 0]] :
         [[100, ystar],
         {
@@ -210,7 +221,7 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           x: xstar,
           y: ystar,
           zIndex: 5,
-          marker: { enabled: true, symbol: 'circle', r: 3, fillColor: '#757575' }
+          marker: { enabled: true, symbol: 'circle', radius: 3, fillColor: '#757575' }
         }, [xstar, 0]];
     }
 
@@ -257,17 +268,16 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
 
   public playStep(value: any) {
     this.mode = value;
-    this.chart.destroy();
     this.createSeries(23539, 25.99, 79.45, 0, 0, 0, 0, true);
     this._setupChart();
-   // this.updateChart(23539, 25.99, 79.45, 0, 0, 0, 0);
+    this.annoucer.announce(`Step ${this.mode + 1} has loaded.`);
 
   }
 
   public reset() {
-    this.chart.destroy();
     this._setupChart();
     this.updateChart(23539, 25.99, 79.45, 0, 0, 0, 0);
+    this.annoucer.announce('The interactive has been reset');
   }
 
   private _setupChart() {
@@ -284,6 +294,11 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
       },
       title: { text: 'Labor Market' },
       legend: { enabled: false },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `Labor equals {point.x:.0f} million. Real wage equals {point.y:.2f}.`
+        }
+      },
       series: [
 
       ],
@@ -309,9 +324,18 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
       },
       plotOptions: {
         series: {
-          enableMouseTracking: false,
+          enableMouseTracking: true,
           lineWidth: 2,
-          color: '#C31229'
+          color: '#C31229',
+          marker: {
+            enabled: false,
+            symbol: 'circle',
+            radius: 2
+          },
+          tooltip: {
+            valueDecimals: 2,
+            pointFormat: `Quantity: {point.x} million<br/>Real wage: {point.y}`
+          }
         }
 
       }
@@ -323,7 +347,7 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'spline',
           name: 'MPN curve and<br/>Labor demand curve, ND',
-          zIndex: 1,
+          zIndex: 0,
           animation: false,
           data: this.ldSeries,
           accessibility: {
@@ -334,7 +358,7 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'spline',
           name: 'Real wage',
-          zIndex: 3,
+          zIndex: 0,
           animation: false,
           data: this.lsSeries,
           accessibility: {
@@ -350,15 +374,14 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           enableMouseTracking: true,
           dashStyle: 'ShortDot',
           color: '#757575',
-          zIndex: 4,
+          zIndex: 2,
           data: this.eqSeries,
           tooltip: {
-            headerFormat: '<b>Current Equilibrium</b><br/>',
             pointFormat: 'Labor demanded: {point.x:.0f} million workers<br/>Real wage: {point.y:.2f}'
           },
           accessibility: {
             point: {
-              valueDescriptionFormat: '{point.name} labor demanded: {point.x}, real wage: {point.y}'
+              valueDescriptionFormat: '{point.name} labor demanded: {point.x:.0f}, real wage: {point.y:.2f}'
 
             }
           },
@@ -387,17 +410,15 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           enableMouseTracking: true,
           dashStyle: 'ShortDot',
           color: '#757575',
-          zIndex: 2,
+          zIndex: 1,
           data: this.eqRef,
           tooltip: {
-            headerFormat: '<b>Initial Equilibrium</b><br/>',
             pointFormat: 'Labor demanded: {point.x:.0f} million workers<br/>Real wage: {point.y:.2f}'
           },
-          marker: { fillColor: '#757575' },
+          marker: { fillColor: '#757575', radius: 4 },
           accessibility: {
             point: {
-              valueDescriptionFormat: '{point.name} labor demanded: {point.x}, real wage: {point.y}'
-
+              valueDescriptionFormat: 'Initial point. labor demanded: {point.x:.0f} million workers, real wage: {point.y:.2f}',
             }
           },
         });
@@ -434,7 +455,7 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           animation: false,
           data: this.ldRef,
           accessibility: {
-            description: 'A horizontal line at the current real wage. It intersects the M P N curve. '
+            description: 'The initial labor demand curve.'
           }
 
         }
@@ -445,11 +466,11 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'spline',
           name: 'Labor supply curve, NS',
-          zIndex: 3,
+          zIndex: 0,
           animation: false,
           data: this.lsSeries,
           accessibility: {
-            description: 'A horizontal line at the current real wage. It intersects the M P N curve. '
+            description: 'An upward sloping curve that is slightly convex upward. '
           }
 
         }
@@ -457,11 +478,11 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'spline',
           name: 'Real wage',
-          zIndex: 3,
+          zIndex: 0,
           animation: false,
           data: this.ldSeries,
           accessibility: {
-            description: 'A horizontal line at the current real wage. It intersects the M P N curve. '
+            description: 'A horizontal line at the current real wage.'
           }
 
         }
@@ -473,15 +494,14 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           enableMouseTracking: true,
           dashStyle: 'ShortDot',
           color: '#757575',
-          zIndex: 4,
+          zIndex: 2,
           data: this.eqSeries,
           tooltip: {
-            headerFormat: '<b>Current Equilibrium</b><br/>',
             pointFormat: 'Labor supplied: {point.x:.0f} million workers<br/>Real wage: {point.y:.2f}'
           },
           accessibility: {
             point: {
-              valueDescriptionFormat: '{point.name} labor supplied: {point.x}, real wage: {point.y}'
+              valueDescriptionFormat: '{point.name} labor supplied: {point.x:.0f}, real wage: {point.y:.2f}'
 
             }
           },
@@ -497,9 +517,9 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           lineWidth: 1,
           color: '#757575',
           animation: false,
-          data: this.lsRef,
+          data: this.ldRef,
           accessibility: {
-            description: 'A horizontal line at the current real wage. It intersects the M P N curve. '
+            description: 'A horizontal line at the initial real wage. It intersects the initial labor supply curve. '
           }
 
         }
@@ -510,17 +530,17 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           animation: false,
           enableMouseTracking: true,
           dashStyle: 'ShortDot',
+          lineWidth: 1,
           color: '#757575',
-          zIndex: 2,
+          zIndex: 1,
           data: this.eqRef,
           tooltip: {
-            headerFormat: 'Initial Equilibrium<br/>',
             pointFormat: 'Labor demanded: {point.x:.0f} million workers<br/>Real wage: {point.y:.2f}'
           },
-          marker: { fillColor: '#757575' },
+          marker: { fillColor: '#757575', radius: 4,  },
           accessibility: {
             point: {
-              valueDescriptionFormat: '{point.name} labor demanded: {point.x}, real wage: {point.y}'
+              valueDescriptionFormat: '{point.name} labor demanded: {point.x:.0f} million workers, real wage: {point.y:.2f}'
 
             }
           },
@@ -530,15 +550,18 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
       case 3:
         this.chart.addSeries({
           type: 'spline',
-          name: 'NS<sup>1</sup>',
+          name: 'NS',
           zIndex: 2,
           animation: false,
-          data: this.lsSeries
+          data: this.lsSeries,
+          label: {
+            enabled: true
+          }
         });
         // Reference series
         this.chart.addSeries({
           type: 'spline',
-          name: '',
+          name: 'Initial labor supply',
           zIndex: -1,
           visible: false,
           dashStyle: 'LongDash',
@@ -546,6 +569,9 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           color: '#757575',
           animation: false,
           data: this.lsRef,
+          label: {
+            enabled: false
+          },
           accessibility: {
             description: 'An upward-sloping, slightly convex, curve.'
           }
@@ -559,14 +585,21 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
           name: 'ND',
           zIndex: 2,
           animation: false,
-          data: this.ldSeries
+          data: this.ldSeries,
+          accessibility: {
+            description: `A downward sloping and slightly convex curve.`
+          }
         });
         this.chart.addSeries({
           type: 'spline',
           name: 'NS',
           zIndex: 2,
           animation: false,
-          data: this.lsSeries
+          data: this.lsSeries,
+          accessibility: {
+            description: `An upward sloping and slightly convex curve.`
+          }
+
         });
         this.chart.addSeries({
           type: 'line',
@@ -705,89 +738,91 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
   }
   public messageBuilder(slider: string, value: any) {
     let message: string = ``;
+    console.log(this.prevA, value);
+
     switch (this.mode) {
       case 0:
-        if (this.prevRw <= value) {
+        if (this.prevRw <= this.rw) {
           message = `The horizontal line showing the real wage shifted up. The point of intersection with the labor demand curve moves up along the curve and occurs at ${this.xStar.toFixed(1)} million workers and a real wage of ${this.yStar.toFixed(1)}.`;
         } else {
           message = `The horizontal line showing the real wage shifted down. The point of intersection with the labor demand curve moves down along the curve and occurs at ${this.xStar.toFixed(1)} million workers and a real wage of ${this.yStar.toFixed(1)}.`;
         }
-        this.prevRw = value;
+        this.prevRw = this.rw;
         break;
       case 1:
-        if (this.prevA <= value && slider === 'prod') {
+        if (this.prevA <= this.A && slider === 'prod') {
           message = `A beneficial supply shock shifted the labor demand curve to the right.`;
-          this.prevA = value;
-        } else if (this.prevA > value && slider === 'prod') {
+          this.prevA = this.A;
+        } else if (this.prevA > this.A && slider === 'prod') {
           message = `An adverse supply shock shifted the labor demand curve to the left.`;
-          this.prevA = value;
-        } else if (this.prevK <= value && slider === 'capital') {
+          this.prevA = this.A;
+        } else if (this.prevK <= this.K && slider === 'capital') {
           message = `An increase in capital shifted the labor demand curve to the right.`;
-          this.prevK = value;
+          this.prevK = this.K;
         } else {
           message = `An decrease in capital shifted the labor demand curve to the left.`;
-          this.prevK = value;
+          this.prevK = this.K;
         }
         break;
       case 2:
-        if (this.prevRw <= value) {
+        if (this.prevRw <= this.rw) {
           message = `The horizontal line showing the real wage shifted up. The point of intersection with the labor supply curve moves up along the curve and occurs at ${this.xStar.toFixed(1)} million workers and a real wage of ${this.yStar.toFixed(1)}.`;
         } else {
           message = `The horizontal line showing the real wage shifted down. The point of intersection with the labor supply curve moves down along the curve and occurs at ${this.xStar.toFixed(1)} million workers and a real wage of ${this.yStar.toFixed(1)}.`;
         }
-        this.prevRw = value;
+        this.prevRw = this.rw;
         break;
       case 3:
-        if (this.prevWealth <= value && slider === 'wealth') {
+        if (this.prevWealth <= this.wealth && slider === 'wealth') {
           message = `An increase in wealth shifted the labor supply curve to the left.`;
-          this.prevWealth = value;
-        } else if (this.prevWealth > value && slider === 'wealth') {
+          this.prevWealth = this.wealth;
+        } else if (this.prevWealth > this.wealth && slider === 'wealth') {
           message = `A decrease in wealth shifted the labor supply curve to the right.`;
-          this.prevWealth = value;
-        } else if (this.prevExWage <= value && slider === 'exRw') {
+          this.prevWealth = this.wealth;
+        } else if (this.prevExWage <= this.exWage && slider === 'exRw') {
           message = `An increase in the expected real wage shifted the labor supply curve to the left.`;
-          this.prevExWage = value;
-        } else if (this.prevExWage > value && slider === 'exRw') {
+          this.prevExWage = this.exWage;
+        } else if (this.prevExWage > this.exWage && slider === 'exRw') {
           message = `A decrease in the expected real wage shifted the labor supply curve to the right.`;
-          this.prevExWage = value;
-        } else if (this.prevPop <= value && slider === 'pop') {
+          this.prevExWage = this.exWage;
+        } else if (this.prevPop <= this.pop && slider === 'pop') {
           message = ` An increase in the working age population shifted the labor supply curve to the right.`;
-          this.prevPop = value;
-        } else if (this.prevPop > value && slider === 'pop') {
+          this.prevPop = this.pop;
+        } else if (this.prevPop > this.pop && slider === 'pop') {
           message = `A decrease in the expected real wage shifted the labor supply curve to the left.`;
-          this.prevPop = value;
-        } else if (this.prevPartRate <= value && slider === 'partRate') {
+          this.prevPop = this.pop;
+        } else if (this.prevPartRate <= this.partRate && slider === 'partRate') {
           message = ` An increase in the participation rate shifted the labor supply curve to the right.`;
-          this.prevPartRate = value;
+          this.prevPartRate = this.partRate;
         } else {
           message = `A decrease in the participation rate shifted the labor supply curve to the left.`;
-          this.prevPartRate = value;
+          this.prevPartRate = this.partRate;
         }
         break;
       case 4:
-        if (value < 79.45) {
+        if (this.rw < 79.45) {
           message = `The quantity of labor demanded is greater than the quantity of labor supplied. The market is not in equilibrium.`;
-        } else if (value > 79.45) {
+        } else if (this.rw > 79.45) {
           message = `The quantity of labor demanded is less than the quantity of labor supplied. The market is not in equilibrium.`;
 
         } else {
           message = `The quantity of labor demanded is equal to the quantity of labor supplied. The market is in equilibrium.`;
         }
-        this.prevRw = value;
+        this.prevRw = this.rw;
         break;
       case 5:
-        if (this.prevA <= value && slider === 'prod') {
+        if (this.prevA <= this.A && slider === 'prod') {
           message = `A beneficial supply shock shifted the labor demand curve to the right, increasing the equilibrium quantity of labor to ${this.xStar.toFixed(1)} million workers and the equilibrium real wage to ${this.yStar.toFixed(1)}.`;
-          this.prevA = value;
-        } else if (this.prevA > value && slider === 'prod') {
+          this.prevA = this.A;
+        } else if (this.prevA > this.A && slider === 'prod') {
           message = `An adverse supply shock shifted the labor demand curve to the left, decreasing the equilibrium quantity of labor to ${this.xStar.toFixed(1)} million workers and the equilibrium real wage to ${this.yStar.toFixed(1)}.`;
-          this.prevA = value;
-        } else if (this.prevWealth <= value && slider === 'wealth') {
+          this.prevA = this.A;
+        } else if (this.prevWealth <= this.wealth && slider === 'wealth') {
           message = `An increase in wealth shifted the labor supply curve to the left, decreasing the equilibrium quantity of labor to ${this.xStar.toFixed(1)} million workers and increasing the equilibrium real wage to ${this.yStar.toFixed(1)}.`;
-          this.prevWealth = value;
+          this.prevWealth = this.wealth;
         } else {
           message = `A decrease in wealth shifted the labor supply curve to the right, increasing the equilibrium quantity of labor to ${this.xStar.toFixed(1)} million workers and decreasing the equilibrium real wage to ${this.yStar.toFixed(1)}.`;
-          this.prevWealth = value;
+          this.prevWealth = this.wealth;
         }
         break;
       default:

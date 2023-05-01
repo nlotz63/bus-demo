@@ -30,7 +30,7 @@
         [displayValue]="rw"
         step="0.05"
         (valueChange)="updateChart(23539, 25.99, $event, 0, 0, 0, 0)"
-        (dragEnd)="messageBuilder('rw', $event.value)"
+        (change)="messageBuilder('rw', $event)"
       ></econ-slider>
      </div>
     <div *ngIf="mode === 1" @myAnimationTrigger>
@@ -69,7 +69,7 @@
           [value]="A"
           step=".1"
           (valueChange)="updateChart(K, $event, rw, 0, 0, 0, 0)"
-          (dragEnd)="messageBuilder('prod', $event.value)"
+          (change)="messageBuilder('prod', $event)"
         ></econ-slider>
         <econ-slider
           class="econ-control"
@@ -81,7 +81,7 @@
           [value]="K"
           step="100"
           (valueChange)="updateChart($event, A, rw, 0, 0, 0, 0)"
-          (dragEnd)="messageBuilder('capital', $event.value)"
+          (change)="messageBuilder('capital', $event)"
         ></econ-slider>
         <button mat-raised-button (click)="reset()">Reset</button>
       </div>
@@ -109,7 +109,7 @@
         [displayValue]="rw"
         step=".05"
         (valueChange)="updateChart(23539, 25.99, $event, 0, 0, 0, 0)"
-        (dragEnd)="messageBuilder('rw', $event.value)"
+        (change)="messageBuilder('rw', $event)"
       ></econ-slider>
     </div>
     <div *ngIf="mode === 3" @myAnimationTrigger>
@@ -143,7 +143,7 @@
           (valueChange)="
             updateChart(23539, 25.99, 80, $event, exWage, pop, partRate)
           "
-          (dragEnd)="messageBuilder('wealth', $event.value)"
+          (change)="messageBuilder('wealth', $event)"
         ></econ-slider>
         <econ-slider
           class="econ-control"
@@ -157,7 +157,7 @@
           (valueChange)="
             updateChart(23539, 25.99, 80, wealth, $event, pop, partRate)
           "
-          (dragEnd)="messageBuilder('exRw', $event.value)"
+          (change)="messageBuilder('exRw', $event)"
         ></econ-slider>
         <econ-slider
           class="econ-control"
@@ -179,7 +179,7 @@
               partRate
             )
           "
-          (dragEnd)="messageBuilder('pop', $event.value)"
+          (change)="messageBuilder('pop', $event)"
         ></econ-slider>
         <econ-slider
           class="econ-control"
@@ -193,7 +193,7 @@
           (valueChange)="
             updateChart(23539, 25.99, 80, wealth, exWage, pop, $event)
           "
-          (dragEnd)="messageBuilder('partRate', $event.value)"
+          (change)="messageBuilder('partRate', $event)"
         ></econ-slider>
          <button mat-raised-button (click)="reset()">Reset</button>
       </div>
@@ -218,7 +218,7 @@
         value="79.45"
         step=".05"
         (valueChange)="updateChart(23539, 25.99, $event, 0, 0, 0, 0)"
-        (dragEnd)="messageBuilder('rw', $event.value)"
+        (change)="messageBuilder('rw', $event)"
       ></econ-slider>
      </div>
     <div *ngIf="mode === 5" @myAnimationTrigger>
@@ -253,7 +253,7 @@
           [value]="A"
           step=".05"
           (valueChange)="updateChart(K, $event, rw, wealth, 0, 0, 0)"
-          (dragEnd)="messageBuilder('prod', $event.value)"
+          (change)="messageBuilder('prod', $event)"
         ></econ-slider>
         <econ-slider
           aria-describedby="sliderInstruction"
@@ -266,7 +266,7 @@
           [value]="wealth"
           step=".05"
           (valueChange)="updateChart(K, A, rw, $event, 0, 0, 0)"
-          (dragEnd)="messageBuilder('wealth', $event.value)"
+          (change)="messageBuilder('wealth', $event)"
         ></econ-slider>
          <button mat-raised-button (click)="reset()">Reset</button>
       </div>

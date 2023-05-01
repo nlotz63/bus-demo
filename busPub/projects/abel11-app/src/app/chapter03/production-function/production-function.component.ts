@@ -144,7 +144,6 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   public playStep(value: any) {
     this.count = 0;
     this.mode = value;
-    this.chart.destroy();
     this.createSeries();
     switch (this.mode) {
       case 0:
@@ -169,7 +168,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
       default:
         break;
     }
-     this._setupChart();
+    this._setupChart();
+    this.announcer.announce(`Step ${this.mode + 1} has loaded.`);
 
   }
 
