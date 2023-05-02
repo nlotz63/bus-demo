@@ -79,6 +79,11 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
       },
       title: { text: 'National saving and investment in a small open economy' },
       legend: { enabled: false },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: ``
+        }
+      },
       series: [
         {
           type: 'spline',
@@ -184,7 +189,12 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
           },
           label: {
             style: { fontWeight: '400'}
-         }
+          },
+          marker: {
+            enabled: false,
+            symbol: 'circle',
+            radius: 4
+          }
 
         }
 
