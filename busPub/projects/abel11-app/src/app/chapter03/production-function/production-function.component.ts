@@ -272,14 +272,14 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   private createSeries() {
     this.seriesData = [];
     let x = 0;
-    let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = max/100;
+    let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = this.config[this.mode].plotLabor ? max/20 : max/200;
 
     do {
       let point = {};
       let productionFunction = this.config[this.mode].plotLabor ? this._computePF( this.A, this.K, x ) : this._computePF(this.A, x, this.N);
       point = {x: x, y: productionFunction[0], slope: productionFunction[1]};
       this.seriesData.push(point);
-      x += step;
+      x = x + step;
 
     } while (x <= max);
 
