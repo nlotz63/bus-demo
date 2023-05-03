@@ -36,8 +36,9 @@
           step=".01"
           [value]="slider.value.rRate!"
           (valueChange)="updateChart({ rRate: $event })"
+          (change)="messageBuilder()"
         ></econ-slider>
-        <p class="econ-control">
+        <p class="econ-control" >
           <span econMath="$$ NX = S^d - I^d $$"></span>
           <span
             econMath="$$ NX = {{
@@ -87,7 +88,8 @@
           [showPercent]="true"
           [value]="slider.value.govPurchases!"
           #startValue
-          (valueChange)="updateChart({ govPurchases: -$event })"
+          (valueChange)="updateChart({ govPurchases: $event })"
+          (change)="messageBuilder()"
         ></econ-slider>
         <p class="econ-control">
           <span econMath="$$ NX = S^d - I^d $$"></span>
@@ -128,12 +130,13 @@
           label="Shift investment curve"
           class="econ-control"
           showValue="false"
+          [showPercent]="true"
           [min]="-2"
           [max]="2"
           step=".01"
           [value]="slider.value.taxRate!"
-          #startValue
-          (valueChange)="updateChart({ taxRate: -$event })"
+          (valueChange)="updateChart({ taxRate: $event })"
+          (change)="messageBuilder()"
         ></econ-slider>
         <p class="econ-control">
           <span econMath="$$ NX = S^d - I^d $$"></span>
