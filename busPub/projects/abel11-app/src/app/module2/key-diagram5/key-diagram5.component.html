@@ -54,7 +54,7 @@
             [step]="rwStep"
             type="number"
             matInput
-            (input)="updateChart({ rRate: slider.value.rRate! }, 1)"
+            (input)="updateChart({ rRate: slider.value.rRate! }, 1);messageBuilder('input')"
           />
           <span matSuffix>&nbsp;percent&nbsp;&nbsp;</span>
         </mat-form-field>
@@ -98,6 +98,7 @@
           step=".1"
           [value]="slider.value.wealth!"
           (valueChange)="updateChart({ wealth: $event }, 1)"
+          (change)="messageBuilder('wealth')"
         ></econ-slider>
         <econ-slider
           label="Effective tax rate on capital"
@@ -109,6 +110,7 @@
           step=".1"
           [value]="slider.value.taxRate!"
           (valueChange)="updateChart({ taxRate: $event }, 1)"
+          (change)="messageBuilder('taxRate')"
         ></econ-slider>
       </div>
     </div>
@@ -133,7 +135,7 @@
             [step]="rwStep"
             type="number"
             matInput
-            (input)="updateChart({ rRate: slider.value.rRate! }, 1)"
+            (input)="updateChart({ rRate: slider.value.rRate! }, 1);messageBuilder('input')"
           />
           <span matSuffix>&nbsp;percent&nbsp;&nbsp;</span>
         </mat-form-field>
@@ -177,6 +179,7 @@
           step=".1"
           [value]="sliderF.value.wealth!"
           (valueChange)="updateChart({ wealth: $event }, 2)"
+          (change)="messageBuilder('wealth')"
         ></econ-slider>
         <econ-slider
           label="Effective tax rate on capital"
@@ -188,6 +191,7 @@
           step=".1"
           [value]="sliderF.value.taxRate!"
           (valueChange)="updateChart({ taxRate: $event }, 2)"
+          (change)="messageBuilder('taxRate')"
         ></econ-slider>
       </div>
     </div>
@@ -212,7 +216,7 @@
             [step]="rwStep"
             type="number"
             matInput
-            (input)="updateChart({ rRate: slider.value.rRate! }, 1)"
+            (input)="updateChart({ rRate: slider.value.rRate! }, 1);messageBuilder('input')"
           />
           <span matSuffix>&nbsp;percent&nbsp;&nbsp;</span>
         </mat-form-field>

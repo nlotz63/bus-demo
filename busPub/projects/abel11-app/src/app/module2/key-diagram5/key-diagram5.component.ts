@@ -10,6 +10,7 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
+import { MatSliderRangeThumb } from '@angular/material/slider';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -83,6 +84,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   desiredBorrow!: number;
   message: string = `Raise the interest rate to increase desired lending at home and decrease desired borrowing in the foreign country.`;
 
+  prevRate = this.slider.value.rRate!;
+  prevWealth = this.slider.value.wealth!;
+  prevWealthF = this.sliderF.value.wealth!;
+  prevTaxRate = this.slider.value.taxRate!;
+  prevTaxRateF = this.sliderF.value.taxRate!;
+
   ngOnInit(): void {
     this.ActiveRoute.queryParams.subscribe((params) => {
       this.mode = params['mode'] ? Number(params['mode']) : this.mode;
@@ -103,6 +110,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     this.mode = value;
     if (value === 3 && this.previousMode === 2 || value === 5 && this.previousMode === 4) {
       this.previousMode = value;
+      this.announcer.announce(`Step ${this.mode + 1} has loaded.`);
       return;
     }
     this.slider.setValue({
@@ -116,12 +124,21 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       govPurchases: 0,
       taxes: 0
     });
-
+    this.sliderF.setValue({
+      rRate: 0,
+      taxRate: 0,
+      expectedMPK: 0,
+      output: 0,
+      expectedOutput: 0,
+      wealth: 0,
+      expectedRealRate: 0,
+      govPurchases: 0,
+      taxes: 0
+    });
     if (value !== 1) this.slider.patchValue({ rRate: 1.351 });
     this._setupChart(true);
-
-
     this.previousMode = value;
+    this.announcer.announce(`Step ${this.mode + 1} has loaded.`);
   }
 
   public updateChart(value: any, chart: number) {
@@ -271,7 +288,61 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     });
   }
 
-  public messageBuilder(slider: string, startValue: any) {
+  public messageBuilder(slider: string) {
+    let sliderGroup = this.slider.value!, sliderGroupF = this.sliderF.value!;
+    let message = ``;
+
+    if (this.mode === 1 || this.mode === 3 || this.mode === 5) {
+      if (this.prevRate < sliderGroup.rRate!) {
+        message = `Desired lending at home increased to ${this.desiredLending.toFixed(0)} and desired borrowing in foreign country decreased to ${this.desiredBorrow.toFixed(0)}. `;
+      } else {
+        message = `Desired lending at home decreased to ${this.desiredLending.toFixed(0)} and desired borrowing in foreign country increased to ${this.desiredBorrow.toFixed(0)}. `;
+      }
+      this.prevRate = sliderGroup.rRate!;
+      message = message + this.message;
+    }
+
+    switch (this.mode) {
+      case 2:
+        if (slider === 'wealth') {
+          if (this.prevWealth < sliderGroup.wealth!) {
+            message = `Wealth increased in the home country. The saving curve shifted to the left, decreasing desired lending at home.`;
+
+          } else {
+            message = `Wealth decreased in the home country. The saving curve shifted to the right, increasing desired lending at home.`;
+          }
+          this.prevWealth = sliderGroup.wealth!;
+        } else {
+          if (this.prevTaxRate < sliderGroup.taxRate!) {
+            message = `The effective tax rate increased in the home country. The investment curve shifted to the left, increasing desired lending at home.`;
+          } else {
+            message = `The effective tax rate decreased in the home country. The investment curve shifted to the right, decreasing desired lending at home.`;
+          }
+          this.prevTaxRate = sliderGroup.taxRate!;
+        }
+        break;
+      case 4:
+        if (slider === 'wealth') {
+          if (this.prevWealthF < sliderGroupF.wealth!) {
+            message = `Wealth increased in the foreign country. The saving curve shifted to the left, increasing desired borrowing in the foreign country.`;
+
+          } else {
+            message = `Wealth decreased in the foreign country. The saving curve shifted to the right, decreasing desired borrowing in the foreign country.`;
+          }
+          this.prevWealthF = sliderGroupF.wealth!;
+        } else {
+          if (this.prevTaxRateF < sliderGroupF.taxRate!) {
+            message = `The effective tax rate increased in the foreign country. The investment curve shifted to the left, decreasing desired borrowing in the foreign country.`;
+          } else {
+            message = `The effective tax rate decreased in the foreign country. The investment curve shifted to the right, increasing desired borrowing in the foreign country.`;
+          }
+          this.prevTaxRateF = sliderGroupF.taxRate!;
+        }
+        break;
+      default:
+        break;
+    }
+    this.announcer.announce(message);
   }
 
   // Private methods
@@ -313,7 +384,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             useHTML: true,
             format: 'S'
           },
-          accessibility: {description: 'An upward-sloping, slightly convex curve.'}
+          accessibility: { description: 'An upward-sloping, slightly convex curve.' }
         },
         {
           type: 'spline',
@@ -326,7 +397,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             useHTML: true,
             format: 'I'
           },
-          accessibility: {description: 'A downward-sloping, slightly convex curve.'}
+          accessibility: { description: 'A downward-sloping, slightly convex curve.' }
         },
         {
           type: 'line',
@@ -374,7 +445,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             radius: 4,
             symbol: 'circle'
           },
-          accessibility: {description: `The quantity of saving desired`}
+          accessibility: { description: `The quantity of saving desired` }
         },
         {
           type: 'line',
@@ -397,13 +468,13 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             radius: 4,
             symbol: 'circle'
           },
-          accessibility: {description: `The quantity of investment desired`}
+          accessibility: { description: `The quantity of investment desired` }
 
         },
         {
           type: 'line',
           name: 'Initial saving',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgb(112, 112, 112)',
           lineWidth: 1,
           zIndex: -1,
@@ -411,12 +482,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           label: {
             enabled: false
           },
-          accessibility: {description: `An upward-sloping, slightly convex curve.`}
+          accessibility: { description: `An upward-sloping, slightly convex curve.` }
         },
         {
           type: 'line',
           name: 'Initial investment',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgb(112, 112, 112)',
           lineWidth: 1,
           zIndex: -1,
@@ -424,9 +495,9 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           label: {
             enabled: false
           },
-          accessibility: { description: `A downward-sloping, slightly convex curve.`}
+          accessibility: { description: `A downward-sloping, slightly convex curve.` }
         },
-       ],
+      ],
       xAxis: {
         lineColor: '#757575',
         lineWidth: 1.,
@@ -499,7 +570,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             useHTML: true,
             format: 'S<sub>For</sub>'
           },
-          accessibility: {description: 'An upward-sloping, slightly convex curve.'}
+          accessibility: { description: 'An upward-sloping, slightly convex curve.' }
         },
         {
           type: 'spline',
@@ -512,7 +583,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             useHTML: true,
             format: 'I<sub>For</sub>'
           },
-          accessibility: {description: 'A downward-sloping, slightly convex curve.'}
+          accessibility: { description: 'A downward-sloping, slightly convex curve.' }
         },
         {
           type: 'line',
@@ -560,7 +631,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             radius: 4,
             symbol: 'circle'
           },
-          accessibility: {description: `The quantity of saving desired`}
+          accessibility: { description: `The quantity of saving desired` }
         },
         {
           type: 'line',
@@ -583,12 +654,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             radius: 4,
             symbol: 'circle'
           },
-          accessibility: {description: `The quantity of investment desired`}
+          accessibility: { description: `The quantity of investment desired` }
         },
         {
           type: 'line',
           name: 'Initial saving',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgb(112, 112, 112)',
           lineWidth: 1,
           zIndex: -1,
@@ -596,12 +667,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           label: {
             enabled: false
           },
-          accessibility: {description: `An upward-sloping, slightly convex curve.`}
+          accessibility: { description: `An upward-sloping, slightly convex curve.` }
         },
         {
           type: 'line',
           name: 'Initial investment',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgb(112, 112, 112)',
           lineWidth: 1,
           zIndex: -1,
@@ -609,7 +680,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           label: {
             enabled: false
           },
-          accessibility: { description: `A downward-sloping, slightly convex curve.`}
+          accessibility: { description: `A downward-sloping, slightly convex curve.` }
         },
       ],
       xAxis: {
@@ -714,7 +785,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           radius: 4,
           symbol: 'circle'
         },
-        accessibility: {enabled: false}
+        accessibility: { enabled: false }
       },
       {
         name: 'desired saving',
@@ -728,7 +799,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           radius: 4,
           symbol: 'circle'
         },
-        accessibility: {enabled: false}
+        accessibility: { enabled: false }
       },
       { x: 2500, y: rRate, accessibility: { enabled: false } }
     ];
@@ -837,7 +908,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           symbol: 'circle',
 
         },
-        accessibility: {enabled: false}
+        accessibility: { enabled: false }
       },
       {
         name: 'desired saving',
@@ -847,7 +918,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         marker: {
           symbol: 'circle',
         },
-        accessibility: {enabled: false}
+        accessibility: { enabled: false }
 
       },
       { x: 2500, y: rRate, accessibility: { enabled: false } }
