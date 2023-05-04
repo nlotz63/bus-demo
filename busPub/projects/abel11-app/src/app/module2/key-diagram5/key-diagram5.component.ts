@@ -171,16 +171,10 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             },
             { value: 2500, dashStyle: 'Dot' }
           ],
-          tooltip: {
-            pointFormat: ''
-          },
-          label: {
-            style: { fontWeight: '400' }
-          }
         },
         {
           type: 'line',
-          name: 'Sd',
+          name: 'S<sup>d</sup>',
           zIndex: 2,
           animation: false,
           data: series.qSaving,
@@ -191,7 +185,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Sd',
+          name: 'I<sup>d</sup>',
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
@@ -244,16 +238,10 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             },
             { value: 2500, dashStyle: 'Dot' }
           ],
-          tooltip: {
-            pointFormat: ''
-          },
-          label: {
-            style: { fontWeight: '400' }
-          }
         },
         {
           type: 'line',
-          name: 'Sd',
+          name: 'S<sup>d</sup>',
           zIndex: 2,
           animation: false,
           data: seriesF.qSaving,
@@ -264,7 +252,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Sd',
+          name: 'I<sup>d</sup>',
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
@@ -279,7 +267,6 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             radius: 4
           }
         },
-
       ],
     });
   }
@@ -306,6 +293,14 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       },
       title: { text: 'Home Country' },
       legend: { enabled: false },
+      tooltip: {
+        useHTML: true
+      },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: 'Quantity: ${point.x:.0f}<br/>Real interest rate: {point.y:.2f}%'
+        }
+      },
       series: [
         {
           type: 'spline',
@@ -317,7 +312,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           label: {
             useHTML: true,
             format: 'S'
-          }
+          },
+          accessibility: {description: 'An upward-sloping, slightly convex curve.'}
         },
         {
           type: 'spline',
@@ -329,13 +325,14 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           label: {
             useHTML: true,
             format: 'I'
-          }
+          },
+          accessibility: {description: 'A downward-sloping, slightly convex curve.'}
         },
         {
           type: 'line',
           name: 'Desired lending',
           color: 'rgb(143, 36, 105)',
-          zIndex: 1,
+          zIndex: -1,
           lineWidth: 1.5,
           animation: false,
           marker: { enabled: false },
@@ -351,11 +348,14 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
               dashStyle: 'Solid'
             },
             { value: 2500, dashStyle: 'Dot' }
-          ]
+          ],
+          accessibility: {
+            description: `The horizontal line between desired saving and desired investment, representing the amount of desired lending at a particular world real interest rate.`
+          }
         },
         {
           type: 'line',
-          name: 'Sd',
+          name: 'S<sup>d</sup>',
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
@@ -373,11 +373,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             radius: 4,
             symbol: 'circle'
-          }
+          },
+          accessibility: {description: `The quantity of saving desired`}
         },
         {
           type: 'line',
-          name: 'Id',
+          name: 'I<sup>d</sup>',
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
@@ -395,7 +396,9 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             radius: 4,
             symbol: 'circle'
-          }
+          },
+          accessibility: {description: `The quantity of investment desired`}
+
         },
         {
           type: 'line',
@@ -407,7 +410,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           data: series.savingRef,
           label: {
             enabled: false
-          }
+          },
+          accessibility: {description: `An upward-sloping, slightly convex curve.`}
         },
         {
           type: 'line',
@@ -419,51 +423,10 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           data: series.investmentRef,
           label: {
             enabled: false
-          }
-        },
-/*         {
-          type: 'line',
-          name: 'Sd Reference',
-          zIndex: -1,
-          animation: false,
-          dashStyle: 'Dot',
-          lineWidth: 1,
-          color: 'rgb(112, 112, 112)',
-          data: series.qSavingRef,
-          label: {
-            enabled: false
           },
-          marker: {
-            enabled: true,
-            fillColor: 'rgb(112, 112, 112)',
-            lineColor: 'black',
-            lineWidth: 1,
-            radius: 3,
-            symbol: 'circle'
-          }
+          accessibility: { description: `A downward-sloping, slightly convex curve.`}
         },
-        {
-          type: 'line',
-          name: 'Id Reference',
-          zIndex: -1,
-          animation: false,
-          dashStyle: 'Dot',
-          lineWidth: 1,
-          color: 'rgb(112, 112, 112)',
-          data: series.qInvestmentRef,
-          label: {
-            enabled: false
-          },
-          marker: {
-            enabled: true,
-            fillColor: 'rgb(112, 112, 112)',
-            lineColor: 'black',
-            lineWidth: 1,
-            radius: 3,
-            symbol: 'circle'
-          }
-        },
- */      ],
+       ],
       xAxis: {
         lineColor: '#757575',
         lineWidth: 1.,
@@ -490,10 +453,15 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+            pointFormat: 'Quantity: ${point.x:.0f}<br/>Real interest rate: {point.y:.2f}%'
           },
           label: {
             style: { fontWeight: '400' }
+          },
+          marker: {
+            enabled: false,
+            symbol: 'circle',
+            radius: 2
           }
         }
       }
@@ -511,6 +479,14 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       },
       title: { text: 'Foreign Country' },
       legend: { enabled: false },
+      tooltip: {
+        useHTML: true
+      },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: 'Quantity: ${point.x:.0f}<br/>Real interest rate: {point.y:.2f}%'
+        }
+      },
       series: [
         {
           type: 'spline',
@@ -522,7 +498,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           label: {
             useHTML: true,
             format: 'S<sub>For</sub>'
-          }
+          },
+          accessibility: {description: 'An upward-sloping, slightly convex curve.'}
         },
         {
           type: 'spline',
@@ -534,7 +511,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           label: {
             useHTML: true,
             format: 'I<sub>For</sub>'
-          }
+          },
+          accessibility: {description: 'A downward-sloping, slightly convex curve.'}
         },
         {
           type: 'line',
@@ -556,11 +534,14 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
               dashStyle: 'Solid'
             },
             { value: 2500, dashStyle: 'Dot' }
-          ]
+          ],
+          accessibility: {
+            description: `The horizontal line between desired saving and desired investment, representing the amount of desired borrowing at a particular world real interest rate.`
+          }
         },
         {
           type: 'line',
-          name: 'Sd',
+          name: 'S<sup>d</sup>',
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
@@ -578,11 +559,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             radius: 4,
             symbol: 'circle'
-          }
+          },
+          accessibility: {description: `The quantity of saving desired`}
         },
         {
           type: 'line',
-          name: 'Id',
+          name: 'I<sup>d</sup>',
           zIndex: 3,
           animation: false,
           dashStyle: 'Dot',
@@ -600,7 +582,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             radius: 4,
             symbol: 'circle'
-          }
+          },
+          accessibility: {description: `The quantity of investment desired`}
         },
         {
           type: 'line',
@@ -612,7 +595,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           data: seriesF.savingRef,
           label: {
             enabled: false
-          }
+          },
+          accessibility: {description: `An upward-sloping, slightly convex curve.`}
         },
         {
           type: 'line',
@@ -624,51 +608,9 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           data: seriesF.investmentRef,
           label: {
             enabled: false
-          }
+          },
+          accessibility: { description: `A downward-sloping, slightly convex curve.`}
         },
-        /*         {
-                  type: 'line',
-                  name: 'Sd Reference',
-                  zIndex: -1,
-                  animation: false,
-                  dashStyle: 'Dot',
-                  lineWidth: 1,
-                  color: 'rgb(112, 112, 112)',
-                  data: seriesF.qSavingRef,
-                  label: {
-                    enabled: false
-                  },
-                  marker: {
-                    enabled: true,
-                    fillColor: 'rgb(112, 112, 112)',
-                    lineColor: 'black',
-                    lineWidth: 1,
-                    radius: 3,
-                    symbol: 'circle'
-                  }
-                },
-                {
-                  type: 'line',
-                  name: 'Id Reference',
-                  zIndex: -1,
-                  animation: false,
-                  dashStyle: 'Dot',
-                  lineWidth: 1,
-                  color: 'rgb(112, 112, 112)',
-                  data: seriesF.qInvestmentRef,
-                  label: {
-                    enabled: false
-                  },
-                  marker: {
-                    enabled: true,
-                    fillColor: 'rgb(112, 112, 112)',
-                    lineColor: 'black',
-                    lineWidth: 1,
-                    radius: 3,
-                    symbol: 'circle'
-                  }
-                },
-         */
       ],
       xAxis: {
         lineColor: '#757575',
@@ -677,7 +619,6 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         title: { useHTML: true, text: 'Desired national saving S<sup>d</sup><sub>For</sub>, and desired investment, I<sup>d</sup><sub>For</sub>' },
         min: 0,
         max: 2000
-
       },
       yAxis: {
         gridLineWidth: 0,
@@ -696,17 +637,19 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+            pointFormat: 'Quantity: ${point.x:.0f}<br/>Real interest rate: {point.y:.2f}%'
           },
           label: {
             style: { fontWeight: '400' }
+          },
+          marker: {
+            enabled: false,
+            radius: 2,
+            symbol: 'circle'
           }
-
         }
-
       }
     });
-
   }
   // Create series for home country
   private _createSeries(addRef: boolean) {
@@ -753,39 +696,41 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       }
       saving.push(point);
       investment.push(point1);
-      x = x + 25;
+      x = x + 50;
 
     } while (x <= 1700);
 
     let nx = [
-      [0, rRate],
+      { x: 0, y: rRate, accessibility: { enabled: false } },
       {
         name: 'desired investment',
         x: inverseInvestment(rRate),
         y: rRate,
         marker: {
-          enabled: true,
+          enabled: false,
           fillColor: 'orange',
           lineColor: 'black',
           lineWidth: 1,
           radius: 4,
           symbol: 'circle'
-        }
+        },
+        accessibility: {enabled: false}
       },
       {
         name: 'desired saving',
         x: inverseSaving(rRate),
         y: rRate,
         marker: {
-          enabled: true,
+          enabled: false,
           fillColor: 'orange',
           lineColor: 'black',
           lineWidth: 1,
           radius: 4,
           symbol: 'circle'
-        }
+        },
+        accessibility: {enabled: false}
       },
-      [2500, rRate]
+      { x: 2500, y: rRate, accessibility: { enabled: false } }
     ];
     qSaving = [
       {
@@ -794,7 +739,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         color: 'blue',
         marker: { enabled: true, Symbol: 'circle', }
       },
-      [inverseSaving(rRate), -3]
+      { x: inverseSaving(rRate), y: -3, accessibility: { enabled: false } }
     ];
     qInvestment = [
       {
@@ -803,7 +748,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         color: 'blue',
         marker: { enabled: true, Symbol: 'circle', }
       },
-      [inverseInvestment(rRate), -3]
+      { x: inverseInvestment(rRate), y: -3, accessibility: { enabled: false } }
     ];
 
     this.desiredLending = inverseSaving(rRate) - inverseInvestment(rRate);
@@ -877,12 +822,12 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
       }
       saving.push(point);
       investment.push(point1);
-      x = x + 25;
+      x = x + 50;
 
     } while (x <= 1500);
 
     let nx = [
-      [0, rRate],
+      { x: 0, y: rRate, accessibility: { enabled: false } },
       {
         name: 'desired investment',
         x: inverseInvestment(rRate),
@@ -891,7 +836,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         marker: {
           symbol: 'circle',
 
-        }
+        },
+        accessibility: {enabled: false}
       },
       {
         name: 'desired saving',
@@ -900,9 +846,11 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         color: 'blue',
         marker: {
           symbol: 'circle',
-        }
+        },
+        accessibility: {enabled: false}
+
       },
-      [2500, rRate]
+      { x: 2500, y: rRate, accessibility: { enabled: false } }
     ];
     qSaving = [
       {
@@ -911,7 +859,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         color: 'blue',
         marker: { enabled: true, Symbol: 'circle', }
       },
-      [inverseSaving(rRate), -3]
+      { x: inverseSaving(rRate), y: -3, accessibility: { enabled: false } }
     ];
     qInvestment = [
       {
@@ -920,7 +868,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         color: 'blue',
         marker: { enabled: true, Symbol: 'circle', }
       },
-      [inverseInvestment(rRate), -3]
+      { x: inverseInvestment(rRate), y: -3, accessibility: { enabled: false } }
     ];
 
     this.desiredBorrow = inverseInvestment(rRate) - inverseSaving(rRate);
