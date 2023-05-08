@@ -53,6 +53,12 @@ export class SolowComponent implements OnInit, AfterViewInit {
     capitalRatio: new FormControl(0)
   });
 
+  prevSavingRate = .25;
+  prevCapitalRatio = 0;
+  prevPopRate = .01;
+  prevProductivity = 25.99;
+
+
   chart!: Highcharts.Chart;
   chart2!: Highcharts.Chart;
 
@@ -107,7 +113,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
       if (this.mode === 2 && this.slider.value.capitalRatio! === 1046) {
         this.chart.addAnnotation({
           id: 'ss',
-          labelOptions: { backgroundColor: 'rgba(255,255,255,0.65)', align: 'right', x: -165, y: -35, allowOverlap: true, borderRadius: 8, padding: 4, shadow: true, borderColor: 'rgba(54, 54, 54, 0.7)' },
+          labelOptions: { backgroundColor: 'rgb(255, 255, 255)', align: 'right', x: -165, y: -35, allowOverlap: true, borderRadius: 8, padding: 4, shadow: true, borderColor: 'rgba(54, 54, 54, .4)' },
           visible: true,
           labels: [
             {
@@ -147,6 +153,12 @@ export class SolowComponent implements OnInit, AfterViewInit {
         {
           type: 'line',
           data: series.EQ,
+          accessibility: {
+            point: {
+              valueDescriptionFormat: `${kRatio}: {point.x:.1f}, {series.name}: {point.y:.2f}`
+            }
+
+          },
 
           label: {
             enabled: false,
@@ -239,6 +251,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
         ]
 
       }, true);
+      this.messageBuilder(series.EQ2)
 
     }
 
@@ -258,7 +271,44 @@ export class SolowComponent implements OnInit, AfterViewInit {
     });
     this.hidden = 'hidden';
     this._setupChart();
+    this.announcer.announce(`Step ${mode + 1} has loaded.`)
+  }
 
+  public messageBuilder(eq?: any[] ) {
+    let slider = this.slider.value;
+    let message = ``;
+
+    switch (this.mode) {
+      case 1:
+        if (slider.capitalRatio! === 350) {
+
+        } else if (slider.capitalRatio! === 1357.6) {
+
+        } else if (slider.capitalRatio! === 3500) {
+
+        } else {
+
+        }
+
+        break;
+      case 2:
+
+        break;
+      case 3:
+
+        break;
+      case 4:
+
+        break;
+      case 5:
+
+        break;
+
+      default:
+        break;
+    }
+
+    this.announcer.announce(message);
   }
 
   private _setupChart() {
@@ -284,6 +334,12 @@ export class SolowComponent implements OnInit, AfterViewInit {
       },
       title: { text: 'Solow Model' },
       legend: { enabled: false },
+      accessibility: {
+        series: {
+          pointDescriptionEnabledThreshold: false,
+          describeSingleSeries: true
+        }
+      },
       series: [
       ],
       xAxis: {
@@ -338,10 +394,16 @@ export class SolowComponent implements OnInit, AfterViewInit {
 
         this.chart.addSeries(
           {
-            type: 'line',
+            type: 'spline',
             name: 'f(k)',
             zIndex: 0,
-            data: series.prod
+            data: series.prod,
+            accessibility: {
+              description: `A concave curve beginning at the origin, rises sharply at first but then more slowly, becoming flatter and flatter.`,
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.0f}, Output per worker: {point.y:.0f}`
+              }
+            }
           }
         );
         break;
@@ -355,6 +417,13 @@ export class SolowComponent implements OnInit, AfterViewInit {
             data: series.prod,
             label: {
               enabled: true,
+            },
+            accessibility: {
+              description: `A concave curve beginning at the origin, rises sharply at first but then more slowly, becoming flatter and flatter.`,
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.0f}, Output per worker: {point.y:.0f}`
+
+              }
             }
           }
         );
@@ -366,8 +435,14 @@ export class SolowComponent implements OnInit, AfterViewInit {
             data: series.invest,
             label: {
               enabled: true,
-
+            },
+            accessibility: {
+              description: `An upward-sloping straight line.`,
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.1f}, Investment per worker: {point.y:.2f}`
+              }
             }
+
           }
         );
         this.chart.addSeries(
@@ -379,6 +454,11 @@ export class SolowComponent implements OnInit, AfterViewInit {
             color: 'black',
             zIndex: 1,
             data: series.EQ,
+            accessibility: {
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.1f}, investment per worker: {point.y:.2f}`
+              }
+            }
          }
         );
 
@@ -407,15 +487,22 @@ export class SolowComponent implements OnInit, AfterViewInit {
           },
           title: { text: 'Consumption Per Worker' },
           legend: { enabled: false },
+          accessibility: {
+            point: {
+              valueDescriptionFormat: `capital per worker: {point.x:.0f}, consumption per worker: {point.y:.0f}`
+            }
+            },
+
           series: [
             {
               type: 'line',
               name: 'Consumption per worker',
-              zIndex: -1,
+              zIndex: 0,
               animation: false,
+              lineWidth: 2,
               data: series.consumption,
               accessibility: {
-                description: 'An upward-sloping straight line'
+                description: 'A concave curve beginning at the origin, it rises sharply, reaches a peak,  and then gradually declines to the horizontal axis.',
               },
               label: {
                 enabled: false,
@@ -472,7 +559,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
               enableMouseTracking: true,
               color: '#C31229',
               tooltip: {
-                headerFormat: '{series.name}<br/>',
+                headerFormat: '',
                 pointFormat: 'k = ${point.x:.0f} <br/>{point.name}  = ${point.y:.2f}'
               },
               label: {
@@ -492,7 +579,15 @@ export class SolowComponent implements OnInit, AfterViewInit {
             type: 'line',
             name: 'sf(k)',
             zIndex: 0,
-            data: series.saving
+            data: series.saving,
+            accessibility: {
+              description: `A concave curve beginning at the origin, rises sharply at first but then more slowly, becoming flatter and flatter.`,
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.0f}, Saving per worker: {point.y:.0f}`
+
+              }
+            }
+
           }
         );
         this.chart.addSeries(
@@ -500,18 +595,29 @@ export class SolowComponent implements OnInit, AfterViewInit {
             type: 'line',
             name: '(n + d)k',
             zIndex: 0,
-            data: series.invest
+            data: series.invest,
+            accessibility: {
+              description: `An upward-sloping straight line.`,
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.1f}, Investment per worker: {point.y:.2f}`
+              }
+            }
           }
         );
         this.chart.addSeries(
           {
             type: 'line',
-            name: 'point',
+            name: 'sf(k)',
             lineWidth: 1,
             dashStyle: 'Dot',
             color: 'black',
             zIndex: 1,
             data: eqSeries,
+            accessibility: {
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.1f}, saving per worker: {point.y:.2f}`
+              }
+            },
             label: {
               enabled: true,
               useHTML: true,
@@ -541,7 +647,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
     // model parameters
     // let max = 6 * K / N,
     let max = this.mode < 2 ? 8500 : 3000;
-    let K = slider.capital!, N = slider.labor! / 10, step = max / 500;
+    let K = slider.capital!, N = slider.labor! / 10, step = max / 100;
     let x = 0, n = slider.popRate!, d = slider.depreciationRate!, s = slider.savingRate!, A = slider.productivity!, alpha = 0.3;
     let investSeries: any[] = [], prodSeries: any[] = [], savingSeries: any[] = [], eqSeries: any[] = [], eq2Series: any[] = [], eq3Series: any[] = [], eq4Series: any[] = [], consumptionSeries: any[] = [];
 
@@ -587,15 +693,15 @@ export class SolowComponent implements OnInit, AfterViewInit {
       savingSeries.push(point3);
       consumptionSeries.push(point4);
 
-      x += step;
+      x = x < 1000 ? x + step/2  : x + 2*step;
 
     } while (x <= max);
 
     // Other series and key points
     eqSeries = [
-      [0, production(eqProd)],
+      { x: 0, y: production(eqProd), accessibility: { enabled: false } },
       {
-        name: 'k<sub>max</sub>',
+        name: 'k',
         x: eqProd,
         y: production(eqProd),
         marker: {
@@ -605,9 +711,13 @@ export class SolowComponent implements OnInit, AfterViewInit {
           lineWidth: 1,
           radius: 4,
           symbol: 'circle'
+        },
+        accessibility: {
+          description: `Key point on the production function.`,
         }
       },
       {
+        name: 'k',
         x: eqProd, y: invest(eqProd), marker: {
           enabled: true,
           fillColor: 'orange',
@@ -615,9 +725,12 @@ export class SolowComponent implements OnInit, AfterViewInit {
           lineWidth: 1,
           radius: 4,
           symbol: 'circle'
+        },
+        accessibility: {
+          description: `Key point on the investment per worker line.`,
         }
       },
-      {x: eqProd, y: 0, marker: {enabled: false}}
+      {x: eqProd, y: 0, marker: {enabled: false}, accessibility: {enabled: false}}
     ];
 
     eq2Series = [
@@ -639,21 +752,9 @@ export class SolowComponent implements OnInit, AfterViewInit {
     ];
 
     eq3Series = [
-      [0, saving(eqSaving)],
+      { x: 0, y: saving(eqSaving), accessibility: { enabled: false } },
       {
-        name: 'k<sub>max</sub>',
-        x: eqSaving,
-        y: saving(eqSaving),
-        marker: {
-          enabled: true,
-          fillColor: 'orange',
-          lineColor: 'black',
-          lineWidth: 1,
-          radius: 4,
-          symbol: 'circle'
-        }
-      },
-      {
+        name: 'k',
         x: eqSaving, y: invest(eqSaving), marker: {
           enabled: true,
           fillColor: 'orange',
@@ -663,11 +764,13 @@ export class SolowComponent implements OnInit, AfterViewInit {
           symbol: 'circle'
         }
       },
-      {x: eqSaving, y: 0, marker: {enabled: false}}
+      {
+        x: eqSaving, y: 0, marker: { enabled: false },
+      accessibility: {enabled: false}}
     ];
 
     eq4Series = [
-      { x: 0, y: saving(slider.capitalRatio!), marker: { enabled: false } },
+      { x: 0, y: saving(slider.capitalRatio!), marker: { enabled: false }, accessibility: {enabled: false} },
       {
         name: 'k<sub>max</sub>',
         x: +slider.capitalRatio!,
@@ -681,7 +784,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
           symbol: 'circle'
         }
       },
-      { x: slider.capitalRatio!, y: 0, marker: { enabled: false } },
+      { x: slider.capitalRatio!, y: 0, marker: { enabled: false }, accessibility: {enabled: false} },
     ];
 
     // set key properties
