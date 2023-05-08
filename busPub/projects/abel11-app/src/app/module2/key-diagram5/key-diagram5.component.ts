@@ -10,7 +10,6 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
-import { MatSliderRangeThumb } from '@angular/material/slider';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
