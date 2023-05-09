@@ -82,6 +82,7 @@
             step="104.6"
             [value]="slider.value.capitalRatio!"
             (valueChange)="updateChart({ capitalRatio: $event })"
+            (change)="messageBuilder()"
           ></econ-slider>
       </div>
       <div *ngIf="mode === 3" @myAnimationTrigger>
@@ -112,6 +113,7 @@
             step=".01"
             [value]="slider.value.savingRate!"
             (valueChange)="updateChart({ savingRate: $event })"
+            (change)="messageBuilder()"
           ></econ-slider>
         </div>
       </div>
@@ -145,6 +147,7 @@
             step=".0005"
             [value]="slider.value.popRate!"
             (valueChange)="updateChart({ popRate: $event })"
+            (change)="messageBuilder()"
           ></econ-slider>
         </div>
       </div>
@@ -177,6 +180,7 @@
             step=".1"
             [value]="slider.value.productivity!"
             (valueChange)="updateChart({ productivity: $event })"
+            (change)="messageBuilder()"
           ></econ-slider>
         </div>
 

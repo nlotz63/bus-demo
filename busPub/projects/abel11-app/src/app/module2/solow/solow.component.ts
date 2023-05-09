@@ -251,7 +251,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
         ]
 
       }, true);
-      this.messageBuilder(series.EQ2)
+      this.messageBuilder(series.EQ)
 
     }
 
@@ -274,40 +274,52 @@ export class SolowComponent implements OnInit, AfterViewInit {
     this.announcer.announce(`Step ${mode + 1} has loaded.`)
   }
 
-  public messageBuilder(eq?: any[] ) {
+  public messageBuilder(eq: any[] =[] ) {
     let slider = this.slider.value;
     let message = ``;
 
     switch (this.mode) {
       case 1:
-        if (slider.capitalRatio! === 350) {
-
-        } else if (slider.capitalRatio! === 1357.6) {
-
-        } else if (slider.capitalRatio! === 3500) {
-
-        } else {
-
-        }
-
+        message = `Capital per worker is ${eq[1].x.toFixed(0)}. Consumption equals ${eq[1].y.toFixed(0)} minus ${eq[2].y.toFixed(0)} equals ${(eq[1].y - eq[2].y).toFixed(0)} dollars.`;
         break;
       case 2:
-
+        if (+slider.capitalRatio! < 1046) {
+          message = `Capital per worker is less than the steady state`;
+        } else if (+slider.capitalRatio! === 1046) {
+          message = `You reached the steady-state capital-labor ratio. The point where the saving curve and the steady-state investment line cross.`;
+        } else {
+          message = `Capital per worker is greater than the steady state.`;
+        }
         break;
       case 3:
-
+        if (this.prevSavingRate < slider.savingRate!) {
+          message = `The saving curve shifted up, increasing the steady-state capital-labor ratio.`;
+        } else {
+          message = `The saving curve shifted down, decreasing the steady-state capital-labor ratio.`;
+        }
+        this.prevSavingRate = slider.savingRate!;
         break;
       case 4:
-
+        if (this.prevPopRate < slider.popRate!) {
+          message = `The investment line became steeper, decreasing the steady-state capital-labor ratio.`;
+        } else {
+          message = `The investment line became flatter, increasing the steady-state capital-labor ratio.`;
+        }
+        this.prevPopRate = slider.popRate!;
         break;
       case 5:
-
+        if (this.prevProductivity < slider.productivity!) {
+          message = `The saving curve shifted up, increasing the steady-state capital-labor ratio.`;
+        } else {
+          message = `The saving curve shifted down, decreasing the steady-state capital-labor ratio.`;
+        }
+        this.prevProductivity = slider.productivity!;
         break;
 
       default:
         break;
     }
-
+    message = message + ``
     this.announcer.announce(message);
   }
 
@@ -373,8 +385,8 @@ export class SolowComponent implements OnInit, AfterViewInit {
             enabled: true,
           },
           marker: {
-            radius: 2,
-            symbol: 'circle'
+            symbol: 'circle',
+            enabled: false
 
           },
         }
@@ -611,7 +623,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
             lineWidth: 1,
             dashStyle: 'Dot',
             color: 'black',
-            zIndex: 1,
+            zIndex: 2,
             data: eqSeries,
             accessibility: {
               point: {
@@ -634,11 +646,68 @@ export class SolowComponent implements OnInit, AfterViewInit {
 
           }
         );
+        this.chart.addSeries(
+          {
+            type: 'line',
+            name: 'Initial sf(k)',
+            zIndex: -1,
+            dashStyle: 'LongDash',
+            lineWidth: 1,
+            color: 'rgb(128, 128, 128)',
+            data: series.saving,
+            accessibility: {
+              description: `A concave curve beginning at the origin, rises sharply at first but then more slowly, becoming flatter and flatter.`,
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.0f}, Saving per worker: {point.y:.0f}`
+              }
+            },
+            label: {
+              enabled: false
+            }
+          }
+        );
 
-
+        this.chart.addSeries(
+          {
+            type: 'line',
+            name: 'Initial (n + d)k',
+            zIndex: -1,
+            dashStyle: 'LongDash',
+            lineWidth: 1,
+            color: 'rgb(128, 128, 128)',
+            data: series.invest,
+            accessibility: {
+              description: `An upward-sloping straight line.`,
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.1f}, Investment per worker: {point.y:.2f}`
+              },
+            },
+            label: {
+              enabled: false
+            }
+          }
+        );
+        this.chart.addSeries(
+          {
+            type: 'line',
+            name: 'Initial sf(k) point',
+            lineWidth: 1,
+            dashStyle: 'Dot',
+            color: 'rgb(128, 128, 128)',
+            zIndex: 1,
+            data: series.EQref,
+            accessibility: {
+              point: {
+                valueDescriptionFormat: `Capital per worker: {point.x:.1f}, saving per worker: {point.y:.2f}`
+              }
+            },
+            label: {
+              enabled: false,
+            }
+          }
+        );
         break;
     }
-
   }
 
   private _createSeries(addRef: boolean) {
@@ -662,7 +731,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
     };
 
     let consumption = (x: number) => { return production(x) - invest(x); }
-    let eqProd = this.mode === 1 ? slider.capitalRatio! : Math.pow(A / (d + n), 1 / (1 - alpha));
+    let eqProd = this.mode === 1 ? +slider.capitalRatio! : Math.pow(A / (d + n), 1 / (1 - alpha));
     let eqSaving = Math.pow((s * A) / (d + n), 1 / (1 - alpha));
 
 
@@ -765,12 +834,12 @@ export class SolowComponent implements OnInit, AfterViewInit {
         }
       },
       {
-        x: eqSaving, y: 0, marker: { enabled: false },
+        x: eqSaving, y: 0, marker: { enabled: false, radius: 0 },
       accessibility: {enabled: false}}
     ];
 
     eq4Series = [
-      { x: 0, y: saving(slider.capitalRatio!), marker: { enabled: false }, accessibility: {enabled: false} },
+      { x: 0, y: saving(slider.capitalRatio!), marker: { enabled: false, radius: 0 }, accessibility: {enabled: false} },
       {
         name: 'k<sub>max</sub>',
         x: +slider.capitalRatio!,
@@ -784,8 +853,29 @@ export class SolowComponent implements OnInit, AfterViewInit {
           symbol: 'circle'
         }
       },
-      { x: slider.capitalRatio!, y: 0, marker: { enabled: false }, accessibility: {enabled: false} },
+      { x: slider.capitalRatio!, y: 0, marker: { enabled: false, radius: 0 }, accessibility: {enabled: false} },
     ];
+
+    let eqRef = this.mode > 2 ? [
+      { x: 0, y: saving(eqSaving), accessibility: { enabled: false }, },
+      {
+        name: 'k',
+        x: eqSaving, y: invest(eqSaving),
+        marker: {
+          enabled: true,
+          fillColor: 'rgb(225, 225, 225)',
+          lineColor: 'black',
+          lineWidth: 1,
+          radius: 3,
+          symbol: 'circle'
+        }
+      },
+      {
+        x: eqSaving,
+        y: 0,
+      accessibility: {enabled: false}}
+    ] : [];
+
 
     // set key properties
     this.steadyState = eq3Series[1].x;
@@ -799,7 +889,8 @@ export class SolowComponent implements OnInit, AfterViewInit {
       EQ: eqSeries,
       EQ2: eq2Series,
       EQ3: eq3Series,
-      EQ4: eq4Series
+      EQ4: eq4Series,
+      EQref: eqRef
     }
 
   }
