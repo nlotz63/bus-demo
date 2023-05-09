@@ -2,12 +2,14 @@ import { DataService } from './../../data.service';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { forkJoin, fromEvent } from 'rxjs';
 import * as Highcharts from 'highcharts/highstock';
+import HC_sonify from 'highcharts/modules/sonification';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 import accessibility from 'highcharts/modules/accessibility';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
+HC_sonify(Highcharts);
 accessibility(Highcharts);
 
 @Component({
