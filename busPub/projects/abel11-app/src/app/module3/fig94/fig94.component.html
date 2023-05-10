@@ -28,6 +28,7 @@
         step="100"
         [value]="slider.value.expectedOutput!"
         (valueChange)="updateChart({ expectedOutput: $event })"
+        (change)="messageBuilder()"
       ></econ-slider>
       </div>
   </div>

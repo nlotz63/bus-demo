@@ -5,6 +5,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 
 import * as Highcharts from 'highcharts';
+import HC_sonify from 'highcharts/modules/sonification';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
@@ -12,6 +13,7 @@ import HC_data from 'highcharts/modules/export-data';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
+HC_sonify(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
@@ -27,7 +29,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
   previousY = 900;
 
   slider = new FormGroup({
-    expectedOutput: new FormControl(75),
+    expectedOutput: new FormControl(900),
     wealth: new FormControl(150),
     govPurchases: new FormControl(600),
     taxes: new FormControl(400),
@@ -94,7 +96,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
         formatter: () => {
           return `Equilibrium:</br>M/P = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[1].y.toPrecision(2)}%`;
         }
-        }
+      }
     })
     this.chart2.series[1].update({
       type: 'line',
@@ -112,26 +114,6 @@ export class Fig94Component implements OnInit, AfterViewInit {
         description: `${this.chart2.series[1].getName()}: The point on the I S cuve has coordinates Y equals ${series.EQ2[1].x} and r equals ${series.EQ2[1].y}%`
       }
     });
-    let announceMessage = () => {
-      let message = '';
-      let announce = () => {
-
-      }
-      if (this.previousY < series.EQ2[1].x) {
-        message = `The money demand curve shifted up and the point on the LM curve moved up along the curve.`
-      } else {
-        message = `The money demand curve shifted down and the point on the LM curve moved down along the curve.`
-
-      }
-      this.announcer.announce(message);
-
-     this.previousY = series.EQ2[1].x;
-
-
-    }
-
-    announceMessage();
-
   }
 
   public playStep(mode: number) {
@@ -154,7 +136,24 @@ export class Fig94Component implements OnInit, AfterViewInit {
       capitalStock: 0
     })
     this._setupChart();
+    if (this.showPlayer) {
+      this.announcer.announce(`Step ${mode + 1} has loaded`);
+    } else {
+      this.announcer.announce(`The interactive has loaded`);
+    }
+  }
 
+  public messageBuilder() {
+    let message = ``;
+    let currentY = this.slider.value.expectedOutput!;
+
+    if (this.previousY < currentY) {
+      message = `As output is increased, the money demand curve shifts up, while the point on the L M curve is moving up along the L M curve.`;
+    } else {
+      message = `As output is decreased, the money demand curve shifts down, while the point on the L M curve is moving down along the L M curve.`;
+    }
+    this.previousY = currentY;
+    this.announcer.announce(message);
   }
 
   private _setupChart() {
@@ -166,13 +165,18 @@ export class Fig94Component implements OnInit, AfterViewInit {
         height: 425,
         ignoreHiddenSeries: true,
       },
-      tooltip: { enabled: false },
+      tooltip: { enabled: true },
       credits: {
         text: 'Pearson Education',
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
       title: { text: 'Money market' },
       legend: { enabled: false },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `Quantity of money: {point.x:.0f}, Real interest rate: {point.y:.2f} percent.`
+        }
+      },
       series: [
         {
           type: 'line',
@@ -216,19 +220,12 @@ export class Fig94Component implements OnInit, AfterViewInit {
           allowPointSelect: true,
           animation: false,
           data: series.EQ,
-          marker: {
-            enabled: true,
-            fillColor: 'orange',
-            lineColor: 'black',
-            lineWidth: 1
-
-          },
           accessibility: {
             description: 'A point showing the intersection of the real money demand and real money supply curves'
           },
           label: {
             useHTML: true,
-            style: {fontSize: '11px', fontWeight: '400'},
+            style: { fontSize: '11px', fontWeight: '400' },
             formatter: () => {
               return `Equilibrium:</br>I = $${series.EQ[1].x.toFixed(0)}</br>r = ${series.EQ[1].y.toPrecision(2)}%`;
             }
@@ -260,7 +257,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
       },
       plotOptions: {
         series: {
-          enableMouseTracking: false,
+          enableMouseTracking: true,
           lineWidth: 2,
           color: '#C31229',
           tooltip: {
@@ -272,7 +269,8 @@ export class Fig94Component implements OnInit, AfterViewInit {
           },
           marker: {
             enabled: false,
-            radius: 0
+            radius: 4,
+            symbol: 'circle'
           },
 
         }
@@ -292,7 +290,12 @@ export class Fig94Component implements OnInit, AfterViewInit {
       },
       title: { text: 'LM Curve' },
       legend: { enabled: false },
-      tooltip: { enabled: false },
+      tooltip: { enabled: true },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `Output, Y: {point.x:.0f} billion dollars, Real interest rate: {point.y:.2f} percent.`
+        }
+      },
       series: [
         {
           type: 'line',
@@ -321,19 +324,13 @@ export class Fig94Component implements OnInit, AfterViewInit {
           allowPointSelect: true,
           animation: false,
           data: series.EQ2,
-          marker: {
-            enabled: true,
-            fillColor: 'orange',
-            lineColor: 'black',
-            lineWidth: 1
-          },
           accessibility: {
             description: 'A point that moves along the LM curve the corresponds to the intersection of the real money demand and real money supply curves.'
           },
           label: {
             enabled: true,
             useHTML: true,
-            style: {fontSize: '11px', fontWeight: '400'},
+            style: { fontSize: '11px', fontWeight: '400' },
             formatter: () => {
               return `LM curve point:</br>Y = ${series.EQ2[1].x.toFixed(0)}</br>r = ${series.EQ2[1].y.toPrecision(2)}`;
             }
@@ -363,12 +360,16 @@ export class Fig94Component implements OnInit, AfterViewInit {
       },
       plotOptions: {
         series: {
-          enableMouseTracking: false,
+          enableMouseTracking: true,
           lineWidth: 2,
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+            pointFormat: 'Output, Y: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+          },
+          marker: {
+            enabled: false,
+            symbol: 'circle'
           }
         }
 
@@ -387,7 +388,7 @@ export class Fig94Component implements OnInit, AfterViewInit {
 
     let ybar = slider.expectedOutput! + slider.capitalStock! + slider.supplyShock! + slider.laborSupply!;
 
-    let x: number = 300, isSeries = [], lmSeries = [], eqSeries = [], eq2Series = [], feSeries, msSeries = [], mdSeries = [];
+    let x: number = 900, isSeries = [], lmSeries = [], eqSeries = [], eq2Series = [], feSeries, msSeries = [], mdSeries = [];
 
     let is = (x: number) => { return (c0 + G + i0 - cy * t0 - x * (1 - cy + cy * t)) / (cr + ir); }
     let lm = (x: number) => { return (-M + l0 * P - lr * P * piE + ly * P * x) / (lr * P); }
@@ -409,9 +410,9 @@ export class Fig94Component implements OnInit, AfterViewInit {
 
       isSeries.push(point);
       lmSeries.push(point2);
-      x = x + 25;
+      x = x + 1050;
     } while (x < 7500);
-    x = 50;
+    x = 750;
 
     do {
       let point = {
@@ -421,38 +422,41 @@ export class Fig94Component implements OnInit, AfterViewInit {
       }
       mdSeries.push(point);
 
-      x = x + 5;
-    } while (x < 3250);
+      x = x + 300;
+    } while (x <= 3250);
 
     msSeries = [
       [M / P, -3],
-      [M/P, 4.5]
+      [M / P, 4.5]
     ];
 
 
     // equilibrium series
     eqSeries = [
-      { x: 0, y: eq, marker: { enabled: false, radius: 0 } },
+      { x: 0, y: eq, marker: { enabled: false, radius: 0 }, accessibility: { enabled: false } },
       {
         name: 'Equilibrium',
-        x: M/P,
+        x: M / P,
         y: eq,
         color: '#008000',
         marker: {
           symbol: 'circle',
           radius: 4,
-          enabled: true
-
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1
         }
       },
       {
-        x: M/P, y: -3, marker: {
+        x: M / P, y: -3, marker: {
           enabled: false, radius: 0
-          }
+        },
+        accessibility: { enabled: false }
       }
     ];
     eq2Series = [
-      { x: 0, y: lm(ybar), marker: { enabled: false, radius: 0 } },
+      { x: 0, y: lm(ybar), marker: { enabled: false, radius: 0 }, accessibility: {enabled: false} },
       {
         name: 'Equilibrium',
         x: ybar,
@@ -460,11 +464,13 @@ export class Fig94Component implements OnInit, AfterViewInit {
         color: '#008000',
         marker: {
           symbol: 'circle',
-          enabled: true
-
+          enabled: true,
+          fillColor: 'orange',
+          lineColor: 'black',
+          lineWidth: 1
         }
       },
-      { x: ybar, y: -3, marker: { enabled: false } }
+      { x: ybar, y: -3, marker: { enabled: false, radius: 0 }, accessibility: {enabled: false} }
     ];
     feSeries = [
       [ybar, -3],
