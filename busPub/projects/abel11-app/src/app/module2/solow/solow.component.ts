@@ -11,10 +11,12 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
+import HC_sonify from 'highcharts/modules/sonification';
 
 HC_annotate(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
+HC_sonify(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
@@ -768,7 +770,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
 
     // Other series and key points
     eqSeries = [
-      { x: 0, y: production(eqProd), accessibility: { enabled: false } },
+      { x: 0, y: production(eqProd), accessibility: { enabled: false }, marker: {radius: 0} },
       {
         name: 'k',
         x: eqProd,
@@ -799,7 +801,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
           description: `Key point on the investment per worker line.`,
         }
       },
-      {x: eqProd, y: 0, marker: {enabled: false}, accessibility: {enabled: false}}
+      {x: eqProd, y: 0, marker: {enabled: false, radius: 0}, accessibility: {enabled: false}}
     ];
 
     eq2Series = [
@@ -817,11 +819,11 @@ export class SolowComponent implements OnInit, AfterViewInit {
           symbol: 'circle'
         }
       },
-      { x: slider.capitalRatio!, y: 0, marker: { enabled: false } },
+      { x: slider.capitalRatio!, y: 0, marker: { enabled: false, radius: 0 }, accessility: {enabled: false} },
     ];
 
     eq3Series = [
-      { x: 0, y: saving(eqSaving), accessibility: { enabled: false } },
+      { x: 0, y: saving(eqSaving), accessibility: { enabled: false }, marker: {enabled: false, radius: 0} },
       {
         name: 'k',
         x: eqSaving, y: invest(eqSaving), marker: {
@@ -857,7 +859,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
     ];
 
     let eqRef = this.mode > 2 ? [
-      { x: 0, y: saving(eqSaving), accessibility: { enabled: false }, },
+      { x: 0, y: saving(eqSaving), accessibility: { enabled: false }, marker: {enabled: false, radius: 0} },
       {
         name: 'k',
         x: eqSaving, y: invest(eqSaving),
@@ -873,7 +875,9 @@ export class SolowComponent implements OnInit, AfterViewInit {
       {
         x: eqSaving,
         y: 0,
-      accessibility: {enabled: false}}
+        accessibility: { enabled: false },
+        marker: {enabled: false, radius: 0}
+      }
     ] : [];
 
 
