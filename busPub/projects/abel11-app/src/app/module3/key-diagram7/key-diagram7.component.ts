@@ -140,8 +140,8 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
 
   public messageBuilder(sliderType: string) {
     let series = this._createSeries(false);
-    let currentValue = sliderType === 'F E' ? series.FE[0].x : series.EQ[1].x,
-    prevValue = sliderType === 'F E' ? this.prevFE : this.prevEQ;
+    let currentValue = sliderType === 'L R A S' ? series.FE[0].x : series.EQ[1].x,
+    prevValue = sliderType === 'L R A S' ? this.prevFE : this.prevEQ;
     let direction: string;
 
     if (sliderType === 'S R A S') {
