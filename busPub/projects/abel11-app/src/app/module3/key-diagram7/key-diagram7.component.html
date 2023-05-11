@@ -5,27 +5,34 @@
         <h1>Overview of the AD/AS model</h1>
         <ul>
           <li>
-            The price level, <span econMath="\(P\)"></span>, is on the vertical axis, and output, <span econMath="\(Y\)"></span>, is on the horizontal axis .
+            The price level, <span econMath="\(P\)"></span>, is on the vertical
+            axis, and output, <span econMath="\(Y\)"></span>, is on the
+            horizontal axis .
           </li>
           <li>
-            The aggregate demand (AD) curve shows the aggregate quantity of output demanded at each price level.
+            The aggregate demand (AD) curve shows the aggregate quantity of
+            output demanded at each price level.
           </li>
           <li>
-            In the short run, the price level is fixed, and firms supply whatever level of output is demanded. Thus, the short-run aggregate supply (SRAS) curve is horizontal.
+            In the short run, the price level is fixed, and firms supply
+            whatever level of output is demanded. Thus, the short-run aggregate
+            supply (SRAS) curve is horizontal.
           </li>
           <li>
-            In the long run, firms produce the amount of output that maximizes their profits, which is the full-employment level of output.
+            In the long run, firms produce the amount of output that maximizes
+            their profits, which is the full-employment level of output.
           </li>
+          <li>So, the long-run aggregate-supply curve, LRAS, is vertical.</li>
           <li>
-            So, the long-run aggregate-supply curve, LRAS, is vertical.
-          </li>
-          <li>
-            The economy is in general equilibrium at the intersection of all three curves.
+            The economy is in general equilibrium at the intersection of all
+            three curves.
           </li>
         </ul>
       </div>
       <div *ngIf="mode === 1" class="econ-narative-block" @myAnimationTrigger>
-        <h1>Factors that shift the AD curve (part 1): IS curve shifters (saving)</h1>
+        <h1>
+          Factors that shift the AD curve (part 1): IS curve shifters (saving)
+        </h1>
         <ul>
           <li>
             The AD curve shifts up and to the right if
@@ -37,7 +44,8 @@
             </ul>
           </li>
           <li>
-            To restore general equilibrium, the price level changes, causing the SRAS curve to shift.
+            To restore general equilibrium, the price level changes, causing the
+            SRAS curve to shift.
           </li>
         </ul>
         <div class="control-column econ-control">
@@ -50,6 +58,7 @@
             step="10"
             [value]="slider.value.wealth!"
             (valueChange)="updateChart({ wealth: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Expected future output"
@@ -60,6 +69,7 @@
             step="10"
             [value]="slider.value.expectedOutput!"
             (valueChange)="updateChart({ expectedOutput: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Government purchases"
@@ -72,6 +82,7 @@
             [value]="slider.value.govPurchases!"
             #startValue
             (valueChange)="updateChart({ govPurchases: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Taxes"
@@ -84,6 +95,7 @@
             [value]="slider.value.taxes!"
             #startValue
             (valueChange)="updateChart({ taxes: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
         </div>
         <div>
@@ -115,7 +127,8 @@
             </ul>
           </li>
           <li>
-            To restore general equilibrium, the price level changes, causing the SRAS curve to shift.
+            To restore general equilibrium, the price level changes, causing the
+            SRAS curve to shift.
           </li>
         </ul>
         <div class="control-column econ-control">
@@ -130,6 +143,7 @@
             [value]="slider.value.expectedTFP!"
             #startValue
             (valueChange)="updateChart({ expectedTFP: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Effective tax rate on capital"
@@ -142,6 +156,7 @@
             [value]="slider.value.effTax!"
             #startValue
             (valueChange)="updateChart({ effTax: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
         </div>
         <div>
@@ -174,7 +189,8 @@
             </ul>
           </li>
           <li>
-            To restore general equilibrium, the price level changes, causing the SRAS curve to shift.
+            To restore general equilibrium, the price level changes, causing the
+            SRAS curve to shift.
           </li>
         </ul>
         <div class="control-column econ-control">
@@ -188,6 +204,7 @@
             [value]="slider.value.money!"
             #startValue
             (valueChange)="updateChart({ money: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Expected inflation"
@@ -198,6 +215,7 @@
             step="0.0025"
             [value]="slider.value.expectedInflation!"
             (valueChange)="updateChart({ expectedInflation: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Nominal rate on money"
@@ -208,6 +226,7 @@
             step="0.0025"
             [value]="slider.value.nominalRate!"
             (valueChange)="updateChart({ nominalRate: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
         </div>
         <div>
@@ -232,13 +251,17 @@
         <h1>Factors that shift the SRAS curve</h1>
         <ul>
           <li>
-            Any factor, such as an increase in the costs of production, that leads firms to increase prices in the short-run will shift the short-run aggregate supply (SRAS) curve up.
+            Any factor, such as an increase in the costs of production, that
+            leads firms to increase prices in the short-run will shift the
+            short-run aggregate supply (SRAS) curve up.
           </li>
           <li>
-            Conversely, a factor that decreases the costs of production will shift the SRAS curve down.
+            Conversely, a factor that decreases the costs of production will
+            shift the SRAS curve down.
           </li>
           <li>
-            To restore general equilibrium, the price level changes, causing the SRAS curve to shift.
+            To restore general equilibrium, the price level changes, causing the
+            SRAS curve to shift.
           </li>
         </ul>
         <div class="control-column econ-control">
@@ -252,6 +275,7 @@
             [value]="slider.value.priceLevel!"
             #startValue
             (valueChange)="updateChart({ priceLevel: $event })"
+            (change)="messageBuilder('S R A S')"
           ></econ-slider>
         </div>
         <div>
@@ -276,7 +300,8 @@
         <h1>Factors that shift the LRAS curve</h1>
         <ul>
           <li>
-            Any factor that increases the full-employment level of output shifts the long-run aggregate supply (LRAS) curve to the right
+            Any factor that increases the full-employment level of output shifts
+            the long-run aggregate supply (LRAS) curve to the right
             <ul>
               <li>
                 A beneficial supply shock that causes an increase in total
@@ -287,7 +312,8 @@
             </ul>
           </li>
           <li>
-            To restore general equilibrium, the price level changes, causing the SRAS curve to shift.
+            To restore general equilibrium, the price level changes, causing the
+            SRAS curve to shift.
           </li>
         </ul>
         <div class="control-column econ-control">
@@ -301,6 +327,7 @@
             [value]="slider.value.supplyShock!"
             #startValue
             (valueChange)="updateChart({ supplyShock: $event })"
+            (change)="messageBuilder('L R A S')"
           ></econ-slider>
           <econ-slider
             label="Labor supply"
@@ -312,6 +339,7 @@
             [value]="slider.value.laborSupply!"
             #startValue
             (valueChange)="updateChart({ laborSupply: $event })"
+            (change)="messageBuilder('L R A S')"
           ></econ-slider>
           <econ-slider
             label="Capital stock"
@@ -323,6 +351,7 @@
             [value]="slider.value.capitalStock!"
             #startValue
             (valueChange)="updateChart({ capitalStock: $event })"
+            (change)="messageBuilder('L R A S')"
           ></econ-slider>
         </div>
         <div>

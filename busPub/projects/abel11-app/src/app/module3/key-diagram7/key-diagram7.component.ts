@@ -8,6 +8,7 @@ import { transition, trigger, style, animate } from '@angular/animations';
 
 
 import * as Highcharts from 'highcharts';
+import HC_sonify from 'highcharts/modules/sonification';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
@@ -16,6 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
+HC_sonify(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
@@ -43,6 +45,8 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
   showPlayer: boolean = false;
   shortRunEquilibrium = 4000;
   longRunEquilibrium = 4000;
+  prevEQ = 4000;
+  prevFE = 4000;
 
   slider = new FormGroup({
     expectedOutput: new FormControl(75),
@@ -105,7 +109,6 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
         }
       }
     );
-    this.announcer.announce(`The graph has been updated`);
   }
 
   public playStep(mode: number) {
@@ -127,14 +130,54 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
       laborSupply: 0,
       capitalStock: 0
     });
+    this.prevEQ = 4000;
+    this.prevFE = 4000;
+
     this._snackBar.dismiss();
     this._setupChart();
     this.announcer.announce(`Step ${mode + 1} has loaded.`);
   }
 
+  public messageBuilder(sliderType: string) {
+    let series = this._createSeries(false);
+    let currentValue = sliderType === 'F E' ? series.FE[0].x : series.EQ[1].x,
+    prevValue = sliderType === 'F E' ? this.prevFE : this.prevEQ;
+    let direction: string;
+
+    if (sliderType === 'S R A S') {
+      direction = prevValue < currentValue ? 'down' : 'up';
+    } else {
+      direction  = prevValue < currentValue ? 'right' : 'left'
+    }
+    let message = ``;
+
+    if (sliderType !== 'LR') {
+      message = `The ${sliderType} curve has shifted to the ${direction}.`;
+      this.announcer.announce(message);
+
+    } else {
+      if (this.shortRunEquilibrium > this.longRunEquilibrium + 0.5) {
+        message = `To restore long-run equilibrium, the price level will rise, shifting the SRAS curve up.`;
+      } else if (this.shortRunEquilibrium < this.longRunEquilibrium - 0.5) {
+        message = `To restore long-run equilibrium, the price level will fall, shifting the SRAS curve down.`;
+      } else {
+        message = `The economy is in long-rung equilibrium`;
+      }
+      this._snackBar.open(message, 'Close', { panelClass: 'econ-message', horizontalPosition: 'left', verticalPosition: 'top' });
+      }
+
+    if (sliderType === 'L R A S') {
+      this.prevFE = currentValue;
+    } else {
+      this.prevEQ = currentValue;
+    }
+
+  }
+
+
   public restoreEquilibrium() {
     let newPrice: number;
-    this._messageBuilder();
+    this.messageBuilder('LR');
     const subscription = this.playInterval.subscribe(() => {
       let series = this._createSeries(false);
       let difference = series.FE[0].x - series.EQ[1].x;
@@ -182,10 +225,18 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
       },
       title: { text: 'AD/AS Model' },
       legend: { enabled: false },
-      tooltip: { enabled: false },
+      tooltip: { enabled: true },
+      sonification: {
+        duration: 20000
+      },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `Output, Y: {point.x:.0f} billion dollars, Price level: {point.y:.2f}.`
+        }
+      },
       series: [
         {
-          type: 'line',
+          type: 'spline',
           name: 'AD',
           zIndex: 1,
           animation: false,
@@ -218,7 +269,7 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Eqilibrium',
+          name: 'Equilibrium',
           color: 'black',
           dashStyle: 'Dot',
           lineWidth: 1,
@@ -227,7 +278,7 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
           animation: false,
           data: series.EQ,
           accessibility: {
-            description: `Long-run: Y = $${series.EQ[1].x.toFixed(0)} P = ${series.EQ[0].y.toFixed(0)}`
+            description: `Long-run: Y = $${series.EQ[1].x.toFixed(0)} Price level = ${series.EQ[0].y.toFixed(0)}`
           },
           label: {
             useHTML: true,
@@ -239,7 +290,7 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
           }
         },
         {
-          type: 'line',
+          type: 'spline',
           name: 'Initial AD',
           dashStyle: 'Dash',
           color: 'rgba(93, 93, 93, 1)',
@@ -319,7 +370,12 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Output: ${point.x:.0f} billion<br/>Price level: {point.y:.1f}'
+            pointFormat: 'Output, Y: ${point.x:.0f} billion<br/>Price level: {point.y:.1f}'
+          },
+          marker: {
+            enabled: false,
+            symbol: 'circle',
+            radius: 2
           }
         }
 
@@ -358,12 +414,12 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
       };
 
       adSeries.push(point);
-      x = x + 25;
-    } while (x < 6500);
+      x = x + 250;
+    } while (x <= 6500);
 
     srasSeries = [
-      { x: 2000, y: P, marker: { enabled: false, radius: 0 } },
-      { x: 6500, y: P, marker: { enabled: false, radius: 0 } },
+      { x: 2000, y: P, marker: { enabled: false, radius: 1 } },
+      { x: 6500, y: P, marker: { enabled: false, radius: 1 } },
     ]
 
     // equilibrium series
@@ -382,12 +438,12 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
           symbol: 'circle'
         },
       },
-      { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
+      { x: eq, y: 0, marker: { enabled: false, radius: 0 }, accessibility: {enabled: false} }
     ];
 
     feSeries = [
-      { x: ybar, y: 0, marker: { enabled: false, radius: 0 } },
-      { x: ybar, y: 250, marker: { enabled: false, radius: 0 } },
+      { x: ybar, y: 0, marker: { enabled: false, radius: 1 } },
+      { x: ybar, y: 250, marker: { enabled: false, radius: 1 } },
     ];
 
     this.shortRunEquilibrium = eq;
@@ -408,7 +464,7 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
             enabled: true
           }
         },
-        { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
+        { x: eq, y: 0, marker: { enabled: false, radius: 0 }, accessibility: {enabled: false} }
       ];
     }
 
@@ -422,19 +478,6 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
       feRef: feRef,
       eqRef: eqRef
     }
-
-  }
-
-  private _messageBuilder() {
-    let message = ``;
-    if (this.shortRunEquilibrium > this.longRunEquilibrium + 0.5) {
-      message = `To restore long-run equilibrium, the price level will rise, shifting the SRAS curve up.`;
-    } else if (this.shortRunEquilibrium < this.longRunEquilibrium - 0.5) {
-      message = `To restore long-run equilibrium, the price level will fall, shifting the SRAS curve down.`;
-    } else {
-      message = `The economy is in long-rung equilibrium`;
-    }
-    this._snackBar.open(message, 'Close', { panelClass: 'econ-message', horizontalPosition: 'left', verticalPosition: 'top' });
 
   }
 
