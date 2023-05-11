@@ -52,6 +52,7 @@
             step="10"
             [value]="slider.value.wealth!"
             (valueChange)="updateChart({ wealth: $event })"
+            (change)="messageBuilder('I S')"
           ></econ-slider>
           <econ-slider
             label="Expected future output"
@@ -62,6 +63,7 @@
             step="10"
             [value]="slider.value.expectedOutput!"
             (valueChange)="updateChart({ expectedOutput: $event })"
+            (change)="messageBuilder('I S')"
           ></econ-slider>
           <econ-slider
             label="Government purchases"
@@ -74,6 +76,7 @@
             [value]="slider.value.govPurchases!"
             #startValue
             (valueChange)="updateChart({ govPurchases: $event })"
+            (change)="messageBuilder('I S')"
           ></econ-slider>
           <econ-slider
             label="Taxes"
@@ -86,6 +89,7 @@
             [value]="slider.value.taxes!"
             #startValue
             (valueChange)="updateChart({ taxes: $event })"
+            (change)="messageBuilder('I S')"
           ></econ-slider>
         </div>
         <div>
@@ -130,6 +134,7 @@
             [value]="slider.value.expectedTFP!"
             #startValue
             (valueChange)="updateChart({ expectedTFP: $event })"
+            (change)="messageBuilder('I S')"
           ></econ-slider>
           <econ-slider
             label="Effective tax rate on capital"
@@ -142,6 +147,7 @@
             [value]="slider.value.effTax!"
             #startValue
             (valueChange)="updateChart({ effTax: $event })"
+            (change)="messageBuilder('I S')"
           ></econ-slider>
         </div>
         <div>
@@ -193,6 +199,8 @@
             [value]="slider.value.money!"
             #startValue
             (valueChange)="updateChart({ money: $event })"
+            (change)="messageBuilder('L M')"
+
           ></econ-slider>
           <econ-slider
             label="Price level"
@@ -204,6 +212,7 @@
             [value]="slider.value.priceLevel!"
             #startValue
             (valueChange)="updateChart({ priceLevel: $event })"
+            (change)="messageBuilder('L M')"
           ></econ-slider>
           <econ-slider
             label="Expected inflation"
@@ -214,6 +223,7 @@
             step="0.0025"
             [value]="slider.value.expectedInflation!"
             (valueChange)="updateChart({ expectedInflation: $event })"
+            (change)="messageBuilder('L M')"
           ></econ-slider>
           <econ-slider
             label="Nominal rate on money"
@@ -224,6 +234,7 @@
             step="0.0025"
             [value]="slider.value.nominalRate!"
             (valueChange)="updateChart({ nominalRate: $event })"
+            (change)="messageBuilder('L M')"
           ></econ-slider>
         </div>
         <div>
@@ -271,6 +282,8 @@
             [value]="slider.value.supplyShock!"
             #startValue
             (valueChange)="updateChart({ supplyShock: $event })"
+            (change)="messageBuilder('F E')"
+
           ></econ-slider>
           <econ-slider
             label="Labor supply"
@@ -282,6 +295,7 @@
             [value]="slider.value.laborSupply!"
             #startValue
             (valueChange)="updateChart({ laborSupply: $event })"
+            (change)="messageBuilder('F E')"
           ></econ-slider>
           <econ-slider
             label="Capital stock"
@@ -293,6 +307,7 @@
             [value]="slider.value.capitalStock!"
             #startValue
             (valueChange)="updateChart({ capitalStock: $event })"
+            (change)="messageBuilder('F E')"
           ></econ-slider>
         </div>
         <div>
@@ -345,6 +360,8 @@
             [value]="slider.value.govPurchases!"
             #startValue
             (valueChange)="updateChart({ govPurchases: $event })"
+            (change)="messageBuilder('I S')"
+
           ></econ-slider>
           <econ-slider
             label="LM curve shift"
@@ -356,6 +373,8 @@
             [value]="slider.value.money!"
             #startValue
             (valueChange)="updateChart({ money: $event })"
+            (change)="messageBuilder('L M')"
+
           ></econ-slider>
           <econ-slider
             label="FE curve shift"
@@ -367,6 +386,7 @@
             [value]="slider.value.supplyShock!"
             #startValue
             (valueChange)="updateChart({ supplyShock: $event })"
+            (change)="messageBuilder('F E')"
           ></econ-slider>
         </div>
         <div>
