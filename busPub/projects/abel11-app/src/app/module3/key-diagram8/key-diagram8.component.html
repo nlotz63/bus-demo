@@ -20,7 +20,7 @@
             In the long run, firms produce the amount of output that maximizes their profits, which is the full-employment level of output.
           </li>
           <li>
-            So, the long-run aggregate-supply curve, LRAS, is vertical.
+            So, the long-run aggregate supply curve (LRAS) is vertical.
           </li>
           <li>
             The economy is in general equilibrium at the intersection of all three curves.
@@ -53,6 +53,7 @@
             step="10"
             [value]="slider.value.wealth!"
             (valueChange)="updateChart({ wealth: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Expected future output"
@@ -63,6 +64,7 @@
             step="10"
             [value]="slider.value.expectedOutput!"
             (valueChange)="updateChart({ expectedOutput: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Government purchases"
@@ -73,8 +75,8 @@
             step="10"
             [showPercent]="true"
             [value]="slider.value.govPurchases!"
-            #startValue
             (valueChange)="updateChart({ govPurchases: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Taxes"
@@ -85,8 +87,8 @@
             step="10"
             [showPercent]="true"
             [value]="slider.value.taxes!"
-            #startValue
             (valueChange)="updateChart({ taxes: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
         </div>
         <div>
@@ -128,8 +130,8 @@
             step="1"
             [showPercent]="true"
             [value]="slider.value.expectedTFP!"
-            #startValue
             (valueChange)="updateChart({ expectedTFP: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Effective tax rate on capital"
@@ -140,8 +142,8 @@
             step=".0025"
             [showPercent]="true"
             [value]="slider.value.effTax!"
-            #startValue
             (valueChange)="updateChart({ effTax: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
         </div>
         <div>
@@ -186,8 +188,8 @@
             [max]="325000"
             step="100"
             [value]="slider.value.money!"
-            #startValue
             (valueChange)="updateChart({ money: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Expected inflation"
@@ -198,6 +200,7 @@
             step="0.0025"
             [value]="slider.value.expectedInflation!"
             (valueChange)="updateChart({ expectedInflation: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
           <econ-slider
             label="Nominal rate on money"
@@ -208,6 +211,7 @@
             step="0.0025"
             [value]="slider.value.nominalRate!"
             (valueChange)="updateChart({ nominalRate: $event })"
+            (change)="messageBuilder('A D')"
           ></econ-slider>
         </div>
         <div>
@@ -250,8 +254,8 @@
             [max]="150"
             step="1"
             [value]="slider.value.expectedPrice!"
-            #startValue
             (valueChange)="updateChart({ expectedPrice: $event })"
+            (change)="messageBuilder('S R A S')"
           ></econ-slider>
         </div>
         <div>
@@ -296,8 +300,8 @@
             [max]="400"
             step="10"
             [value]="slider.value.supplyShock!"
-            #startValue
             (valueChange)="updateChart({ supplyShock: $event })"
+            (change)="messageBuilder('L R A S')"
           ></econ-slider>
           <econ-slider
             label="Labor supply"
@@ -307,8 +311,8 @@
             [max]="400"
             step="1"
             [value]="slider.value.laborSupply!"
-            #startValue
             (valueChange)="updateChart({ laborSupply: $event })"
+            (change)="messageBuilder('L R A S')"
           ></econ-slider>
           <econ-slider
             label="Capital stock"
@@ -318,8 +322,8 @@
             [max]="400"
             step="1"
             [value]="slider.value.capitalStock!"
-            #startValue
             (valueChange)="updateChart({ capitalStock: $event })"
+            (change)="messageBuilder('L R A S')"
           ></econ-slider>
         </div>
         <div>

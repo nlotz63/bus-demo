@@ -8,6 +8,7 @@ import { transition, trigger, style, animate } from '@angular/animations';
 
 
 import * as Highcharts from 'highcharts';
+import HC_sonify from 'highcharts/modules/sonification';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
@@ -16,6 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
+HC_sonify(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
@@ -43,6 +45,8 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
   showPlayer: boolean = false;
   shortRunEquilibrium = 4000;
   longRunEquilibrium = 4000;
+  prevEQ = 4000;
+  prevFE = 4000;
 
   slider = new FormGroup({
     expectedOutput: new FormControl(75),
@@ -107,7 +111,6 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         }
       }
     );
-    this.announcer.announce(`The graph has been updated`);
   }
 
   public playStep(mode: number) {
@@ -130,14 +133,59 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
       laborSupply: 0,
       capitalStock: 0
     });
+    this.prevEQ = 4000;
+    this.prevFE = 4000;
+
     this._snackBar.dismiss();
     this._setupChart();
     this.announcer.announce(`Step ${mode + 1} has loaded.`);
   }
 
+  public messageBuilder(sliderType: string) {
+    let series = this._createSeries(false);
+    let currentValue = sliderType === 'L R A S' ? series.FE[0].x : series.EQ[1].x,
+      prevValue = sliderType === 'L R A S' ? this.prevFE : this.prevEQ;
+    let direction: string, direction2: string = ``;
+
+    if (sliderType === 'S R A S') {
+      direction = prevValue < currentValue ? 'down and to the right' : 'up and to the left';
+    } else {
+      direction = prevValue < currentValue ? 'up and to the right' : 'down and to the left';
+      direction2 = prevValue < currentValue ? 'right' : 'left';
+    }
+    let message = ``;
+
+    if (sliderType !== 'LR' && sliderType !== 'L R A S') {
+      message = `The ${sliderType} curve has shifted ${direction}.`;
+      this.announcer.announce(message);
+
+    } else if (sliderType !== 'LR' && sliderType === 'L R A S') {
+      message = `The ${sliderType} curve has shifted ${direction2}, and the S R A S curve has also shifted to the ${direction2} but by a smaller amount.`;
+      this.announcer.announce(message);
+
+    } else {
+      if (this.shortRunEquilibrium > this.longRunEquilibrium + 0.5) {
+        message = `To restore long-run equilibrium, the expected price level will rise, shifting the SRAS curve up and to the left.`;
+      } else if (this.shortRunEquilibrium < this.longRunEquilibrium - 0.5) {
+        message = `To restore long-run equilibrium, the expected price level will fall, shifting the SRAS curve down and to the right.`;
+      } else {
+        message = `The economy is in long-rung equilibrium`;
+      }
+      this._snackBar.open(message, 'Close', { panelClass: 'econ-message', horizontalPosition: 'left', verticalPosition: 'top' });
+    }
+
+    if (sliderType === 'L R A S') {
+      this.prevFE = currentValue;
+    } else {
+      this.prevEQ = currentValue;
+    }
+
+  }
+
+
   public restoreEquilibrium() {
     let newPrice: number;
-    this._messageBuilder();
+    this.messageBuilder('LR');
     const subscription = this.playInterval.subscribe(() => {
       let series = this._createSeries(false);
       let difference = series.EQ[0].y - this.slider.value.expectedPrice!;
@@ -159,7 +207,7 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         } else {
           newPrice = this.slider.value.expectedPrice! - .253;
         }
-      } else if (Math.abs(difference) >= .01 && Math.abs(difference) <.25) {
+      } else if (Math.abs(difference) >= .01 && Math.abs(difference) < .25) {
         if (difference > 0) {
           newPrice = this.slider.value.expectedPrice! + .02;
         } else {
@@ -191,10 +239,18 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
       },
       title: { text: 'AD/AS Model: Misperceptions version' },
       legend: { enabled: false },
-      tooltip: { enabled: false },
+      tooltip: { enabled: true },
+      sonification: {
+        duration: 20000
+      },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `Output, Y: {point.x:.0f} billion dollars, Price level: {point.y:.2f}.`
+        }
+      },
       series: [
         {
-          type: 'line',
+          type: 'spline',
           name: 'AD',
           zIndex: 1,
           animation: false,
@@ -210,7 +266,7 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
           animation: false,
           data: series.SRAS,
           accessibility: {
-            description: `A horizontal straight line.`
+            description: `An upward-sloping straight line.`
           }
         },
         {
@@ -226,7 +282,7 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Eqilibrium',
+          name: 'Equilibrium',
           color: 'black',
           dashStyle: 'Dot',
           lineWidth: 1,
@@ -235,7 +291,7 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
           animation: false,
           data: series.EQ,
           accessibility: {
-            description: `Long-run: Y = $${series.EQ[1].x.toFixed(0)} P = ${series.EQ[0].y.toFixed(0)}`
+            description: `Long-run: Y = $${series.EQ[1].x.toFixed(0)} Price level = ${series.EQ[0].y.toFixed(0)}`
           },
           label: {
             useHTML: true,
@@ -248,9 +304,9 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
           }
         },
         {
-          type: 'line',
+          type: 'spline',
           name: 'Initial AD',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -262,7 +318,7 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Initial SRAS',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -274,7 +330,7 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Initial LRAS',
-          dashStyle: 'Dash',
+          dashStyle: 'LongDash',
           color: 'rgba(93, 93, 93, 1)',
           lineWidth: 1,
           zIndex: -1,
@@ -328,7 +384,12 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
-            pointFormat: 'Output: ${point.x:.0f} billion<br/>Price level: {point.y:.1f}'
+            pointFormat: 'Output, Y: ${point.x:.0f} billion<br/>Price level: {point.y:.1f}'
+          },
+          marker: {
+            enabled: false,
+            symbol: 'circle',
+            radius: 2
           }
         }
       }
@@ -379,8 +440,8 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         y: ad(x)
       };
       adSeries.push(point);
-      x = x + 25;
-    } while (x < 6500);
+      x = x + 250;
+    } while (x <= 6500);
     x = 2250;
     do {
       let point2 = {
@@ -388,12 +449,13 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
         y: sras(x)
       }
       srasSeries.push(point2);
-      x = x + 25;
-    } while (x < 6250);
+      x = x + 250;
+    } while (x <= 6250);
 
 
     // equilibrium series
     eqSeries = [
+      { x: 2000, y: ad(eq), marker: { enabled: false, radius: 0 }, accessibility: { enabled: false } },
       {
         name: 'Equilibrium',
         x: eq,
@@ -408,12 +470,12 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
           symbol: 'circle'
         },
       },
-      { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
+      { x: eq, y: 0, marker: { enabled: false, radius: 0 }, accessibility: { enabled: false } }
     ];
 
     feSeries = [
-      { x: ybar, y: 0, marker: { enabled: false, radius: 0 } },
-      { x: ybar, y: 250, marker: { enabled: false, radius: 0 } },
+      { x: ybar, y: 0, marker: { enabled: false, radius: 1 } },
+      { x: ybar, y: 250, marker: { enabled: false, radius: 1 } },
     ];
 
     this.shortRunEquilibrium = eq;
@@ -424,17 +486,21 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
       srasRef = srasSeries;
       feRef = feSeries;
       eqRef = [
+        { x: 2000, y: ad(eq), marker: { enabled: false, radius: 0 }, accessibility: { enabled: false } },
         {
           name: 'Equilibrium',
           x: eq,
           y: ad(eq),
-          color: 'rgba(93, 93, 93, 1)',
           marker: {
             symbol: 'circle',
-            enabled: true
+            enabled: true,
+            fillColor: 'rgb(225, 225, 225)',
+            lineColor: 'black',
+            lineWidth: 1,
+            radius: 3
           }
         },
-        { x: eq, y: 0, marker: { enabled: false, radius: 0 } }
+        { x: eq, y: 0, marker: { enabled: false, radius: 0 }, accessibility: { enabled: false } }
       ];
     }
 
@@ -448,19 +514,6 @@ export class KeyDiagram8Component implements OnInit, AfterViewInit {
       feRef: feRef,
       eqRef: eqRef
     }
-
-  }
-
-  private _messageBuilder() {
-    let message = ``;
-    if (this.shortRunEquilibrium > this.longRunEquilibrium + 0.5) {
-      message = `To restore long-run equilibrium, the expected price level will rise, shifting the SRAS curve up and to the left.`;
-    } else if (this.shortRunEquilibrium < this.longRunEquilibrium - 0.5) {
-      message = `To restore long-run equilibrium, the expected price level will fall, shifting the SRAS curve down and to the right.`;
-    } else {
-      message = `The economy is in long-rung equilibrium`;
-    }
-    this._snackBar.open(message, 'Close', { panelClass: 'econ-message', horizontalPosition: 'left', verticalPosition: 'top' });
 
   }
 
