@@ -4,11 +4,18 @@ import * as Highcharts from 'highcharts/highstock';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_seriesLabel from 'highcharts/modules/series-label';
+import HC_export from 'highcharts/modules/exporting';
+import HC_data from 'highcharts/modules/export-data';
+import HC_sonify from 'highcharts/modules/sonification';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
-HC_accessibility(Highcharts);
+HC_export(Highcharts);
+HC_data(Highcharts);
+HC_sonify(Highcharts);
 HC_annotate(Highcharts);
 HC_seriesLabel(Highcharts);
+HC_accessibility(Highcharts);
+
 
 @Component({
   selector: 'app-production-function',
@@ -24,6 +31,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   A = 25.99;
   alpha = 0.3;
   slope = 2.138079871234851;
+  currentValue!: number;
   prevN!: number;
   prevK!: number;
   prevA = this.A;
@@ -188,6 +196,9 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
       },
       title: {text: 'Production Function'},
       legend: { enabled: false },
+      sonification: {
+        duration: 10000
+      },
       accessibility: {
         point: {
           valueDescriptionFormat: `${this.config[this.mode].xTitle} equals {point.x:.1f}. ${this.config[this.mode].yTitle} equals {point.y:.0f}`
@@ -286,6 +297,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   }
   public plotTangent(tanX1: any, addSeries?: boolean) {
     tanX1 = typeof tanX1 === 'object' ? Number(tanX1.target.value) : tanX1;
+    this.currentValue = tanX1;
     let tanValues = this.config[this.mode].plotLabor ? this._computePF( this.A, this.K, tanX1 ) : this._computePF(this.A, tanX1, this.N);
     let deltaX = this.mode === 1 ? 2000 : 20;
     let xLabel = this.config[this.mode].plotLabor ? 'Labor' : 'Captial', mpLabel = this.config[this.mode].plotLabor ? 'MPL' : 'MPK', xUnit = this.config[this.mode].plotLabor ? 'million workers' : 'billions';
@@ -365,7 +377,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   }
 
   public plotDimMarginal(centerPoint: any, addSeries?: boolean) {
-    centerPoint =  typeof centerPoint === 'object' ? Number(centerPoint.target.value) : centerPoint;
+    centerPoint = typeof centerPoint === 'object' ? Number(centerPoint.target.value) : centerPoint;
+    this.currentValue = centerPoint;
     let lowerX = centerPoint - 1000, upperX = centerPoint + 1000,
       centerY = this._computePF(this.A, centerPoint, this.N)[0], lowerY = this._computePF(this.A, lowerX, this.N)[0], upperY = this._computePF(this.A, upperX, this.N)[0];
 
@@ -519,6 +532,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   }
   public shiftPf(A: any, reference?: boolean) {
     A = typeof A === 'object' ? Number(A.target.value) : A;
+    this.currentValue = A;
     let x = 0;
     let max = this.config[this.mode].plotLabor ? this.N + 1 : this.K, step = max / 100;
     this.seriesData = [];
@@ -573,8 +587,10 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
     return [productionFunction, marginalProduct];
   }
 
-  public messageBuilder(value: any) {
+  public messageBuilder() {
     let message: string = ``;
+    let value = this.currentValue;
+
 
     switch (this.mode) {
       case 0:
@@ -614,19 +630,7 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
         break;
     }
 
-    let counter = (count: number) => {
-      count = count + 1;
-      if (count === 3) {
-        this.count = 0;
-        return true;
-      } else {
-        this.count = count;
-        return false;
-      }
-
-    }
-    let announce: boolean = counter(this.count);
-    if (announce) this.announcer.announce(message);
+    this.announcer.announce(message);
 
 
   }
