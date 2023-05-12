@@ -1,6 +1,6 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
-import * as Highcharts from 'highcharts/highstock';
+import * as Highcharts from 'highcharts';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_seriesLabel from 'highcharts/modules/series-label';
@@ -559,7 +559,10 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
         visible: false,
         color: 'grey',
         dashStyle: 'Dash',
-        data: referenceSeries
+        data: referenceSeries,
+        label: {
+          enabled: false
+        }
       });
       this.chart.series[0].update({
         type: 'spline',
