@@ -10,9 +10,11 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
+import HC_sonify from 'highcharts/modules/sonification';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
+HC_sonify(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
@@ -39,6 +41,10 @@ HC_accessibility(Highcharts);
 export class KeyDiagram3Component implements OnInit, AfterViewInit {
   mode: number = 0;
   showPlayer: boolean = false;
+  currentEQ = 1021;
+  currentRate = 0.61;
+  prevEQ = 1021;
+  preRate = 0.61;
 
   // create form controls for sliders
 
@@ -74,6 +80,9 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
     },
     title: { text: 'Saving-Investment Model' },
     legend: { enabled: false },
+    sonification: {
+      duration: 10000
+    },
     accessibility: {
       point: {
         valueDescriptionFormat: `quantity {point.x:.0f} billion dollars, real interest rate: {point.y:.2f} percent.`
@@ -150,13 +159,57 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
       taxes: 0,
       ricardian: false
     });
-
+    this.preRate = 0.61;
+    this.prevEQ = 1021;
     this._setupChart(true);
     this.announcer.announce(`Step ${this.mode + 1} has loaded or been reset.`)
   }
 
-  public messageBuilder(slider: string, startValue: any) {
-    console.log(startValue);
+  public messageBuilder() {
+    let message = ``;
+    console.log(this.preRate, this.currentRate);
+    switch (this.mode) {
+      case 0:
+        if (this.preRate < this.currentRate) {
+          message = `The point moved up along the saving curve.`;
+        } else {
+          message = `The point moved down along the saving curve.`;
+        }
+        break;
+      case 1:
+        if (this.preRate < this.currentRate) {
+          message = `The point moved up along the investment curve.`;
+        } else {
+          message = `The point moved down along the investment curve.`;
+        }
+        break;
+      case 2:
+        if (0.61 < this.currentRate) {
+          message = `The quantity of saving supplied is greater than the quantity of investment demanded.`;
+        } else if (0.61 > this.currentRate) {
+          message = `The quantity of saving supplied is less than the quantity of investment demanded.`;
+        } else {
+          message = `The quantity of saving supplied is equal to the quantity of investment demanded. The market is in equilibrium.`;
+        }
+        break;
+      case 5:
+        if (this.prevEQ < this.currentEQ) {
+          message = `The investment curve has shifted to the right.`;
+        } else {
+          message = `The investment curve has shifted to the left.`;
+        }
+        break;
+      default:
+        if (this.prevEQ < this.currentEQ) {
+          message = `The saving curve has shifted to the right.`;
+        } else {
+          message = `The saving curve has shifted to the left.`;
+        }
+        break;
+    }
+    this.preRate = this.currentRate;
+    this.prevEQ = this.currentEQ;
+    this.announcer.announce(message);
   }
 
   //Private methods
@@ -173,6 +226,9 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           zIndex: 1,
           animation: false,
           data: series.seriesSaving,
+          accessibility: {
+            description: `An upward-sloping, slightly convex, curve.`
+          }
         });
         this.chart.addSeries({
           type: 'line',
@@ -199,7 +255,10 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: 'Investment',
           zIndex: 1,
           animation: false,
-          data: series.seriesInvestment
+          data: series.seriesInvestment,
+          accessibility: {
+            description: `A downward-sloping, slightly convex, curve.`
+          }
         });
         this.chart.addSeries({
           type: 'line',
@@ -222,15 +281,20 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: 'Saving',
           zIndex: 1,
           animation: false,
-          data: series.seriesSaving
-
+          data: series.seriesSaving,
+          accessibility: {
+            description: `An upward-sloping, slightly convex, curve.`
+          }
         });
         this.chart.addSeries({
           type: 'spline',
           name: 'Investment',
           zIndex: 1,
           animation: false,
-          data: series.seriesInvestment
+          data: series.seriesInvestment,
+          accessibility: {
+            description: `A downward-sloping, slightly convex, curve.`
+          }
 
         });
         this.chart.addSeries({
@@ -255,7 +319,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           zIndex: 2,
           animation: false,
           data: series.qSaving,
-          label: {enabled: false}
+          label: { enabled: false }
         });
         this.chart.addSeries({
           type: 'line',
@@ -266,7 +330,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           zIndex: 2,
           animation: false,
           data: series.qInvestment,
-          label: {enabled: false}
+          label: { enabled: false }
         });
         this.chart.addSeries({
           type: 'line',
@@ -277,7 +341,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           zIndex: 2,
           animation: false,
           data: series.eqRef,
-          label: {enabled: false}
+          label: { enabled: false }
         });
         break;
 
@@ -287,16 +351,20 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           name: 'Saving',
           zIndex: 1,
           animation: false,
-          data: series.seriesSaving
-
+          data: series.seriesSaving,
+          accessibility: {
+            description: `An upward-sloping, slightly convex, curve.`
+          }
         });
         this.chart.addSeries({
           type: 'spline',
           name: 'Investment',
           zIndex: 1,
           animation: false,
-          data: series.seriesInvestment
-
+          data: series.seriesInvestment,
+          accessibility: {
+            description: `A downward-sloping, slightly convex, curve.`
+          }
         });
         this.chart.addSeries({
           type: 'line',
@@ -334,7 +402,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           zIndex: 1,
           animation: false,
           data: series.savingRef,
-          label: {enabled: false},
+          label: { enabled: false },
           visible: false
         });
         this.chart.addSeries({
@@ -346,7 +414,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
           zIndex: 1,
           animation: false,
           data: series.investmentRef,
-          label: {enabled: false},
+          label: { enabled: false },
           visible: false
         });
         break;
@@ -456,44 +524,46 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
         y: rRate,
         marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'orange', lineColor: 'black', lineWidth: 1 }
       },
-      { x: inverseSaving(rRate), y: - 3, accessibility: {enabled: false}}
+      { x: inverseSaving(rRate), y: - 3, accessibility: { enabled: false } }
     ];
     qInvestment = [
-      { x: 0, y: rRate, accessibility: {enabled: false} },
+      { x: 0, y: rRate, accessibility: { enabled: false } },
       {
         name: 'investment supplied',
         x: inverseInvestment(rRate),
         y: rRate,
         marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'orange', lineColor: 'black', lineWidth: 1 }
       },
-      { x: inverseInvestment(rRate), y: -3, accessibility: {enabled: false} }
+      { x: inverseInvestment(rRate), y: -3, accessibility: { enabled: false } }
     ];
     eq = [
-      { x: 0, y: investmentCurve(_findEq()), accessibility: {enabled: false} },
+      { x: 0, y: investmentCurve(_findEq()), accessibility: { enabled: false } },
       {
         name: 'Equilibrium',
         x: _findEq(),
         y: investmentCurve(_findEq()),
         marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'orange', lineColor: 'black', lineWidth: 1 }
       },
-      { x: _findEq(), y: -3, accessibility: {enabled: false} }
+      { x: _findEq(), y: -3, accessibility: { enabled: false } }
     ];
     //reference series
     if (addRef) {
       eqRef = [
-        { x: 0, y: investmentCurve(_findEq()), accessibility: {enabled: false} },
+        { x: 0, y: investmentCurve(_findEq()), accessibility: { enabled: false } },
         {
           name: 'Equilibrium',
           x: _findEq(),
           y: investmentCurve(_findEq()),
           marker: { enabled: true, symbol: 'circle', radius: 4, fillColor: 'lightgrey', lineColor: 'black', lineWidth: 1 },
         },
-        { x: _findEq(), y: -3, accessibility: {enabled: false} }
+        { x: _findEq(), y: -3, accessibility: { enabled: false } }
       ];
       savingRef = saving;
       investmentRef = investment;
 
     }
+    this.currentEQ = eq[1].x;
+    this.currentRate = rRate;
 
     return {
       seriesSaving: saving,
