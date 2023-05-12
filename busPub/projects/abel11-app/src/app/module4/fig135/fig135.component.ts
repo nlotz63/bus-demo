@@ -6,6 +6,7 @@ import { transition, trigger, style, animate } from '@angular/animations';
 
 
 import * as Highcharts from 'highcharts';
+import HC_sonify from 'highcharts/modules/sonification';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
@@ -15,6 +16,7 @@ import HC_data from 'highcharts/modules/export-data';
 HC_annotate(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
+HC_sonify(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
@@ -44,6 +46,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
   SminusDref!: any[];
   NXref!: any[];
   eqRef!: any[];
+  prevEQ = 586;
 
 
   slider = new FormGroup({
@@ -78,6 +81,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
       rf: 1.1351,
       nx0: 250
     });
+    this.prevEQ = 586;
     this._setupChart(true);
     this.announcer.announce('The interactive has been reset');
   }
@@ -110,7 +114,18 @@ export class Fig135Component implements OnInit, AfterViewInit {
       },
       true
     );
-    this.announcer.announce('The graph has been updated.');
+    this.messageBuilder(series.EQ[1].x);
+  }
+
+  public messageBuilder(currentValue: number) {
+    let message = ``;
+    if (this.prevEQ < currentValue) {
+      message = `the net exports (N X) line has shifted to the right.`;
+    } else {
+      message = `the net exports (N X) line has shifted to the left.`;
+    }
+    this.prevEQ = currentValue;
+    this.announcer.announce(message);
   }
 
   // private methods
@@ -132,15 +147,16 @@ export class Fig135Component implements OnInit, AfterViewInit {
       legend: { enabled: false },
       accessibility: {
         keyboardNavigation: {
-          order: ['series', 'chartMenu'],
           seriesNavigation: {
             rememberPointFocus: true,
           },
-
         },
         point: {
           valueDescriptionFormat: `{point.name} Quantity {point.x:.0f} billion Real interest rate {point.y:.2f}`
         }
+      },
+      sonification: {
+        duration: 7000
       },
       series: [
         {
@@ -152,6 +168,9 @@ export class Fig135Component implements OnInit, AfterViewInit {
           lineWidth: 1,
           animation: false,
           data: series.EQ,
+          accessibility: {
+            description: `A point showing the intersection of the NX line and the S subscript d minus I subscript d curve.`
+          },
           label: {
             enabled: false,
             useHTML: true,
@@ -165,6 +184,9 @@ export class Fig135Component implements OnInit, AfterViewInit {
           zIndex: 0,
           animation: false,
           data: series.SminusD,
+          accessibility: {
+            description: `An upward-sloping convex curve.`
+          },
           label: {
             useHTML: true,
             format: 'S<sup>d</sup> - I<sup>d</sup>'
@@ -176,6 +198,9 @@ export class Fig135Component implements OnInit, AfterViewInit {
           zIndex: 0,
           animation: false,
           data: series.NX,
+          accessibility: {
+            description: `A downward-sloping straight line.`
+          },
           label: {
             useHTML: true,
             format: '<i>NX</i>'
@@ -242,13 +267,17 @@ export class Fig135Component implements OnInit, AfterViewInit {
 
       },
       tooltip: {
-        enabled: false
+        enabled: true
       },
       plotOptions: {
         series: {
           enableMouseTracking: true,
           lineWidth: 2,
-          marker: {enabled: false},
+          marker: {
+            enabled: false,
+            symbol: 'circle',
+            radius: 2
+          },
           color: '#C31229',
           tooltip: {
             headerFormat: '{series.name}<br/>',
@@ -353,7 +382,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
 
     let eqPt = _findEq();
     let eq: any[] = [
-      {name: 'equilibrium x intercept', x: -2000, y: eqPt, marker: {radius: 2}},
+      {name: 'equilibrium x intercept', x: -2000, y: eqPt, marker: {radius: 0}, accessibility: {enabled: false}},
       {
         name: 'Equilibrium',
         x: NXcurve(eqPt),
@@ -372,13 +401,9 @@ export class Fig135Component implements OnInit, AfterViewInit {
         x: NXcurve(eqPt),
         y: -4,
         marker: {
-          enabled: false,
-          fillColor: 'orange',
-          lineColor: 'black',
-          lineWidth: 1,
-          radius: 1,
-          symbol: 'circle'
-        }
+          radius: 0,
+        },
+        accessibility: {enabled: false}
       },
     ];
 
@@ -406,7 +431,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
       this.SminusDref = SminusD;
       this.NXref = NX;
       this.eqRef = [
-        { x: -2000, y: eqPt, marker: { enabled: false, radius: 0 } },
+        { x: -2000, y: eqPt, marker: { radius: 0 }, accessibility: {enabled: false} },
         {
           name: 'Initial equilibrium',
           x: NXcurve(eqPt),
@@ -420,7 +445,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
             symbol: 'circle'
           },
         },
-        {x: NXcurve(eqPt), y: -4, marker: {enabled: false, radius: 0}}
+        {x: NXcurve(eqPt), y: -4, marker: { radius: 0}, accessibility: {enabled: false}}
       ];
 
     }
