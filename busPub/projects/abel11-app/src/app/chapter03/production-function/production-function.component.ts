@@ -1,5 +1,7 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
+import { transition, trigger, style, animate } from '@angular/animations';
+
 import * as Highcharts from 'highcharts';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_annotate from 'highcharts/modules/annotations';
@@ -8,6 +10,9 @@ import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 import HC_sonify from 'highcharts/modules/sonification';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { PlayerComponent } from '../../player/player/player.component';
+import { BusPubLibModule } from 'bus-pub-lib';
+import { NgIf, DecimalPipe, CurrencyPipe } from '@angular/common';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -18,9 +23,23 @@ HC_accessibility(Highcharts);
 
 
 @Component({
-  selector: 'app-production-function',
-  templateUrl: './production-function.component.html',
-  styleUrls: ['./production-function.component.scss']
+    selector: 'app-production-function',
+    templateUrl: './production-function.component.html',
+  styleUrls: ['./production-function.component.scss'],
+  animations: [
+    trigger('myAnimationTrigger', [
+        transition(':enter', [
+            style({ opacity: 0 }),
+            animate('400ms 30ms ease-in', style({ opacity: 1 }))
+        ]),
+        transition(':leave', [
+            animate('0s', style({ opacity: 0 }))
+        ])
+    ])
+],
+
+    standalone: true,
+    imports: [NgIf, BusPubLibModule, PlayerComponent, DecimalPipe, CurrencyPipe]
 })
 export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   chart!: Highcharts.Chart;

@@ -8,8 +8,8 @@ describe('KeyDiagram7Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ KeyDiagram7Component ]
-    })
+    imports: [KeyDiagram7Component]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(KeyDiagram7Component);

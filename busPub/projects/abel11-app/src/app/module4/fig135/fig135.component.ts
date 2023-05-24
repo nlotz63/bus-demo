@@ -12,6 +12,10 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
+import { PlayerComponent } from '../../player/player/player.component';
+import { MatButtonModule } from '@angular/material/button';
+import { BusPubLibModule } from 'bus-pub-lib';
+import { NgIf, PercentPipe, CurrencyPipe } from '@angular/common';
 
 HC_annotate(Highcharts);
 HC_export(Highcharts);
@@ -21,22 +25,29 @@ HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
-  selector: 'app-fig135',
-  templateUrl: './fig135.component.html',
-  styleUrls: ['./fig135.component.scss'],
-  animations: [
-    trigger('myAnimationTrigger', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('400ms 30ms ease-in', style({ opacity: 1 }))
-
-      ]),
-      transition(':leave', [
-        animate('0s', style({ opacity: 0 }))
-      ])
-    ])
-  ],
-
+    selector: 'app-fig135',
+    templateUrl: './fig135.component.html',
+    styleUrls: ['./fig135.component.scss'],
+    animations: [
+        trigger('myAnimationTrigger', [
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate('400ms 30ms ease-in', style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate('0s', style({ opacity: 0 }))
+            ])
+        ])
+    ],
+    standalone: true,
+    imports: [
+        NgIf,
+        BusPubLibModule,
+        MatButtonModule,
+        PlayerComponent,
+        PercentPipe,
+        CurrencyPipe,
+    ],
 })
 export class Fig135Component implements OnInit, AfterViewInit {
 

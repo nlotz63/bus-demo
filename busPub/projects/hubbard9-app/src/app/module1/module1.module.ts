@@ -7,23 +7,20 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { PlayerModule } from '../player/player.module';
+
 import { BusPubLibModule } from 'bus-pub-lib';
 
 
 @NgModule({
-  declarations: [
-    Figure31Component
-  ],
-  imports: [
+    imports: [
     CommonModule,
     Module1RoutingModule,
-    PlayerModule,
     BusPubLibModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatTooltipModule,
-    MatSnackBarModule
-  ]
+    MatSnackBarModule,
+    Figure31Component
+]
 })
 export class Module1Module { }

@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 import { Module2RoutingModule } from './module2-routing.module';
 import { KeyDiagram3Component } from './key-diagram3/key-diagram3.component';
-import { PlayerModule } from '../player/player.module';
+
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -18,16 +18,9 @@ import { MatInputModule } from '@angular/material/input';
 
 
 @NgModule({
-  declarations: [
-    KeyDiagram3Component,
-    KeyDiagram4Component,
-    KeyDiagram5Component,
-    SolowComponent,
-  ],
-  imports: [
+    imports: [
     CommonModule,
     Module2RoutingModule,
-    PlayerModule,
     ReactiveFormsModule,
     MatButtonModule,
     BusPubLibModule,
@@ -35,7 +28,11 @@ import { MatInputModule } from '@angular/material/input';
     MatTooltipModule,
     MatSelectModule,
     MatInputModule,
-    FormsModule
-  ]
+    FormsModule,
+    KeyDiagram3Component,
+    KeyDiagram4Component,
+    KeyDiagram5Component,
+    SolowComponent
+]
 })
 export class Module2Module { }

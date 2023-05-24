@@ -10,6 +10,10 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
+import { PlayerComponent } from '../../player/player/player.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BusPubLibModule } from 'bus-pub-lib';
+import { NgIf, CurrencyPipe } from '@angular/common';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -18,22 +22,22 @@ HC_accessibility(Highcharts);
 
 
 @Component({
-  selector: 'app-key-diagram4',
-  templateUrl: './key-diagram4.component.html',
-  styleUrls: ['./key-diagram4.component.scss'],
-  animations: [
-    trigger('myAnimationTrigger', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('400ms 30ms ease-in', style({ opacity: 1 }))
-
-      ]),
-      transition(':leave', [
-        animate('0s', style({ opacity: 0 }))
-      ])
-    ])
-  ]
-
+    selector: 'app-key-diagram4',
+    templateUrl: './key-diagram4.component.html',
+    styleUrls: ['./key-diagram4.component.scss'],
+    animations: [
+        trigger('myAnimationTrigger', [
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate('400ms 30ms ease-in', style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate('0s', style({ opacity: 0 }))
+            ])
+        ])
+    ],
+    standalone: true,
+    imports: [NgIf, BusPubLibModule, MatTooltipModule, PlayerComponent, CurrencyPipe]
 })
 
 export class KeyDiagram4Component implements OnInit, AfterViewInit {

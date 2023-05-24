@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms'
-import { PlayerModule } from '../player/player.module';
+
 import {MatRadioModule} from '@angular/material/radio';
 
 import { Module4RoutingModule } from './module4-routing.module';
@@ -14,21 +14,17 @@ import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
-  declarations: [
-    Fig134Component,
-    Fig135Component,
-    Fig139Component
-  ],
-  imports: [
+    imports: [
     CommonModule,
     Module4RoutingModule,
     ReactiveFormsModule,
     MatButtonModule,
     BusPubLibModule,
-    PlayerModule,
     MatSelectModule,
     MatRadioModule,
-
-  ]
+    Fig134Component,
+    Fig135Component,
+    Fig139Component,
+]
 })
 export class Module4Module { }

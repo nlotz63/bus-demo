@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { transition, trigger, style, animate } from '@angular/animations';
@@ -10,6 +10,13 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
+import { PlayerComponent } from '../../player/player/player.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgIf } from '@angular/common';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -17,21 +24,32 @@ HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
-  selector: 'app-fig134',
-  templateUrl: './fig134.component.html',
-  styleUrls: ['./fig134.component.scss'],
-  animations: [
-    trigger('myAnimationTrigger', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('400ms 30ms ease-in', style({ opacity: 1 }))
-
-      ]),
-      transition(':leave', [
-        animate('0s', style({ opacity: 0 }))
-      ])
-    ])
-  ],
+    selector: 'app-fig134',
+    templateUrl: './fig134.component.html',
+    styleUrls: ['./fig134.component.scss'],
+    animations: [
+        trigger('myAnimationTrigger', [
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate('400ms 30ms ease-in', style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate('0s', style({ opacity: 0 }))
+            ])
+        ])
+    ],
+    standalone: true,
+    imports: [
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatRadioModule,
+        MatButtonModule,
+        PlayerComponent,
+    ],
 })
 export class Fig134Component implements OnInit, AfterViewInit {
 

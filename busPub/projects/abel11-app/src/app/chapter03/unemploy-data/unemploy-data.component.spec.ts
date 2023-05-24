@@ -8,8 +8,8 @@ describe('UnemployDataComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UnemployDataComponent ]
-    })
+    imports: [UnemployDataComponent]
+})
     .compileComponents();
 
     fixture = TestBed.createComponent(UnemployDataComponent);

@@ -10,6 +10,7 @@ import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 import HC_sonify from 'highcharts/modules/sonification';
+import { BusPubLibModule } from 'bus-pub-lib';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -18,9 +19,11 @@ HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
-  selector: 'app-fig92',
-  templateUrl: './fig92.component.html',
-  styleUrls: ['./fig92.component.scss']
+    selector: 'app-fig92',
+    templateUrl: './fig92.component.html',
+    styleUrls: ['./fig92.component.scss'],
+    standalone: true,
+    imports: [BusPubLibModule]
 })
 export class Fig92Component implements OnInit, AfterViewInit {
 

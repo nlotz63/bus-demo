@@ -13,6 +13,11 @@ import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PlayerComponent } from '../../player/player/player.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { BusPubLibModule } from 'bus-pub-lib';
+import { NgIf } from '@angular/common';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -21,21 +26,22 @@ HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
-  selector: 'app-key-diagram6',
-  templateUrl: './key-diagram6.component.html',
-  styleUrls: ['./key-diagram6.component.scss'],
-  animations: [
-    trigger('myAnimationTrigger', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('400ms 30ms ease-in', style({ opacity: 1 }))
-
-      ]),
-      transition(':leave', [
-        animate('0s', style({ opacity: 0 }))
-      ])
-    ])
-  ]
+    selector: 'app-key-diagram6',
+    templateUrl: './key-diagram6.component.html',
+    styleUrls: ['./key-diagram6.component.scss'],
+    animations: [
+        trigger('myAnimationTrigger', [
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate('400ms 30ms ease-in', style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate('0s', style({ opacity: 0 }))
+            ])
+        ])
+    ],
+    standalone: true,
+    imports: [NgIf, BusPubLibModule, MatButtonModule, MatTooltipModule, PlayerComponent]
 })
 export class KeyDiagram6Component implements OnInit, AfterViewInit {
   mode: number = 0;

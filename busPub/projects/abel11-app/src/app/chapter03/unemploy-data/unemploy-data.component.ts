@@ -6,6 +6,11 @@ import HC_sonify from 'highcharts/modules/sonification';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 import accessibility from 'highcharts/modules/accessibility';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { NgFor } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -13,9 +18,17 @@ HC_sonify(Highcharts);
 accessibility(Highcharts);
 
 @Component({
-  selector: 'app-unemploy-data',
-  templateUrl: './unemploy-data.component.html',
-  styleUrls: ['./unemploy-data.component.scss'],
+    selector: 'app-unemploy-data',
+    templateUrl: './unemploy-data.component.html',
+    styleUrls: ['./unemploy-data.component.scss'],
+    standalone: true,
+    imports: [
+        MatFormFieldModule,
+        MatSelectModule,
+        NgFor,
+        MatOptionModule,
+        MatButtonModule,
+    ],
 })
 export class UnemployDataComponent implements OnInit, AfterViewInit {
   //FRED URL properties

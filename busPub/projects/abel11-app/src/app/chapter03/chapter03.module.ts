@@ -10,25 +10,21 @@ import { Chapter03RoutingModule } from './chapter03-routing.module';
 import { ProductionFunctionComponent } from './production-function/production-function.component';
 import { LaborDemandComponent } from './labor-demand/labor-demand.component';
 import { UnemployDataComponent } from './unemploy-data/unemploy-data.component';
-import { PlayerModule } from '../player/player.module';
+
 
 
 @NgModule({
-  declarations: [
-    ProductionFunctionComponent,
-    LaborDemandComponent,
-    UnemployDataComponent,
-  ],
-  imports: [
+    imports: [
     CommonModule,
     Chapter03RoutingModule,
     BusPubLibModule,
-    PlayerModule,
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
-
-  ]
+    ProductionFunctionComponent,
+    LaborDemandComponent,
+    UnemployDataComponent,
+]
 })
 export class Chapter03Module { }

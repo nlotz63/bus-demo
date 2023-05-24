@@ -4,7 +4,7 @@
 <div class="wrapper">
 <div class="item-narative" >
   <!--Mode 0-->
-  <div *ngIf="mode === 0">
+  <div *ngIf="mode === 0" @myAnimationTrigger>
     <h1>Diminishing Marginal Productivity</h1>
     <ul>
       <li>Point <b>A</b> shows actual U.S. output in 2020.</li>
@@ -55,7 +55,7 @@
     </table>
   </div>
   <!--Mode 1-->
-  <div *ngIf="mode === 1">
+  <div *ngIf="mode === 1" @myAnimationTrigger>
     <h1>Marginal Product of Capital</h1>
     <ul>
       <li>
@@ -90,7 +90,7 @@
     ></econ-slider>
    </div>
   <!--Mode 2-->
-  <div *ngIf="mode === 2">
+  <div *ngIf="mode === 2" @myAnimationTrigger>
     <h1>The Production Function Relating Output and Labor</h1>
     <ul>
       <li>
@@ -125,7 +125,7 @@
     ></econ-slider>
    </div>
   <!--Mode 3-->
-  <div *ngIf="mode === 3">
+  <div *ngIf="mode === 3" @myAnimationTrigger>
     <h1>Adverse Supply Shock</h1>
     <ul>
       <li>

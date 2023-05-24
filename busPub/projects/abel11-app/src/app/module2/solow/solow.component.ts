@@ -12,6 +12,12 @@ import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
 import HC_sonify from 'highcharts/modules/sonification';
+import { PlayerComponent } from '../../player/player/player.component';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { BusPubLibModule } from 'bus-pub-lib';
+import { NgIf, DecimalPipe, PercentPipe } from '@angular/common';
 
 HC_annotate(Highcharts);
 HC_export(Highcharts);
@@ -21,21 +27,22 @@ HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
-  selector: 'app-solow',
-  templateUrl: './solow.component.html',
-  styleUrls: ['./solow.component.scss'],
-  animations: [
-    trigger('myAnimationTrigger', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('400ms 30ms ease-in', style({ opacity: 1 }))
-
-      ]),
-      transition(':leave', [
-        animate('0s', style({ opacity: 0 }))
-      ])
-    ])
-  ]
+    selector: 'app-solow',
+    templateUrl: './solow.component.html',
+    styleUrls: ['./solow.component.scss'],
+    animations: [
+        trigger('myAnimationTrigger', [
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate('400ms 30ms ease-in', style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate('0s', style({ opacity: 0 }))
+            ])
+        ])
+    ],
+    standalone: true,
+    imports: [NgIf, BusPubLibModule, MatFormFieldModule, MatSelectModule, MatOptionModule, PlayerComponent, DecimalPipe, PercentPipe]
 })
 
 export class SolowComponent implements OnInit, AfterViewInit {

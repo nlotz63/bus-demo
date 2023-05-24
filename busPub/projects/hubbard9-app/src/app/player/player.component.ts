@@ -1,9 +1,12 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-player',
-  templateUrl: './player.component.html',
-  styleUrls: ['./player.component.scss']
+    selector: 'app-player',
+    templateUrl: './player.component.html',
+    styleUrls: ['./player.component.scss'],
+    standalone: true,
+    imports: [MatButtonModule]
 })
 export class PlayerComponent implements OnInit {
 

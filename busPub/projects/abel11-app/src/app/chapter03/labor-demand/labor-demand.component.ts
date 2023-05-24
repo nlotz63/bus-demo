@@ -7,27 +7,32 @@ import * as Highcharts from 'highcharts/highstock';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_seriesLabel from 'highcharts/modules/series-label';
+import { PlayerComponent } from '../../player/player/player.component';
+import { MatButtonModule } from '@angular/material/button';
+import { BusPubLibModule } from 'bus-pub-lib';
+import { NgIf } from '@angular/common';
 
 HC_annotate(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
-  selector: 'app-labor-demand',
-  templateUrl: './labor-demand.component.html',
-  styleUrls: ['./labor-demand.component.scss'],
-  animations: [
-    trigger('myAnimationTrigger', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('400ms 30ms ease-in', style({ opacity: 1 }))
-
-      ]),
-      transition(':leave', [
-        animate('0s', style({ opacity: 0 }))
-      ])
-    ])
-  ]
+    selector: 'app-labor-demand',
+    templateUrl: './labor-demand.component.html',
+    styleUrls: ['./labor-demand.component.scss'],
+    animations: [
+        trigger('myAnimationTrigger', [
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate('400ms 30ms ease-in', style({ opacity: 1 }))
+            ]),
+            transition(':leave', [
+                animate('0s', style({ opacity: 0 }))
+            ])
+        ])
+    ],
+    standalone: true,
+    imports: [NgIf, BusPubLibModule, MatButtonModule, PlayerComponent]
 })
 export class LaborDemandComponent implements OnInit, AfterViewInit {
   @Input() mode: any = 0;
