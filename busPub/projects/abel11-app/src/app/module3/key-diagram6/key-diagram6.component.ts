@@ -12,7 +12,7 @@ import HC_sonify from 'highcharts/modules/sonification';
 import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PlayerComponent } from '../../player/player/player.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
@@ -41,7 +41,7 @@ HC_accessibility(Highcharts);
         ])
     ],
     standalone: true,
-    imports: [NgIf, BusPubLibModule, MatButtonModule, MatTooltipModule, PlayerComponent]
+    imports: [NgIf, BusPubLibModule, MatButtonModule, MatTooltipModule, PlayerComponent, MatSnackBarModule]
 })
 export class KeyDiagram6Component implements OnInit, AfterViewInit {
   mode: number = 0;
