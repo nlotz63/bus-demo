@@ -12,7 +12,6 @@ import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerComponent } from '../../player/player.component';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { NgIf, CurrencyPipe } from '@angular/common';
@@ -39,7 +38,7 @@ HC_accessibility(Highcharts);
         ])
     ],
     standalone: true,
-    imports: [NgIf, BusPubLibModule, PlayerComponent, CurrencyPipe]
+    imports: [NgIf, BusPubLibModule, PlayerComponent, CurrencyPipe ]
 })
 
 
@@ -55,7 +54,7 @@ export class Figure31Component implements OnInit, AfterViewInit {
   previousPrice = 175;
   previousQd = 7;
 
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private _snackBar: MatSnackBar) {}
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer ) {}
 
   ngOnInit() {
     this.ActiveRoute.queryParams.subscribe((params) => {
@@ -92,7 +91,6 @@ export class Figure31Component implements OnInit, AfterViewInit {
       annotations: [
         {
           animation: false,
-          labelOptions: { backgroundColor: 'rgba(255,255,255,0.65)', align: align, x: xPos, y: yPos, allowOverlap: false, borderRadius: 8, padding: 4, shadow: true, borderColor: 'rgba(54, 54, 54, 0.8)' },
           labels: [
          { point: {x: qd, y: price, xAxis: 0, yAxis: 0},
               text: `When the price ${direction}s from $${this.previousPrice}</br>to $${price}, the quantity demanded</br> ${direction2}s from ${this.previousQd}M to ${qd}M pairs of</br>shoes per week.`,
@@ -211,7 +209,7 @@ export class Figure31Component implements OnInit, AfterViewInit {
       ],
       annotations: [
         {
-          labelOptions: { backgroundColor: 'rgba(255,255,255,0.65)', align: 'left', x: 25, y: -25, allowOverlap: true, borderRadius: 8, padding: 4, shadow: true, borderColor: 'rgba(54, 54, 54, 0.7)' },
+          labelOptions: { backgroundColor: 'rgba(255,255,255,1)', align: 'left', x: 25, y: -25, allowOverlap: true, borderRadius: 8, padding: 4, shadow: true, borderColor: 'rgba(54, 54, 54, 0.7)' },
           labels: [
          { point: {x: 7, y: 175, xAxis: 0, yAxis: 0},
               text: 'Use the slider to see the relationship between</br>the demand schedule and demand curve.',
