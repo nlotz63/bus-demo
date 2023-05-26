@@ -1,1 +1,175 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use "@angular/material" as mat;
+// Plus imports for other components in your app.
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"');
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+$acemoglu-palette: (
+  50: #ffebee,
+  100: #ffcdd2,
+  200: #ef9a9a,
+  300: #e57373,
+  400: #ef5350,
+  500: #f44336,
+  600: #e53935,
+  700: #d32f2f,
+  800: #c62828,
+  900: #b71c1c,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: rgba(black, 0.87),
+    600: rgba(black, 0.87),
+    700: white,
+    800: white,
+    900: white,
+  ),
+);
+
+@include mat.strong-focus-indicators(
+  (
+    border-style: solid,
+    border-width: 1px,
+    border-radius: 2px,
+  )
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$acemoglu-primary: mat.define-palette($acemoglu-palette, 500);
+$acemoglu-accent: mat.define-palette($acemoglu-palette, 900);
+
+// The warn palette is optional (defaults to red).
+$acemoglu-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$acemoglu-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $acemoglu-primary,
+      accent: $acemoglu-accent,
+      warn: $acemoglu-warn,
+    ),
+  )
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($acemoglu-theme);
+@include mat.strong-focus-indicators-theme($acemoglu-theme);
+
 /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+$my-custom-typography-config: mat.define-typography-config(
+  $headline-1:
+    mat.define-typography-level(24px, 112px, 300, $letter-spacing: -0.05em),
+  $headline-2:
+    mat.define-typography-level(56px, 56px, 400, $letter-spacing: -0.02em),
+  $headline-3:
+    mat.define-typography-level(45px, 48px, 400, $letter-spacing: -0.005em),
+  $headline-4: mat.define-typography-level(34px, 40px, 400),
+  $headline-5: mat.define-typography-level(24px, 62px, 400),
+  $body-1:
+    mat.define-typography-level(
+      1.1rem,
+      $line-height: normal,
+      $font-weight: 300,
+      $font-family: "Roboto"
+    ),
+);
+
+@include mat.typography-hierarchy($my-custom-typography-config);
+
+h1 {
+}
+
+.mat-headline-5 {
+  color: map-get($acemoglu-primary, 800);
+}
+
+.mst-headline-6 {
+  color: map-get($acemoglu-primary, 600);
+}
+
+.econ-interactive-container {
+  max-width: 1000px;
+  //min-height: 550px;
+  background-color: rgb(218, 237, 250);
+  margin-left: 5px;
+  padding: 0.25rem;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  //border-bottom-left-radius: 0px;
+  box-shadow: 2px 4px 4px rgba(211, 211, 211, 0.877);
+}
+
+.econ-control {
+  position: relative;
+  left: 10%;
+}
+.model-container:focus-within {
+  border: solid rgb(4, 123, 156) 2px;
+}
+.model-container {
+  overflow: hidden;
+}
+
+h1 {
+  font-size: large;
+  color: map-get($acemoglu-primary, 300);
+  text-align: center;
+}
+
+h2 {
+  color: map-get($acemoglu-accent, 600);
+  font-size: 18pt;
+  font-weight: 500;
+  margin-left: 5px;
+}
+caption {
+  color: #00245d;
+  font-size: 14pt;
+  font-weight: 600;
+  text-align: left;
+  margin-left: 5px;
+}
+
+.econ-message div.mdc-snackbar__surface {
+  background-color: white;
+  color: black;
+  width: 450px !important;
+}
+
+.econ-message div.mdc-snackbar__label {
+  color: black;
+}
+
+.econ-message button span {
+  color: rgb(4, 123, 156);
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.wrapper {
+  width: 100%;
+}
