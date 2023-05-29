@@ -1,8 +1,7 @@
-import { AfterViewChecked, AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatSliderModule } from '@angular/material/slider';
-import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
 import * as Highcharts from 'highcharts';
@@ -38,10 +37,20 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   mode = 0;
 
+
   config = [{
     title: 'Equilibrium'
   }
   ];
+
+  foods: Food[] = [
+    {value: 'steak-0', viewValue: 'Steak'},
+    {value: 'pizza-1', viewValue: 'Pizza'},
+    {value: 'tacos-2', viewValue: 'Tacos'},
+  ];
+
+  demandShift = 0;
+  supplyShift = 0;
 
   chart!: Highcharts.Chart;
 
@@ -49,24 +58,28 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
 
+
   }
 
   ngAfterViewInit(): void {
+    let series = this._createSeries();
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
         height: 550,
-        styledMode: false
+        styledMode: false,
+        shadow: { color: 'grey', offsetX: 1, offsetY: 1},
+        borderRadius: 5
 
       },
       caption: {
-        text: `The market for oil in equilibrium. The supply and demand curves intersect at the market price of 50 dollars per barrel and quantity of 35 billion barrels per year.`
+        text: `The market for oil in equilibrium. The supply and demand curves intersect at the market-clearing price of $50 per barrel and quantity of 35 billion barrels per year.`
       },
       credits: {
-        text: 'Pearson Education',
+        text: `Pearson Education`,
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
       title: {
-        text: 'The market for oil',
+        text: 'Market for Oil',
         style: {
           fontFamily: 'sans-serif',
           fontWeight: '300',
@@ -76,25 +89,59 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       },
       legend: { enabled: false },
       sonification: {
-        duration: 2000
+        duration: 5000
       },
       accessibility: {
         point: {
-          valueDescriptionFormat: `quantity {point.x:.0f} billion dollars, real interest rate: {point.y:.2f} percent.`
+          valueDescriptionFormat: `quantity {point.x:.0f} billion barrels, price: {point.y:.2f} dollars.`
+        },
+        keyboardNavigation: {
+          order: ['container', 'series', 'chartMenu']
         }
       },
       series: [
         {
           type: 'line',
-          data: [7, 5, 3, 1]
+          name: 'Equilibrium',
+          dashStyle: 'ShortDot',
+          color: 'black',
+          lineWidth: 2,
+          zIndex: 1,
+          data: series.EQ,
+          label: {
+            enabled: false
+          },
+          marker: {
+            fillColor: '#FAF6EE',
+            lineWidth: 1,
+            lineColor: 'black',
+            radius: 4
+          }
+
+      },
+        {
+          type: 'line',
+          name: 'Demand',
+          lineWidth: 2,
+          color: '#0771BD',
+          data: series.demand
+        },
+        {
+          type: 'line',
+          name: 'Supply',
+          lineWidth: 2,
+          color: '#C62828',
+          data: series.supply
         }
+
       ],
       xAxis: {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: 'Desired national saving S<sup>d</sup>, and desired investment, I<sup>d</sup> (billions of dollars)' },
-        min: 0
+        title: { useHTML: true, text: 'Quantity (billions of barrels of oil per year)' },
+        min: 15,
+        max: 55
       },
       yAxis: {
         gridLineWidth: 0,
@@ -102,16 +149,71 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         tickWidth: 1,
-        title: { useHTML: true, text: 'Real interest rate, r' },
+        title: { useHTML: true, text: 'Price per barrel' },
+        min: 10,
+        max: 90
       },
-
+      plotOptions: {
+        series: {
+          marker: { enabled: false, symbol: 'circle', radius: 2 },
+          tooltip: {
+            headerFormat: '',
+            pointFormat: `{point.name} {point.x:.0f} billion<br/>Price: \${point.y:.2f}`
+          }
+        }
+      }
 
     });
 
   }
-  foods: Food[] = [
-    {value: 'steak-0', viewValue: 'Steak'},
-    {value: 'pizza-1', viewValue: 'Pizza'},
-    {value: 'tacos-2', viewValue: 'Tacos'},
-  ];
+
+  private _createSeries() {
+    let x = 18, a = 120, b = 2, c = -13, d = 1.8;
+    let demandSeries = [], supplySeries = [];
+
+    let demand = (x: number): number => {
+      return a - b * x;
+    }
+
+    let supply = (x: number): number => {
+      return c + d * x ;
+    }
+    let qd = (y: number) => { return (a - y) / b; }
+    let qs = (y: number) => { return (y - c) / d; }
+
+    do {
+      let point = {
+        name: 'Quantity demanded:',
+        x: x,
+        y: demand(x)
+      }
+      let point2 = {
+        name: 'Quantity supplied:',
+        x: x,
+        y: supply(x)
+      }
+      demandSeries.push(point);
+      supplySeries.push(point2);
+      x = x + 5;
+
+    } while (x <= 57);
+
+    let eqX = (a - c) / (b + d);
+
+    let eqSeries = [
+      { x: 10, y: demand(eqX), accessibility: { enabled: false }},
+      { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true} },
+      { x: eqX, y: 5, accessibility: { enabled: false } }
+    ];
+    console.log(eqSeries);
+
+    return {
+      demand: demandSeries,
+      supply: supplySeries,
+      EQ: eqSeries
+    }
+
+
+
+  }
 }

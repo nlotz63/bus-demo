@@ -16,12 +16,12 @@ $acemoglu-palette: (
   100: #ffcdd2,
   200: #ef9a9a,
   300: #e57373,
-  400: #ef5350,
-  500: #f44336,
-  600: #e53935,
-  700: #d32f2f,
-  800: #c62828,
-  900: #b71c1c,
+  400: #23B1F7,
+  500: #00A3F5,
+  600: #E26711,
+  700: #0882D1,
+  800: #0771BD,
+  900: #09519B,
   A50: #FDF2E1,
   contrast: (
     50: rgba(black, 0.87),
@@ -48,8 +48,8 @@ $acemoglu-palette: (
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$acemoglu-primary: mat.define-palette($acemoglu-palette, 500);
-$acemoglu-accent: mat.define-palette($acemoglu-palette, 900);
+$acemoglu-primary: mat.define-palette($acemoglu-palette, 800);
+$acemoglu-accent: mat.define-palette($acemoglu-palette, 600);
 
 // The warn palette is optional (defaults to red).
 $acemoglu-warn: mat.define-palette(mat.$red-palette);
@@ -92,6 +92,8 @@ $my-custom-typography-config: mat.define-typography-config(
     mat.define-typography-level(45px, 48px, 400, $letter-spacing: -0.005em),
   $headline-4: mat.define-typography-level(34px, 40px, 400),
   $headline-5: mat.define-typography-level(24px, 30px, 400),
+  $headline-6: mat.define-typography-level(22px, 30px, 500),
+
   $body-1:
     mat.define-typography-level(
       1.1rem,
@@ -106,21 +108,22 @@ $my-custom-typography-config: mat.define-typography-config(
 
 .mat-headline-5 {
 //  color: map-get($acemoglu-primary, contrast);
-  background-color: map-get($acemoglu-primary, 800);
-  color: white;
-  margin: -5px -5px 10px -5px !important;
+  background-color: #0771BD;
+  color:#FAF6EE;
+  margin: -5px -5px 5px -5px !important;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
 
-.mst-headline-6 {
-  color: map-get($acemoglu-primary, 600);
+.mat-headline-6 {
+  color: #525252;
+  font-weight: 300;
 }
 
 .econ-interactive-container {
   max-width: 1000px;
   //min-height: 550px;
-  background-color:map-get($acemoglu-primary, A50);;
+  background-color: #FAF6EE;
   margin: 5px;
   padding: 5px;
   border: 1px solid lightgrey;
@@ -140,12 +143,6 @@ h1 {
   text-align: center;
 }
 
-h2 {
-  color: map-get($acemoglu-accent, 600);
-  font-size: 18pt;
-  font-weight: 500;
-  margin-left: 5px;
-}
 caption {
   color: #00245d;
   font-size: 14pt;
