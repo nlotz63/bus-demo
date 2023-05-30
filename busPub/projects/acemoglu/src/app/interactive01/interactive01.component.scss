@@ -8,11 +8,11 @@
   width: 100%;
 }
 .item-chart {
-  @include flex(5.5 );
+  @include flex(5.5 2 55%);
 }
 
 .item-narrative {
-  @include flex(4.5 );
+  @include flex(4.5 .5 45% );
 }
 
 .econ-narative-block {

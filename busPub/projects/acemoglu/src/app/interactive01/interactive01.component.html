@@ -1,10 +1,50 @@
 <div class="econ-interactive-container">
-  <h1 class="mat-headline-5">{{config[mode].title}}</h1>
+  <h1 class="mat-headline-5">Equilibrium in the Supply/Demand Model</h1>
   <div class="wrapper">
-    <div class="item-narrative">
-      <h2 class="mat-headline-6">Excess Supply</h2>
+    <div class="item-narrative" *ngIf="mode === '0' ">
+      <h2 class="mat-headline-6">Equilibrium and disequilibrium</h2>
+        <ul class="mat-body-1">
+          <li>
+            The competitive equilibrium price is the price at which quantity supplied (q<sup>s</sup>) and quantity demanded (q<sup>d</sup>) are the same (the instersection of the supply and demand curves). This is sometimes referred to as the market clearing price.
+          </li>
+          <li>
+            When the market price is above the competitive equilibrium price, quantity supplied exceeds quantity demanded, creating excess supply.
+          </li>
+          <li>
+            When market price is below the competitive equilibrium price, quantity demanded exceeds quantity supplied, creating excess demand.
+          </li>
+          <li>
+            Use the market price slider to explore various outcomes. All quantities are in billions of barrels per year.
+          </li>
+        </ul>
+      <econ-slider
+      class="econ-control"
+      label="Market price:"
+      showValue="false"
+      min="20"
+      max="75"
+      step=".25"
+      [value]="price()"
+      displayValue="{{price() | currency}}"
+      (valueChange)="price.set($event);updateGraph()"
+      >
+
+      </econ-slider>
+     <div aria-live="polite">
+      <h3 class="mat-subtitle-1">
+        Results
+      </h3>
+        <span [econMath]="equation1()"></span>
+        <span [econMath]="equation2()"></span>
+     </div>
+
+    </div>
+
+    <!-- Mode 1 shifts in supply and demand-->
+    <div class="item-narrative" *ngIf="mode === '1' ">
+      <h2 class="mat-headline-6">Shifts in supply and demand</h2>
       <p class="mat-body-1">
-        This is  test of customized typography in my app.
+        This is  test of customized typography in my app. The mode is {{mode}}
       </p>
 
       <mat-form-field appearance="outline">
@@ -21,6 +61,7 @@
       </econ-slider>
 
     </div>
+
     <div class="item-chart" id="chart1">
 
     </div>

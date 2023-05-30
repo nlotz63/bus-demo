@@ -93,14 +93,23 @@ $my-custom-typography-config: mat.define-typography-config(
   $headline-4: mat.define-typography-level(34px, 40px, 400),
   $headline-5: mat.define-typography-level(24px, 30px, 400),
   $headline-6: mat.define-typography-level(22px, 30px, 500),
+  $subtitle-1: mat.define-typography-level(20px, 22px, 400),
 
   $body-1:
     mat.define-typography-level(
-      1.1rem,
+      1rem,
       $line-height: normal,
       $font-weight: 300,
       $font-family: "Roboto"
     ),
+    $body-2:
+    mat.define-typography-level(
+      .8rem,
+      $line-height: normal,
+      $font-weight: 300,
+      $font-family: "Roboto"
+    ),
+
 );
 
 @include mat.typography-hierarchy($my-custom-typography-config);
@@ -119,6 +128,10 @@ $my-custom-typography-config: mat.define-typography-config(
   color: #525252;
   font-weight: 300;
 }
+.mat-subtitle-1 {
+  color: #525252;
+
+}
 
 .econ-interactive-container {
   max-width: 1000px;
@@ -135,6 +148,8 @@ $my-custom-typography-config: mat.define-typography-config(
 .econ-control {
   position: relative;
   left: 10%;
+  font-size: 1.08rem;
+  font-weight: 400;
 }
 
 h1 {
@@ -184,3 +199,11 @@ caption {
 }
 
  */
+li {
+  margin-bottom: 10px;
+}
+
+ul {
+  padding-left: 30px;
+
+}

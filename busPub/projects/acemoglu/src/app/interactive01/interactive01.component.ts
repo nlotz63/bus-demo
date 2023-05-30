@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatSliderModule } from '@angular/material/slider';
@@ -11,6 +11,7 @@ import HC_sonify from 'highcharts/modules/sonification';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
+import { Route } from '@angular/router';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -33,14 +34,16 @@ interface Food {
   templateUrl: './interactive01.component.html',
   styleUrls: ['./interactive01.component.scss']
 })
+
 export class Interactive01Component implements OnInit, AfterViewInit {
 
-  mode = 0;
+  @Input() mode?: string;
 
 
   config = [{
     title: 'Equilibrium'
-  }
+  },
+    {title: 'Factors that Shift Supply/Dem'}
   ];
 
   foods: Food[] = [
@@ -49,16 +52,44 @@ export class Interactive01Component implements OnInit, AfterViewInit {
     {value: 'tacos-2', viewValue: 'Tacos'},
   ];
 
-  demandShift = 0;
-  supplyShift = 0;
+  demandShift = signal(0);
+  supplyShift = signal(0);
+  price = signal(50);
+  equation1 = computed(() => {
+    if (this.price() > 50) {
+      return `$$ \\text{Excess supply} = q^s - q^d > 0 $$`;
+    } else if (this.price() < 50) {
+      return `$$ \\text{Excess demand} = q^d - q^s > 0 $$`;
+    } else {
+      return `$$ \\text{Equilibrium} = q^s - q^d = 0 $$`;
+
+    }
+
+  });
+  equation2 = computed(() => {
+    let series = this._createSeries();
+    let qd = series.QD, qs = series.QS;
+
+    if (this.price() > 50) {
+      return `$$ \\text{Excess supply} = ${qs.toFixed(2)} - ${qd.toFixed(2)} = ${(qs - qd).toFixed(2)} $$`;
+    } else if (this.price() < 50) {
+      return `$$ \\text{Excess demand} = ${qd.toFixed(2)} - ${qs.toFixed(2)} = ${(qd - qs).toFixed(2)} $$`;
+
+    } else {
+      return `$$ \\text{Equilibrium} = ${qd.toFixed(2)} - ${qs.toFixed(2)} = ${(qd - qs).toFixed(2)} $$`;
+    }
+
+  });
+
+
+
 
   chart!: Highcharts.Chart;
 
   constructor() { }
 
   ngOnInit(): void {
-
-
+    this._createSeries();
   }
 
   ngAfterViewInit(): void {
@@ -68,7 +99,8 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         height: 550,
         styledMode: false,
         shadow: { color: 'grey', offsetX: 1, offsetY: 1},
-        borderRadius: 5
+        borderRadius: 5,
+        animation: false
 
       },
       caption: {
@@ -91,6 +123,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       sonification: {
         duration: 5000
       },
+      tooltip: {useHTML: true},
       accessibility: {
         point: {
           valueDescriptionFormat: `quantity {point.x:.0f} billion barrels, price: {point.y:.2f} dollars.`
@@ -106,7 +139,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
           dashStyle: 'ShortDot',
           color: 'black',
           lineWidth: 2,
-          zIndex: 1,
+          zIndex: 2,
           data: series.EQ,
           label: {
             enabled: false
@@ -117,13 +150,13 @@ export class Interactive01Component implements OnInit, AfterViewInit {
             lineColor: 'black',
             radius: 4
           }
-
       },
         {
           type: 'line',
           name: 'Demand',
           lineWidth: 2,
           color: '#0771BD',
+          zIndex: 0,
           data: series.demand
         },
         {
@@ -131,7 +164,45 @@ export class Interactive01Component implements OnInit, AfterViewInit {
           name: 'Supply',
           lineWidth: 2,
           color: '#C62828',
+          zIndex: 0,
           data: series.supply
+        },
+        {
+          type: 'line',
+          name: 'Q<sub>s</sub>',
+          lineWidth: 2,
+          dashStyle: 'ShortDot',
+          color: 'black',
+          zIndex: 1,
+          data: series.QSseries,
+          label: {
+            enabled: false,
+            useHTML: true
+          },
+          marker: {
+            fillColor: '#FAF6EE',
+            lineWidth: 1,
+            lineColor: 'black',
+            radius: 4
+          }
+        },
+        {
+          type: 'line',
+          name: 'Q<sub>d</sub>',
+          lineWidth: 2,
+          dashStyle: 'ShortDot',
+          color: 'black',
+          zIndex: 1,
+          label: {
+            enabled: false,
+            useHTML: true
+          },
+          marker: {
+            fillColor: '#FAF6EE',
+            lineWidth: 1,
+            lineColor: 'black',
+            radius: 4
+          }
         }
 
       ],
@@ -167,8 +238,31 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   }
 
+  public updateGraph() {
+   let series = this._createSeries();
+    this.chart.series[3].update(
+      {
+        type: 'line',
+        data: series.QSseries,
+        zIndex: this.price() < 50 ? 2 : 1
+
+      }
+    );
+    this.chart.series[4].update(
+      {
+        type: 'line',
+        data: series.QDseries,
+        zIndex: this.price() < 50 ? 1 : 2
+
+      }
+
+    );
+
+
+  }
+
   private _createSeries() {
-    let x = 18, a = 120, b = 2, c = -13, d = 1.8;
+    let x = 18, a = 120 + this.demandShift(), b = 2, c = -13 + this.supplyShift(), d = 1.8;
     let demandSeries = [], supplySeries = [];
 
     let demand = (x: number): number => {
@@ -205,12 +299,26 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true} },
       { x: eqX, y: 5, accessibility: { enabled: false } }
     ];
-    console.log(eqSeries);
+
+    let qsSeries = [
+      { x: 10, y: this.price(), accessibility: {enabled: false} },
+      { name: 'q<sup>s</sup>:', x: qs(this.price()), y: this.price(), marker: {enabled: true} },
+      { x: qs(this.price()), y: 10, accessibility: {enabled: false} }
+    ],
+      qdSeries = [
+        { x: 10, y: this.price(), accessibility: {enabled: false} },
+        { name: 'q<sup>d</sup>:', x: qd(this.price()), y: this.price(), marker: {enabled: true} },
+        { x: qd(this.price()), y: 10, accessibility: {enabled: false} }
+        ];
 
     return {
       demand: demandSeries,
       supply: supplySeries,
-      EQ: eqSeries
+      EQ: eqSeries,
+      QD: qd(this.price()),
+      QS: qs(this.price()),
+      QSseries: qsSeries,
+      QDseries: qdSeries
     }
 
 
