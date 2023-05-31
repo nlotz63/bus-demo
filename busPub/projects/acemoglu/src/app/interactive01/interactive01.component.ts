@@ -30,7 +30,7 @@ interface Food {
 @Component({
   selector: 'app-interactive01',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule, MatSliderModule, MatSelectModule ],
+  imports: [CommonModule, BusPubLibModule, MatSliderModule, MatSelectModule],
   templateUrl: './interactive01.component.html',
   styleUrls: ['./interactive01.component.scss']
 })
@@ -43,13 +43,13 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   config = [{
     title: 'Equilibrium'
   },
-    {title: 'Factors that Shift Supply/Dem'}
+  { title: 'Factors that Shift Supply/Dem' }
   ];
 
   foods: Food[] = [
-    {value: 'steak-0', viewValue: 'Steak'},
-    {value: 'pizza-1', viewValue: 'Pizza'},
-    {value: 'tacos-2', viewValue: 'Tacos'},
+    { value: 'steak-0', viewValue: 'Steak' },
+    { value: 'pizza-1', viewValue: 'Pizza' },
+    { value: 'tacos-2', viewValue: 'Tacos' },
   ];
 
   demandShift = signal(0);
@@ -98,10 +98,9 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       chart: {
         height: 550,
         styledMode: false,
-        shadow: { color: 'grey', offsetX: 1, offsetY: 1},
+        shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
         borderRadius: 5,
-        animation: false
-
+        animation: false,
       },
       caption: {
         text: `The market for oil in equilibrium. The supply and demand curves intersect at the market-clearing price of $50 per barrel and quantity of 35 billion barrels per year.`
@@ -120,10 +119,21 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         }
       },
       legend: { enabled: false },
+      tooltip: { useHTML: true },
       sonification: {
-        duration: 5000
+        duration: 20000,
+        afterSeriesWait: 1000,
+        defaultInstrumentOptions: {
+          instrument: 'piano',
+          mapping: {
+            pitch: {
+              min: 'c2',
+              max: 'c6',
+              scale: Highcharts.sonification.Scales?.majorPentatonic
+            }
+          }
+        },
       },
-      tooltip: {useHTML: true},
       accessibility: {
         point: {
           valueDescriptionFormat: `quantity {point.x:.0f} billion barrels, price: {point.y:.2f} dollars.`
@@ -141,6 +151,20 @@ export class Interactive01Component implements OnInit, AfterViewInit {
           lineWidth: 2,
           zIndex: 2,
           data: series.EQ,
+          sonification: {
+            tracks: [
+              {
+                type: 'speech',
+
+                mapping: {
+                  text: 'equilibrium',
+                }
+              },
+              {
+                type: 'instrument'
+              }
+            ]
+          },
           label: {
             enabled: false
           },
@@ -150,14 +174,28 @@ export class Interactive01Component implements OnInit, AfterViewInit {
             lineColor: 'black',
             radius: 4
           }
-      },
+        },
         {
           type: 'line',
           name: 'Demand',
+          id: 'demand',
           lineWidth: 2,
           color: '#0771BD',
           zIndex: 0,
-          data: series.demand
+          data: series.demand,
+          sonification: {
+            tracks: [
+              {
+                type: 'speech',
+                mapping: {
+                  text: 'demand',
+                }
+              },
+              {
+                type: 'instrument'
+              }
+            ]
+          }
         },
         {
           type: 'line',
@@ -165,12 +203,25 @@ export class Interactive01Component implements OnInit, AfterViewInit {
           lineWidth: 2,
           color: '#C62828',
           zIndex: 0,
-          data: series.supply
+          data: series.supply,
+          sonification: {
+            tracks: [
+              {
+                type: 'speech',
+                mapping: {
+                  text: 'supply'
+                }
+              },
+              {
+                type: 'instrument'
+              }
+            ]
+          }
         },
         {
           type: 'line',
           name: 'Q<sub>s</sub>',
-          lineWidth: 2,
+          lineWidth: 1,
           dashStyle: 'ShortDot',
           color: 'black',
           zIndex: 1,
@@ -189,7 +240,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Q<sub>d</sub>',
-          lineWidth: 2,
+          lineWidth: 1,
           dashStyle: 'ShortDot',
           color: 'black',
           zIndex: 1,
@@ -230,33 +281,185 @@ export class Interactive01Component implements OnInit, AfterViewInit {
           tooltip: {
             headerFormat: '',
             pointFormat: `{point.name} {point.x:.0f} billion<br/>Price: \${point.y:.2f}`
-          }
+          },
         }
-      }
+      },
+      annotations: [
+        {
+          visible: false,
+          shapes: [
+            {
+              stroke: 'black',
+              type: 'path',
+              strokeWidth: 1,
+              points: [
+                {
+                  x: 50,
+                  y: this.price(),
+                  xAxis: 0,
+                  yAxis: 0
+                },
+                {
+                  x: 20,
+                  y: this.price(),
+                  xAxis: 0,
+                  yAxis: 0
+                },
+              ],
+              markerEnd: 'arrow',
 
+            },
+            {
+              stroke: 'black',
+              type: 'path',
+              strokeWidth: 1,
+              points: [
+                {
+                  x: 20,
+                  y: this.price(),
+                  xAxis: 0,
+                  yAxis: 0
+                },
+                {
+                  x: 50,
+                  y: this.price(),
+                  xAxis: 0,
+                  yAxis: 0
+                },
+              ],
+              markerEnd: 'arrow',
+
+            },
+          ],
+          labels: [
+            {
+              point: {
+                x: 35,
+                y: this.price(),
+                xAxis: 0,
+                yAxis: 0
+              },
+              text: this.equation1()
+            }
+          ]
+        }
+      ]
     });
 
+    if (this.mode === '1') {
+      this.chart.series[4].remove();
+      this.chart.series[3].remove();
+      this.chart.update(
+        {
+          sonification: {
+            duration: 6000,
+            afterSeriesWait: 1000
+          }
+        }
+      );
+
+    }
   }
 
   public updateGraph() {
-   let series = this._createSeries();
-    this.chart.series[3].update(
-      {
-        type: 'line',
-        data: series.QSseries,
-        zIndex: this.price() < 50 ? 2 : 1
+    let series = this._createSeries();
 
-      }
-    );
-    this.chart.series[4].update(
-      {
-        type: 'line',
-        data: series.QDseries,
-        zIndex: this.price() < 50 ? 1 : 2
+    switch (this.mode) {
+      case '0':
+        this.chart.series[3].update(
+          {
+            type: 'line',
+            data: series.QSseries,
+            zIndex: this.price() < 50 ? 2 : 1
 
-      }
+          },
+          false
+        );
+        this.chart.series[4].update(
+          {
+            type: 'line',
+            data: series.QDseries,
+            zIndex: this.price() < 50 ? 1 : 2
 
-    );
+          },
+          false
+        );
+        this.chart.update(
+          {
+            annotations: [
+              {
+                visible: this.price() !== 50 ? true : false,
+                draggable: '',
+                shapes: [
+                  {
+                    stroke: 'black',
+                    type: 'path',
+                    strokeWidth: 1,
+                    points: [
+                      {
+                        x: 35,
+                        y: this.price(),
+                        xAxis: 0,
+                        yAxis: 0
+                      },
+                      {
+                        x: this.price() < 50 ? series.QD - .5 : series.QD + .5,
+                        y: this.price(),
+                        xAxis: 0,
+                        yAxis: 0
+                      },
+                    ],
+                    markerEnd: 'arrow',
+
+                  },
+                  {
+                    stroke: 'black',
+                    type: 'path',
+                    strokeWidth: 1,
+                    points: [
+                      {
+                        x: 35,
+                        y: this.price(),
+                        xAxis: 0,
+                        yAxis: 0
+                      },
+                      {
+                        x: this.price() < 50 ? series.QS + .5 : series.QS - .5,
+                        y: this.price(),
+                        xAxis: 0,
+                        yAxis: 0
+                      },
+                    ],
+                    markerEnd: 'arrow',
+                  },
+                ],
+                labels: [
+                  {
+                    point: {
+                      x: 35,
+                      y: this.price(),
+                      xAxis: 0,
+                      yAxis: 0
+                    },
+                    text: this.price() > 50 ? 'Excess supply' : 'Excess demand',
+                    accessibility: {
+                      description: `a horizontal double-arrow line at the market price between the supply and demand curves, indicating excess supply or excess demand.`
+                    }
+                  }
+                ],
+                labelOptions: {
+                  backgroundColor: 'white',
+                },
+              }
+            ]
+          },
+          true
+        );
+        break;
+      default:
+
+        break;
+    }
 
 
   }
@@ -270,7 +473,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
     }
 
     let supply = (x: number): number => {
-      return c + d * x ;
+      return c + d * x;
     }
     let qd = (y: number) => { return (a - y) / b; }
     let qs = (y: number) => { return (y - c) / d; }
@@ -295,21 +498,21 @@ export class Interactive01Component implements OnInit, AfterViewInit {
     let eqX = (a - c) / (b + d);
 
     let eqSeries = [
-      { x: 10, y: demand(eqX), accessibility: { enabled: false }},
-      { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true} },
-      { x: eqX, y: 5, accessibility: { enabled: false } }
+      { x: 0, y: demand(eqX), accessibility: { enabled: false } },
+      { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true }},
+      { x: eqX, y: 9, accessibility: { enabled: false } }
     ];
 
     let qsSeries = [
-      { x: 10, y: this.price(), accessibility: {enabled: false} },
-      { name: 'q<sup>s</sup>:', x: qs(this.price()), y: this.price(), marker: {enabled: true} },
-      { x: qs(this.price()), y: 10, accessibility: {enabled: false} }
+      { x: 10, y: this.price(), accessibility: { enabled: false } },
+      { name: 'q<sup>s</sup>:', x: qs(this.price()), y: this.price(), marker: { enabled: true } },
+      { x: qs(this.price()), y: 10, accessibility: { enabled: false } }
     ],
       qdSeries = [
-        { x: 10, y: this.price(), accessibility: {enabled: false} },
-        { name: 'q<sup>d</sup>:', x: qd(this.price()), y: this.price(), marker: {enabled: true} },
-        { x: qd(this.price()), y: 10, accessibility: {enabled: false} }
-        ];
+        { x: 10, y: this.price(), accessibility: { enabled: false } },
+        { name: 'q<sup>d</sup>:', x: qd(this.price()), y: this.price(), marker: { enabled: true } },
+        { x: qd(this.price()), y: 10, accessibility: { enabled: false } }
+      ];
 
     return {
       demand: demandSeries,
