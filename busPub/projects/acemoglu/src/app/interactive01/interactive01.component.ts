@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, Input, signal, computed } from '@angu
 import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatSliderModule } from '@angular/material/slider';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 import * as Highcharts from 'highcharts';
 import HC_export from 'highcharts/modules/exporting';
@@ -11,7 +11,9 @@ import HC_sonify from 'highcharts/modules/sonification';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
-import { Route } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -20,17 +22,21 @@ HC_annotate(Highcharts);
 HC_labels(Highcharts);
 HC_accessibility(Highcharts);
 
-
-interface Food {
+interface Shifters {
   value: string;
   viewValue: string;
 }
 
+interface ShiftGroup {
+  disabled?: boolean;
+  name: string;
+  shifters: Shifters[];
+}
 
 @Component({
   selector: 'app-interactive01',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule, MatSliderModule, MatSelectModule],
+  imports: [CommonModule, BusPubLibModule, MatSliderModule, MatSelectModule, MatFormFieldModule, MatButtonModule, MatRadioModule],
   templateUrl: './interactive01.component.html',
   styleUrls: ['./interactive01.component.scss']
 })
@@ -46,14 +52,41 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   { title: 'Factors that Shift Supply/Dem' }
   ];
 
-  foods: Food[] = [
-    { value: 'steak-0', viewValue: 'Steak' },
-    { value: 'pizza-1', viewValue: 'Pizza' },
-    { value: 'tacos-2', viewValue: 'Tacos' },
-  ];
+  // Mode 1 props
+  shifterGroups: ShiftGroup[] = [
+    {
+      name: 'Demand curve',
+      shifters: [
+        { value: '0', viewValue: 'Tastes and Preferences' },
+        { value: '1', viewValue: 'Income and wealth' },
+        { value: '2', viewValue: 'Price of a related good' },
+        { value: '3', viewValue: 'Number and scale of buyers' },
+        { value: '4', viewValue: 'Buyers\' beliefs about the future' },
+      ]
+    },
+    {
+      name: 'Supply curve',
+      shifters: [
+        { value: '5', viewValue: 'Prices of inputs used to produce the good' },
+        { value: '6', viewValue: 'Technology used to produce the good' },
+        { value: '7', viewValue: 'Number and scale of sellers' },
+        { value: '8', viewValue: 'Sellers\' beliefs about the future' }
+      ]
+    }
+  ]
 
+  selected: any[] = [];
+  demandLabel: string = '';
+  supplyLabel: string = '';
+  demandShiftValue!: number;
+  supplyShiftValue!: number;
+  radioValue: number = 1;
   demandShift = signal(0);
   supplyShift = signal(0);
+  supplyDirection: number = 1;
+
+
+  // Mode 0 props
   price = signal(50);
   equation1 = computed(() => {
     if (this.price() > 50) {
@@ -80,9 +113,6 @@ export class Interactive01Component implements OnInit, AfterViewInit {
     }
 
   });
-
-
-
 
   chart!: Highcharts.Chart;
 
@@ -155,7 +185,6 @@ export class Interactive01Component implements OnInit, AfterViewInit {
             tracks: [
               {
                 type: 'speech',
-
                 mapping: {
                   text: 'equilibrium',
                 }
@@ -254,8 +283,45 @@ export class Interactive01Component implements OnInit, AfterViewInit {
             lineColor: 'black',
             radius: 4
           }
-        }
+        },
+        // reference curves
+        {
+          type: 'line',
+          name: 'Initial equilibrium',
+          dashStyle: 'ShortDot',
+          lineWidth: 2,
+          zIndex: 1,
+          color: 'rgb(69, 69, 69)',
+          data: series.EQref,
+          label: { enabled: false },
+          marker: {
+            fillColor: 'rgb(235, 235, 235)',
+            lineWidth: 1,
+            lineColor: 'black',
+            radius: 4
+          }
 
+        },
+        {
+          type: 'line',
+          name: 'Initial demand',
+          dashStyle: 'LongDash',
+          lineWidth: 1,
+          zIndex: -1,
+          color: 'rgb(89, 89, 89)',
+          data: series.demand,
+          label: { enabled: false }
+        },
+        {
+          type: 'line',
+          name: 'Initial demand',
+          dashStyle: 'LongDash',
+          lineWidth: 1,
+          zIndex: -1,
+          color: 'rgb(89, 89, 89)',
+          data: series.supply,
+          label: { enabled: false }
+        }
       ],
       xAxis: {
         lineColor: '#757575',
@@ -361,7 +427,52 @@ export class Interactive01Component implements OnInit, AfterViewInit {
     }
   }
 
-  public updateGraph() {
+  public updateUX(event: MatSelectChange) {
+    let valueArray = event.value;
+    valueArray.forEach((el: string) => {
+      let value = Number(el);
+      if (value < 5) {
+        this.demandShiftValue = value;
+        this.shifterGroups[0].disabled = true;
+        this.demandLabel = this.shifterGroups[0].shifters[value].viewValue;
+      } else {
+        this.supplyShiftValue = value;
+        value = value - 5;
+        this.shifterGroups[1].disabled = true;
+        this.supplyLabel = this.shifterGroups[1].shifters[value].viewValue;
+        if (value === 0) { this.supplyDirection = -1; }
+      }
+    });
+  }
+
+  public reset(slidersOnly: boolean) {
+    if (slidersOnly) {
+      this.supplyDirection = 1;
+      this.supplyShift.set(0);
+      this.demandShift.set(0);
+      this.updateGraph();
+    } else {
+      this.selected = [];
+      this.demandLabel = '';
+      this.supplyLabel = '';
+      this.shifterGroups[0].disabled = false;
+      this.shifterGroups[1].disabled = false;
+      this.radioValue = 1;
+      this.supplyDirection = 1;
+      this.supplyShift.set(0);
+      this.demandShift.set(0);
+      this.updateGraph();
+    }
+  }
+
+  public updateGraph(value?: number, curve?: string) {
+    let direction = curve === 'demand' ? Number(this.radioValue) : this.supplyDirection;
+    if (value && curve === 'demand') {
+      this.demandShift.set(direction * value);
+    } else if (value && curve === 'supply') {
+      this.supplyShift.set(direction * value);
+    }
+
     let series = this._createSeries();
 
     switch (this.mode) {
@@ -457,7 +568,22 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         );
         break;
       default:
-
+        this.chart.update({
+          series: [
+            {
+              type: 'line',
+              data: series.EQ
+            },
+            {
+              type: 'line',
+              data: series.demand
+            },
+            {
+              type: 'line',
+              data: series.supply
+            }
+          ]
+        });
         break;
     }
 
@@ -465,7 +591,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   }
 
   private _createSeries() {
-    let x = 18, a = 120 + this.demandShift(), b = 2, c = -13 + this.supplyShift(), d = 1.8;
+    let x = 18, a = 120 + this.demandShift(), b = 2, c = -13 - this.supplyShift(), d = 1.8;
     let demandSeries = [], supplySeries = [];
 
     let demand = (x: number): number => {
@@ -499,9 +625,15 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
     let eqSeries = [
       { x: 0, y: demand(eqX), accessibility: { enabled: false } },
-      { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true }},
+      { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
       { x: eqX, y: 9, accessibility: { enabled: false } }
     ];
+
+    let eqRef = [
+      { x: 0, y: demand(eqX), accessibility: { enabled: false } },
+      { name: 'Initial equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
+      { x: eqX, y: 9, accessibility: { enabled: false } }
+    ]
 
     let qsSeries = [
       { x: 10, y: this.price(), accessibility: { enabled: false } },
@@ -518,6 +650,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       demand: demandSeries,
       supply: supplySeries,
       EQ: eqSeries,
+      EQref: eqRef,
       QD: qd(this.price()),
       QS: qs(this.price()),
       QSseries: qsSeries,
