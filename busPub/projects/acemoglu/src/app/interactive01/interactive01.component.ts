@@ -46,13 +46,6 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   @Input() mode?: string;
 
-
-  config = [{
-    title: 'Equilibrium'
-  },
-  { title: 'Factors that Shift Supply/Dem' }
-  ];
-
   // Mode 1 props
   shifterGroups: ShiftGroup[] = [
     {
@@ -62,16 +55,16 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         { value: '1', viewValue: 'Income and wealth' },
         { value: '2', viewValue: 'Price of a related good' },
         { value: '3', viewValue: 'Number and scale of buyers' },
-        { value: '4', viewValue: 'Buyers\' beliefs about the future' },
+        { value: '4', viewValue: 'Buyers\' beliefs about the future (optimism)' },
       ]
     },
     {
       name: 'Supply curve',
       shifters: [
-        { value: '5', viewValue: 'Prices of inputs used to produce the good' },
-        { value: '6', viewValue: 'Technology used to produce the good' },
+        { value: '5', viewValue: 'Prices of inputs used in production' },
+        { value: '6', viewValue: 'Technology used in production' },
         { value: '7', viewValue: 'Number and scale of sellers' },
-        { value: '8', viewValue: 'Sellers\' beliefs about the future' }
+        { value: '8', viewValue: 'Sellers\' beliefs about the future (optimism)' }
       ]
     }
   ]
