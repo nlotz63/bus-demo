@@ -43,7 +43,7 @@
     </div>
 
     <!-- Mode 1 shifts in supply and demand-->
-    <div class="item-narrative" *ngIf="mode === '1'">
+    <div class="item-narrative" *ngIf="mode === '1'" >
       <h2 class="mat-headline-6">Shifts in supply and demand</h2>
       <ul class="mat-body-1">
         <li>
@@ -103,8 +103,7 @@
             <mat-radio-button value="-1"
               >Inferior good</mat-radio-button
             > </mat-radio-group
-          ><br />
-
+          ><br/>
           <econ-slider
             label="{{ demandLabel }}"
             showValue="false"
@@ -131,13 +130,17 @@
           </econ-slider>
         </div>
       </div>
-      <div class="wrapper econ-button-group">
-        <button mat-raised-button (click)="reset(false)">
-          Reset Interactive
-        </button>
-        <button mat-raised-button (click)="reset(true)">
-          Reset graph only
-        </button>
+      <div class="button-group-wrapper" *ngIf="supplyLabel !== '' || demandLabel !== ''">
+        <div class="button-group-item">
+          <button mat-raised-button (click)="reset(false)">
+            Reset Interactive
+          </button>
+          </div>
+          <div class="button-group-item">
+            <button mat-raised-button (click)="reset(true)">
+              Reset graph only
+            </button>
+              </div>
       </div>
     </div>
     <div class="item-chart" id="chart1"></div>

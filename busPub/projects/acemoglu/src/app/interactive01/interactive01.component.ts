@@ -14,6 +14,7 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -116,7 +117,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   chart!: Highcharts.Chart;
 
-  constructor() { }
+  constructor( private announcer: LiveAnnouncer) { }
 
   ngOnInit(): void {
     this._createSeries();
@@ -202,6 +203,9 @@ export class Interactive01Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             lineColor: 'black',
             radius: 4
+          },
+          accessibility: {
+            description: 'A point at the intersection of the supply and demand curves.'
           }
         },
         {
@@ -224,7 +228,11 @@ export class Interactive01Component implements OnInit, AfterViewInit {
                 type: 'instrument'
               }
             ]
+          },
+          accessibility: {
+            description: 'A straight line that slopes down from left to right.'
           }
+
         },
         {
           type: 'line',
@@ -245,7 +253,11 @@ export class Interactive01Component implements OnInit, AfterViewInit {
                 type: 'instrument'
               }
             ]
+          },
+          accessibility: {
+            description: 'A straight line that slopes up from left to right.'
           }
+
         },
         {
           type: 'line',
@@ -264,6 +276,9 @@ export class Interactive01Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             lineColor: 'black',
             radius: 4
+          },
+          accessibility: {
+            description: 'A point on the supply curve at the current market price.'
           }
         },
         {
@@ -282,46 +297,11 @@ export class Interactive01Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             lineColor: 'black',
             radius: 4
+          },
+          accessibility: {
+            description: 'A point on the demand curve at the current market price.'
           }
         },
-        // reference curves
-        {
-          type: 'line',
-          name: 'Initial equilibrium',
-          dashStyle: 'ShortDot',
-          lineWidth: 2,
-          zIndex: 1,
-          color: 'rgb(69, 69, 69)',
-          data: series.EQref,
-          label: { enabled: false },
-          marker: {
-            fillColor: 'rgb(235, 235, 235)',
-            lineWidth: 1,
-            lineColor: 'black',
-            radius: 4
-          }
-
-        },
-        {
-          type: 'line',
-          name: 'Initial demand',
-          dashStyle: 'LongDash',
-          lineWidth: 1,
-          zIndex: -1,
-          color: 'rgb(89, 89, 89)',
-          data: series.demand,
-          label: { enabled: false }
-        },
-        {
-          type: 'line',
-          name: 'Initial demand',
-          dashStyle: 'LongDash',
-          lineWidth: 1,
-          zIndex: -1,
-          color: 'rgb(89, 89, 89)',
-          data: series.supply,
-          label: { enabled: false }
-        }
       ],
       xAxis: {
         lineColor: '#757575',
@@ -421,28 +401,71 @@ export class Interactive01Component implements OnInit, AfterViewInit {
             duration: 6000,
             afterSeriesWait: 1000
           }
-        }
+        },
+        false
       );
-
+      this.chart.addSeries({
+        type: 'line',
+        name: 'Initial equilibrium',
+        dashStyle: 'ShortDot',
+        lineWidth: 2,
+        zIndex: 1,
+        color: 'rgb(69, 69, 69)',
+        data: series.EQref,
+        label: { enabled: false },
+        marker: {
+          fillColor: 'rgb(235, 235, 235)',
+          lineWidth: 1,
+          lineColor: 'black',
+          radius: 4
+        }
+      }, false);
+      this.chart.addSeries(
+        {
+          type: 'line',
+          name: 'Initial demand',
+          dashStyle: 'LongDash',
+          lineWidth: 1,
+          zIndex: -1,
+          color: 'rgb(89, 89, 89)',
+          data: series.demand,
+          label: { enabled: false }
+        }, false);
+      this.chart.addSeries({
+        type: 'line',
+        name: 'Initial supply',
+        dashStyle: 'LongDash',
+        lineWidth: 1,
+        zIndex: -1,
+        color: 'rgb(89, 89, 89)',
+        data: series.supply,
+        label: { enabled: false }
+      }, true);
     }
   }
 
   public updateUX(event: MatSelectChange) {
-    let valueArray = event.value;
+    let valueArray = event.value, arrLength = valueArray.length;
+    let message = '';
+
     valueArray.forEach((el: string) => {
       let value = Number(el);
       if (value < 5) {
         this.demandShiftValue = value;
         this.shifterGroups[0].disabled = true;
         this.demandLabel = this.shifterGroups[0].shifters[value].viewValue;
+        message = 'Slider added.';
       } else {
         this.supplyShiftValue = value;
         value = value - 5;
         this.shifterGroups[1].disabled = true;
         this.supplyLabel = this.shifterGroups[1].shifters[value].viewValue;
         if (value === 0) { this.supplyDirection = -1; }
+        message = 'Slider added.'
       }
     });
+    if (arrLength < 2) message = 'Slider and reset buttons added.';
+    this.announcer.announce(message);
   }
 
   public reset(slidersOnly: boolean) {
@@ -451,6 +474,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       this.supplyShift.set(0);
       this.demandShift.set(0);
       this.updateGraph();
+      this.announcer.announce('The graph and sliders have been reset.');
     } else {
       this.selected = [];
       this.demandLabel = '';
@@ -462,6 +486,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       this.supplyShift.set(0);
       this.demandShift.set(0);
       this.updateGraph();
+      this.announcer.announce('The interactive has been reset.');
     }
   }
 
@@ -586,7 +611,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         });
         break;
     }
-
+    this.announcer.announce('The graph has been updated.');
 
   }
 
