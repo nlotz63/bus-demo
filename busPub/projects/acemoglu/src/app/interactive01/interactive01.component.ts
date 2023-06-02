@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnInit, Input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
-import { MatSliderModule } from '@angular/material/slider';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 import * as Highcharts from 'highcharts';
@@ -37,7 +36,7 @@ interface ShiftGroup {
 @Component({
   selector: 'app-interactive01',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule, MatSliderModule, MatSelectModule, MatFormFieldModule, MatButtonModule, MatRadioModule],
+  imports: [CommonModule, BusPubLibModule, MatSelectModule, MatFormFieldModule, MatButtonModule, MatRadioModule],
   templateUrl: './interactive01.component.html',
   styleUrls: ['./interactive01.component.scss']
 })
