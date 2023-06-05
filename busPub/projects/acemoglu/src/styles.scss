@@ -18,7 +18,7 @@ $acemoglu-palette: (
   300: #e57373,
   400: #23B1F7,
   500: #00A3F5,
-  600: #E26711,
+  600: #AD0000,
   700: #0882D1,
   800: #0771BD,
   900: #09519B,
@@ -49,10 +49,10 @@ $acemoglu-palette: (
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $acemoglu-primary: mat.define-palette($acemoglu-palette, 800);
-$acemoglu-accent: mat.define-palette($acemoglu-palette, 600);
+$acemoglu-accent: mat.define-palette($acemoglu-palette, 900);
 
 // The warn palette is optional (defaults to red).
-$acemoglu-warn: mat.define-palette(mat.$red-palette);
+$acemoglu-warn: mat.define-palette($acemoglu-palette, 600);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
@@ -102,14 +102,14 @@ $my-custom-typography-config: mat.define-typography-config(
       $font-weight: 300,
       $font-family: "Roboto"
     ),
-    $body-2:
+/*     $body-2:
     mat.define-typography-level(
       1.0rem,
       $line-height: normal,
       $font-weight: 300,
       $font-family: "Roboto"
     ),
-
+ */
 );
 
 @include mat.typography-hierarchy($my-custom-typography-config);
