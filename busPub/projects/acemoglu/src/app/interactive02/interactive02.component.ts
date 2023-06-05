@@ -144,7 +144,8 @@ export class Interactive02Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         title: { useHTML: true, text: `Quantity of ${this.xGood}` },
         min: 0,
-        max: 14
+        max: 14,
+        tickInterval: 2
       },
       yAxis: {
         gridLineWidth: 0,
@@ -154,7 +155,8 @@ export class Interactive02Component implements OnInit, AfterViewInit {
         tickWidth: 1,
         title: { useHTML: true, text: `Quantity of ${this.yGood}` },
         min: 0,
-        max: 20
+        max: 20,
+        tickInterval: 2
       },
       plotOptions: {
         series: {
