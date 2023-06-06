@@ -167,8 +167,6 @@ export class Interactive02Component implements OnInit, AfterViewInit {
           },
         }
       },
-
-
     });
 
   }

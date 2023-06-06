@@ -1,7 +1,29 @@
 <div class="econ-interactive-container">
-  <h1 class="mat-headline-5">Computing Consumer Surplus</h1>
+  <h1 class="mat-headline-5">Consumer Surplus</h1>
   <div class="wrapper">
     <div class="item-narrative">
+      <div class="control-column">
+        <econ-slider
+        label="Initial price"
+        showValue="false"
+        displayValue="{{sliderGroup.value.initialPrice | currency}}"
+        min="25"
+        max="75"
+        step="5"
+        [(value)]="sliderGroup.value.initialPrice!"
+        (valueChange)="updateGraph()"
+        ></econ-slider>
+        <econ-slider
+        label="New price"
+        showValue="false"
+        displayValue="{{sliderGroup.value.newPrice | currency}}"
+        min="25"
+        max="100"
+        step="5"
+        [(value)]="sliderGroup.value.newPrice!"
+        (valueChange)="updateGraph()"
+        ></econ-slider>
+      </div>
 
     </div>
     <div class="item-chart" id="chart1"></div>
