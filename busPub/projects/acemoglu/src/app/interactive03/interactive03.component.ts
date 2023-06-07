@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, signal, computed } from '@angular/cor
 import { CommonModule } from '@angular/common';
 
 import * as Highcharts from 'highcharts';
+import HC_more from 'highcharts/highcharts-more';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/data';
 import HC_sonify from 'highcharts/modules/sonification';
@@ -15,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BusPubLibModule } from 'bus-pub-lib';
 
+HC_more(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
 HC_sonify(Highcharts);
@@ -111,6 +113,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
           type: 'line',
           name: 'D<sub>Market</sub>',
           lineWidth: 2,
+          zIndex: 1,
           color: '#0771BD',
           data: series.demand,
           label: {
@@ -119,19 +122,39 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          dashStyle: 'ShortDot',
-          lineWidth: 1,
+          dashStyle: 'ShortDash',
+          lineWidth: 1.5,
+          zIndex: 2,
           color: 'black',
           data: series.initialPrice,
           label: {enabled: false}
         },
         {
           type: 'line',
-          dashStyle: 'ShortDot',
-          lineWidth: 1,
+          dashStyle: 'ShortDash',
+          lineWidth: 1.5,
+          zIndex: 2,
           color: 'black',
           data: series.newPrice,
           label: {enabled: false}
+        },
+        {
+          type: 'arearange',
+          animation: false,
+          name: 'Consumer Surplus 1',
+          opacity: .5,
+          zIndex: -1,
+          data: series.CS1,
+          label: { enabled: true, format: 'Consumer Suplus', onArea: true}
+        },
+        {
+          type: 'arearange',
+          animation: false,
+          name: 'Consumer Surplus 2',
+          color: 'salmon',
+          opacity: .4,
+          zIndex: -1,
+          data: series.CS2
         }
 
       ],
@@ -168,8 +191,10 @@ export class Interactive03Component implements OnInit, AfterViewInit {
 
   public updateGraph() {
     let series = this._createSeries();
-    this.chart.series[1].setData(series.initialPrice, false);
-    this.chart.series[2].setData(series.newPrice, true);
+    this.chart.series[1].setData(series.initialPrice, false, false);
+    this.chart.series[2].setData(series.newPrice, false, false, false);
+    this.chart.series[3].setData(series.CS1, false, false, false);
+    this.chart.series[4].setData(series.CS2, true, false, false);
 
   }
 
@@ -180,7 +205,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
 
     let f = (x: number) => { return a - b * x; }, inverse = (x: number) => a / b - x / b;
 
-    let demand: any[] = [];
+    let demand: any[] = [], cs1: any[] = [], cs2: any[] = [];
 
     do {
       let point = {
@@ -190,7 +215,41 @@ export class Interactive03Component implements OnInit, AfterViewInit {
       demand.push(point);
       x = x + 10;
 
-    } while (x <= 90)
+    } while (x <= 90);
+
+    // area range series
+
+    cs1 = [
+      {
+        x: 0,
+        low: newP < initP ? initP : newP,
+        high: f(0)
+      },
+      {
+        x: newP < initP ? inverse(initP) : inverse(newP),
+        low: newP < initP ? initP : newP,
+        high: newP < initP ? initP : newP
+      }
+    ]
+
+    cs2 = [
+      {
+        x: 0,
+        low: newP < initP ? newP : initP,
+        high: newP < initP ? initP : newP
+      },
+      {
+        x: newP < initP ? inverse(initP) : inverse(newP),
+        low: newP < initP ? newP : initP,
+        high: newP < initP ? initP : newP
+      },
+      {
+        x: newP < initP ? inverse(newP) : inverse(initP),
+        low: newP < initP ? newP : initP,
+        high: newP < initP ? newP : initP
+      }
+
+    ]
 
     let initPrice = [
       { x: 0, y: initP, accessibility: { enabled: false } },
@@ -226,7 +285,9 @@ export class Interactive03Component implements OnInit, AfterViewInit {
     return {
       demand: demand,
       initialPrice: initPrice,
-      newPrice: newPrice
+      newPrice: newPrice,
+      CS1: cs1,
+      CS2: cs2
     }
 
   }
