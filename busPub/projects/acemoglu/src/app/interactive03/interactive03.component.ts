@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 
 import * as Highcharts from 'highcharts';
 import HC_more from 'highcharts/highcharts-more';
@@ -12,8 +12,6 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import { MatButtonModule } from '@angular/material/button';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { BusPubLibModule } from 'bus-pub-lib';
 
 HC_more(Highcharts);
@@ -27,15 +25,20 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive03',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule, ReactiveFormsModule, ],
+  imports: [CommonModule, BusPubLibModule, ReactiveFormsModule, CurrencyPipe ],
   templateUrl: './interactive03.component.html',
   styleUrls: ['./interactive03.component.scss']
 })
 export class Interactive03Component implements OnInit, AfterViewInit {
 
   chart!: Highcharts.Chart;
-
   xGood: string = 'Jeans';
+  equation1 = ``;
+  equation2 = ``;
+  equation3 = ``;
+  currencyFormat = new CurrencyPipe('en-US');
+  cs0Area = 'A';
+  cs1Area = 'A';
 
   sliderGroup = new FormGroup({
     initialPrice: new FormControl(50),
@@ -47,12 +50,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
   constructor(private announcer: LiveAnnouncer) { }
 
   ngOnInit(): void {
-
-    this.sliderGroup.valueChanges.subscribe((value) => {
-      console.log('value Changes');
-      this.updateGraph();
-
-    });
+    this._createSeries();
 
   }
 
@@ -67,7 +65,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         animation: false,
       },
       caption: {
-        text: `.`
+        text: `The market demand curve for ${this.xGood} with a shaded triangle showing the consumer surplus at the initial price of $50.`
       },
       credits: {
         text: `Pearson Education`,
@@ -83,7 +81,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         }
       },
       legend: { enabled: false },
-      tooltip: { useHTML: true },
+      tooltip: { useHTML: true, enabled: true },
       sonification: {
         duration: 6000,
         afterSeriesWait: 1000,
@@ -117,12 +115,14 @@ export class Interactive03Component implements OnInit, AfterViewInit {
           color: '#0771BD',
           data: series.demand,
           label: {
-            useHTML: true
-          }
+            useHTML: true,
+            enabled: true
+          },
         },
         {
           type: 'line',
           dashStyle: 'ShortDash',
+          name: 'Initial price',
           lineWidth: 1.5,
           zIndex: 2,
           color: 'black',
@@ -131,6 +131,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
+          name: 'New price',
           dashStyle: 'ShortDash',
           lineWidth: 1.5,
           zIndex: 2,
@@ -145,7 +146,6 @@ export class Interactive03Component implements OnInit, AfterViewInit {
           opacity: .5,
           zIndex: -1,
           data: series.CS1,
-          label: { enabled: true, format: 'Consumer Suplus', onArea: true}
         },
         {
           type: 'arearange',
@@ -165,6 +165,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         title: { useHTML: true, text: `Quantity of ` },
         min: 0,
         max: 100,
+        tickInterval: 10
       },
       yAxis: {
         gridLineWidth: 0,
@@ -174,33 +175,97 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         tickWidth: 1,
         title: { useHTML: true, text: `Quantity of ` },
         min: 0,
-        max: 150,
+        max: 140,
+        tickInterval: 10
       },
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
             headerFormat: '<b>{series.name}</b><br/>',
-            pointFormat: `{point.x:.1f} $`
+            pointFormat: `\${point.y:.2f}`
           },
+          label: {enabled: false}
         }
-      }
+      },
+      annotations: [
+        {
+          labelOptions: {
+            borderWidth: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            align: 'center',
+            verticalAlign: 'middle'
+          },
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: 5,
+                y: 50
+              },
+              text: 'Consumer surplus'
+            }
+          ]
+        }
+      ]
     });
 
   }
 
   public updateGraph() {
     let series = this._createSeries();
-    this.chart.series[1].setData(series.initialPrice, false, false);
-    this.chart.series[2].setData(series.newPrice, false, false, false);
-    this.chart.series[3].setData(series.CS1, false, false, false);
-    this.chart.series[4].setData(series.CS2, true, false, false);
+    let slider = this.sliderGroup.value;
+    this.cs1Area = slider.initialPrice! > slider.newPrice! ? 'A + B + C' : 'A';
+    this.cs0Area = slider.initialPrice! > slider.newPrice! ? 'A' : 'A + B + C';
+
+    this.chart.update({
+      series: [
+        {
+          type: 'line',
+          data: series.demand
+        },
+        {
+          type: 'line',
+          data: series.initialPrice
+        },
+        {
+          type: 'line',
+          data: series.newPrice
+        },
+        {
+          type: 'arearange',
+          data: series.CS1
+        },
+        {
+          type: 'arearange',
+          data: series.CS2
+        },
+      ],
+      annotations: [
+        {
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: 5,
+                y: this.sliderGroup.value.newPrice!
+              },
+              text: 'Consumer surplus'
+            }
+          ]
+        }
+      ]
+
+
+    }, true);
 
   }
 
   private _createSeries() {
 
-    let a = 125, b = 1.22, x = 0;
+    let a = 125, b = 1.25, x = 0;
     let initP = this.sliderGroup.value.initialPrice!, newP = this.sliderGroup.value.newPrice!;
 
     let f = (x: number) => { return a - b * x; }, inverse = (x: number) => a / b - x / b;
@@ -280,7 +345,13 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         }
       },
       { x: inverse(newP), y: 0, accessibility: { enabled: false } },
-    ]
+    ];
+    let cs0 = ((f(0) - initP) * inverse(initP)) / 2, csNew = ((f(0) - newP) * inverse(newP)) / 2, csDif = csNew - cs0;
+
+    this.equation1 = `$$ CS_0 = \\frac{(\$${f(0)}- \$${initP}) \\times (${inverse(initP)}-0)} {2} = ${this.currencyFormat.transform(cs0) } $$`;
+    this.equation2 = `$$ CS_1 = \\frac{(\$${f(0)}- \$${newP}) \\times (${inverse(newP)}-0)} {2} = ${ this.currencyFormat.transform(csNew)} $$`;
+    this.equation3 = `$$\\text{Change in consumer surplus} = CS_1 - CS_0 = ${this.currencyFormat.transform(csDif)} $$`;
+
 
     return {
       demand: demand,

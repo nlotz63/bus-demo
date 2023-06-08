@@ -1,9 +1,21 @@
 <div class="econ-interactive-container">
   <h1 class="mat-headline-5">Consumer Surplus</h1>
   <div class="wrapper">
-    <div class="item-narrative">
+    <div class="item-narrative" aria-live="polite">
       <div class="control-column">
+        <ul>
+          <li>
+            Use the sliders to vary the initial price and new price of jeans to practice computing consumer surplus and the change in consumer surplus.
+          </li>
+          <li>
+            Initial consumer surplus (C<sub>0</sub>) is the area {{cs0Area}} in the graph, the new consumer surplus (C<sub>1</sub>) is the area {{cs1Area}} in the graph.
+          </li>
+          <li>
+
+          </li>
+        </ul>
         <econ-slider
+        class="econ-control"
         label="Initial price"
         showValue="false"
         displayValue="{{sliderGroup.value.initialPrice | currency}}"
@@ -14,6 +26,7 @@
         (valueChange)="updateGraph()"
         ></econ-slider>
         <econ-slider
+        class="econ-control"
         label="New price"
         showValue="false"
         displayValue="{{sliderGroup.value.newPrice | currency}}"
@@ -24,6 +37,13 @@
         (valueChange)="updateGraph()"
         ></econ-slider>
       </div>
+      <p class="econ-math">
+        <span [econMath]="equation1"></span>
+        <span [econMath]="equation2"></span>
+        <span [econMath]="equation3"></span>
+
+
+      </p>
 
     </div>
     <div class="item-chart" id="chart1"></div>
