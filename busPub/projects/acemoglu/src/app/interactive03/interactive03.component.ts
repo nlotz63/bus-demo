@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
-
+import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
 import HC_more from 'highcharts/highcharts-more';
 import HC_export from 'highcharts/modules/exporting';
@@ -9,7 +9,6 @@ import HC_sonify from 'highcharts/modules/sonification';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
-import { MatButtonModule } from '@angular/material/button';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BusPubLibModule } from 'bus-pub-lib';
@@ -27,7 +26,19 @@ HC_accessibility(Highcharts);
   standalone: true,
   imports: [CommonModule, BusPubLibModule, ReactiveFormsModule, CurrencyPipe ],
   templateUrl: './interactive03.component.html',
-  styleUrls: ['./interactive03.component.scss']
+  styleUrls: ['./interactive03.component.scss'],
+  animations: [
+    trigger('myAnimationTrigger', [
+        transition(':enter', [
+            style({ opacity: 0 }),
+            animate('400ms 30ms ease-in', style({ opacity: 1 }))
+        ]),
+        transition(':leave', [
+            animate('0s', style({ opacity: 0 }))
+        ])
+    ])
+],
+
 })
 export class Interactive03Component implements OnInit, AfterViewInit {
 
@@ -268,7 +279,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
       this.cs0Area = 'A';
       this.cs1Area = 'A';
     }
-    let caption = `The market demand curve for jeans. The initial consumer surplus (C<sub>0</sub>) is the area ${this.cs0Area} in the graph, the new consumer surplus (C<sub>1</sub>) is the area ${this.cs1Area} in the graph.
+    let caption = `The market demand curve for jeans. The initial consumer surplus (C<sub>0</sub>) is the area ${this.cs0Area}. The new consumer surplus (C<sub>1</sub>) is the area ${this.cs1Area}.
     `;
 
     this.chart.update({
