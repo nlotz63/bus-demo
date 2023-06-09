@@ -1,6 +1,5 @@
 @import '../../app-mixins';
 
-
 .wrapper {
   @include flexbox();
   flex-flow: row;
@@ -21,16 +20,6 @@
   }
 }
 
-form {
-  margin-top: 10px;
-
-}
-
-.form-field {
-  width: 180px;
-  margin-right: 15px;
-  margin-bottom: 25px;
-}
 
 .item-chart {
   @include flex(5.5 2 55%);
@@ -64,28 +53,13 @@ form {
   .item-narative {
     @include flex(0 0 100%);
       }
-
-}
-
-ul {
-  line-height: 1.75em;
-}
-
-button {
-  width: 60px;
-  position: relative;
-  margin: 8px;
-  left: 40%;
-}
-
-.player-navigation-container {
-  @include flexbox();
-  flex-flow: row;
-  justify-content: space-between;
-  align-items: center;
-  margin: 5px 5px;
 }
 
 .econ-math {
   font-size: .85rem;
+}
+
+h3 {
+  padding-top: 20px;
+  padding-bottom: 0px;
 }

@@ -97,9 +97,9 @@ $my-custom-typography-config: mat.define-typography-config(
 
   $body-1:
     mat.define-typography-level(
-      1rem,
+      .9rem,
       $line-height: normal,
-      $font-weight: 300,
+      $font-weight: 400,
       $font-family: "Roboto"
     ),
 /*     $body-2:

@@ -72,7 +72,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
       title: {
-        text: 'Consumer Surplus',
+        text: `Demand for ${this.xGood}`,
         style: {
           fontFamily: 'sans-serif',
           fontWeight: '300',
@@ -98,7 +98,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
       },
       accessibility: {
         point: {
-          valueDescriptionFormat: `quantity: {point.x:.0f} .`
+          valueDescriptionFormat: `quantity: {point.x:.0f}, price: {point.y:.0f} dollars.`
         },
         keyboardNavigation: {
           order: ['container', 'series', 'chartMenu']
@@ -118,6 +118,9 @@ export class Interactive03Component implements OnInit, AfterViewInit {
             useHTML: true,
             enabled: true
           },
+          accessibility: {
+            description: 'A straight line that slopes down from left to right.'
+          }
         },
         {
           type: 'line',
@@ -142,19 +145,25 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           animation: false,
-          name: 'Consumer Surplus 1',
+          name: 'Area A',
           opacity: .5,
           zIndex: -1,
           data: series.CS1,
+          accessibility: {
+            description: `The area under the demand curve above the initial price.`
+          }
         },
         {
           type: 'arearange',
           animation: false,
-          name: 'Consumer Surplus 2',
+          name: 'Area B + C',
           color: 'salmon',
           opacity: .4,
           zIndex: -1,
-          data: series.CS2
+          data: series.CS2,
+          accessibility: {
+            description: `The area between the initial price, the new price and the demand curve.`
+          }
         }
 
       ],
@@ -162,7 +171,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: `Quantity of ` },
+        title: { useHTML: true, text: `Quantity of ${this.xGood} ` },
         min: 0,
         max: 100,
         tickInterval: 10
@@ -173,10 +182,10 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         tickWidth: 1,
-        title: { useHTML: true, text: `Quantity of ` },
+        title: { useHTML: true, text: `Price per pair` },
         min: 0,
         max: 140,
-        tickInterval: 10
+        tickInterval: 10,
       },
       plotOptions: {
         series: {
@@ -193,19 +202,50 @@ export class Interactive03Component implements OnInit, AfterViewInit {
           labelOptions: {
             borderWidth: 0,
             backgroundColor: 'rgba(255, 255, 255, 0)',
-            align: 'center',
-            verticalAlign: 'middle'
+            align: 'right',
+            verticalAlign: 'top'
           },
           labels: [
             {
               point: {
                 xAxis: 0,
                 yAxis: 0,
-                x: 5,
-                y: 50
+                x: series.labelPositioner.xCSA,
+                y: series.labelPositioner.yCSA
               },
-              text: 'Consumer surplus'
+              text: 'A'
             }
+          ]
+        },
+        {
+          id: 'cs1',
+          visible: false,
+          labelOptions: {
+            borderWidth: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            align: 'right',
+            verticalAlign: 'top'
+          },
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: series.labelPositioner.xCSB,
+                y: series.labelPositioner.yCSB
+              },
+              text: 'B'
+            },
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: series.labelPositioner.xCSC,
+                y: series.labelPositioner.yCSC
+              },
+              text: 'C'
+            }
+
           ]
         }
       ]
@@ -216,10 +256,26 @@ export class Interactive03Component implements OnInit, AfterViewInit {
   public updateGraph() {
     let series = this._createSeries();
     let slider = this.sliderGroup.value;
-    this.cs1Area = slider.initialPrice! > slider.newPrice! ? 'A + B + C' : 'A';
-    this.cs0Area = slider.initialPrice! > slider.newPrice! ? 'A' : 'A + B + C';
+    let cs1Description = slider.initialPrice! >= slider.newPrice! ? 'initial price' : 'new price';
+
+    if (slider.initialPrice! > slider.newPrice!) {
+      this.cs1Area = 'A + B + C';
+      this.cs0Area = 'A';
+    } else if (slider.initialPrice! < slider.newPrice!) {
+      this.cs1Area = 'A';
+      this.cs0Area = 'A + B + C';
+    } else {
+      this.cs0Area = 'A';
+      this.cs1Area = 'A';
+    }
+    let caption = `The market demand curve for jeans. The initial consumer surplus (C<sub>0</sub>) is the area ${this.cs0Area} in the graph, the new consumer surplus (C<sub>1</sub>) is the area ${this.cs1Area} in the graph.
+    `;
 
     this.chart.update({
+      caption: {
+        text: caption,
+        useHTML: true
+      },
       series: [
         {
           type: 'line',
@@ -235,7 +291,10 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         },
         {
           type: 'arearange',
-          data: series.CS1
+          data: series.CS1,
+          accessibility: {
+            description: `The area under the demand curve above the ${cs1Description}.`
+          }
         },
         {
           type: 'arearange',
@@ -249,18 +308,39 @@ export class Interactive03Component implements OnInit, AfterViewInit {
               point: {
                 xAxis: 0,
                 yAxis: 0,
-                x: 5,
-                y: this.sliderGroup.value.newPrice!
+                x: series.labelPositioner.xCSA,
+                y: series.labelPositioner.yCSA
               },
-              text: 'Consumer surplus'
+              text: 'A'
+            }
+          ]
+        },
+        {
+          visible: slider.initialPrice! !== slider.newPrice! ? true : false,
+          labels: [
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: series.labelPositioner.xCSB,
+                y: series.labelPositioner.yCSB
+              },
+              text: 'B'
+            },
+            {
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: series.labelPositioner.xCSC,
+                y: series.labelPositioner.yCSC
+              },
+              text: 'C'
             }
           ]
         }
       ]
-
-
     }, true);
-
+    this.announcer.announce('The graph has been updated');
   }
 
   private _createSeries() {
@@ -313,7 +393,6 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         low: newP < initP ? newP : initP,
         high: newP < initP ? newP : initP
       }
-
     ]
 
     let initPrice = [
@@ -324,7 +403,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
           enabled: true,
           symbol: 'circle',
           radius: 4,
-          fillColor: 'orange',
+          fillColor: 'rgb(235, 235, 235)',
           lineWidth: 1,
           lineColor: 'black'
         }
@@ -339,7 +418,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
           enabled: true,
           symbol: 'circle',
           radius: 4,
-          fillColor: 'orange',
+          fillColor: 'rgb(235, 235, 235)',
           lineWidth: 1,
           lineColor: 'black'
         }
@@ -352,15 +431,57 @@ export class Interactive03Component implements OnInit, AfterViewInit {
     this.equation2 = `$$ CS_1 = \\frac{(\$${f(0)}- \$${newP}) \\times (${inverse(newP)}-0)} {2} = ${ this.currencyFormat.transform(csNew)} $$`;
     this.equation3 = `$$\\text{Change in consumer surplus} = CS_1 - CS_0 = ${this.currencyFormat.transform(csDif)} $$`;
 
+    let labelPosition = this._positioner(initP, newP, inverse(initP), inverse(newP));
 
     return {
       demand: demand,
       initialPrice: initPrice,
       newPrice: newPrice,
       CS1: cs1,
-      CS2: cs2
+      CS2: cs2,
+      labelPositioner: labelPosition
+    }
+  }
+
+  private _positioner(initP: number, newP: number, initQ: number, newQ: number) {
+    let xcsA: number = 0, xcsB: number = 0, xcsC: number = 0;
+    let ycsA: number = 0, ycsB: number = 0, ycsC: number = 0;
+
+    if (initP < newP) {
+      xcsA = newQ / 2;
+      xcsB = newQ / 2;
+      xcsC = (initQ + newQ) / 2;
+      ycsA = newP + 5;
+      ycsB = initP+1;
+      ycsC = initP+1;
+
+    } else if (initP > newP) {
+      xcsA = initQ / 2;
+      xcsB = initQ / 2;
+      xcsC = (initQ + newQ) / 2;
+      ycsA = initP + 5;
+      ycsB = newP+1;
+      ycsC = newP+1;
+
+    } else {
+      xcsA = newQ / 2;
+      xcsB = newQ / 2;
+      xcsC = (initQ + newQ) / 2;
+      ycsA = newP + 5;
+      ycsB = initP+1;
+      ycsC = initP+1;
+
     }
 
+    return {
+      xCSA: xcsA,
+      xCSB: xcsB,
+      xCSC: xcsC,
+      yCSA: ycsA,
+      yCSB: ycsB,
+      yCSC: ycsC
+
+    }
   }
 
 }
