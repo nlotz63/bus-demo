@@ -1,0 +1,69 @@
+@import '../../app-mixins';
+
+.wrapper {
+  @include flexbox();
+  flex-flow: row;
+  justify-content:space-between;
+  width: 100%;
+}
+
+.button-group-wrapper {
+  @include flexbox();
+  flex-flow:row;
+  justify-content: left;
+}
+
+.button-group-item {
+  flex: 0 1 40%;
+  button {
+    width: 95px;
+  }
+}
+
+.item-header {
+  flex: 1 0 100%;
+  width: 100%;
+}
+
+.item-chart {
+  @include flex(5.5 2 55%);
+}
+
+.item-narrative {
+  @include flex(4.5 .5 45% );
+  margin-right: 5px;
+}
+
+.econ-narative-block {
+  margin-right: 5px;
+}
+
+.control-column {
+  @include flexbox();
+  flex-flow: column;
+  margin-left: 5px;
+}
+
+@media all and (max-width: 750px) {
+  .wrapper {
+    @include flexbox();
+    flex-flow: column-reverse;
+  }
+
+  .item-chart {
+    @include flex(1 0 100%);
+  }
+
+  .item-narative {
+    @include flex(0 0 100%);
+      }
+}
+
+.econ-math {
+  font-size: .85rem;
+}
+
+h3 {
+  padding-top: 20px;
+  padding-bottom: 0px;
+}
