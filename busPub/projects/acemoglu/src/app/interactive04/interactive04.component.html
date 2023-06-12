@@ -1,11 +1,61 @@
 <div class="econ-interactive-container">
-  <h1 class="mat-headline-5">{{title}}</h1>
+  <h1 class="mat-headline-5">{{ title }}</h1>
   <div class="wrapper">
-    <div class="item-narrative">
-      <p>
-        Testing the narrative {{mode}}
-      </p>
+    <div class="item-narrative" *ngIf="mode === 0" @myAnimationTrigger>
+      <ul>
+        <li>variable cost bullet</li>
+        <li>fixed cost bullet.</li>
+        <li>
+          Use the sliders to see the effect of changes in fixed and variable
+          costs on the cost curves.
+        </li>
+      </ul>
+      <div class="control-column">
+        <econ-slider
+        class="econ-control"
+        label="Variable cost"
+        showValue="false"
+        displayValue="{{(sliderGroup.value.variable!/40) | percent}}"
+        [(value)]="sliderGroup.value.variable!"
+        min="-20"
+        max="20"
+        (valueChange)="updateGraph()"
+        ></econ-slider>
+        <econ-slider
+        class="econ-control"
+        label="Fixed cost"
+        showValue="false"
+        displayValue="{{(sliderGroup.value.fixed!/200) | percent}}"
+        [(value)]="sliderGroup.value.fixed!"
+        min="-100"
+        max="100"
+        (valueChange)="updateGraph()"
+        ></econ-slider>
+      </div>
     </div>
-    <div class="item-chart"></div>
+    <div class="item-narrative" *ngIf="mode === 1">
+      <p>Testing the narrative {{ mode }}</p>
+
+      <div class="control-column">
+        <econ-slider
+        class="econ-control"
+        label="Price"
+        ></econ-slider>
+      </div>
     </div>
+    <div class="item-narrative" *ngIf="mode === 2">
+      <p>Testing the narrative {{ mode }}</p>
+
+      <div class="control-column">
+        <econ-slider
+        class="econ-control"
+        label="Quantity"
+        ></econ-slider>
+
+      </div>
+
+    </div>
+
+    <div class="item-chart" id="chart1"></div>
+  </div>
 </div>
