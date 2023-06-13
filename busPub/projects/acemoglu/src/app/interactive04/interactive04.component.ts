@@ -53,7 +53,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
     variable: new FormControl(0),
     fixed: new FormControl(0),
     quantity: new FormControl(0),
-    price: new FormControl(0)
+    price: new FormControl(1.07)
 
   });
 
@@ -78,6 +78,13 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         break;
     }
 
+    Highcharts.setOptions({
+      lang: {
+        thousandsSep: ','
+      },
+
+    });
+
   }
 
   ngAfterViewInit(): void {
@@ -97,7 +104,9 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         this.chart?.series[0].setData(series.ATC, false, false, false);
         this.chart?.series[1].setData(series.MC, false, false, false);
         this.chart?.series[2].setData(series.AVC, true, false, false);
-
+        break;
+      case 1:
+        this.chart?.series[3].setData(series.MR, true, false, false);
         break;
 
       default:
@@ -202,14 +211,30 @@ export class Interactive04Component implements OnInit, AfterViewInit {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
             headerFormat: '<b>{series.name}</b><br/>',
-            pointFormat: `\${point.y:.2f}`
+            pointFormat: `\${point.x:,.2f}`
           },
           label: {enabled: true}
         }
       },
-
-
     });
+
+    switch (this.mode) {
+      case 1:
+        this.chart.addSeries({
+          type: 'line',
+          name: 'Price = MR',
+          lineWidth: 2,
+          zIndex: 1,
+          color: '#0771BD',
+          data: series.MR
+
+        });
+
+        break;
+
+      default:
+        break;
+    }
 
   }
 
@@ -224,6 +249,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
     let vc = (x: number) => scalar01 * (a * Math.pow(x, 3) - b * Math.pow(x, 2) + c * x + d);
     let mc = (x: number) => scalar01 * (3 * a * Math.pow(x, 2) - 2 * b * x + c);
+
+    let inverseMC = (x: any) => (b*scalar01 + Math.sqrt(Math.pow(b, 2)*Math.pow(scalar01, 2) - 3*a*c*Math.pow(scalar01, 2)+ 3*a*scalar01*x))/(3*a*scalar01);
 
     do {
       let point = {
@@ -246,11 +273,34 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
     } while (x <= 1750);
 
+    // price and marginal revenue series
+    let mrSeries = [
+      {
+        name: 'price',
+        x: 0,
+        y: p,
+      },
+      {
+        name: 'price',
+        x: 1900,
+        y: p
+      }
+
+    ];
+
+    let profitSeries = [
+      {
+        x: inverseMC(p),
+        y: p
+      }
+    ];
+    console.log(profitSeries[0].x, vc(510.412)/510.412, mc(510.412));
 
     return {
       AVC: avcArr,
       MC: mcArr,
-      ATC: atcArr
+      ATC: atcArr,
+      MR: mrSeries
     }
 
   }

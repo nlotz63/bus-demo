@@ -40,6 +40,14 @@
         <econ-slider
         class="econ-control"
         label="Price"
+        showValue="false"
+        displayValue="{{sliderGroup.value.price! | currency }}"
+        [(value)]="sliderGroup.value.price!"
+        min=".75"
+        max="1.25"
+        step=".005"
+        (valueChange)="updateGraph()"
+
         ></econ-slider>
       </div>
     </div>
