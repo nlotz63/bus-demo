@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ElementRef } from '@angular/core';
 import { transition, trigger, style, animate } from '@angular/animations';
 
 import * as Highcharts from 'highcharts/highstock';
@@ -74,7 +74,8 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
 
   constructor(
     private activeRoute: ActivatedRoute,
-    private annoucer: LiveAnnouncer
+    private annoucer: LiveAnnouncer,
+    private el: ElementRef
   ) { }
 
   ngOnInit(): void {
@@ -286,7 +287,8 @@ export class LaborDemandComponent implements OnInit, AfterViewInit {
   }
 
   private _setupChart() {
-    this.chart = new Highcharts.Chart('container', {
+    const chart1 = this.el.nativeElement.querySelector('#container');
+    this.chart = new Highcharts.Chart(chart1, {
       chart: {
         type: 'spline',
         animation: false,

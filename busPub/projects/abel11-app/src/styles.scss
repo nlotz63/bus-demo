@@ -44,7 +44,7 @@ $abel-palette: (
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $abel11-app-primary: mat.define-palette($abel-palette);
-$abel11-app-accent: mat.define-palette($abel-palette);
+$abel11-app-accent: mat.define-palette($abel-palette, 100);
 
 // The warn palette is optional (defaults to red).
 $abel11-app-warn: mat.define-palette(mat.$red-palette);

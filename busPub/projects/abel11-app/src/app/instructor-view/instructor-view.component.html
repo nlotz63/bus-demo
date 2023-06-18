@@ -1,0 +1,36 @@
+<div class="econ-instructor-view-container">
+  <mat-toolbar color="accent">
+    <button mat-button [matMenuTriggerFor]="chapter">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1>Abel/Bernanke/Croushore: Macroeconomics Interactive Models</h1>
+    <mat-menu #chapter="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="chapter3">Chapter 3</button>
+      <button mat-menu-item [matMenuTriggerFor]="chapter4">Chapter 4</button>
+    </mat-menu>
+
+    <mat-menu #chapter3>
+      <a
+        mat-menu-item
+        [routerLink]="['/instructor-dashboard/key-diagram1']"
+        [queryParams]="{ showPlayer: true }"
+        skipLocationChange
+      >
+        Key Diagram 1
+      </a>
+      <a
+        mat-menu-item
+        [routerLink]="['/instructor-dashboard/key-diagram2']"
+        [queryParams]="{ showPlayer: true }"
+        skipLocationChange
+      >
+        Key Diagram 2
+      </a>
+    </mat-menu>
+
+    <mat-menu #chapter4> </mat-menu>
+  </mat-toolbar>
+  <div class="econ-model-container" id="model" (click)="viewFullscreen()">
+    <router-outlet></router-outlet>
+  </div>
+</div>

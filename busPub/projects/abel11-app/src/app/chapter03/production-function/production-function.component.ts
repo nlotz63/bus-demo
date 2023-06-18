@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit, AfterViewInit, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ElementRef } from '@angular/core';
 import { transition, trigger, style, animate } from '@angular/animations';
 
 import * as Highcharts from 'highcharts';
@@ -124,7 +124,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
 
   constructor(
     private activeRoute: ActivatedRoute,
-    private announcer: LiveAnnouncer
+    private announcer: LiveAnnouncer,
+    private el: ElementRef
   ) { }
 
   ngOnInit(): void {
@@ -201,8 +202,8 @@ export class ProductionFunctionComponent implements OnInit, AfterViewInit {
   }
 
   private _setupChart() {
-
-    this.chart = new Highcharts.Chart('container', {
+    const chart1 = this.el.nativeElement.querySelector('#container');
+    this.chart = new Highcharts.Chart(chart1, {
       chart: {
         type: 'spline',
         animation: false,
