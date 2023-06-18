@@ -7,6 +7,9 @@
     <mat-menu #chapter="matMenu">
       <button mat-menu-item [matMenuTriggerFor]="chapter3">Chapter 3</button>
       <button mat-menu-item [matMenuTriggerFor]="chapter4">Chapter 4</button>
+      <button mat-menu-item [matMenuTriggerFor]="chapter5">Chapter 5</button>
+      <button mat-menu-item (click)="viewFullscreen()">View Fullscreen</button>
+
     </mat-menu>
 
     <mat-menu #chapter3>
@@ -27,10 +30,13 @@
         Key Diagram 2
       </a>
     </mat-menu>
+    <mat-menu #chapter4>
 
-    <mat-menu #chapter4> </mat-menu>
+    </mat-menu>
+
+    <mat-menu #chapter5> </mat-menu>
   </mat-toolbar>
-  <div class="econ-model-container" id="model" (click)="viewFullscreen()">
+  <div class="econ-model-container" id="model">
     <router-outlet></router-outlet>
   </div>
 </div>
