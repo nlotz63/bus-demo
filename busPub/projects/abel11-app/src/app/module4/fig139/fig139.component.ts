@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ElementRef } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -103,7 +103,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
 
   playInterval = interval(300);
 
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private el: ElementRef) { }
 
   ngOnInit(): void {
     this.ActiveRoute.queryParams.subscribe((params) => {
@@ -112,6 +112,7 @@ export class Fig139Component implements OnInit, AfterViewInit {
     });
     this._createSeries(false);
     this._createSeriesF(false);
+
   }
 
   ngAfterViewInit(): void {
@@ -255,12 +256,12 @@ export class Fig139Component implements OnInit, AfterViewInit {
   // private methods
 
   private _setupChart(addRef: boolean) {
-    if (this.chart) this.chart.destroy();
-    if (this.chart2) this.chart2.destroy();
     let series = this._createSeries(addRef);
     let seriesF = this._createSeriesF(addRef);
+    const chart1 = this.el.nativeElement.querySelector('#chart1');
+    const chart2 = this.el.nativeElement.querySelector('#chart2');
 
-    this.chart = new Highcharts.Chart('chart1', {
+    this.chart = new Highcharts.Chart(chart1, {
       chart: {
         type: 'line',
         animation: false,
@@ -448,12 +449,13 @@ export class Fig139Component implements OnInit, AfterViewInit {
       ]
     });
 
-    this.chart2 = new Highcharts.Chart('chart2', {
+    this.chart2 = new Highcharts.Chart(chart2, {
       chart: {
         type: 'spline',
         animation: false,
         height: 350,
         borderRadius: 5,
+        styledMode: false
       },
       credits: {
         text: 'Pearson Education',
@@ -616,7 +618,6 @@ export class Fig139Component implements OnInit, AfterViewInit {
             borderWidth: 0,
             verticalAlign: 'bottom',
             y: -5,
-            useHTML: true
           },
           labels: [
             {
@@ -625,6 +626,10 @@ export class Fig139Component implements OnInit, AfterViewInit {
                 yAxis: 0,
                 x: 2700,
                 y: -2
+              },
+              useHTML: true,
+              style: {
+                fontSize: '11.2px'
               },
               formatter: (): any => {
                 return `${this.eqLabel}:</br>Y<sub>For</sub> = $${seriesF.EQ[1].x.toFixed(0)}</br>r<sub>For</sub> = ${seriesF.EQ[0].y.toPrecision(2)}%`;

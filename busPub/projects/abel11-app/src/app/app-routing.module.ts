@@ -30,7 +30,7 @@ const routes: Routes = [
       { path: 'key-diagram4', loadComponent: () => import('./module2/key-diagram4/key-diagram4.component').then(m => m.KeyDiagram4Component), title: 'National Saving (small open economy) Model' },
       { path: 'key-diagram5', loadComponent: () => import('./module2/key-diagram5/key-diagram5.component').then(m => m.KeyDiagram5Component), title: 'National Saving (large open economy) Model' },
       { path: 'figure6.5', loadComponent: () => import('./module2/solow/solow.component').then(mod => mod.SolowComponent), title: 'Solow model' },
-      { path: 'module03/key-diagram6', loadComponent: () => import('./module3/key-diagram6/key-diagram6.component').then(mod => mod.KeyDiagram6Component), title: 'ISLM model' },
+      { path: 'key-diagram6', loadComponent: () => import('./module3/key-diagram6/key-diagram6.component').then(mod => mod.KeyDiagram6Component), title: 'ISLM model' },
       { path: 'key-diagram7', loadComponent: () => import('./module3/key-diagram7/key-diagram7.component').then(mod => mod.KeyDiagram7Component), title: 'AD/AS model' },
       { path: 'key-diagram8', loadComponent: () => import('./module3/key-diagram8/key-diagram8.component').then(mod => mod.KeyDiagram8Component), title: 'AD/AS (misperceptions)' },
       { path: 'figure9.2', loadComponent: () => import('./module3/fig92/fig92.component').then(m => m.Fig92Component), title: 'Derive IS curve' },

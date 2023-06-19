@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -71,7 +71,7 @@ export class SolowComponent implements OnInit, AfterViewInit {
   chart!: Highcharts.Chart;
   chart2!: Highcharts.Chart;
 
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private el: ElementRef) { }
 
   ngOnInit(): void {
     this.ActiveRoute.queryParams.subscribe((params) => {
@@ -340,8 +340,8 @@ export class SolowComponent implements OnInit, AfterViewInit {
     if (this.mode == 2) {
       kRatio = this.slider.value.capitalRatio!== 1046 ? 'k' : 'k<sub>ss</sub>';
     }
-
-    this.chart = new Highcharts.Chart('chart1', {
+    const chart1 = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart(chart1, {
       chart: {
         type: 'spline',
         animation: false,
@@ -494,7 +494,8 @@ export class SolowComponent implements OnInit, AfterViewInit {
           }
 
         });
-        this.chart2 = new Highcharts.Chart('chart2', {
+        const chart2 = this.el.nativeElement.querySelector('#chart2');
+        this.chart2 = new Highcharts.Chart(chart2, {
           chart: {
             type: 'spline',
             animation: false,

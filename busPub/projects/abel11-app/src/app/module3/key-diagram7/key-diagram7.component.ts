@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { interval } from 'rxjs';
 
@@ -76,7 +76,7 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
   chart!: Highcharts.Chart;
 
 
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private _snackBar: MatSnackBar) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private _snackBar: MatSnackBar, private el: ElementRef) { }
 
   ngOnInit(): void {
     this.ActiveRoute.queryParams.subscribe((params) => {
@@ -218,7 +218,8 @@ export class KeyDiagram7Component implements OnInit, AfterViewInit {
 
   private _setupChart() {
     let series = this._createSeries(true);
-    this.chart = new Highcharts.Chart('chart1', {
+    const chart1 = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart(chart1, {
       chart: {
         type: 'spline',
         animation: false,

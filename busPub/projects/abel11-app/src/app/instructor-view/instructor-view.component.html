@@ -1,5 +1,5 @@
 <div class="econ-instructor-view-container">
-  <mat-toolbar color="accent">
+  <mat-toolbar color="accent" class="econ-toolbar">
     <button mat-button [matMenuTriggerFor]="chapter">
       <mat-icon>menu</mat-icon>
     </button>
@@ -8,6 +8,10 @@
       <button mat-menu-item [matMenuTriggerFor]="chapter3">Chapter 3</button>
       <button mat-menu-item [matMenuTriggerFor]="chapter4">Chapter 4</button>
       <button mat-menu-item [matMenuTriggerFor]="chapter5">Chapter 5</button>
+      <button mat-menu-item [matMenuTriggerFor]="chapter6">Chapter 6</button>
+      <button mat-menu-item [matMenuTriggerFor]="chapter9">Chapter 9</button>
+      <button mat-menu-item [matMenuTriggerFor]="chapter10">Chapter 10</button>
+      <button mat-menu-item [matMenuTriggerFor]="chapter13">Chapter 13</button>
       <button mat-menu-item (click)="viewFullscreen()">View Fullscreen</button>
 
     </mat-menu>
@@ -29,12 +33,118 @@
       >
         Key Diagram 2
       </a>
+      <a
+      mat-menu-item
+      [routerLink]="['/instructor-dashboard/figure3.15']"
+      skipLocationChange
+    >
+      Figure 3.15
+    </a>
+
     </mat-menu>
     <mat-menu #chapter4>
-
+      <a
+      mat-menu-item
+      [routerLink]="['/instructor-dashboard/key-diagram3']"
+      [queryParams]="{ showPlayer: true }"
+      skipLocationChange
+    >
+      Key Diagram 3
+    </a>
     </mat-menu>
-
-    <mat-menu #chapter5> </mat-menu>
+    <mat-menu #chapter5>
+      <a
+      mat-menu-item
+      [routerLink]="['/instructor-dashboard/key-diagram4']"
+      [queryParams]="{ showPlayer: true }"
+      skipLocationChange
+    >
+      Key Diagram 4
+    </a>
+    <a
+    mat-menu-item
+    [routerLink]="['/instructor-dashboard/key-diagram5']"
+    [queryParams]="{ showPlayer: true }"
+    skipLocationChange
+  >
+    Key Diagram 5
+  </a>
+  </mat-menu>
+  <mat-menu #chapter6>
+    <a
+    mat-menu-item
+    [routerLink]="['/instructor-dashboard/figure6.5']"
+    [queryParams]="{ showPlayer: true }"
+    skipLocationChange
+  >
+    Figure 6.5
+  </a>
+  </mat-menu>
+  <mat-menu #chapter9>
+    <a
+    mat-menu-item
+    [routerLink]="['/instructor-dashboard/figure9.2']"
+    skipLocationChange
+  >
+    Figure 9.2
+  </a>
+  <a
+  mat-menu-item
+  [routerLink]="['/instructor-dashboard/figure9.4']"
+  skipLocationChange
+>
+  Figure 9.4
+</a>
+<a
+mat-menu-item
+[routerLink]="['/instructor-dashboard/key-diagram6']"
+[queryParams]="{ showPlayer: true }"
+skipLocationChange
+>
+Key Diagram 6
+</a>
+<a
+mat-menu-item
+[routerLink]="['/instructor-dashboard/key-diagram7']"
+[queryParams]="{ showPlayer: true }"
+skipLocationChange
+>
+Key Diagram 7
+</a>
+</mat-menu>
+<mat-menu #chapter10>
+  <a
+  mat-menu-item
+  [routerLink]="['/instructor-dashboard/key-diagram8']"
+  [queryParams]="{ showPlayer: true }"
+  skipLocationChange
+>
+  Key Diagram 8
+</a>
+</mat-menu>
+<mat-menu #chapter13>
+  <a
+  mat-menu-item
+  [routerLink]="['/instructor-dashboard/figure13.4']"
+  skipLocationChange
+>
+  Figure 13.4
+</a>
+<a
+mat-menu-item
+[routerLink]="['/instructor-dashboard/figure13.5']"
+skipLocationChange
+>
+Figure 13.5
+</a>
+<a
+mat-menu-item
+[routerLink]="['/instructor-dashboard/figure13.9']"
+skipLocationChange
+>
+Figure 13.9
+</a>
+</mat-menu>
   </mat-toolbar>
   <div class="econ-model-container" id="model">
     <router-outlet></router-outlet>

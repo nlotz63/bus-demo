@@ -1,16 +1,18 @@
 .econ-instructor-view-container {
- max-width: 1200px;
-// height: 90%;
- margin: auto;
- border: solid lightblue 1px;
- border-radius: 8px;
+  max-width: 1005px;
+  min-height: 500px;
+  margin: auto;
+  margin-top: 10px;
+  border: solid lightblue 1px;
+  border-radius: 8px;
 }
 
+.econ-toolbar {
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+}
 
 .econ-model-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 25px;
+  margin-top: 5px;
   margin-bottom: 25px;
-
 }

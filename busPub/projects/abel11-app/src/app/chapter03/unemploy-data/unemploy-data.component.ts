@@ -1,5 +1,5 @@
 import { DataService } from './../../data.service';
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { forkJoin, fromEvent } from 'rxjs';
 import * as Highcharts from 'highcharts/highstock';
 import HC_sonify from 'highcharts/modules/sonification';
@@ -274,7 +274,7 @@ export class UnemployDataComponent implements OnInit, AfterViewInit {
   chartOptions: Highcharts.Options = {
     chart: {
       type: 'spline',
-      height: 500
+      height: 500,
     },
     credits: {
       text: 'Pearson Education',
@@ -314,7 +314,7 @@ export class UnemployDataComponent implements OnInit, AfterViewInit {
 
   }
 
-  constructor(private data: DataService) {}
+  constructor(private data: DataService, private el: ElementRef) {}
 
   ngOnInit(): void {
     // Apply the theme
@@ -376,7 +376,8 @@ export class UnemployDataComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.chart = new Highcharts.StockChart('container', this.chartOptions);
+    const chart1 = this.el.nativeElement.querySelector('#container');
+    this.chart = new Highcharts.StockChart(chart1, this.chartOptions);
     this.addSeries();
 
   }

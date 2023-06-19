@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -63,7 +63,7 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
   qSaveRefF: any[] = [];
   qInvestRefF: any[] = [];
 
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private el: ElementRef) { }
 
   // Home slider group
   slider = new FormGroup({
@@ -364,7 +364,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
     let series = this._createSeries(addRef);
     let seriesF = this._createSeriesForeign(addRef);
     this._setMessage();
-    this.chart = new Highcharts.Chart('chart1', {
+    const chart1 = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart(chart1, {
       chart: {
         type: 'spline',
         animation: false,
@@ -550,7 +551,8 @@ export class KeyDiagram5Component implements OnInit, AfterViewInit {
         }
       }
     });
-    this.chart2 = new Highcharts.Chart('chart2', {
+    const chart2 = this.el.nativeElement.querySelector('#chart2');
+    this.chart2 = new Highcharts.Chart(chart2, {
       chart: {
         type: 'spline',
         animation: false,

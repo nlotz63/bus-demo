@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -48,7 +48,7 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
   saveRef: any[] = []
   investRef: any[] = [];
 
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private el: ElementRef) { }
 
   // create form controls for sliders
 
@@ -226,7 +226,8 @@ export class KeyDiagram4Component implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.chart = new Highcharts.Chart('chart1', this.chart1);
+    const chart1 = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart(chart1, this.chart1);
     this.playStep(this.mode);
   }
 

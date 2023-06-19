@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -73,69 +73,8 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
   // Chart properties
   chart!: Highcharts.Chart;
 
-  chart1: Highcharts.Options = {
-    chart: {
-      type: 'spline',
-      animation: false,
-      height: 540,
-      ignoreHiddenSeries: true,
-    },
-    credits: {
-      text: 'Pearson Education',
-      href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
-    },
-    title: { text: 'Saving-Investment Model' },
-    legend: { enabled: false },
-    sonification: {
-      duration: 10000
-    },
-    accessibility: {
-      point: {
-        valueDescriptionFormat: `quantity {point.x:.0f} billion dollars, real interest rate: {point.y:.2f} percent.`
-      }
-    },
-    series: [
 
-    ],
-    xAxis: {
-      lineColor: '#757575',
-      lineWidth: 1.,
-      tickColor: '#757575',
-      title: { useHTML: true, text: 'Desired national saving S<sup>d</sup>, and desired investment, I<sup>d</sup> (billions of dollars)' },
-      min: 0,
-      max: 2500
-
-    },
-    yAxis: {
-      gridLineWidth: 0,
-      lineColor: '#757575',
-      lineWidth: 1.,
-      tickColor: '#757575',
-      tickWidth: 1,
-      title: { useHTML: true, text: 'Real interest rate, r' },
-      min: -2.1,
-      max: 5
-
-    },
-    plotOptions: {
-      series: {
-        enableMouseTracking: true,
-        lineWidth: 2,
-        color: '#C31229',
-        tooltip: {
-          headerFormat: '{series.name}<br/>',
-          pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
-        },
-        marker: {
-          enabled: false,
-          symbol: 'circle',
-          radius: 2
-        }
-      }
-    }
-  }
-
-  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer) { }
+  constructor(private ActiveRoute: ActivatedRoute, private announcer: LiveAnnouncer, private el: ElementRef) { }
 
   ngOnInit() {
     this.ActiveRoute.queryParams.subscribe((params) => {
@@ -146,7 +85,7 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.chart = new Highcharts.Chart('chart1', this.chart1);
+
     this.playStep(this.mode);
   }
 
@@ -222,7 +161,68 @@ export class KeyDiagram3Component implements OnInit, AfterViewInit {
 
   private _setupChart(addRef: boolean) {
     let series: any = this._createSeries(addRef);
-    this.chart = new Highcharts.Chart('chart1', this.chart1);
+    const chart1 = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart(chart1, {
+    chart: {
+      type: 'spline',
+      animation: false,
+      height: 540,
+      ignoreHiddenSeries: true,
+    },
+    credits: {
+      text: 'Pearson Education',
+      href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
+    },
+    title: { text: 'Saving-Investment Model' },
+    legend: { enabled: false },
+    sonification: {
+      duration: 10000
+    },
+    accessibility: {
+      point: {
+        valueDescriptionFormat: `quantity {point.x:.0f} billion dollars, real interest rate: {point.y:.2f} percent.`
+      }
+    },
+    series: [
+
+    ],
+    xAxis: {
+      lineColor: '#757575',
+      lineWidth: 1.,
+      tickColor: '#757575',
+      title: { useHTML: true, text: 'Desired national saving S<sup>d</sup>, and desired investment, I<sup>d</sup> (billions of dollars)' },
+      min: 0,
+      max: 2500
+
+    },
+    yAxis: {
+      gridLineWidth: 0,
+      lineColor: '#757575',
+      lineWidth: 1.,
+      tickColor: '#757575',
+      tickWidth: 1,
+      title: { useHTML: true, text: 'Real interest rate, r' },
+      min: -2.1,
+      max: 5
+
+    },
+    plotOptions: {
+      series: {
+        enableMouseTracking: true,
+        lineWidth: 2,
+        color: '#C31229',
+        tooltip: {
+          headerFormat: '{series.name}<br/>',
+          pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
+        },
+        marker: {
+          enabled: false,
+          symbol: 'circle',
+          radius: 2
+        }
+      }
+    }
+  });
 
     switch (this.mode) {
       case 0:
