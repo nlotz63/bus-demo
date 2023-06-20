@@ -378,7 +378,11 @@ export class UnemployDataComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     const chart1 = this.el.nativeElement.querySelector('#container');
     this.chart = new Highcharts.StockChart(chart1, this.chartOptions);
-    this.addSeries();
+
+    // short delay before adding default series to graph
+    setTimeout(() => {
+      this.addSeries();
+    }, 50);
 
   }
 
@@ -407,7 +411,7 @@ export class UnemployDataComponent implements OnInit, AfterViewInit {
         data: seriesData,
         color: '#0076A3'
 
-      });
+      }, true);
     });
     this.data.getData(url02).subscribe((data: any) => {
       let seriesData = this._parseData(data);
@@ -417,7 +421,7 @@ export class UnemployDataComponent implements OnInit, AfterViewInit {
         data: seriesData,
         color: '#C31229'
 
-      });
+      }, true);
     });
     this.data.getData(url03).subscribe((data: any) => {
       let seriesData = this._parseData(data);
@@ -427,7 +431,7 @@ export class UnemployDataComponent implements OnInit, AfterViewInit {
         data: seriesData,
         color: '#097B82'
 
-      });
+      }, true);
 
     });
 
