@@ -1,15 +1,31 @@
 .econ-instructor-view-container {
+  display: flex;
+flex-flow: column;
   max-width: 1005px;
   min-height: 500px;
   margin: auto;
   margin-top: 10px;
-  border: solid lightblue 1px;
   border-radius: 8px;
 }
 
 .econ-toolbar {
+  align-items: center;
+  border-bottom: solid lightgray 1px;  
+  box-shadow: 2px 2px 2px rgba(211, 211, 211, 0.877);
+  margin-top: -5px;
+
+}
+
+.econ-dashboard-title {
+  background-color: #EAF7FD;
+  text-align: center;
+  line-height: 1.5em;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  box-shadow: 2px -2px 2px rgba(211, 211, 211, 0.877);
+
 }
 
 .econ-model-container {

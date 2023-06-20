@@ -1,9 +1,10 @@
 <div class="econ-instructor-view-container">
-  <mat-toolbar color="accent" class="econ-toolbar">
-    <button mat-button [matMenuTriggerFor]="chapter">
-      <mat-icon>menu</mat-icon>
+  <h1 class="econ-dashboard-title">Abel/Bernanke/Croushore: Macroeconomics Interactive Models</h1>
+  <div class="econ-toolbar">
+    <button mat-button [matMenuTriggerFor]="chapter" >
+      Choose a model
     </button>
-    <h1>Abel/Bernanke/Croushore: Macroeconomics Interactive Models</h1>
+  </div>
     <mat-menu #chapter="matMenu">
       <button mat-menu-item [matMenuTriggerFor]="chapter3">Chapter 3</button>
       <button mat-menu-item [matMenuTriggerFor]="chapter4">Chapter 4</button>
@@ -145,7 +146,6 @@ skipLocationChange
 Figure 13.9
 </a>
 </mat-menu>
-  </mat-toolbar>
   <div class="econ-model-container" id="model">
     <router-outlet></router-outlet>
   </div>
