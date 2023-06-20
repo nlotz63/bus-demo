@@ -40,7 +40,7 @@ export class UnemployDataComponent implements OnInit, AfterViewInit {
   fredDate = '1960-01-01';
 
   recessionDisabled = false;
-  recessionTitle = 'Show Recessions';
+  recessionTitle = 'Show recessions';
   recessionToggle = false;
   selected = 0;
   viewChange = true;

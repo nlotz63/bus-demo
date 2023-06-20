@@ -18,6 +18,8 @@ import { ExternalReference } from '@angular/compiler';
 })
 export class InstructorViewComponent {
 
+  interactive: null | number = null; 
+
   constructor(private el: ElementRef) { }
 
   public viewFullscreen() {

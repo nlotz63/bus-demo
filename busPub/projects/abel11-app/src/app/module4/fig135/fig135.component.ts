@@ -192,7 +192,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
 
         {
           type: 'spline',
-          name: 'Sd minus Id',
+          name: 'S<sup>d</sup> - I<sup>d</sup>',
           zIndex: 0,
           animation: false,
           data: series.SminusD,
@@ -279,7 +279,8 @@ export class Fig135Component implements OnInit, AfterViewInit {
 
       },
       tooltip: {
-        enabled: true
+        enabled: true,
+        useHTML: true
       },
       plotOptions: {
         series: {
@@ -292,6 +293,7 @@ export class Fig135Component implements OnInit, AfterViewInit {
           },
           color: '#C31229',
           tooltip: {
+            
             headerFormat: '{series.name}<br/>',
             pointFormat: 'Quantity: ${point.x:.0f} billion<br/>Real interest rate: {point.y:.2f}%'
           },

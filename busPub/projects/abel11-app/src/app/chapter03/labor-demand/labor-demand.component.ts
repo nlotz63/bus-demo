@@ -7,11 +7,15 @@ import * as Highcharts from 'highcharts/highstock';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_seriesLabel from 'highcharts/modules/series-label';
+import HC_data from 'highcharts/modules/export-data';
+import HC_export from 'highcharts/modules/exporting'
 import { PlayerComponent } from '../../player/player/player.component';
 import { MatButtonModule } from '@angular/material/button';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { NgIf } from '@angular/common';
 
+HC_export(Highcharts);
+HC_data(Highcharts);
 HC_annotate(Highcharts);
 HC_seriesLabel(Highcharts);
 HC_accessibility(Highcharts);
