@@ -1,13 +1,12 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import {MatMenuModule} from '@angular/material/menu';
-import { ExternalReference } from '@angular/compiler';
 
 @Component({
   selector: 'app-instructor-view',
@@ -16,12 +15,19 @@ import { ExternalReference } from '@angular/compiler';
   templateUrl: './instructor-view.component.html',
   styleUrls: ['./instructor-view.component.scss']
 })
-export class InstructorViewComponent {
+export class InstructorViewComponent implements AfterViewInit {
 
   interactive: number = 1; 
   savedInteractive = 1;
 
-  constructor(private el: ElementRef) { }
+  constructor(private el: ElementRef, private router: Router) { }
+
+  ngAfterViewInit(): void {
+    this.router.navigate(
+      ['/instructor-dashboard/key-diagram1'],
+      { skipLocationChange: true }
+    );
+  }
 
   public viewFullscreen() {
     const container = this.el.nativeElement.querySelector('#model');

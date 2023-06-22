@@ -38,8 +38,6 @@ const routes: Routes = [
       { path: 'figure13.4', loadComponent: () => import('./module4/fig134/fig134.component').then(m => m.Fig134Component), title: 'Supply/demand for currency' },
       { path: 'figure13.5', loadComponent: () => import('./module4/fig135/fig135.component').then(m => m.Fig135Component), title: 'Goods market (open economy)' },
       { path: 'figure13.9', loadComponent: () => import('./module4/fig139/fig139.component').then(m => m.Fig139Component), title: 'Open economy ISLM' },
-      { path: '', redirectTo: 'key-diagram1', pathMatch: 'full' },
-
         ]
   }
 
