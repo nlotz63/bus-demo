@@ -18,7 +18,7 @@ import { ExternalReference } from '@angular/compiler';
 })
 export class InstructorViewComponent {
 
-  interactive: null | number = null; 
+  interactive: null | number = 1; 
 
   constructor(private el: ElementRef) { }
 
