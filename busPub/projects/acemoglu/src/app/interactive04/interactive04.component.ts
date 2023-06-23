@@ -52,7 +52,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
   sliderGroup = new FormGroup({
     variable: new FormControl(0),
     fixed: new FormControl(0),
-    quantity: new FormControl(0),
+    quantity: new FormControl(600),
     price: new FormControl(1.07)
 
   });
@@ -107,6 +107,12 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         break;
       case 1:
         this.chart?.series[3].setData(series.MR, true, false, false);
+        this.chart?.series[4].setData(series.profit, true, false, false);
+
+        break;
+      case 2:
+        this.chart?.series[4].setData(series.profit, true, false, false);
+        this.chart?.series[5].setData(series.qStar, true, false, false);
         break;
 
       default:
@@ -116,6 +122,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
   }
 
   private _setupStep() {
+    if (this.mode === 2) this.sliderGroup.patchValue({ price: 1.25 });
     let series = this._createSeries();
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
@@ -170,7 +177,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
           name: 'ATC',
           color: '#37723B',
           lineWidth: 2,
-          data: series.ATC
+          data: series.ATC,
+          enableMouseTracking: false
         },
         {
           type: 'spline',
@@ -229,8 +237,50 @@ export class Interactive04Component implements OnInit, AfterViewInit {
           data: series.MR
 
         });
-
+        this.chart.addSeries({
+          type: 'arearange',
+          name: 'profit/loss',
+          opacity: .5,
+          zIndex: -1,
+          data: series.profit
+        });
         break;
+      case 2:
+        case 1:
+          this.chart.addSeries({
+            type: 'line',
+            name: 'Price = MR',
+            lineWidth: 2,
+            zIndex: 1,
+            color: '#0771BD',
+            data: series.MR
+  
+          });
+          this.chart.addSeries({
+            type: 'arearange',
+            name: 'profit/loss',
+            opacity: .5,
+            zIndex: -1,
+            data: series.profit,
+            enableMouseTracking: false
+
+          });
+        this.chart.addSeries({
+          type: 'line',
+          lineWidth: 1,
+          zIndex: 2,
+          color: 'black',
+          data: series.qStar,
+          marker: { enabled: true, radius: 4, symbol: 'circle', lineWidth: 1, lineColor: 'black', fillColor: 'lightgrey' },
+          label: { enabled: false },
+          tooltip: {
+            headerFormat: '',
+            pointFormat: `{point.name}: {series.point[2].y}`,
+            valueDecimals: 2
+          }
+  
+        });
+          break;
 
       default:
         break;
@@ -240,7 +290,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
   private _createSeries() {
     let slider = this.sliderGroup.value;
-    let p = slider.price, q = slider.quantity;
+    let p = slider.price!, q = slider.quantity!;
 
     let a = .000000004, b = 0.000004, c = 0.0101, d = 0.0217;
     let scalar01 = 85 + slider.variable!, FC = 216 + slider.fixed!;
@@ -288,19 +338,55 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
     ];
 
+    // profit area
+    let xStar = this.mode === 1 ? inverseMC(p) : q, atc = vc(xStar) / xStar + FC / xStar;
+
     let profitSeries = [
       {
-        x: inverseMC(p),
-        y: p
+        name: p < atc ? 'Loss' : 'Profit',
+        x: 0,
+        low: p! < atc ? p : atc,
+        high: p! <= atc ? atc : p,
+      },
+      {
+        x: xStar,
+        low: p < atc ? p : atc,
+        high: p <= atc ? atc : p
       }
     ];
-    console.log(profitSeries[0].x, vc(510.412)/510.412, mc(510.412));
+
+    let quantStarSeries = [
+      {
+        x: xStar,
+        y: 0.4,
+        marker: { enabled: false },
+      },
+      {
+        x: xStar,
+        y: atc,
+        name: 'ATC',
+      },
+      {
+        x: xStar,
+        y: mc(xStar),
+        name: 'MC'
+      },
+      {
+        x: xStar,
+        y: p,
+        name: 'MR'
+      }
+    ];
+    console.log(inverseMC(1.25));
+
 
     return {
       AVC: avcArr,
       MC: mcArr,
       ATC: atcArr,
-      MR: mrSeries
+      MR: mrSeries,
+      profit: profitSeries,
+      qStar: quantStarSeries
     }
 
   }
