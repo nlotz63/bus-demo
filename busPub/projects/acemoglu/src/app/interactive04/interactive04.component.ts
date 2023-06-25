@@ -113,6 +113,28 @@ export class Interactive04Component implements OnInit, AfterViewInit {
       case 2:
         this.chart?.series[4].setData(series.profit, true, false, false);
         this.chart?.series[5].setData(series.qStar, true, false, false);
+        this.chart?.update(
+          {
+            annotations: [
+              {
+                labels: [{
+                  point: {
+                    xAxis: 0,
+                    yAxis: 0,
+                    x: series.qStar[0].x,
+                    y: .4
+                  },
+                  text: `MR =  $${series.qStar[3].y.toFixed(2)}<br/>MC = $${series.qStar[2].y.toFixed(2)}<br/>ATC = $${series.qStar[1].y.toFixed(2)}`,
+                  accessibility: {
+                    description: `MR equals ${series.qStar[3].y.toFixed(2)} dollars. MC equals ${series.qStar[2].y.toFixed(2)} dollars. ATC equals ${series.qStar[1].y.toFixed(2)} dollars.`
+                  }
+    
+                }
+                ],
+              }
+            ]
+          }
+        );
         break;
 
       default:
@@ -278,8 +300,39 @@ export class Interactive04Component implements OnInit, AfterViewInit {
             pointFormat: `{point.name}: {series.point[2].y}`,
             valueDecimals: 2
           }
-  
         });
+        this.chart.addAnnotation(
+          {
+            animation: false,
+            labelOptions: {
+              backgroundColor: 'rgba(255, 255, 255, 0)',
+              borderWidth: 0,
+              align: 'left',
+              verticalAlign: 'bottom',
+              x: 5,
+              y: -2,
+              style: {
+                textAlign: 'right',
+                fontSize: '12px'
+              },
+            },
+            labels: [{
+              useHTML: true,
+              point: {
+                xAxis: 0,
+                yAxis: 0,
+                x: series.qStar[0].x,
+                y: .4
+              },
+              text: `MR =  $${series.qStar[3].y.toFixed(2)}<br/>MC = $${series.qStar[2].y.toFixed(2)}<br/>ATC = $${series.qStar[1].y.toFixed(2)}`,
+              accessibility: {
+                description: `MR equals ${series.qStar[3].y.toFixed(2)} dollars. MC equals ${series.qStar[2].y.toFixed(2)} dollars. ATC equals ${series.qStar[1].y.toFixed(2)} dollars.`
+              }
+
+            }
+            ],
+          }
+        );
           break;
 
       default:
