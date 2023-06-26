@@ -47,12 +47,17 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
   title: string = 'Cost Curves';
   xGood: string = 'cheese';
-  graphTitle: string = 'Cheeseman'
+  graphTitle: string = 'Wisconsin Cheeseman';
+  qStar: number = 602;
+  pStar: number = 1.07;
+  atcStar: number = 1.07;
+  profit: number = 0;
+
 
   sliderGroup = new FormGroup({
     variable: new FormControl(0),
     fixed: new FormControl(0),
-    quantity: new FormControl(600),
+    quantity: new FormControl(602),
     price: new FormControl(1.07)
 
   });
@@ -154,14 +159,14 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         animation: false,
       },
       caption: {
-        text: `The market demand curve for ${this.xGood} with a shaded triangle showing the consumer surplus at the initial price of $50.`
+        text: `The Wisconsin Cheeseman is a producer of cheese boxes. The graph shows the firm’s cost curves and its demand curve. Per unit costs and market price are shown on the y-axis and the quantity produced is shown on the x-axis.`
       },
       credits: {
         text: `Pearson Education`,
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
       title: {
-        text: `${this.graphTitle}'s Cost Curves`,
+        text: `${this.graphTitle}`,
         style: {
           fontFamily: 'sans-serif',
           fontWeight: '300',
@@ -200,7 +205,6 @@ export class Interactive04Component implements OnInit, AfterViewInit {
           color: '#37723B',
           lineWidth: 2,
           data: series.ATC,
-          enableMouseTracking: false
         },
         {
           type: 'spline',
@@ -222,7 +226,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: `Quantity of ${this.xGood} ` },
+        title: { useHTML: true, text: `Quantity of ${this.xGood} boxes ` },
         min: 0,
         max: 2000,
       },
@@ -232,7 +236,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         tickWidth: 1,
-        title: { useHTML: true, text: `Price per pair` },
+        title: { useHTML: true, text: `Cost (price) per cheese box` },
         min: .5,
         max: 1.5,
       },
@@ -241,7 +245,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
             headerFormat: '<b>{series.name}</b><br/>',
-            pointFormat: `\${point.x:,.2f}`
+            pointFormat: `\${point.y:,.2f}`
           },
           label: {enabled: true}
         }
@@ -249,6 +253,47 @@ export class Interactive04Component implements OnInit, AfterViewInit {
     });
 
     switch (this.mode) {
+      case 0:
+        this.chart.addSeries(
+          {
+            type: 'spline',
+            name: 'Initial ATC',
+            color: 'rgb(125, 125, 125)',
+            zIndex: -1,
+            lineWidth: 1,
+            dashStyle: 'LongDash',
+            data: series.ATC,
+            label: {enabled: false}
+          },
+          false
+        );
+        this.chart.addSeries(
+          {
+            type: 'spline',
+            name: 'Initial MC',
+            color: 'rgb(125, 125, 125)',
+            lineWidth: 1,
+            zIndex: -1,
+            dashStyle: 'LongDash',
+            data: series.MC,
+            label: {enabled: false}
+          },
+          false
+        );
+        this.chart.addSeries(
+          {
+            type: 'spline',
+            name: 'Initial AVC',
+            color: 'rgb(125, 125, 125)',
+            lineWidth: 1,
+            zIndex: -1,
+            dashStyle: 'LongDash',
+            data: series.AVC,
+            label: {enabled: false}
+          },
+          true
+        );
+        break;
       case 1:
         this.chart.addSeries({
           type: 'line',
@@ -296,8 +341,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
           marker: { enabled: true, radius: 4, symbol: 'circle', lineWidth: 1, lineColor: 'black', fillColor: 'lightgrey' },
           label: { enabled: false },
           tooltip: {
-            headerFormat: '',
-            pointFormat: `{point.name}: {series.point[2].y}`,
+            headerFormat: 'Selected quantity: ',
+            pointFormat: `{point.x}`,
             valueDecimals: 2
           }
         });
@@ -430,8 +475,10 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         name: 'MR'
       }
     ];
-    console.log(inverseMC(1.25));
-
+    this.qStar = xStar;
+    this.pStar = p;
+    this.atcStar = atc;
+    this.profit = (Number(p.toFixed(3)) - Number(atc.toFixed(3))) * Number(xStar.toFixed(3));
 
     return {
       AVC: avcArr,

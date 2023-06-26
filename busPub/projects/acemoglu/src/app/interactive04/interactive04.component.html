@@ -47,8 +47,13 @@
         max="1.25"
         step=".005"
         (valueChange)="updateGraph()"
-
         ></econ-slider>
+        <p>
+          <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
+          <span econMath="$$ \text{Profit} = ({{pStar | currency}} - {{atcStar | currency}}) \times {{qStar | number: '0.2-2'}} = {{profit | currency}} $$"></span>
+
+        </p>
+
       </div>
     </div>
     <div class="item-narrative" *ngIf="mode === 2">
@@ -59,11 +64,16 @@
         class="econ-control"
         label="Quantity"
         [(value)]="sliderGroup.value.quantity!"
-        min="601"
-        max="1201"
-        step="15"
+        min="637"
+        max="1202"
+        step="50"
         (valueChange)="updateGraph()"
         ></econ-slider>
+        <p>
+          <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
+          <span econMath="$$ \text{Profit} = ({{pStar | currency}} - {{atcStar | currency}}) \times {{qStar | number: '0.3-3'}} = {{profit | currency}} $$"></span>
+
+        </p>
 
       </div>
 
