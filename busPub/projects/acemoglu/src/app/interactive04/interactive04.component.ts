@@ -49,8 +49,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
   xGood: string = 'cheese';
   graphTitle: string = 'Wisconsin Cheeseman';
   qStar: number = 602;
-  pStar: number = 1.07;
-  atcStar: number = 1.07;
+  pStar: number = 1.25;
+  atcStar: number = 1.055;
   profit: number = 0;
 
 
@@ -58,7 +58,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
     variable: new FormControl(0),
     fixed: new FormControl(0),
     quantity: new FormControl(602),
-    price: new FormControl(1.07)
+    price: new FormControl(1.056)
 
   });
 
@@ -390,8 +390,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
     let slider = this.sliderGroup.value;
     let p = slider.price!, q = slider.quantity!;
 
-    let a = .000000004, b = 0.000004, c = 0.0101, d = 0.0217;
-    let scalar01 = 85 + slider.variable!, FC = 216 + slider.fixed!;
+    let a = .000000004, b = 0.000004001228, c = 0.0101, d = 0.0217;
+    let scalar01 = 85 + slider.variable!, FC = 204 + slider.fixed!;
 
     let x = 50, atcArr: any[] = [], avcArr: any[] = [], mcArr: any[] = [];
 
@@ -478,7 +478,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
     this.qStar = xStar;
     this.pStar = p;
     this.atcStar = atc;
-    this.profit = (Number(p.toFixed(3)) - Number(atc.toFixed(3))) * Number(xStar.toFixed(3));
+    this.profit = (Number(p.toFixed(3)) - Number(atc.toFixed(3))) * Number(xStar.toFixed(0));
+    console.log( inverseMC(1.25), atc )
 
     return {
       AVC: avcArr,

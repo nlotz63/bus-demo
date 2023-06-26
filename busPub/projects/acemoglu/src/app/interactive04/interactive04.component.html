@@ -41,16 +41,16 @@
         class="econ-control"
         label="Price"
         showValue="false"
-        displayValue="{{sliderGroup.value.price! | currency }}"
+        displayValue="{{sliderGroup.value.price! | currency: 'USD' : 'symbol' : '0.2-3' }}"
         [(value)]="sliderGroup.value.price!"
-        min=".75"
-        max="1.25"
+        min=".751"
+        max="1.251"
         step=".005"
         (valueChange)="updateGraph()"
         ></econ-slider>
         <p>
           <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
-          <span econMath="$$ \text{Profit} = ({{pStar | currency}} - {{atcStar | currency}}) \times {{qStar | number: '0.2-2'}} = {{profit | currency}} $$"></span>
+          <span econMath="$$ \text{Profit} = ({{pStar | currency: 'USD' : 'symbol' : '0.2-3'}} - {{atcStar | currency: 'USD' : 'symbol' : '0.3-3'}}) \times {{qStar | number: '0.0-2'}} = {{profit | currency}} $$"></span>
 
         </p>
 
@@ -64,14 +64,14 @@
         class="econ-control"
         label="Quantity"
         [(value)]="sliderGroup.value.quantity!"
-        min="637"
+        min="612"
         max="1202"
-        step="50"
+        step="25"
         (valueChange)="updateGraph()"
         ></econ-slider>
         <p>
           <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
-          <span econMath="$$ \text{Profit} = ({{pStar | currency}} - {{atcStar | currency}}) \times {{qStar | number: '0.3-3'}} = {{profit | currency}} $$"></span>
+          <span econMath="$$ \text{Profit} = ({{pStar | currency}} - {{atcStar | currency: 'USD' : 'symbol' : '0.3-3'}}) \times {{qStar | number: '0.0-2'}} = {{profit | currency}} $$"></span>
 
         </p>
 
