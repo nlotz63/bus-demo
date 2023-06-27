@@ -3,54 +3,47 @@
   <div class="wrapper">
     <div class="item-narrative" *ngIf="mode === 0" @myAnimationTrigger>
       <ul>
-        <li>variable cost bullet</li>
-        <li>fixed cost bullet.</li>
+        <li>
+          A variable cost is the cost of variable factors of production, which change along with a firm’s output.
+        </li>
+        <li>
+          Average variable cost, average total cost, and marginal cost are all affected by changes in the price of
+          variable factors.
+        </li>
+        <li>
+          A fixed cost is the cost of fixed factors of production, which a firm must pay even if it produces zero
+          output.</li>
+        <li>
+          Only average total cost is affected by changes in the cost of a fixed factor. It’s worth noting that the
+          average fixed cost is the vertical distance between average total cost and average variable cost.
+        </li>
         <li>
           Use the sliders to see the effect of changes in fixed and variable
           costs on the cost curves.
         </li>
       </ul>
       <div class="control-column">
-        <econ-slider
-        class="econ-control"
-        label="Variable cost"
-        showValue="false"
-        displayValue="{{(sliderGroup.value.variable!/40) | percent}}"
-        [(value)]="sliderGroup.value.variable!"
-        min="-20"
-        max="20"
-        (valueChange)="updateGraph()"
-        ></econ-slider>
-        <econ-slider
-        class="econ-control"
-        label="Fixed cost"
-        showValue="false"
-        displayValue="{{(sliderGroup.value.fixed!/200) | percent}}"
-        [(value)]="sliderGroup.value.fixed!"
-        min="-100"
-        max="100"
-        (valueChange)="updateGraph()"
-        ></econ-slider>
+        <econ-slider class="econ-control" label="Variable cost" showValue="false"
+          displayValue="{{(sliderGroup.value.variable!/40) | percent}}" [(value)]="sliderGroup.value.variable!"
+          min="-20" max="20" (valueChange)="updateGraph()"></econ-slider>
+        <econ-slider class="econ-control" label="Fixed cost" showValue="false"
+          displayValue="{{(sliderGroup.value.fixed!/200) | percent}}" [(value)]="sliderGroup.value.fixed!" min="-100"
+          max="100" (valueChange)="updateGraph()"></econ-slider>
+          <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
     <div class="item-narrative" *ngIf="mode === 1">
       <p>Testing the narrative {{ mode }}</p>
 
       <div class="control-column">
-        <econ-slider
-        class="econ-control"
-        label="Price"
-        showValue="false"
-        displayValue="{{sliderGroup.value.price! | currency: 'USD' : 'symbol' : '0.2-3' }}"
-        [(value)]="sliderGroup.value.price!"
-        min=".751"
-        max="1.251"
-        step=".005"
-        (valueChange)="updateGraph()"
-        ></econ-slider>
+        <econ-slider class="econ-control" label="Price" showValue="false"
+          displayValue="{{sliderGroup.value.price! | currency: 'USD' : 'symbol' : '0.2-3' }}"
+          [(value)]="sliderGroup.value.price!" min=".751" max="1.251" step=".005"
+          (valueChange)="updateGraph()"></econ-slider>
         <p>
           <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
-          <span econMath="$$ \text{Profit} = ({{pStar | currency: 'USD' : 'symbol' : '0.2-3'}} - {{atcStar | currency: 'USD' : 'symbol' : '0.3-3'}}) \times {{qStar | number: '0.0-2'}} = {{profit | currency}} $$"></span>
+          <span
+            econMath="$$ \text{Profit} = ({{pStar | currency: 'USD' : 'symbol' : '0.2-3'}} - {{atcStar | currency: 'USD' : 'symbol' : '0.3-3'}}) \times {{qStar | number: '0.0-2'}} = {{profit | currency}} $$"></span>
 
         </p>
 
@@ -60,18 +53,12 @@
       <p>Testing the narrative {{ mode }}</p>
 
       <div class="control-column">
-        <econ-slider
-        class="econ-control"
-        label="Quantity"
-        [(value)]="sliderGroup.value.quantity!"
-        min="612"
-        max="1202"
-        step="25"
-        (valueChange)="updateGraph()"
-        ></econ-slider>
+        <econ-slider class="econ-control" label="Quantity" [(value)]="sliderGroup.value.quantity!" min="612" max="1202"
+          step="25" (valueChange)="updateGraph()"></econ-slider>
         <p>
           <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
-          <span econMath="$$ \text{Profit} = ({{pStar | currency}} - {{atcStar | currency: 'USD' : 'symbol' : '0.3-3'}}) \times {{qStar | number: '0.0-2'}} = {{profit | currency}} $$"></span>
+          <span
+            econMath="$$ \text{Profit} = ({{pStar | currency}} - {{atcStar | currency: 'USD' : 'symbol' : '0.3-3'}}) \times {{qStar | number: '0.0-2'}} = {{profit | currency}} $$"></span>
 
         </p>
 

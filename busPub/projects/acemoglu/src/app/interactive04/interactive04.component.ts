@@ -10,8 +10,9 @@ import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { BusPubLibModule } from 'bus-pub-lib';
+import { MatButtonModule } from '@angular/material/button';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -24,7 +25,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive04',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule],
+  imports: [CommonModule, BusPubLibModule, MatButtonModule],
   templateUrl: './interactive04.component.html',
   styleUrls: ['./interactive04.component.scss'],
   animations: [
@@ -148,6 +149,13 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
   }
 
+  public reset() {
+    this.sliderGroup.patchValue(
+      { variable: 0, fixed: 0 }
+    );
+    this.updateGraph();
+  }
+
   private _setupStep() {
     if (this.mode === 2) this.sliderGroup.patchValue({ price: 1.25 });
     let series = this._createSeries();
@@ -192,7 +200,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
       },
       accessibility: {
         point: {
-          valueDescriptionFormat: `quantity: {point.x:.0f}, price: {point.y:.0f} dollars.`
+          valueDescriptionFormat: `quantity: {point.x:.0f}, {point.name}: {point.y:.2f} dollars.`
         },
         keyboardNavigation: {
           order: ['container', 'series', 'chartMenu']
@@ -334,6 +342,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
           });
         this.chart.addSeries({
           type: 'line',
+          name: 'Selected quantity',
           lineWidth: 1,
           zIndex: 2,
           color: 'black',
@@ -402,14 +411,17 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
     do {
       let point = {
+        name: 'AVC',
         x: x,
         y: vc(x) / x
       }
       let point2 = {
+        name: 'MC',
         x: x,
         y: mc(x)
       };
       let point3 = {
+        name: 'ATC',
         x: x,
         y: vc(x) / x + FC / x
       }
@@ -479,7 +491,6 @@ export class Interactive04Component implements OnInit, AfterViewInit {
     this.pStar = p;
     this.atcStar = atc;
     this.profit = (Number(p.toFixed(3)) - Number(atc.toFixed(3))) * Number(xStar.toFixed(0));
-    console.log( inverseMC(1.25), atc )
 
     return {
       AVC: avcArr,
