@@ -63,7 +63,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
   });
 
-
+  prevVariable = 0;
+  prevFixed = 0;
 
   constructor(private announcer: LiveAnnouncer) { }
 
@@ -134,7 +135,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
                   accessibility: {
                     description: `MR equals ${series.qStar[3].y.toFixed(2)} dollars. MC equals ${series.qStar[2].y.toFixed(2)} dollars. ATC equals ${series.qStar[1].y.toFixed(2)} dollars.`
                   }
-    
+
                 }
                 ],
               }
@@ -146,7 +147,6 @@ export class Interactive04Component implements OnInit, AfterViewInit {
       default:
         break;
     }
-
   }
 
   public reset() {
@@ -255,7 +255,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
             headerFormat: '<b>{series.name}</b><br/>',
             pointFormat: `\${point.y:,.2f}`
           },
-          label: {enabled: true}
+          label: { enabled: true }
         }
       },
     });
@@ -271,7 +271,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
             lineWidth: 1,
             dashStyle: 'LongDash',
             data: series.ATC,
-            label: {enabled: false}
+            label: { enabled: false }
           },
           false
         );
@@ -284,7 +284,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
             zIndex: -1,
             dashStyle: 'LongDash',
             data: series.MC,
-            label: {enabled: false}
+            label: { enabled: false }
           },
           false
         );
@@ -297,7 +297,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
             zIndex: -1,
             dashStyle: 'LongDash',
             data: series.AVC,
-            label: {enabled: false}
+            label: { enabled: false }
           },
           true
         );
@@ -321,25 +321,25 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         });
         break;
       case 2:
-        case 1:
-          this.chart.addSeries({
-            type: 'line',
-            name: 'Price = MR',
-            lineWidth: 2,
-            zIndex: 1,
-            color: '#0771BD',
-            data: series.MR
-  
-          });
-          this.chart.addSeries({
-            type: 'arearange',
-            name: 'profit/loss',
-            opacity: .5,
-            zIndex: -1,
-            data: series.profit,
-            enableMouseTracking: false
+      case 1:
+        this.chart.addSeries({
+          type: 'line',
+          name: 'Price = MR',
+          lineWidth: 2,
+          zIndex: 1,
+          color: '#0771BD',
+          data: series.MR
 
-          });
+        });
+        this.chart.addSeries({
+          type: 'arearange',
+          name: 'profit/loss',
+          opacity: .5,
+          zIndex: -1,
+          data: series.profit,
+          enableMouseTracking: false
+
+        });
         this.chart.addSeries({
           type: 'line',
           name: 'Selected quantity',
@@ -387,7 +387,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
             ],
           }
         );
-          break;
+        break;
 
       default:
         break;
@@ -407,7 +407,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
     let vc = (x: number) => scalar01 * (a * Math.pow(x, 3) - b * Math.pow(x, 2) + c * x + d);
     let mc = (x: number) => scalar01 * (3 * a * Math.pow(x, 2) - 2 * b * x + c);
 
-    let inverseMC = (x: any) => (b*scalar01 + Math.sqrt(Math.pow(b, 2)*Math.pow(scalar01, 2) - 3*a*c*Math.pow(scalar01, 2)+ 3*a*scalar01*x))/(3*a*scalar01);
+    let inverseMC = (x: any) => (b * scalar01 + Math.sqrt(Math.pow(b, 2) * Math.pow(scalar01, 2) - 3 * a * c * Math.pow(scalar01, 2) + 3 * a * scalar01 * x)) / (3 * a * scalar01);
 
     do {
       let point = {
@@ -503,5 +503,33 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
   }
 
+  public messageBuilder(slider: string, value: number) {
+    let sliderValue = this.sliderGroup.value;
+    let message = ``;
+    console.log(+sliderValue.variable!, this.prevVariable);
+
+    switch (slider) {
+      case 'vc':
+        if (this.prevVariable < value) {
+          message = 'The marginal cost curve, average total cost curve, and the average variable cost curve have all shifted up.';
+        } else {
+          message = 'The marginal cost curve, average total cost curve, and the average variable cost curve have all shifted down.';
+        }
+        this.prevVariable = value;
+        break;
+      case 'fc':
+        if (this.prevFixed < value) {
+          message = 'Only the average total cost curve has shifted up.';
+        } else {
+          message = 'Only the average total cost curve has shifted down.';
+        }
+        this.prevFixed = value;
+        break;
+      default:
+        message = 'The graph has been updated.';
+        break;
+    }
+    this.announcer.announce(message);
+  }
 
 }

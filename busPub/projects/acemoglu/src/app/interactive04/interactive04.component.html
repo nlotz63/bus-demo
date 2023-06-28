@@ -23,44 +23,85 @@
         </li>
       </ul>
       <div class="control-column">
-        <econ-slider class="econ-control" label="Variable cost" showValue="false"
-          displayValue="{{(sliderGroup.value.variable!/40) | percent}}" [(value)]="sliderGroup.value.variable!"
-          min="-20" max="20" (valueChange)="updateGraph()"></econ-slider>
-        <econ-slider class="econ-control" label="Fixed cost" showValue="false"
+        <econ-slider #vc 
+        class="econ-control" 
+        label="Variable cost" showValue="false" 
+        [showPercent]="true"
+        displayValue="{{(sliderGroup.value.variable!/40) | percent}}" 
+        [(value)]="sliderGroup.value.variable!"
+        min="-20" 
+        max="20" 
+        (valueChange)="updateGraph()" 
+        (change)="messageBuilder('vc', +vc.value)"
+        ></econ-slider>
+        <econ-slider #fc class="econ-control" label="Fixed cost" showValue="false" [showPercent]="true"
           displayValue="{{(sliderGroup.value.fixed!/200) | percent}}" [(value)]="sliderGroup.value.fixed!" min="-100"
-          max="100" (valueChange)="updateGraph()"></econ-slider>
-          <button mat-raised-button (click)="reset()">Reset</button>
+          max="100" (valueChange)="updateGraph()" (change)="messageBuilder('fc', +fc.value)"></econ-slider>
+        <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
     <div class="item-narrative" *ngIf="mode === 1">
-      <p>Testing the narrative {{ mode }}</p>
-
+      <ul>
+        <li>
+          Profit is maximized (or the loss minimized) by producing where marginal revenue (MR) equals marginal cost (MC).
+        </li>
+        <li>
+          In a competitive market, marginal revenue is equal to the market price.
+        </li>
+        <li>
+          The demand curve faced by the Cheeseman is the horizontal line at the market price shown in the graph.
+        </li>
+        <li>
+          Vary the price to explore the different outcomes. Pay particular attention to the point where Cheeseman should shut down on the short run.
+        </li>
+      </ul>
       <div class="control-column">
         <econ-slider class="econ-control" label="Price" showValue="false"
           displayValue="{{sliderGroup.value.price! | currency: 'USD' : 'symbol' : '0.2-3' }}"
           [(value)]="sliderGroup.value.price!" min=".751" max="1.251" step=".005"
-          (valueChange)="updateGraph()"></econ-slider>
-        <p>
+          (valueChange)="updateGraph()"
+          (change)="messageBuilder('default', $event)"
+          #price
+          ></econ-slider>
+        <div aria-live="polite">
           <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
           <span
             econMath="$$ \text{Profit} = ({{pStar | currency: 'USD' : 'symbol' : '0.2-3'}} - {{atcStar | currency: 'USD' : 'symbol' : '0.3-3'}}) \times {{qStar | number: '0.0-2'}} = {{profit | currency}} $$"></span>
 
-        </p>
+            <p *ngIf="+price.value <= 0.776">At this price, Cheeseman is not even able to cover its variable cost; therefore, it should shut down in the short run.</p>
+            <p *ngIf="+price.value > 0.776 && +price.value < 1.056">At this price, Cheeseman is operating at a loss but is able to cover its variable cost and at least some of its fixed cost, therefore, it should continue to operate in the short run.</p>
+            <p *ngIf="+price.value == 1.056">At this price, Cheeseman is earning zero economic profit; therefore, it should continue to operate in the short run.</p>
+            <p *ngIf="+price.value > 1.056">At this price, Cheeseman is earning positive economic profit; therefore, it should continue to operate in the short run.</p>
+        </div>
 
       </div>
     </div>
     <div class="item-narrative" *ngIf="mode === 2">
-      <p>Testing the narrative {{ mode }}</p>
-
+      <ul>
+        <li>
+          Profit is maximized (or the loss minimized) by producing where marginal revenue (MR) equals marginal cost (MC).
+        </li>
+        <li>
+          In a competitive market, marginal revenue is equal to the market price.
+        </li>
+        <li>
+          When marginal revenue is greater than marginal cost, the last unit produced adds to profit.
+        </li>
+        <li>
+          When marginal revenue is less than marginal cost, the last unit produced subtracted from profit.
+        </li>
+      </ul>
       <div class="control-column">
         <econ-slider class="econ-control" label="Quantity" [(value)]="sliderGroup.value.quantity!" min="612" max="1202"
-          step="25" (valueChange)="updateGraph()"></econ-slider>
-        <p>
+          step="25" #quantity (valueChange)="updateGraph()" (change)="messageBuilder('default', $event)"></econ-slider>
+        <div aria-live="polite">
           <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
           <span
             econMath="$$ \text{Profit} = ({{pStar | currency}} - {{atcStar | currency: 'USD' : 'symbol' : '0.3-3'}}) \times {{qStar | number: '0.0-2'}} = {{profit | currency}} $$"></span>
-
-        </p>
+            <p *ngIf="+quantity.value === 1037" >At this quantity marginal revenue equals marginal cost and profit is maximized.</p>
+            <p *ngIf="+quantity.value < 1037" >At this quantity marginal revenue is greater than marginal cost. Increasing output will increase profit.</p>
+            <p *ngIf="+quantity.value > 1037" >At this quantity marginal revenue is less than marginal cost. Decreasing output will increase profit.</p>
+        </div>
 
       </div>
 
