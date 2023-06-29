@@ -105,6 +105,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
 
   public updateGraph() {
     let series = this._createSeries();
+    let profitLoss = this.sliderGroup.value.price! < 1.056 ? 'Loss' : 'Profit';
 
     switch (this.mode) {
       case 0:
@@ -114,12 +115,15 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         break;
       case 1:
         this.chart?.series[3].setData(series.MR, true, false, false);
-        this.chart?.series[4].setData(series.profit, true, false, false);
+        this.chart?.series[4].update({
+          type: 'arearange',
+          name: profitLoss,
+          data: series.profit
+        }, true);
 
         break;
       case 2:
-        this.chart?.series[4].setData(series.profit, true, false, false);
-        this.chart?.series[5].setData(series.qStar, true, false, false);
+        this.chart?.series[5].setData(series.qStar, false, false, false);
         this.chart?.update(
           {
             annotations: [
@@ -142,6 +146,12 @@ export class Interactive04Component implements OnInit, AfterViewInit {
             ]
           }
         );
+        this.chart?.series[4].update({
+          type: 'arearange',
+          name: profitLoss,
+          data: series.profit
+        }, true);
+
         break;
 
       default:
@@ -213,20 +223,31 @@ export class Interactive04Component implements OnInit, AfterViewInit {
           color: '#37723B',
           lineWidth: 2,
           data: series.ATC,
+          accessibility: {
+            description: 'A U shaped curve. It reaches a minimum at a quantity of approximately 886 cheese boxes.'
+          }
         },
         {
           type: 'spline',
           name: 'MC',
           color: '#C63F43',
           lineWidth: 2,
-          data: series.MC
+          data: series.MC,
+          accessibility: {
+            description: 'Looks like a check mark. It stars below AVC, falls slightly, and then increases sharply. It intersects the AVC curve at a quantity of approximately 525 cheese boxes; continues to increase, and then intersects the ATC curve at a quantity of approximately 886 cheese boxes. Finally, it continues to increase above the ATC curve.'
+          }
+
         },
         {
           type: 'spline',
           name: 'AVC',
           color: '#563177',
           lineWidth: 2,
-          data: series.AVC
+          data: series.AVC,
+          accessibility: {
+            description: 'A U shaped curve that lies below ATC. It reaches a minimum at a quantity of approximately 525 cheese boxes.'
+          }
+
         },
 
       ],
@@ -252,8 +273,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
-            headerFormat: '<b>{series.name}</b><br/>',
-            pointFormat: `\${point.y:,.2f}`
+            headerFormat: '<b>{series.name}: </b> ',
+            pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
           },
           label: { enabled: true }
         }
@@ -314,7 +335,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         });
         this.chart.addSeries({
           type: 'arearange',
-          name: 'profit/loss',
+          name: 'profit',
           opacity: .5,
           zIndex: -1,
           data: series.profit
@@ -333,7 +354,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         });
         this.chart.addSeries({
           type: 'arearange',
-          name: 'profit/loss',
+          name: 'profit',
           opacity: .5,
           zIndex: -1,
           data: series.profit,

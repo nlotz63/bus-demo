@@ -35,8 +35,11 @@
         (change)="messageBuilder('vc', +vc.value)"
         ></econ-slider>
         <econ-slider #fc class="econ-control" label="Fixed cost" showValue="false" [showPercent]="true"
-          displayValue="{{(sliderGroup.value.fixed!/200) | percent}}" [(value)]="sliderGroup.value.fixed!" min="-100"
-          max="100" (valueChange)="updateGraph()" (change)="messageBuilder('fc', +fc.value)"></econ-slider>
+          displayValue="{{(sliderGroup.value.fixed!/200) | percent}}" [(value)]="sliderGroup.value.fixed!" 
+          min="-100"
+          max="100"
+          step="10"
+          (valueChange)="updateGraph()" (change)="messageBuilder('fc', +fc.value)"></econ-slider>
         <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
@@ -60,7 +63,7 @@
           displayValue="{{sliderGroup.value.price! | currency: 'USD' : 'symbol' : '0.2-3' }}"
           [(value)]="sliderGroup.value.price!" min=".751" max="1.251" step=".005"
           (valueChange)="updateGraph()"
-          (change)="messageBuilder('default', $event)"
+          (change)="messageBuilder('default', 0)"
           #price
           ></econ-slider>
         <div aria-live="polite">
@@ -93,7 +96,7 @@
       </ul>
       <div class="control-column">
         <econ-slider class="econ-control" label="Quantity" [(value)]="sliderGroup.value.quantity!" min="612" max="1202"
-          step="25" #quantity (valueChange)="updateGraph()" (change)="messageBuilder('default', $event)"></econ-slider>
+          step="25" #quantity (valueChange)="updateGraph()" (change)="messageBuilder('default', 0)"></econ-slider>
         <div aria-live="polite">
           <span econMath="$$ \text{Profit} = (\text{Price} - ATC) \times Q $$"></span>
           <span

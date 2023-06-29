@@ -136,6 +136,8 @@ h3 {
 .wrapper {
   width: 100%;
 }
+/* Workaround for Highcharts useHTML bug in annotations */
+.highcharts-annotation-label > span {
+  font-size: 11.9px !important;
 
-
-
+}
