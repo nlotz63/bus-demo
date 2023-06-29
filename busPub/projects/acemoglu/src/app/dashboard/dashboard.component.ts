@@ -11,7 +11,7 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  @Input() toggle?: string = 'false';
+  @Input() toggle?: string;
   enable: boolean = true;
 
 
