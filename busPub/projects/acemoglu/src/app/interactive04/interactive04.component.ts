@@ -527,7 +527,6 @@ export class Interactive04Component implements OnInit, AfterViewInit {
   public messageBuilder(slider: string, value: number) {
     let sliderValue = this.sliderGroup.value;
     let message = ``;
-    console.log(+sliderValue.variable!, this.prevVariable);
 
     switch (slider) {
       case 'vc':

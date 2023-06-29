@@ -1,4 +1,4 @@
-import { Component, Input, booleanAttribute, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -11,13 +11,18 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  @Input({transform: booleanAttribute}) locationToggle!: string;
+  @Input() toggle?: string = 'false';
+  enable: boolean = true;
 
-  disableLocationChange = this.locationToggle !== undefined ? this.locationToggle : true;
 
   ngOnInit() {
 
-    console.log(typeof this.locationToggle);
+    if (this.toggle === undefined) {
+      this.enable = true;
+    } else {
+      this.enable = this.toggle === 'false' ? false : true;
+    }
+
 
   }
   

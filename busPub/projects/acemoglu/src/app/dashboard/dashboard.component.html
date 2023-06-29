@@ -2,7 +2,7 @@
 <div class="grid grid-pad">
   <a
   [routerLink]="['/interactive01']"
-  [skipLocationChange]="disableLocationChange"
+  [skipLocationChange]="enable"
   [queryParams]="{ mode: '0' }"
   class="col-1-4"
 >
@@ -12,7 +12,7 @@
 </a>
 <a
 [routerLink]="['/interactive01']"
-skipLocationChange
+[skipLocationChange]="enable"
 [queryParams]="{ mode: '1' }"
 class="col-1-4"
 >
@@ -22,7 +22,7 @@ class="col-1-4"
 </a>
 <a
 [routerLink]="['/interactive02']"
-skipLocationChange
+[skipLocationChange]="enable"
 class="col-1-4"
 >
 <div class="module hero">
@@ -31,7 +31,7 @@ class="col-1-4"
 </a>
 <a
 [routerLink]="['/interactive03']"
-skipLocationChange
+[skipLocationChange]="enable"
 class="col-1-4"
 >
 <div class="module hero">
@@ -41,7 +41,7 @@ class="col-1-4"
 <a
 [routerLink]="['/interactive04']"
 [queryParams]="{ mode: '0' }"
-skipLocationChange
+[skipLocationChange]="enable"
 class="col-1-4"
 >
 <div class="module hero">
@@ -51,7 +51,7 @@ class="col-1-4"
 <a
 [routerLink]="['/interactive04']"
 [queryParams]="{ mode: '1' }"
-skipLocationChange
+[skipLocationChange]="enable"
 class="col-1-4"
 >
 <div class="module hero">
@@ -61,7 +61,7 @@ class="col-1-4"
 <a
 [routerLink]="['/interactive04']"
 [queryParams]="{ mode: '2' }"
-skipLocationChange
+[skipLocationChange]="enable"
 class="col-1-4"
 >
 <div class="module hero">
