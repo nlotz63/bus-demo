@@ -1,9 +1,39 @@
 <div class="econ-interactive-container">
     <h1 class="mat-headline-5">Price Ceilings and Price Floors</h1>
     <div class="wrapper">
-        <div class="item-narrative" *ngIf="mode() === 0" @myAnimationTrigger></div>
+        <div class="item-narrative">
+            <label id="radio-label11">Choose an option</label><br/>
+            <mat-radio-group aria-labelledby="radio-label11" (change)="setMode($event.value);">
+                <mat-radio-button checked="true" value="0">Price ceiling</mat-radio-button>
+                <mat-radio-button value="1">Price floor</mat-radio-button>
+            </mat-radio-group>
+            <div *ngIf="mode() === 0" @myAnimationTrigger>
+                <ul>
+                    <li>
+                        Price ceiling bullets
+                    </li>
+                </ul>
+            </div>
+            <div *ngIf="mode() === 1"  @myAnimationTrigger>
+                <ul>
+                    <li>
+                        Price floor bullets
+                    </li>
+                </ul>
+            </div>
+            <econ-slider
+            class="econ-control" 
+            label="Price"
+            showValue="false"
+            displayValue="{{ graph().price | currency: 'USD' : 'symbol' : '0.0-0' }}"
+            [min]="graph().min"
+            [max]="graph().max"
+            [(value)]="graph().price"
+            [step]="graph().step"
+            (valueChange)="updateGraph($event)"
+            ></econ-slider>
+        </div>
         <div class="item-chart" id="chart1">
-
         </div>
     </div>
 </div>

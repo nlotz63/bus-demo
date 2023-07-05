@@ -10,7 +10,8 @@ import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { single } from 'rxjs';
+import { MatRadioModule } from '@angular/material/radio';
+import { BusPubLibModule } from 'bus-pub-lib';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -23,7 +24,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive5',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatRadioModule, BusPubLibModule],
   templateUrl: './interactive5.component.html',
   styleUrls: ['./interactive5.component.scss'],
   animations: [
@@ -41,19 +42,27 @@ HC_accessibility(Highcharts);
 })
 export class Interactive5Component implements OnInit, AfterViewInit {
 
-  graphTitle: string = 'Market for Cheese';
-  xGood = computed(() => {
-    if (this.mode() === 0) {
-      return 'cheese';
-    } else {
-      return 'apartments';
-    }
-  });
   chart1!: Highcharts.Chart;
 
   mode = signal(0);
-  price = signal(50);
+  graph = computed(() => {
+    let scaler = 30, xGood = 'apartments (thousands)', yGood = 'Rent (dollars per month)', title = 'Market for 2-Bedroom Apartments', price = 1500, min = 750, max = 1500, step = 25;
 
+    if (this.mode() === 1) {
+      scaler = .5, xGood = 'cheese (thousands of pounds)', yGood = 'Price (dollars per pound)', title = 'Market for Chedar Cheese', price = 25, min = 25, max = 35, step = 1;
+
+    };
+    return {
+      scaler: scaler,
+      xGood: xGood,
+      yGood: yGood,
+      title: title,
+      price: price,
+      min: min,
+      max: max,
+      step: step
+    }
+  });
 
   constructor(private el: ElementRef, private announcer: LiveAnnouncer) { }
 
@@ -65,6 +74,26 @@ export class Interactive5Component implements OnInit, AfterViewInit {
     this._setupStep();
   }
 
+  public setMode(value: number) {
+    this.mode.set(+value);
+    this._setupStep();
+  }
+
+  public updateGraph(value: number) {
+    let series = this._createSeries();
+    this.chart1.series[0].update({
+      type: 'line',
+      name: 'Price Ceiling',
+      lineWidth: 2,
+      zIndex: 1,
+      data: series.priceLine
+    }, false);
+    this.chart1.series[1].update({
+      type: 'arearange',
+      name: 'DWL',
+      data: series.DWL
+    }, true)
+  }
 
   // Private methods
   private _setupStep() {
@@ -85,7 +114,7 @@ export class Interactive5Component implements OnInit, AfterViewInit {
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
       title: {
-        text: `${this.graphTitle}`,
+        text: `${this.graph().title}`,
         style: {
           fontFamily: 'sans-serif',
           fontWeight: '300',
@@ -118,6 +147,19 @@ export class Interactive5Component implements OnInit, AfterViewInit {
         }
       },
       series: [
+        {
+          type: 'line',
+          name: 'Price Ceiling',
+          lineWidth: 2,
+          color: 'black',
+          zIndex: 1,
+          data: series.priceLine
+        },
+        {
+          type: 'arearange',
+          data: series.DWL
+          
+        },
         {
           type: 'line',
           name: 'Equilibrium',
@@ -209,7 +251,7 @@ export class Interactive5Component implements OnInit, AfterViewInit {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: `Quantity of ${this.xGood()} boxes ` },
+        title: { useHTML: true, text: `Quantity of ${this.graph().xGood}` },
         min: 15,
         max: 55,
       },
@@ -219,9 +261,7 @@ export class Interactive5Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         tickWidth: 1,
-        title: { useHTML: true, text: `Cost (price) per cheese box` },
-        min: 10,
-        max: 90,
+        title: { useHTML: true, text: `${this.graph().yGood}` },
       },
       plotOptions: {
         series: {
@@ -240,18 +280,20 @@ export class Interactive5Component implements OnInit, AfterViewInit {
   }
 
   private _createSeries() {
-    let x = 18, a = 120, b = 2, c = -13, d = 1.8;
+    const graph = this.graph();
+    const scaler = graph.scaler;
+    let x = 15, a = 120, b = 2, c = -13, d = 1.8;
     let demandSeries = [], supplySeries = [];
 
     let demand = (x: number): number => {
-      return a - b * x;
+      return scaler * (a - b * x);
     }
 
     let supply = (x: number): number => {
-      return c + d * x;
+      return scaler * (c + d * x);
     }
-    let qd = (y: number) => { return (a - y) / b; }
-    let qs = (y: number) => { return (y - c) / d; }
+    let qd = (y: number) => { return (y/scaler - a)/-b; }
+    let qs = (y: number) => { return (y/scaler - c)/d; }
 
     do {
       let point = {
@@ -268,40 +310,45 @@ export class Interactive5Component implements OnInit, AfterViewInit {
       supplySeries.push(point2);
       x = x + 5;
 
-    } while (x <= 57);
+    } while (x <= 55);
 
     let eqX = (a - c) / (b + d);
-
+    let qStar = graph.price <= demand(eqX) ? qs(graph.price) : qd(graph.price);
     let eqSeries = [
       { x: 0, y: demand(eqX), accessibility: { enabled: false } },
       { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
-      { x: eqX, y: 9, accessibility: { enabled: false } }
+      { x: eqX, y: 0, accessibility: { enabled: false } }
     ];
 
-    let eqRef = [
-      { x: 0, y: demand(eqX), accessibility: { enabled: false } },
-      { name: 'Initial equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
-      { x: eqX, y: 9, accessibility: { enabled: false } }
-    ]
+    let dwlSeries = [
+      { x: qStar, low: supply(qStar), high: demand(qStar) },
+      { x: eqX, low: demand(eqX), high: supply(eqX)}
+    ]; 
 
     let qsSeries = [
-      { x: 10, y: this.price(), accessibility: { enabled: false } },
-      { name: 'q<sup>s</sup>:', x: qs(this.price()), y: this.price(), marker: { enabled: true } },
-      { x: qs(this.price()), y: 10, accessibility: { enabled: false } }
+      { x: 10, y: this.graph().price, accessibility: { enabled: false } },
+      { name: 'q<sup>s</sup>:', x: qs(graph.price), y: graph.price, marker: { enabled: true } },
+      { x: qs(graph.price), y: 10, accessibility: { enabled: false } }
     ],
       qdSeries = [
-        { x: 10, y: this.price(), accessibility: { enabled: false } },
-        { name: 'q<sup>d</sup>:', x: qd(this.price()), y: this.price(), marker: { enabled: true } },
-        { x: qd(this.price()), y: 10, accessibility: { enabled: false } }
+        { x: 10, y: graph.price, accessibility: { enabled: false } },
+        { name: 'q<sup>d</sup>:', x: qd(graph.price), y: graph.price, marker: { enabled: true } },
+        { x: qd(graph.price), y: 10, accessibility: { enabled: false } }
+      ];
+    let priceLine = [
+      { x: 10, y: graph.price },
+      { x: 50, y: graph.price}
+        
       ];
 
     return {
       demand: demandSeries,
       supply: supplySeries,
+      priceLine: priceLine,
       EQ: eqSeries,
-      EQref: eqRef,
-      QD: qd(this.price()),
-      QS: qs(this.price()),
+      DWL: dwlSeries,
+      QD: qd(graph.price),
+      QS: qs(graph.price),
       QSseries: qsSeries,
       QDseries: qdSeries
     }
