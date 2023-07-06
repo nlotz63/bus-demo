@@ -46,10 +46,10 @@ export class Interactive5Component implements OnInit, AfterViewInit {
 
   mode = signal(0);
   graph = computed(() => {
-    let scaler = 30, xGood = 'apartments (thousands)', yGood = 'Rent (dollars per month)', title = 'Market for 2-Bedroom Apartments', price = 1500, min = 750, max = 1500, step = 25;
+    let scaler = 30, xGood = 'apartments (thousands)', yGood = 'Rent (dollars per month)', title = 'Market for 2-Bedroom Apartments',caption = 'The market for two-bedroom apartments. The supply and demand curves intersect at the market clearing price of $1,500 and quantity of 35 thousand apartments. ', price = 1500, min = 1150, max = 1500, step = 25;
 
     if (this.mode() === 1) {
-      scaler = .5, xGood = 'cheese (thousands of pounds)', yGood = 'Price (dollars per pound)', title = 'Market for Chedar Cheese', price = 25, min = 25, max = 35, step = 1;
+      scaler = .5, xGood = 'cheese (thousands of pounds)', yGood = 'Price (dollars per pound)', title = 'Market for Gourmet Cheese', caption = 'The market for gourmet cheese. The supply and demand curves intersect at the market clearing price of $25 per pound and quantity of 35 thousand pounds.', price = 25, min = 25, max = 32, step = 1;
 
     };
     return {
@@ -57,6 +57,7 @@ export class Interactive5Component implements OnInit, AfterViewInit {
       xGood: xGood,
       yGood: yGood,
       title: title,
+      caption: caption,
       price: price,
       min: min,
       max: max,
@@ -81,9 +82,18 @@ export class Interactive5Component implements OnInit, AfterViewInit {
 
   public updateGraph(value: number) {
     let series = this._createSeries();
+    let priceTitle = '';
+
+    if (this.graph().price < series.EQ[1].y) {
+      priceTitle = 'Price ceiling';
+    } else if (this.graph().price > series.EQ[1].y) {
+      priceTitle = 'Price floor';
+    } else {
+      priceTitle = 'Equilibrium price';
+    }
     this.chart1.series[0].update({
       type: 'line',
-      name: 'Price Ceiling',
+      name: priceTitle,
       lineWidth: 2,
       zIndex: 1,
       data: series.priceLine
@@ -92,7 +102,18 @@ export class Interactive5Component implements OnInit, AfterViewInit {
       type: 'arearange',
       name: 'DWL',
       data: series.DWL
-    }, true)
+    }, false);
+    this.chart1.series[2].update({
+      type: 'arearange',
+      name: 'CS',
+      data: series.CSseries
+    }, false);
+    this.chart1.series[3].update({
+      type: 'arearange',
+      name: 'PS',
+      data: series.PSseries
+    }, true);
+
   }
 
   // Private methods
@@ -107,7 +128,7 @@ export class Interactive5Component implements OnInit, AfterViewInit {
         animation: false,
       },
       caption: {
-        text: `The market for oil in equilibrium. The supply and demand curves intersect at the market-clearing price of $50 per barrel and quantity of 35 billion barrels per year.`
+        text: this.graph().caption
       },
       credits: {
         text: `Pearson Education`,
@@ -149,7 +170,7 @@ export class Interactive5Component implements OnInit, AfterViewInit {
       series: [
         {
           type: 'line',
-          name: 'Price Ceiling',
+          name: 'Equilibrium price',
           lineWidth: 2,
           color: 'black',
           zIndex: 1,
@@ -157,15 +178,34 @@ export class Interactive5Component implements OnInit, AfterViewInit {
         },
         {
           type: 'arearange',
+          name: 'DWL',
+          color: '#FFFBCC',
+          zIndex: -1,
           data: series.DWL
+          
+        },
+        {
+          type: 'arearange',
+          name: 'CS',
+          color: '#CDD5E8',
+          zIndex: -1,
+          data: series.CSseries
+          
+        },
+        {
+          type: 'arearange',
+          name: 'PS',
+          color: '#F3D6C8',
+          zIndex: -1,
+          data: series.PSseries
           
         },
         {
           type: 'line',
           name: 'Equilibrium',
           dashStyle: 'ShortDot',
-          color: 'black',
-          lineWidth: 2,
+          color: 'lightgrey',
+          lineWidth: 0,
           zIndex: 2,
           data: series.EQ,
           sonification: {
@@ -314,6 +354,8 @@ export class Interactive5Component implements OnInit, AfterViewInit {
 
     let eqX = (a - c) / (b + d);
     let qStar = graph.price <= demand(eqX) ? qs(graph.price) : qd(graph.price);
+    let csUp = graph.price <= demand(eqX) ? demand(qStar) :graph.price,
+      psDown = graph.price <= demand(eqX) ? graph.price : supply(qStar);
     let eqSeries = [
       { x: 0, y: demand(eqX), accessibility: { enabled: false } },
       { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
@@ -325,16 +367,14 @@ export class Interactive5Component implements OnInit, AfterViewInit {
       { x: eqX, low: demand(eqX), high: supply(eqX)}
     ]; 
 
-    let qsSeries = [
-      { x: 10, y: this.graph().price, accessibility: { enabled: false } },
-      { name: 'q<sup>s</sup>:', x: qs(graph.price), y: graph.price, marker: { enabled: true } },
-      { x: qs(graph.price), y: 10, accessibility: { enabled: false } }
+    let csSeries = [
+      { x: 15, low: graph.price, high: demand(15), accessibility: { enabled: false } },
+      { x: qStar, low: graph.price, high: csUp, accessibility: { enabled: false } }
     ],
-      qdSeries = [
-        { x: 10, y: graph.price, accessibility: { enabled: false } },
-        { name: 'q<sup>d</sup>:', x: qd(graph.price), y: graph.price, marker: { enabled: true } },
-        { x: qd(graph.price), y: 10, accessibility: { enabled: false } }
-      ];
+      psSeries = [
+        { x: 15, high: graph.price, low: supply(15), accessibility: { enabled: false } },
+        { x: qStar, high: graph.price, low: psDown, accessibility: { enabled: false } }
+        ];
     let priceLine = [
       { x: 10, y: graph.price },
       { x: 50, y: graph.price}
@@ -349,8 +389,8 @@ export class Interactive5Component implements OnInit, AfterViewInit {
       DWL: dwlSeries,
       QD: qd(graph.price),
       QS: qs(graph.price),
-      QSseries: qsSeries,
-      QDseries: qdSeries
+      CSseries: csSeries,
+      PSseries: psSeries
     }
   }
 
