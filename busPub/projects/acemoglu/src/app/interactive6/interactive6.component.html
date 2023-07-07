@@ -1,7 +1,14 @@
 <div class="econ-interactive-container">
     <h1 class="mat-headline-5">Gains from Specialization</h1>
     <div class="wrapper">
-        <div class="item-narrative" *ngIf="mode === 0" @myAnimationTrigger></div>
+        <div class="item-narrative" *ngIf="mode === 0" @myAnimationTrigger>
+            <input #value title="oppCost" type="range" min="2" max="20" step="1" (input)="goodX1.set(+value.value)" [value]="goodX1()" />
+            <input #value1 title="oppCost" type="range" min="2" max="20" step="1" (input)="goodX2.set(+value1.value)" [value]="goodX2()" />
+
+
+            <p>Jane's opportunity cost: {{keyValue().oppCost1 | number: '0.1-1'}}</p>
+            <p>Mike's opportunity cost: {{keyValue().oppCost2 | number: '0.1-1'}} </p>
+        </div>
         <div class="item-chart" id="chart1">
 
         </div>

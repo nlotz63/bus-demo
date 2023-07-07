@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -10,6 +10,8 @@ import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { FormsModule } from '@angular/forms';
+import { BusPubLibModule } from 'bus-pub-lib';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -19,10 +21,18 @@ HC_annotate(Highcharts);
 HC_labels(Highcharts);
 HC_accessibility(Highcharts);
 
+interface Profile {
+  player1: string,
+  player2: string,
+  titleX: string,
+  titleY: string,
+
+}
+
 @Component({
   selector: 'app-interactive5',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, BusPubLibModule],
   templateUrl: './interactive6.component.html',
   styleUrls: ['./interactive6.component.scss'],
   animations: [
@@ -38,6 +48,8 @@ HC_accessibility(Highcharts);
   ],
 
 })
+  
+  
 export class Interactive6Component implements OnInit, AfterViewInit {
 
   mode = 0;
@@ -45,11 +57,42 @@ export class Interactive6Component implements OnInit, AfterViewInit {
   xGood: string = 'cheese'
   chart1!: Highcharts.Chart;
 
+  // signals
+  goodX1 = signal(16);
+  goodX2 = signal(8);
+  goodY1 = signal(8);
+  goodY2 = signal(16);
 
-  constructor(private el: ElementRef, private announcer: LiveAnnouncer) { }
-  
+  keyValue = computed(() => {
+
+    return {
+      oppCost1: this.goodY1() / this.goodX1(),
+      oppCost2: this.goodY2() / this.goodX2(),
+      goodXT: this.goodX1() + this.goodX2(),
+      goodYT: this.goodY1() + this.goodY2(),
+    }
+  });
+
+  profile: Profile = {
+    player1: 'Jamie',
+    player2: 'Blair',
+    titleX: 'Number of websites produced',
+    titleY: 'Number of computer programs produced'
+
+  }
+
+
+  constructor(private el: ElementRef, private announcer: LiveAnnouncer) {
+    effect(() => {
+      console.log(this.keyValue().oppCost1);
+      console.log(this.keyValue().oppCost2);
+
+      this._setupStep();
+    })
+   }
+
   ngOnInit(): void {
-    
+
   }
 
   ngAfterViewInit(): void {
@@ -59,7 +102,7 @@ export class Interactive6Component implements OnInit, AfterViewInit {
 
   // Private methods
   private _setupStep() {
-    this._createSeries();
+    let series = this._createSeries();
     const container = this.el.nativeElement.querySelector('#chart1');
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
@@ -109,15 +152,37 @@ export class Interactive6Component implements OnInit, AfterViewInit {
         }
       },
       series: [
+        {
+          type: 'line',
+          lineWidth: 2,
+          color: '#BE5717',
+          name: 'PPC1',
+          data: series.ppc1
+        },
+        {
+          type: 'line',
+          lineWidth: 2,
+          color: '#0066B2',
+          name: 'PPC2',
+          data: series.ppc2
+        },
+        {
+          type: 'line',
+          lineWidth: 2,
+          color: '#BB0170',
+          name: 'PPCT',
+          data: series.ppcT
+        },
 
       ],
       xAxis: {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: `Quantity of ${this.xGood} boxes ` },
+        title: { useHTML: true, text: `${this.profile.titleX}` },
         min: 0,
-        max: 2000,
+        max: 28,
+        tickInterval: 2
       },
       yAxis: {
         gridLineWidth: 0,
@@ -125,13 +190,15 @@ export class Interactive6Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         tickWidth: 1,
-        title: { useHTML: true, text: `Cost (price) per cheese box` },
-        min: .5,
-        max: 1.5,
+        title: { useHTML: true, text: `${this.profile.titleY}` },
+        min: 0,
+        max: 25,
+        tickInterval: 2
       },
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
+          animation: false,
           tooltip: {
             headerFormat: '<b>{series.name}: </b> ',
             pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
@@ -142,11 +209,35 @@ export class Interactive6Component implements OnInit, AfterViewInit {
 
     });
 
-  
+
   }
-  
+
   private _createSeries() {
 
+    let pointXT = this.keyValue().oppCost1 <= this.keyValue().oppCost2 ? this.goodX1() : this.goodX2();
+    let pointYT = this.keyValue().oppCost1 <= this.keyValue().oppCost2 ? this.goodY2() : this.goodY1();
+
+    let ppc1: any[] = [
+      { x: 0, y: this.goodY1() },
+      { x: this.goodX1(), y: 0 }
+    ];
+    let ppc2: any[] = [
+      { x: 0, y: this.goodY2() },
+      { x: this.goodX2(), y: 0 }
+
+    ];
+    let ppcT: any[] = [
+      { x: 0, y: this.keyValue().goodYT },
+      { x: pointXT, y: pointYT, marker: { enabled: true, radius: 4, fillColor: 'rgb(235, 235, 235)', lineWidth: 1, lineColor: 'black'} },
+      { x: this.keyValue().goodXT, y: 0 }
+    ];
+
+    return {
+      ppc1: ppc1,
+      ppc2: ppc2,
+      ppcT: ppcT,
+      
+    }
   }
 
 }
