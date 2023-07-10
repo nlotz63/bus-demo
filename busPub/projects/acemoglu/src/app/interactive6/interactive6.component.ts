@@ -12,6 +12,8 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { FormsModule } from '@angular/forms';
 import { BusPubLibModule } from 'bus-pub-lib';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -24,15 +26,18 @@ HC_accessibility(Highcharts);
 interface Profile {
   player1: string,
   player2: string,
+  player3: string,
+  titleGraph: string,
   titleX: string,
   titleY: string,
+  caption: string
 
 }
 
 @Component({
   selector: 'app-interactive5',
   standalone: true,
-  imports: [CommonModule, FormsModule, BusPubLibModule],
+  imports: [CommonModule, FormsModule, BusPubLibModule, MatInputModule, MatFormFieldModule],
   templateUrl: './interactive6.component.html',
   styleUrls: ['./interactive6.component.scss'],
   animations: [
@@ -52,9 +57,6 @@ interface Profile {
   
 export class Interactive6Component implements OnInit, AfterViewInit {
 
-  mode = 0;
-  graphTitle: string = 'Market for Cheese';
-  xGood: string = 'cheese'
   chart1!: Highcharts.Chart;
 
   // signals
@@ -76,16 +78,17 @@ export class Interactive6Component implements OnInit, AfterViewInit {
   profile: Profile = {
     player1: 'Jamie',
     player2: 'Blair',
+    player3: 'Total',
+    titleGraph: 'Gains from Specialization',
     titleX: 'Number of websites produced',
-    titleY: 'Number of computer programs produced'
+    titleY: 'Number of computer programs produced',
+    caption: `The production possibility curves (PPC) for Jamie and Blair. A third PPC shows the sum of possible outputs. A key point (T) shows the point where both individuals completely specialize according to their comparative advantage. `
 
   }
 
 
   constructor(private el: ElementRef, private announcer: LiveAnnouncer) {
     effect(() => {
-      console.log(this.keyValue().oppCost1);
-      console.log(this.keyValue().oppCost2);
 
       this._setupStep();
     })
@@ -112,14 +115,14 @@ export class Interactive6Component implements OnInit, AfterViewInit {
         animation: false,
       },
       caption: {
-        text: `The Wisconsin Cheeseman is a producer of cheese boxes. The graph shows the firm's cost curves and its demand curve. Per unit costs and market price are shown on the y-axis and the quantity produced is shown on the x-axis.`
+        text: this.profile.caption
       },
       credits: {
         text: `Pearson Education`,
         href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
       },
       title: {
-        text: `${this.graphTitle}`,
+        text: `${this.profile.titleGraph}`,
         style: {
           fontFamily: 'sans-serif',
           fontWeight: '300',
@@ -156,24 +159,26 @@ export class Interactive6Component implements OnInit, AfterViewInit {
           type: 'line',
           lineWidth: 2,
           color: '#BE5717',
-          name: 'PPC1',
-          data: series.ppc1
+          name: `PPC<sub>${this.profile.player1}</sub>`,
+          data: series.ppc1,
+          label: {useHTML: true}
         },
         {
           type: 'line',
           lineWidth: 2,
           color: '#0066B2',
-          name: 'PPC2',
-          data: series.ppc2
+          name: `PPC<sub>${this.profile.player2}</sub>`,
+          data: series.ppc2,
+          label: {useHTML: true}
         },
         {
           type: 'line',
           lineWidth: 2,
           color: '#BB0170',
-          name: 'PPCT',
-          data: series.ppcT
+          name: `PPC<sub>${this.profile.player3}</sub>`,
+          data: series.ppcT,
+          label: {useHTML: true}
         },
-
       ],
       xAxis: {
         lineColor: '#757575',
@@ -201,7 +206,7 @@ export class Interactive6Component implements OnInit, AfterViewInit {
           animation: false,
           tooltip: {
             headerFormat: '<b>{series.name}: </b> ',
-            pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
+            pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.2f}`
           },
           label: { enabled: true }
         }
@@ -217,6 +222,7 @@ export class Interactive6Component implements OnInit, AfterViewInit {
     let pointXT = this.keyValue().oppCost1 <= this.keyValue().oppCost2 ? this.goodX1() : this.goodX2();
     let pointYT = this.keyValue().oppCost1 <= this.keyValue().oppCost2 ? this.goodY2() : this.goodY1();
 
+
     let ppc1: any[] = [
       { x: 0, y: this.goodY1() },
       { x: this.goodX1(), y: 0 }
@@ -231,6 +237,7 @@ export class Interactive6Component implements OnInit, AfterViewInit {
       { x: pointXT, y: pointYT, marker: { enabled: true, radius: 4, fillColor: 'rgb(235, 235, 235)', lineWidth: 1, lineColor: 'black'} },
       { x: this.keyValue().goodXT, y: 0 }
     ];
+
 
     return {
       ppc1: ppc1,
