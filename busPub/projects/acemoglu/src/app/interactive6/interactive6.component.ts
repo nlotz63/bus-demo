@@ -24,9 +24,9 @@ HC_labels(Highcharts);
 HC_accessibility(Highcharts);
 
 interface Profile {
-  player1: string,
-  player2: string,
-  player3: string,
+  player1?: string,
+  player2?: string,
+  player3?: string,
   titleGraph: string,
   titleX: string,
   titleY: string,
