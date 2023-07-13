@@ -10,7 +10,7 @@ import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BusPubLibModule } from 'bus-pub-lib';
 
 HC_more(Highcharts);
@@ -76,6 +76,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
         animation: false,
       },
       caption: {
+        useHTML: true,
         text: `The market demand curve for ${this.xGood} with a shaded triangle showing the consumer surplus at the initial price of $50.`
       },
       credits: {
@@ -279,7 +280,7 @@ export class Interactive03Component implements OnInit, AfterViewInit {
       this.cs0Area = 'A';
       this.cs1Area = 'A';
     }
-    let caption = `The market demand curve for jeans. The initial consumer surplus (C<sub>0</sub>) is the area ${this.cs0Area}. The new consumer surplus (C<sub>1</sub>) is the area ${this.cs1Area}.
+    let caption = `The market demand curve for jeans. The initial consumer surplus (CS<sub>0</sub>) is the area ${this.cs0Area}. The new consumer surplus (CS<sub>1</sub>) is the area ${this.cs1Area}.
     `;
 
     this.chart.update({
