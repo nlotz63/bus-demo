@@ -1,1 +1,47 @@
-<p>interactive8 works!</p>
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">Consumer Surplus</h1>
+    <div class="wrapper">
+      <div class="item-narrative" aria-live="polite" @myAnimationTrigger>
+        <h2 class="mat-headline-6">Computing Consumer Surplus</h2>
+        <p class="mat-body-1">
+          Use the sliders to vary the initial price and new price of jeans to practice computing consumer surplus and the change in consumer surplus.
+        </p>
+  
+        <div class="control-column">
+           <econ-slider
+          class="econ-control"
+          label="World price plus tariff"
+          showValue="false"
+          displayValue="{{sliderGroup.value.tariff | currency}}"
+          min="25"
+          max="75"
+          step="5"
+          [(value)]="sliderGroup.value.tariff!"
+          (valueChange)="updateGraph()"
+          ></econ-slider>
+          <econ-slider
+          class="econ-control"
+          label="World price"
+          showValue="false"
+          displayValue="{{ sliderGroup.value.worldPrice | currency}}"
+          min="25"
+          max="100"
+          step="5"
+          [(value)]="sliderGroup.value.worldPrice!"
+          (valueChange)="updateGraph()"
+          ></econ-slider>
+         </div>
+        <h3 class="mat-subtitle-1">Calculations:</h3>
+        <p>
+          The following equations compute the initial consumer surplus (CS<sub>0</sub>), the new consumer surplus (CS<sub>1</sub>), and the change in consumer surplus.
+        </p>
+        <p aria-live="polite">
+<!--           <span class="econ-math" [econMath]="equation1"></span>
+          <span class="econ-math" [econMath]="equation2"></span>
+          <span class="econ-math" [econMath]="equation3"></span>
+ -->        </p>
+  
+      </div>
+      <div class="item-chart" id="chart1"></div>
+    </div>
+  </div>
