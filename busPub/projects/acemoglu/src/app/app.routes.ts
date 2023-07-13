@@ -9,6 +9,8 @@ export const routes: Routes = [
   { path: 'interactive05', loadComponent: () => import('./interactive5/interactive5.component').then( m => m.Interactive5Component), title: 'Price ceilings and floors'},
   { path: 'interactive06', loadComponent: () => import('./interactive6/interactive6.component').then(m => m.Interactive6Component), title: 'Gains from specialization' },
   { path: 'interactive07', loadComponent: () => import('./interactive7/interactive7.component').then( m => m.Interactive7Component), title: 'Production possibilities curve'},
-  { path: 'interactive08', loadComponent: () => import('./interactive8/interactive8.component').then( m => m.Interactive8Component), title: 'Effects of tariffs'},
+  { path: 'interactive08', loadComponent: () => import('./interactive8/interactive8.component').then(m => m.Interactive8Component), title: 'Effects of tariffs' },
+  { path: 'interactive09', loadComponent: () => import('./interactive09/interactive09.component').then( m => m.Interactive09Component), title: 'Producer surplus'},
+
   { path: '', pathMatch: 'full', redirectTo: '/dashboard'}
 ];

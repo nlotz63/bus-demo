@@ -1,0 +1,47 @@
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">Producer Surplus</h1>
+    <div class="wrapper">
+      <div class="item-narrative" aria-live="polite" @myAnimationTrigger>
+        <h2 class="mat-headline-6">Computing Producer Surplus</h2>
+        <p class="mat-body-1">
+          Use the sliders to vary the initial price and new price of jeans to practice computing producer surplus and the change in producer surplus.
+        </p>
+  
+        <div class="control-column">
+          <econ-slider
+          class="econ-control"
+          label="Initial price"
+          showValue="false"
+          displayValue="{{sliderGroup.value.initialPrice | currency}}"
+          min="25"
+          max="65"
+          step="5"
+          [(value)]="sliderGroup.value.initialPrice!"
+          (valueChange)="updateGraph()"
+          ></econ-slider>
+          <econ-slider
+          class="econ-control"
+          label="New price"
+          showValue="false"
+          displayValue="{{sliderGroup.value.newPrice | currency}}"
+          min="25"
+          max="75"
+          step="5"
+          [(value)]="sliderGroup.value.newPrice!"
+          (valueChange)="updateGraph()"
+          ></econ-slider>
+        </div>
+        <h3 class="mat-subtitle-1">Calculations:</h3>
+        <p>
+          The following equations compute the initial producer surplus (PS<sub>0</sub>), the new producer surplus (PS<sub>1</sub>), and the change in producer surplus.
+        </p>
+        <p aria-live="polite">
+          <span class="econ-math" [econMath]="equation1"></span>
+          <span class="econ-math" [econMath]="equation2"></span>
+          <span class="econ-math" [econMath]="equation3"></span>
+        </p>
+  
+      </div>
+      <div class="item-chart" id="chart1"></div>
+    </div>
+  </div>
