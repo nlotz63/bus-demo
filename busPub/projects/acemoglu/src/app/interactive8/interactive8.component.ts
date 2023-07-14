@@ -72,7 +72,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         animation: false,
       },
       caption: {
-        text: `The market for oil in equilibrium. The supply and demand curves intersect at the market-clearing price of $50 per barrel and quantity of 35 billion barrels per year.`
+        text: `The market for running shoes in equilibrium. The supply and demand curves intersect at the market-clearing price of $50 per pair and quantity of 35 thousand pairs per month.`
       },
       credits: {
         text: `Pearson Education`,
