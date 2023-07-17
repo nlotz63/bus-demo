@@ -36,11 +36,11 @@ interface SliderGroup {
 export class Interactive8Component implements OnInit, AfterViewInit {
 
   chart1!: Highcharts.Chart;
-  price = signal(50);
+  price = signal(125);
 
   sliderGroup = new FormGroup<SliderGroup>({
-    worldPrice:  new FormControl(35),
-    tariff: new FormControl(40)
+    worldPrice:  new FormControl(65),
+    tariff: new FormControl(65)
   })
 
   constructor( private el: ElementRef, private announcer: LiveAnnouncer) { }
@@ -55,6 +55,20 @@ export class Interactive8Component implements OnInit, AfterViewInit {
   }
 
   public updateGraph() {
+    const series = this._createSeries();
+
+    this.chart1.series[3].update(
+      {
+        type: 'line',
+        data: series.QSseries
+      }
+    );
+    this.chart1.series[4].update(
+      {
+        type: 'line',
+        data: series.QDseries
+      }
+    );
 
   }
 
@@ -63,6 +77,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
   private _setupGraph() {
     let series = this._createSeries();
     const container = this.el.nativeElement.querySelector('#chart1');
+    const slider = this.sliderGroup.value;
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
         height: 550,
@@ -226,6 +241,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           dashStyle: 'ShortDot',
           color: 'black',
           zIndex: 1,
+          data: series.QDseries,
           label: {
             enabled: false,
             useHTML: true
@@ -245,9 +261,9 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: 'Quantity (billions of barrels of oil per year)' },
+        title: { useHTML: true, text: 'Quantity (thousands of pairs per month)' },
         min: 15,
-        max: 55
+        max: 60
       },
       yAxis: {
         gridLineWidth: 0,
@@ -255,9 +271,10 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         tickWidth: 1,
-        title: { useHTML: true, text: 'Price per barrel' },
-        min: 10,
-        max: 90
+        title: { useHTML: true, text: 'Price per pair' },
+        min: 25,
+        max: 250,
+        tickInterval: 25
       },
       plotOptions: {
         series: {
@@ -279,13 +296,13 @@ export class Interactive8Component implements OnInit, AfterViewInit {
               points: [
                 {
                   x: 50,
-                  y: this.price(),
+                  y: slider.worldPrice!,
                   xAxis: 0,
                   yAxis: 0
                 },
                 {
                   x: 20,
-                  y: this.price(),
+                  y: slider.worldPrice!,
                   xAxis: 0,
                   yAxis: 0
                 },
@@ -300,13 +317,13 @@ export class Interactive8Component implements OnInit, AfterViewInit {
               points: [
                 {
                   x: 20,
-                  y: this.price(),
+                  y: slider.worldPrice!,
                   xAxis: 0,
                   yAxis: 0
                 },
                 {
                   x: 50,
-                  y: this.price(),
+                  y: slider.worldPrice!,
                   xAxis: 0,
                   yAxis: 0
                 },
@@ -329,22 +346,22 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         }
       ]
     });
-
   }
 
   private _createSeries() {
-    let x = 18, a = 120, b = 2, c = -13, d = 1.8;
+    const slider = this.sliderGroup.value;
+    let x = 15, a = 120, b = 2, c = -13, d = 1.8, scaler = 2.5;
     let demandSeries = [], supplySeries = [];
 
     let demand = (x: number): number => {
-      return a - b * x;
+      return scaler*( a - b * x);
     }
 
     let supply = (x: number): number => {
-      return c + d * x;
+      return scaler*(c + d * x);
     }
-    let qd = (y: number) => { return (a - y) / b; }
-    let qs = (y: number) => { return (y - c) / d; }
+    let qd = (y: number) => { return (a - y / scaler) / b; }
+    let qs = (y: number) => { return (y / scaler - c) / d; }
 
     do {
       let point = {
@@ -378,14 +395,14 @@ export class Interactive8Component implements OnInit, AfterViewInit {
     ]
 
     let qsSeries = [
-      { x: 10, y: this.price(), accessibility: { enabled: false } },
-      { name: 'q<sup>s</sup>:', x: qs(this.price()), y: this.price(), marker: { enabled: true } },
-      { x: qs(this.price()), y: 10, accessibility: { enabled: false } }
+      { x: 10, y: slider.worldPrice!, accessibility: { enabled: false } },
+      { name: 'q<sup>s</sup>:', x: qs(slider.worldPrice!), y: slider.worldPrice!, marker: { enabled: true } },
+      { x: qs(slider.worldPrice!), y: 10, accessibility: { enabled: false } }
     ],
       qdSeries = [
-        { x: 10, y: this.price(), accessibility: { enabled: false } },
-        { name: 'q<sup>d</sup>:', x: qd(this.price()), y: this.price(), marker: { enabled: true } },
-        { x: qd(this.price()), y: 10, accessibility: { enabled: false } }
+        { x: 10, y: slider.worldPrice!, accessibility: { enabled: false } },
+        { name: 'q<sup>d</sup>:', x: qd(slider.worldPrice!), y: slider.worldPrice!, marker: { enabled: true } },
+        { x: qd(slider.worldPrice!), y: 10, accessibility: { enabled: false } }
       ];
 
     return {
@@ -393,8 +410,8 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       supply: supplySeries,
       EQ: eqSeries,
       EQref: eqRef,
-      QD: qd(this.price()),
-      QS: qs(this.price()),
+      QD: qd(slider.worldPrice!),
+      QS: qs(slider.worldPrice!),
       QSseries: qsSeries,
       QDseries: qdSeries
     }
