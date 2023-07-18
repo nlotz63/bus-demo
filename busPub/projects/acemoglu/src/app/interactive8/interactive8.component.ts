@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, OnInit, Input, signal, computed, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
-import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 
 import * as Highcharts from 'highcharts';
 import HC_export from 'highcharts/modules/exporting';
@@ -10,7 +9,6 @@ import HC_sonify from 'highcharts/modules/sonification';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
-import { MatRadioModule } from '@angular/material/radio';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -40,7 +38,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
 
   sliderGroup = new FormGroup<SliderGroup>({
     worldPrice:  new FormControl(65),
-    tariff: new FormControl(65)
+    tariff: new FormControl(0)
   })
 
   constructor( private el: ElementRef, private announcer: LiveAnnouncer) { }
@@ -60,15 +58,28 @@ export class Interactive8Component implements OnInit, AfterViewInit {
     this.chart1.series[3].update(
       {
         type: 'line',
-        data: series.QSseries
+        data: series.worldPrice
       }
     );
     this.chart1.series[4].update(
       {
         type: 'line',
+        data: series.priceTariff
+      }
+    );
+    this.chart1.series[5].update(
+      {
+        type: 'line',
+        data: series.QSseries
+      }
+    );
+    this.chart1.series[6].update(
+      {
+        type: 'line',
         data: series.QDseries
       }
     );
+
 
   }
 
@@ -132,7 +143,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           name: 'Equilibrium',
           dashStyle: 'ShortDot',
           color: 'black',
-          lineWidth: 2,
+          lineWidth: 0,
           zIndex: 2,
           data: series.EQ,
           sonification: {
@@ -214,12 +225,12 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Q<sub>s</sub>',
+          name: 'World price',
           lineWidth: 1,
-          dashStyle: 'ShortDot',
+          dashStyle: 'Solid',
           color: 'black',
-          zIndex: 1,
-          data: series.QSseries,
+          zIndex: 2,
+          data: series.worldPrice,
           label: {
             enabled: false,
             useHTML: true
@@ -236,12 +247,11 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Q<sub>d</sub>',
+          name: 'World price + tariff',
           lineWidth: 1,
-          dashStyle: 'ShortDot',
           color: 'black',
           zIndex: 1,
-          data: series.QDseries,
+          data: series.priceTariff,
           label: {
             enabled: false,
             useHTML: true
@@ -256,6 +266,35 @@ export class Interactive8Component implements OnInit, AfterViewInit {
             description: 'A point on the demand curve at the current market price.'
           }
         },
+        {
+          type: 'line',
+          dashStyle: 'ShortDash',
+          color: 'black',
+          zIndex: 2,
+          data: series.QSseries,
+          marker: {
+            radius: 4,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          },
+          label: {enabled: false}
+        },
+        {
+          type: 'line',
+          dashStyle: 'ShortDash',
+          color: 'black',
+          zIndex: 2,
+          data: series.QDseries,
+          marker: {
+            radius: 4,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          },
+          label: {enabled: false}
+        }
+
       ],
       xAxis: {
         lineColor: '#757575',
@@ -287,60 +326,22 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       },
       annotations: [
         {
-          visible: false,
-          shapes: [
-            {
-              stroke: 'black',
-              type: 'path',
-              strokeWidth: 1,
-              points: [
-                {
-                  x: 50,
-                  y: slider.worldPrice!,
-                  xAxis: 0,
-                  yAxis: 0
-                },
-                {
-                  x: 20,
-                  y: slider.worldPrice!,
-                  xAxis: 0,
-                  yAxis: 0
-                },
-              ],
-              markerEnd: 'arrow',
-
-            },
-            {
-              stroke: 'black',
-              type: 'path',
-              strokeWidth: 1,
-              points: [
-                {
-                  x: 20,
-                  y: slider.worldPrice!,
-                  xAxis: 0,
-                  yAxis: 0
-                },
-                {
-                  x: 50,
-                  y: slider.worldPrice!,
-                  xAxis: 0,
-                  yAxis: 0
-                },
-              ],
-              markerEnd: 'arrow',
-
-            },
-          ],
+          visible: true,
+          labelOptions: {
+            borderWidth: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            y: 1,
+            x: 20
+          },
           labels: [
             {
               point: {
-                x: 35,
-                y: this.price(),
+                x: series.worldPrice[1].x,
+                y: series.worldPrice[1].y,
                 xAxis: 0,
                 yAxis: 0
               },
-              text: 'this.equation1()'
+              text: 'World price'
             }
           ]
         }
@@ -350,6 +351,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
 
   private _createSeries() {
     const slider = this.sliderGroup.value;
+    const pricePlusTariff = slider.worldPrice! + slider.tariff!;
     let x = 15, a = 120, b = 2, c = -13, d = 1.8, scaler = 2.5;
     let demandSeries = [], supplySeries = [];
 
@@ -395,15 +397,23 @@ export class Interactive8Component implements OnInit, AfterViewInit {
     ]
 
     let qsSeries = [
-      { x: 10, y: slider.worldPrice!, accessibility: { enabled: false } },
-      { name: 'q<sup>s</sup>:', x: qs(slider.worldPrice!), y: slider.worldPrice!, marker: { enabled: true } },
-      { x: qs(slider.worldPrice!), y: 10, accessibility: { enabled: false } }
+      { name: 'q<sup>s</sup>:', x: qs(pricePlusTariff), y: pricePlusTariff, marker: { enabled: true } },
+      { x: qs(pricePlusTariff), y: 10, accessibility: { enabled: false } }
     ],
       qdSeries = [
-        { x: 10, y: slider.worldPrice!, accessibility: { enabled: false } },
-        { name: 'q<sup>d</sup>:', x: qd(slider.worldPrice!), y: slider.worldPrice!, marker: { enabled: true } },
-        { x: qd(slider.worldPrice!), y: 10, accessibility: { enabled: false } }
+        { name: 'q<sup>d</sup>:', x: qd(pricePlusTariff), y: pricePlusTariff, marker: { enabled: true } },
+        { x: qd(pricePlusTariff), y: 10, accessibility: { enabled: false } }
       ];
+    
+    let worldSeries = [
+      { x: 0, y: slider.worldPrice! },
+      { x: 50, y: slider.worldPrice! }
+    ];
+    let plusTariffSeries = [
+      { x: 0, y: pricePlusTariff },
+      { x: 50, y: pricePlusTariff }
+    ];
+
 
     return {
       demand: demandSeries,
@@ -413,7 +423,9 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       QD: qd(slider.worldPrice!),
       QS: qs(slider.worldPrice!),
       QSseries: qsSeries,
-      QDseries: qdSeries
+      QDseries: qdSeries,
+      worldPrice: worldSeries,
+      priceTariff: plusTariffSeries
     }
 
   }

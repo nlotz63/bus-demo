@@ -8,28 +8,29 @@
         </p>
   
         <div class="control-column">
-           <econ-slider
-          class="econ-control"
-          label="World price plus tariff"
-          showValue="false"
-          displayValue="{{sliderGroup.value.tariff | currency}}"
-          min="65"
-          max="125"
-          step="5"
-          [(value)]="sliderGroup.value.tariff!"
-          (valueChange)="updateGraph()"
-          ></econ-slider>
           <econ-slider
           class="econ-control"
           label="World price"
           showValue="false"
           displayValue="{{ sliderGroup.value.worldPrice | currency}}"
           min="65"
-          max="125"
+          max="90"
           step="5"
           [(value)]="sliderGroup.value.worldPrice!"
           (valueChange)="updateGraph()"
           ></econ-slider>
+          <econ-slider
+          class="econ-control"
+          label="Tariff"
+          showValue="false"
+          displayValue="{{sliderGroup.value.tariff | currency}}"
+          min="0"
+          max="35"
+          step="5"
+          [(value)]="sliderGroup.value.tariff!"
+          (valueChange)="updateGraph()"
+          ></econ-slider>
+
          </div>
         <h3 class="mat-subtitle-1">Calculations:</h3>
         <p>
