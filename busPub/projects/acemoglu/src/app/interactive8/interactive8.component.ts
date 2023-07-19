@@ -79,7 +79,43 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         data: series.QDseries
       }
     );
+    this.chart1.update({
+      annotations: [
+        {
+          visible: true,
+          labelOptions: {
+            borderWidth: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            align: 'left',
+            y: 10,
+            x: 0,
+            allowOverlap: false
+          },
+          labels: [
+            {
+              point: {
+                x: series.worldPrice[1].x,
+                y: series.worldPrice[1].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+              text: 'World price'
+            },
+            {
+              point: {
+                x: series.priceTariff[1].x,
+                y: series.priceTariff[1].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+              text: 'World price + tariff'
+            }
 
+          ]
+        }
+      ]
+
+    })
 
   }
 
@@ -302,7 +338,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         title: { useHTML: true, text: 'Quantity (thousands of pairs per month)' },
         min: 15,
-        max: 60
+        max: 65
       },
       yAxis: {
         gridLineWidth: 0,
@@ -330,8 +366,9 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           labelOptions: {
             borderWidth: 0,
             backgroundColor: 'rgba(255, 255, 255, 0)',
-            y: 1,
-            x: 20
+            align: 'left',
+            y: 10,
+            x: 0
           },
           labels: [
             {
@@ -342,7 +379,17 @@ export class Interactive8Component implements OnInit, AfterViewInit {
                 yAxis: 0
               },
               text: 'World price'
+            },
+            {
+              point: {
+                x: series.priceTariff[1].x,
+                y: series.priceTariff[1].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+              text: 'World price + tariff'
             }
+
           ]
         }
       ]
