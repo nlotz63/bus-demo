@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
 
 import * as Highcharts from 'highcharts';
+import HC_more from 'highcharts/highcharts-more';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/data';
 import HC_sonify from 'highcharts/modules/sonification';
@@ -12,6 +13,8 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
+
+HC_more(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
 HC_sonify(Highcharts);
@@ -35,51 +38,70 @@ export class Interactive8Component implements OnInit, AfterViewInit {
 
   chart1!: Highcharts.Chart;
   price = signal(125);
+  CSreport!: HTMLBaseElement;
 
   sliderGroup = new FormGroup<SliderGroup>({
-    worldPrice:  new FormControl(65),
+    worldPrice: new FormControl(65),
     tariff: new FormControl(0)
   })
 
-  constructor( private el: ElementRef, private announcer: LiveAnnouncer) { }
-  
+  constructor(private el: ElementRef, private announcer: LiveAnnouncer) { }
+
   ngOnInit(): void {
-    
+
   }
 
   ngAfterViewInit(): void {
-    this._setupGraph()
-    
+    this._setupGraph();
+    this.CSreport = this.el.nativeElement.querySelector('#graph-update');
+
   }
 
   public updateGraph() {
     const series = this._createSeries();
-
-    this.chart1.series[3].update(
-      {
-        type: 'line',
-        data: series.worldPrice
-      }
-    );
-    this.chart1.series[4].update(
-      {
-        type: 'line',
-        data: series.priceTariff
-      }
-    );
-    this.chart1.series[5].update(
-      {
-        type: 'line',
-        data: series.QSseries
-      }
-    );
-    this.chart1.series[6].update(
-      {
-        type: 'line',
-        data: series.QDseries
-      }
-    );
     this.chart1.update({
+      series: [
+        {
+          type: 'line',
+          data: series.worldPrice,
+        },
+        {
+          type: 'line',
+          data: series.priceTariff,
+        },
+        {
+          type: 'line',
+          data: series.QSseries,
+        },
+        {
+          type: 'line',
+          data: series.QDseries,
+        },
+        {
+          type: 'arearange',
+          name: 'CS',
+          data: series.CS
+        },
+        {
+          type: 'arearange',
+          name: 'PS',
+          data: series.PS
+        },
+        {
+          type: 'arearange',
+          data: series.REV
+        },
+        {
+          type: 'arearange',
+          zIndex: -1,
+          data: series.DWL1
+        },
+        {
+          type: 'arearange',
+          zIndex: -1,
+          data: series.DWL2
+        },
+      ],
       annotations: [
         {
           visible: true,
@@ -115,7 +137,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         }
       ]
 
-    })
+    });
 
   }
 
@@ -132,9 +154,10 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
         borderRadius: 5,
         animation: false,
+        
       },
       caption: {
-        text: `The market for running shoes in equilibrium. The supply and demand curves intersect at the market-clearing price of $50 per pair and quantity of 35 thousand pairs per month.`
+        text: `Key areas are shaded in the graph. Click items in the legend to highlight the area in the graph and to see additional information.`
       },
       credits: {
         text: `Pearson Education`,
@@ -149,8 +172,11 @@ export class Interactive8Component implements OnInit, AfterViewInit {
 
         }
       },
-      legend: { enabled: false },
-      tooltip: { useHTML: true },
+      legend: {
+        enabled: true,
+        useHTML: true
+      },
+      tooltip: { useHTML: true, enabled: false },
       sonification: {
         duration: 20000,
         afterSeriesWait: 1000,
@@ -170,10 +196,128 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           valueDescriptionFormat: `quantity {point.x:.0f} thousands of pairs, price: {point.y:.2f} dollars.`
         },
         keyboardNavigation: {
-          order: ['container', 'series', 'chartMenu']
+          order: ['container', 'legend', 'series', 'chartMenu']
         }
       },
       series: [
+        {
+          type: 'line',
+          name: 'World price',
+          lineWidth: 1,
+          dashStyle: 'Solid',
+          color: 'black',
+          zIndex: 2,
+          data: series.worldPrice,
+          showInLegend: false,
+          label: {
+            enabled: false,
+            useHTML: true
+          },
+          marker: {
+            fillColor: '#FAF6EE',
+            lineWidth: 1,
+            lineColor: 'black',
+            radius: 4
+          },
+          accessibility: {
+            description: 'A point on the supply curve at the current market price.'
+          }
+        },
+        {
+          type: 'line',
+          name: 'World price + tariff',
+          lineWidth: 1,
+          color: 'black',
+          zIndex: 1,
+          data: series.priceTariff,
+          showInLegend: false,
+          label: {
+            enabled: false,
+            useHTML: true
+          },
+          marker: {
+            fillColor: '#FAF6EE',
+            lineWidth: 1,
+            lineColor: 'black',
+            radius: 4
+          },
+          accessibility: {
+            description: 'A point on the demand curve at the current market price.'
+          }
+        },
+        {
+          type: 'line',
+          dashStyle: 'ShortDash',
+          color: 'black',
+          zIndex: 2,
+          data: series.QSseries,
+          showInLegend: false,
+          marker: {
+            radius: 0,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          },
+          label: { enabled: false }
+        },
+        {
+          type: 'line',
+          dashStyle: 'ShortDash',
+          color: 'black',
+          zIndex: 2,
+          data: series.QDseries,
+          showInLegend: false,
+          marker: {
+            radius: 0,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          },
+          label: { enabled: false }
+        },
+        {
+          type: 'arearange',
+          name: 'CS',
+          zIndex: -1,
+          lineWidth: 2,
+          legendIndex: 0,
+          data: series.CS,
+          enableMouseTracking: true
+        },
+        {
+          type: 'arearange',
+          name: 'PS',
+          legendIndex: 1,
+          zIndex: -1,
+          data: series.PS,
+          enableMouseTracking: true
+        },
+        {
+          type: 'arearange',
+          name: 'Revenue',
+          legendIndex: 3,
+          zIndex: -1,
+          data: series.REV,
+          enableMouseTracking: true
+        },
+        {
+          type: 'arearange',
+          name: 'DWL<sub>1</sub>',
+          legendIndex: 2,
+          zIndex: -1,
+          data: series.DWL1,
+          enableMouseTracking: true,
+          label: {useHTML: true}
+        },
+        {
+          type: 'arearange',
+          name: 'DWL<sub>2</sub>',
+          zIndex: -1,
+          legendIndex: 4,
+          data: series.DWL2,
+          enableMouseTracking: true,
+          label: {useHTML: true}
+        },
         {
           type: 'line',
           name: 'Equilibrium',
@@ -182,6 +326,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           lineWidth: 0,
           zIndex: 2,
           data: series.EQ,
+          showInLegend: false,
           sonification: {
             tracks: [
               {
@@ -216,6 +361,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           color: '#0771BD',
           zIndex: 0,
           data: series.demand,
+          showInLegend: false,
           sonification: {
             tracks: [
               {
@@ -241,6 +387,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           color: '#C62828',
           zIndex: 0,
           data: series.supply,
+          showInLegend: false,
           sonification: {
             tracks: [
               {
@@ -259,77 +406,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           }
 
         },
-        {
-          type: 'line',
-          name: 'World price',
-          lineWidth: 1,
-          dashStyle: 'Solid',
-          color: 'black',
-          zIndex: 2,
-          data: series.worldPrice,
-          label: {
-            enabled: false,
-            useHTML: true
-          },
-          marker: {
-            fillColor: '#FAF6EE',
-            lineWidth: 1,
-            lineColor: 'black',
-            radius: 4
-          },
-          accessibility: {
-            description: 'A point on the supply curve at the current market price.'
-          }
-        },
-        {
-          type: 'line',
-          name: 'World price + tariff',
-          lineWidth: 1,
-          color: 'black',
-          zIndex: 1,
-          data: series.priceTariff,
-          label: {
-            enabled: false,
-            useHTML: true
-          },
-          marker: {
-            fillColor: '#FAF6EE',
-            lineWidth: 1,
-            lineColor: 'black',
-            radius: 4
-          },
-          accessibility: {
-            description: 'A point on the demand curve at the current market price.'
-          }
-        },
-        {
-          type: 'line',
-          dashStyle: 'ShortDash',
-          color: 'black',
-          zIndex: 2,
-          data: series.QSseries,
-          marker: {
-            radius: 4,
-            lineColor: 'black',
-            lineWidth: 1,
-            fillColor: 'rgb(235, 235, 235)'
-          },
-          label: {enabled: false}
-        },
-        {
-          type: 'line',
-          dashStyle: 'ShortDash',
-          color: 'black',
-          zIndex: 2,
-          data: series.QDseries,
-          marker: {
-            radius: 4,
-            lineColor: 'black',
-            lineWidth: 1,
-            fillColor: 'rgb(235, 235, 235)'
-          },
-          label: {enabled: false}
-        }
+
 
       ],
       xAxis: {
@@ -354,10 +431,24 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
-          tooltip: {
-            headerFormat: '',
-            pointFormat: `{point.name} {point.x:.0f} billion<br/>Price: \${point.y:.2f}`
-          },
+          enableMouseTracking: false,
+          animation: false,
+          events: {
+            mouseOver: (event: any) => {
+              console.log(event);
+              this.CSreport.innerHTML = `You're hovering over the ${event.target.name} with index ${event.target.index}`;
+            },
+            mouseOut: () => {
+              this.CSreport.innerHTML = '';
+            },
+            legendItemClick: (event: any) => {
+              console.log(event);
+              this.CSreport.innerHTML = `You're hovering over the ${event.target.name} with index ${event.target.index}`;
+              return false;
+            },
+
+          }
+
         }
       },
       annotations: [
@@ -399,15 +490,15 @@ export class Interactive8Component implements OnInit, AfterViewInit {
   private _createSeries() {
     const slider = this.sliderGroup.value;
     const pricePlusTariff = slider.worldPrice! + slider.tariff!;
-    let x = 15, a = 120, b = 2, c = -13, d = 1.8, scaler = 2.5;
+    let x = 10, a = 120, b = 2, c = -13, d = 1.8, scaler = 2.5;
     let demandSeries = [], supplySeries = [];
 
     let demand = (x: number): number => {
-      return scaler*( a - b * x);
+      return scaler * (a - b * x);
     }
 
     let supply = (x: number): number => {
-      return scaler*(c + d * x);
+      return scaler * (c + d * x);
     }
     let qd = (y: number) => { return (a - y / scaler) / b; }
     let qs = (y: number) => { return (y / scaler - c) / d; }
@@ -425,9 +516,9 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       }
       demandSeries.push(point);
       supplySeries.push(point2);
-      x = x + 5;
+      x = x + 50;
 
-    } while (x <= 57);
+    } while (x <= 60);
 
     let eqX = (a - c) / (b + d);
 
@@ -437,12 +528,6 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       { x: eqX, y: 9, accessibility: { enabled: false } }
     ];
 
-    let eqRef = [
-      { x: 0, y: demand(eqX), accessibility: { enabled: false } },
-      { name: 'Initial equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
-      { x: eqX, y: 9, accessibility: { enabled: false } }
-    ]
-
     let qsSeries = [
       { name: 'q<sup>s</sup>:', x: qs(pricePlusTariff), y: pricePlusTariff, marker: { enabled: true } },
       { x: qs(pricePlusTariff), y: 10, accessibility: { enabled: false } }
@@ -451,7 +536,6 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         { name: 'q<sup>d</sup>:', x: qd(pricePlusTariff), y: pricePlusTariff, marker: { enabled: true } },
         { x: qd(pricePlusTariff), y: 10, accessibility: { enabled: false } }
       ];
-    
     let worldSeries = [
       { x: 0, y: slider.worldPrice! },
       { x: 50, y: slider.worldPrice! }
@@ -461,18 +545,46 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       { x: 50, y: pricePlusTariff }
     ];
 
+    // Area shading
+    let cs = [
+      { x: 15, low: pricePlusTariff, high: demand(15), marker: { enabled: true, radius: 4 } },
+      { x: qdSeries[0].x, low: qdSeries[0].y, high: qdSeries[0].y }
+    ];
+    let ps = [
+      { x: 15, low: supply(15), high: pricePlusTariff },
+      { x: qsSeries[0].x, low: qsSeries[0].y, high: qsSeries[0].y }
+    ];
+    let revenue = [
+      { x: qsSeries[0].x, low: slider.worldPrice!, high: qsSeries[0].y },
+      { x: (qsSeries[0].x + qdSeries[0].x) / 2, low: slider.worldPrice!, high: qsSeries[0].y },
+      { x: qdSeries[0].x, low: slider.worldPrice!, high: qdSeries[0].y }
+
+    ];
+    let dwl1 = [
+      { x: qs(slider.worldPrice!), low: slider.worldPrice!, high: slider.worldPrice! },
+      { x: qsSeries[0].x, low: slider.worldPrice!, high: qsSeries[0].y },
+    ];
+    let dwl2 = [
+      { x: qd(slider.worldPrice!), low: slider.worldPrice!, high: slider.worldPrice! },
+      { x: qdSeries[0].x, low: slider.worldPrice!, high: qsSeries[0].y },
+    ];
 
     return {
       demand: demandSeries,
       supply: supplySeries,
       EQ: eqSeries,
-      EQref: eqRef,
       QD: qd(slider.worldPrice!),
       QS: qs(slider.worldPrice!),
       QSseries: qsSeries,
       QDseries: qdSeries,
       worldPrice: worldSeries,
-      priceTariff: plusTariffSeries
+      priceTariff: plusTariffSeries,
+      CS: cs,
+      PS: ps,
+      REV: revenue,
+      DWL1: dwl1,
+      DWL2: dwl2
+
     }
 
   }
