@@ -12,6 +12,7 @@ import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { style } from '@angular/animations';
 
 
 HC_more(Highcharts);
@@ -37,12 +38,11 @@ interface SliderGroup {
 export class Interactive8Component implements OnInit, AfterViewInit {
 
   chart1!: Highcharts.Chart;
-  price = signal(125);
   CSreport!: HTMLBaseElement;
 
   sliderGroup = new FormGroup<SliderGroup>({
     worldPrice: new FormControl(65),
-    tariff: new FormControl(0)
+    tariff: new FormControl(25)
   })
 
   constructor(private el: ElementRef, private announcer: LiveAnnouncer) { }
@@ -110,8 +110,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
             backgroundColor: 'rgba(255, 255, 255, 0)',
             align: 'left',
             y: 10,
-            x: 0,
-            allowOverlap: false
+            x: 0
           },
           labels: [
             {
@@ -131,6 +130,58 @@ export class Interactive8Component implements OnInit, AfterViewInit {
                 yAxis: 0
               },
               text: 'World price + tariff'
+            },
+            {
+              point: {
+                x: (series.QS + series.QD) / 2,
+                y: (series.worldPrice[0].y + series.priceTariff[0].y)/2,
+                xAxis: 0,
+                yAxis: 0,
+            
+
+              },
+              text: this.sliderGroup.value.tariff! >= 5 ? 'Revenue' : ' ',
+              style: { fontSize: '.8em', fontWeight: 'bold' },
+              align: 'center',
+              verticalAlign: 'bottom'
+            }
+
+          ]
+        },
+        {
+          labelOptions: {
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            style: {
+              fontSize: '.5em',
+              fontWeight: 'bold'
+            }
+          },
+          labels: [
+            {
+              point: {
+                x: (series.QS + series.QS1) / 2,
+                y: series.worldPrice[0].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+              text: 'DWL<sub>1</sub>',
+              useHTML: true,
+              align: 'center',
+              verticalAlign: 'top',
+              distance: -35
+            },
+            {
+              point: {
+                x: (series.QD + series.QD1) / 2,
+                y: series.worldPrice[0].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+              text: 'DWL<sub>2</sub>',
+              useHTML: true,
+              align: 'center',
+              verticalAlign: 'top',
+              distance: -35
             }
 
           ]
@@ -157,7 +208,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         
       },
       caption: {
-        text: `Key areas are shaded in the graph. Click items in the legend to highlight the area in the graph and to see additional information.`
+        text: `Click items in the legend to highlight key areas in the graph and to see additional information.`
       },
       credits: {
         text: `Pearson Education`,
@@ -220,7 +271,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
             radius: 4
           },
           accessibility: {
-            description: 'A point on the supply curve at the current market price.'
+            description: 'A horizontal line at the world price of running shoes.'
           }
         },
         {
@@ -242,7 +293,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
             radius: 4
           },
           accessibility: {
-            description: 'A point on the demand curve at the current market price.'
+            description: 'A horizontal line at the world price plus the amount of the tariff.'
           }
         },
         {
@@ -298,7 +349,8 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           legendIndex: 3,
           zIndex: -1,
           data: series.REV,
-          enableMouseTracking: true
+          enableMouseTracking: true,
+          label: { enabled: false}
         },
         {
           type: 'arearange',
@@ -415,7 +467,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         title: { useHTML: true, text: 'Quantity (thousands of pairs per month)' },
         min: 15,
-        max: 65
+        max: 65,
       },
       yAxis: {
         gridLineWidth: 0,
@@ -447,9 +499,8 @@ export class Interactive8Component implements OnInit, AfterViewInit {
               return false;
             },
 
-          }
-
-        }
+          },
+                  }
       },
       annotations: [
         {
@@ -461,6 +512,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
             y: 10,
             x: 0
           },
+          draggable: '',
           labels: [
             {
               point: {
@@ -479,6 +531,56 @@ export class Interactive8Component implements OnInit, AfterViewInit {
                 yAxis: 0
               },
               text: 'World price + tariff'
+            },
+            {
+              point: {
+                x: (series.QS + series.QD) / 2,
+                y: (series.worldPrice[0].y + series.priceTariff[0].y)/2,
+                xAxis: 0,
+                yAxis: 0,
+              },
+              text: this.sliderGroup.value.tariff! >= 5 ? 'Revenue' : ' ',
+              style: { fontSize: '.8em', fontWeight: 'bold' },
+              align: 'center',
+              verticalAlign: 'bottom'
+            }
+
+          ]
+        },
+        {
+          labelOptions: {
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            style: {
+              fontSize: '.5em',
+              fontWeight: 'bold',
+            }
+          },
+          labels: [
+            {
+              point: {
+                x: (series.QS + series.QS1) / 2,
+                y: series.worldPrice[0].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+              text: 'DWL<sub>1</sub>',
+              useHTML: true,
+              align: 'center',
+              verticalAlign: 'top',
+              distance: -35,
+            },
+            {
+              point: {
+                x: (series.QD + series.QD1) / 2,
+                y: series.worldPrice[0].y,
+                xAxis: 0,
+                yAxis: 0
+              },
+              text: 'DWL<sub>2</sub>',
+              useHTML: true,
+              align: 'center',
+              verticalAlign: 'top',
+              distance: -35
             }
 
           ]
@@ -547,7 +649,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
 
     // Area shading
     let cs = [
-      { x: 15, low: pricePlusTariff, high: demand(15), marker: { enabled: true, radius: 4 } },
+      { x: 15, low: pricePlusTariff, high: demand(15) },
       { x: qdSeries[0].x, low: qdSeries[0].y, high: qdSeries[0].y }
     ];
     let ps = [
@@ -574,7 +676,9 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       supply: supplySeries,
       EQ: eqSeries,
       QD: qd(slider.worldPrice!),
+      QD1: qd(pricePlusTariff),
       QS: qs(slider.worldPrice!),
+      QS1: qs(pricePlusTariff),
       QSseries: qsSeries,
       QDseries: qdSeries,
       worldPrice: worldSeries,
