@@ -35,8 +35,8 @@ interface Profile {
 }
 
 interface controls {
-  tech1: number,
-  tech2: number,
+  tech1: Signal<number>,
+  tech2: Signal<number>,
   exponent: number,
   labor: number
 
@@ -45,7 +45,7 @@ interface controls {
 @Component({
   selector: 'app-interactive7',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BusPubLibModule],
   templateUrl: './interactive7.component.html',
   styleUrls: ['./interactive7.component.scss']
 })
@@ -55,15 +55,13 @@ export class Interactive7Component implements OnInit, AfterViewInit {
   chart1!: Highcharts.Chart;
 
   controls: Signal<controls> = signal({
-    tech1: 7,
-    tech2: 7,
+    tech1: computed(() => this.technology() * this.appleWeight()),
+    tech2: computed( () => this.technology()*this.orangeWeight()),
     exponent: .5,
     labor: 100
 
 
   });
-
-
 
   profile: Profile = {
     titleGraph: 'Production Possibilities Curve',
@@ -71,6 +69,12 @@ export class Interactive7Component implements OnInit, AfterViewInit {
     titleY: 'Production of oranges',
     caption: `The PPC for apples and oranges demonstrates increasing opportunity cost`
   }
+  technology = signal(0);
+  appleWeight = signal(.5);
+  orangeWeight = computed(() => {
+    return 1 - this.appleWeight();
+
+  });
 
 
   constructor(private announcer: LiveAnnouncer, private el: ElementRef) {
@@ -85,7 +89,10 @@ export class Interactive7Component implements OnInit, AfterViewInit {
     this._setupGraph();
   }
 
-  public updateGraph() { }
+  public updateGraph() { 
+    const series = this._createSeries();
+    this.chart1.series[0].setData(series.ppf, true);
+  }
   
   private _setupGraph() {
     let series = this._createSeries();
@@ -143,6 +150,15 @@ export class Interactive7Component implements OnInit, AfterViewInit {
           name: 'PPC',
           lineWidth: 2,
           data: series.ppf
+        },
+        {
+          type: 'spline',
+          name: 'Initial PPC',
+          lineWidth: 1,
+          dashStyle: 'LongDash',
+          color: 'black',
+          zIndex: -1,
+          data: series.ppf
         }
       ],
       xAxis: {
@@ -181,29 +197,33 @@ export class Interactive7Component implements OnInit, AfterViewInit {
   
   private _createSeries() {
     let controls = this.controls();
-    let tech1 = controls.tech1, tech2 = controls.tech2, exponent = controls.exponent, labor = controls.labor;
+    let tech1 = 7+controls.tech1(), tech2 = 7+controls.tech2(), exponent = controls.exponent, labor = controls.labor;
     let ppfSeries: any[] = [];
     let x = 0, labor1 = (x: number) => Math.pow(x / tech1, 2);
+    let loopUntil: number, count = 0;
 
     let ppf = (x: number) => tech2 * Math.pow(labor - labor1(x), exponent);
     let derivative = (x: number) => -exponent * tech2 * Math.pow(labor - Math.pow((x / tech1), 1 / exponent), exponent - 1) * (1 / exponent) / Math.pow(tech1, 1 / exponent) * Math.pow(x, 1 / exponent - 1);
 
     do {
+      let y = isNaN(ppf(x)) ? 0 : ppf(x);
+      loopUntil = y;
       let point = {
         x: x,
-        y: ppf(x),
+        y: y,
         oppCost: derivative(x)
 
       };
 
       ppfSeries.push(point);
       x = x + .5;
+      count++;
 
-    } while (ppf(x) >= 0);
+    } while (loopUntil > 0  && count < 1000);
 
 
     return {
-      ppf: ppfSeries
+      ppf: ppfSeries,
     }
 
   }
