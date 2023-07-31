@@ -134,13 +134,13 @@ export class Interactive8Component implements OnInit, AfterViewInit {
             {
               point: {
                 x: (series.QS + series.QD) / 2,
-                y: (series.worldPrice[0].y + series.priceTariff[0].y)/2,
+                y: (series.worldPrice[0].y + series.priceTariff[0].y) / 2,
                 xAxis: 0,
                 yAxis: 0,
-            
+
 
               },
-              text: this.sliderGroup.value.tariff! >= 5 ? 'Revenue' : ' ',
+              text: this.sliderGroup.value.tariff! > 5 ? 'Revenue' : ' ',
               style: { fontSize: '.8em', fontWeight: 'bold' },
               align: 'center',
               verticalAlign: 'bottom'
@@ -159,29 +159,29 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           labels: [
             {
               point: {
-                x: (series.QS + series.QS1) / 2,
-                y: series.worldPrice[0].y,
+                x: (series.QS + series.QS1 +1) / 2,
+                y: series.worldPrice[0].y+1,
                 xAxis: 0,
                 yAxis: 0
               },
-              text: 'DWL<sub>1</sub>',
+              text: this.sliderGroup.value.tariff! > 5 ? 'DWL<sub>1</sub>' : ' ',
               useHTML: true,
               align: 'center',
               verticalAlign: 'top',
-              distance: -35
+              distance: 0
             },
             {
               point: {
-                x: (series.QD + series.QD1) / 2,
-                y: series.worldPrice[0].y,
+                x: (series.QD + series.QD1 - 1) / 2,
+                y: series.worldPrice[0].y + 1,
                 xAxis: 0,
                 yAxis: 0
               },
-              text: 'DWL<sub>2</sub>',
+              text: this.sliderGroup.value.tariff! > 5 ? 'DWL<sub>2</sub>' : ' ',
               useHTML: true,
               align: 'center',
               verticalAlign: 'top',
-              distance: -35
+              distance: 0
             }
 
           ]
@@ -189,7 +189,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
       ]
 
     });
-
+    this.announcer.announce('The graph has been updated');
   }
 
   // private methods
@@ -205,7 +205,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
         borderRadius: 5,
         animation: false,
-        
+
       },
       caption: {
         text: `Click items in the legend to highlight key areas in the graph and to see additional information.`
@@ -350,7 +350,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           zIndex: -1,
           data: series.REV,
           enableMouseTracking: true,
-          label: { enabled: false}
+          label: { enabled: false }
         },
         {
           type: 'arearange',
@@ -359,7 +359,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           zIndex: -1,
           data: series.DWL1,
           enableMouseTracking: true,
-          label: {useHTML: true}
+          label: { useHTML: true }
         },
         {
           type: 'arearange',
@@ -368,7 +368,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           legendIndex: 4,
           data: series.DWL2,
           enableMouseTracking: true,
-          label: {useHTML: true}
+          label: { useHTML: true }
         },
         {
           type: 'line',
@@ -486,21 +486,14 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           enableMouseTracking: false,
           animation: false,
           events: {
-            mouseOver: (event: any) => {
-              console.log(event);
-              this.CSreport.innerHTML = `You're hovering over the ${event.target.name} with index ${event.target.index}`;
-            },
-            mouseOut: () => {
-              this.CSreport.innerHTML = '';
-            },
             legendItemClick: (event: any) => {
-              console.log(event);
-              this.CSreport.innerHTML = `You're hovering over the ${event.target.name} with index ${event.target.index}`;
+              const name = event.target.name, index = event.target.index;
+              this._showAdditionalInformation(name, index);
               return false;
             },
 
           },
-                  }
+        }
       },
       annotations: [
         {
@@ -535,7 +528,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
             {
               point: {
                 x: (series.QS + series.QD) / 2,
-                y: (series.worldPrice[0].y + series.priceTariff[0].y)/2,
+                y: (series.worldPrice[0].y + series.priceTariff[0].y) / 2,
                 xAxis: 0,
                 yAxis: 0,
               },
@@ -550,6 +543,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         {
           labelOptions: {
             backgroundColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
             style: {
               fontSize: '.5em',
               fontWeight: 'bold',
@@ -558,8 +552,8 @@ export class Interactive8Component implements OnInit, AfterViewInit {
           labels: [
             {
               point: {
-                x: (series.QS + series.QS1) / 2,
-                y: series.worldPrice[0].y,
+                x: (series.QS + series.QS1 +1) / 2,
+                y: series.worldPrice[0].y+1,
                 xAxis: 0,
                 yAxis: 0
               },
@@ -567,12 +561,12 @@ export class Interactive8Component implements OnInit, AfterViewInit {
               useHTML: true,
               align: 'center',
               verticalAlign: 'top',
-              distance: -35,
+              distance: 0,
             },
             {
               point: {
-                x: (series.QD + series.QD1) / 2,
-                y: series.worldPrice[0].y,
+                x: (series.QD + series.QD1 - 1) / 2,
+                y: series.worldPrice[0].y + 1,
                 xAxis: 0,
                 yAxis: 0
               },
@@ -580,7 +574,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
               useHTML: true,
               align: 'center',
               verticalAlign: 'top',
-              distance: -35
+              distance: 0
             }
 
           ]
@@ -693,7 +687,31 @@ export class Interactive8Component implements OnInit, AfterViewInit {
 
   }
 
-  private _labelPositioner() {
+  private _showAdditionalInformation(name: string, index: number) {
+    let text: string = ``;
+
+    switch (index) {
+      case 4:
+        text = `Consumer surplus (CS) is the area under the demand curve and above the world price plus tariff up to the quantity demanded. While a tariff helps domestic producers by increasing producer surplus (PS), it comes at the expense of consumers. It reduces consumer surplus and creates a deadweight loss.`;
+        break;
+      case 5:
+        text = `Producer surplus (PS) is the area above the supply curve and below the world price plus tariff up to the quantity supplied. While adversely affected by lower world prices, consumers benefit. Producers will often lobby for tariffs. Increasing the tariff increases producer surplus.`;
+        break;
+      case 7:
+        text = `Deadweight loss one (DWL<sub>1</sub>) is the area under the supply curve and above the world price between the quantity supplied at the world price and the quantity supplied the world price plus tariff. This is the loss in social surplus resulting from production inefficiency: domestic firms are producing more than the efficient quantity relative to the world price.`;
+        break;
+      case 6:
+        text = `The tariff generates tax revenue, which is the quantity of imported goods times the tariff. This is the area between the world price plus tariff and the world price from the quantity supplied at the world price plus tariff and the quantity demanded at the world price plus tariff.`;
+        break;
+      case 8:
+        text = `Deadweight loss two (DWL<sub>2</sub>) is the area under the demand curve and above the world price between the quantity demanded at the world price plus tariff and the quantity demanded at the world price.  This is the loss in social surplus resulting from consumption inefficiency: consumers are consuming less than the efficient quantity relative to the world price.`;
+        break;
+      default:
+        break;
+    }
+
+    this.CSreport.innerHTML = text;
+
 
   }
 
