@@ -1,5 +1,5 @@
 <div class="econ-interactive-container">
-    <h1 class="mat-headline-5">PPC Technology Shifts</h1>
+    <h1 class="mat-headline-5">PPC: Change in Technology</h1>
     <div class="wrapper">
         <div class="item-narrative" >
             <h2 class="mat-headline-6">Key Points:</h2>
@@ -9,16 +9,22 @@
                     Changes in technology can favor one product over the other.
                 </li>
                 <li>
-                    Assuming constant opportunity, the PPC is a straight line connecting the extremes.
+                    Use the first slider to allocate how much a change in technology benefits each product.
                 </li>
                 <li>
-                    The opportunity cost of producing websites is the slope of the PPC.
+                    Then use the second slider to simulate an increase in technology.
+                </li>
+                <li>
+                    Notice at the extremes, a change in technology has no effect on the other good.
+                </li>
+                <li>
+                    When split 50-50, each good benefits equally and the PPC shifts parallel to the initial curve.
                 </li>
             </ul>
             <econ-slider
             class="econ-control"
-            label="Apples {{appleWeight() | percent }}"
-            displayValue="Oranges {{ orangeWeight() | percent }}"
+            label="Oranges {{ orangeWeight() | percent }}"
+            displayValue="Apples {{appleWeight() | percent }}"
             showValue="false"
             [value]="appleWeight()"
             step=".05"

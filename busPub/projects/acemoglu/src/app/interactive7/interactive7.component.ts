@@ -67,7 +67,7 @@ export class Interactive7Component implements OnInit, AfterViewInit {
     titleGraph: 'Production Possibilities Curve',
     titleX: 'Production of apples',
     titleY: 'Production of oranges',
-    caption: `The PPC for apples and oranges demonstrates increasing opportunity cost`
+    caption: `The PPC for apples and oranges demonstrates increasing opportunity cost.  Moving from left to right, the opportunity cost of producing apples increases.`
   }
   technology = signal(0);
   appleWeight = signal(.5);
@@ -158,7 +158,8 @@ export class Interactive7Component implements OnInit, AfterViewInit {
           dashStyle: 'LongDash',
           color: 'black',
           zIndex: -1,
-          data: series.ppf
+          data: series.ppf,
+          label: {enabled: false }
         }
       ],
       xAxis: {
@@ -184,8 +185,8 @@ export class Interactive7Component implements OnInit, AfterViewInit {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           animation: false,
           tooltip: {
-            headerFormat: '<b>{series.name}: </b> ',
-            pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.2f}<br/>opportunity cost: {point.oppCost:.2f}`
+            headerFormat: '',
+            pointFormat: `Oranges: {point.y:,.2f}<br/>Apples: {point.x:.2f}<br/>opportunity cost (apples): {point.oppCost:.2f} oranges`
           },
           label: { enabled: true }
         }
@@ -207,16 +208,20 @@ export class Interactive7Component implements OnInit, AfterViewInit {
 
     do {
       let y = isNaN(ppf(x)) ? 0 : ppf(x);
+      let oppCost = derivative(x) === -Infinity ? 'Infinity' : -derivative(x);
+      console.log(typeof derivative(x));
+      console.log(derivative(x));
+
       loopUntil = y;
       let point = {
         x: x,
         y: y,
-        oppCost: derivative(x)
+        oppCost: oppCost
 
       };
 
       ppfSeries.push(point);
-      x = x + .5;
+      x = x + 1;
       count++;
 
     } while (loopUntil > 0  && count < 1000);
