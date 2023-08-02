@@ -12,7 +12,6 @@ import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { style } from '@angular/animations';
 
 
 HC_more(Highcharts);
