@@ -26,7 +26,18 @@ HC_accessibility(Highcharts);
   standalone: true,
   imports: [CommonModule, MatRadioModule, BusPubLibModule],
   templateUrl: './interactive10.component.html',
-  styleUrls: ['./interactive10.component.scss']
+  styleUrls: ['./interactive10.component.scss'],
+  animations: [
+    trigger('myAnimationTrigger', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('400ms 30ms ease-in', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('0s', style({ opacity: 0 }))
+      ])
+    ])
+  ],
 })
 export class Interactive10Component implements OnInit, AfterViewInit {
 
@@ -34,10 +45,10 @@ export class Interactive10Component implements OnInit, AfterViewInit {
   mode = signal(0);
 
   graph = computed(() => {
-    let scaler = 30, xGood = 'apartments (thousands)', yGood = 'Rent (dollars per month)', title = 'Market for 2-Bedroom Apartments',caption = 'The market for two-bedroom apartments. The supply and demand curves intersect at the market clearing price of $1,500 and quantity of 35 thousand apartments. ', price = 1500, min = 1150, max = 1500, step = 25;
+    let scaler = .4, xGood = 'Quantity of electricity produced (in billions of kWh)', yGood = 'Price (cents per kWh)', title = 'Market for Electricity Produced with Coal',caption = 'The market for electricity produced with coal. The supply and demand curves intersect at the market clearing price of $1,500 and quantity of 35 thousand apartments. ', price = 20, min = 1150, max = 1500, step = 25;
 
     if (this.mode() === 1) {
-      scaler = .5, xGood = 'cheese (thousands of pounds)', yGood = 'Price (dollars per pound)', title = 'Market for Gourmet Cheese', caption = 'The market for gourmet cheese. The supply and demand curves intersect at the market clearing price of $25 per pound and quantity of 35 thousand pounds.', price = 25, min = 25, max = 32, step = 1;
+      scaler = .8, xGood = 'Quantity of education (in millions of years)', yGood = 'Price (in thousands of dollars)', title = 'Market for Education', caption = 'The market for Education in equilibrium without externalities. The supply and demand curves intersect at the market clearing price of $25 per pound and quantity of 35 thousand pounds.', price = 25, min = 25, max = 32, step = 1;
 
     };
     return {
@@ -71,6 +82,9 @@ export class Interactive10Component implements OnInit, AfterViewInit {
     this._setupGraph();
   }
 
+  public updateGraph(value: number) {
+
+  }
 
   private _setupGraph() {
     const chartContainer = this.el.nativeElement.querySelector('#chart1');
@@ -144,7 +158,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: `Quantity of ${this.graph().xGood}` },
+        title: { useHTML: true, text: `${this.graph().xGood}` },
         min: 15,
         max: 55,
       },

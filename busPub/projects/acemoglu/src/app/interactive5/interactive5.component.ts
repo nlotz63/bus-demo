@@ -38,7 +38,6 @@ HC_accessibility(Highcharts);
       ])
     ])
   ],
-
 })
 export class Interactive5Component implements OnInit, AfterViewInit {
 
