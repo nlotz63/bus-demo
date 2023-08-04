@@ -355,6 +355,7 @@ export class Interactive5Component implements OnInit, AfterViewInit {
     let qStar = graph.price <= demand(eqX) ? qs(graph.price) : qd(graph.price);
     let csUp = graph.price <= demand(eqX) ? demand(qStar) :graph.price,
       psDown = graph.price <= demand(eqX) ? graph.price : supply(qStar);
+      
     let eqSeries = [
       { x: 0, y: demand(eqX), accessibility: { enabled: false } },
       { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },

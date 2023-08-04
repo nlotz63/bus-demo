@@ -45,14 +45,15 @@ export class Interactive10Component implements OnInit, AfterViewInit {
   mode = signal(0);
 
   graph = computed(() => {
-    let scaler = .4, xGood = 'Quantity of electricity produced (in billions of kWh)', yGood = 'Price (cents per kWh)', title = 'Market for Electricity Produced with Coal',caption = 'The market for electricity produced with coal. The supply and demand curves intersect at the market clearing price of $1,500 and quantity of 35 thousand apartments. ', price = 20, min = 1150, max = 1500, step = 25;
+    let xscaler = 10, yscaler = .005, xGood = 'Quantity of electricity produced (in billions of kWh)', yGood = 'Price (cents per kWh)', title = 'Market for Electricity Produced with Coal',caption = 'The market for electricity produced with coal. The supply and demand curves intersect at the market clearing price of $1,500 and quantity of 35 thousand apartments. ', price = 20, min = 1150, max = 1500, step = 25, xMin = 100;
 
     if (this.mode() === 1) {
-      scaler = .8, xGood = 'Quantity of education (in millions of years)', yGood = 'Price (in thousands of dollars)', title = 'Market for Education', caption = 'The market for Education in equilibrium without externalities. The supply and demand curves intersect at the market clearing price of $25 per pound and quantity of 35 thousand pounds.', price = 25, min = 25, max = 32, step = 1;
+      xscaler = 1.145, yscaler = .8, xGood = 'Quantity of education (in millions of years)', yGood = 'Price (in thousands of dollars)', title = 'Market for Education', caption = 'The market for Education in equilibrium without externalities. The supply and demand curves intersect at the market clearing price of $25 per pound and quantity of 35 thousand pounds.', price = 25, min = 25, max = 32, step = 1, xMin = 10;
 
     };
     return {
-      scaler: scaler,
+      xscaler: xscaler,
+      yscaler: yscaler,
       xGood: xGood,
       yGood: yGood,
       title: title,
@@ -60,7 +61,8 @@ export class Interactive10Component implements OnInit, AfterViewInit {
       price: price,
       min: min,
       max: max,
-      step: step
+      step: step,
+      xMin: xMin
     }
   });
 
@@ -89,6 +91,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
   private _setupGraph() {
     const chartContainer = this.el.nativeElement.querySelector('#chart1');
     const series = this._createSeries();
+    if (this.chart1) this.chart1.destroy();
     this.chart1 = new Highcharts.Chart(chartContainer, {
       chart: {
         height: 550,
@@ -152,6 +155,20 @@ export class Interactive10Component implements OnInit, AfterViewInit {
           color: '#C62828',
           zIndex: 0,
           data: series.supply
+        },
+        {
+          type: 'line',
+          name: 'Equilibrium',
+          color: 'black',
+          dashStyle: 'Dot',
+          zIndex: 1,
+          data: series.EQ,
+          marker: {
+            radius: 4,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          }
         }
       ],
       xAxis: {
@@ -159,8 +176,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
         lineWidth: 1.,
         tickColor: '#757575',
         title: { useHTML: true, text: `${this.graph().xGood}` },
-        min: 15,
-        max: 55,
+        min: this.graph().xMin
       },
       yAxis: {
         gridLineWidth: 0,
@@ -187,30 +203,30 @@ export class Interactive10Component implements OnInit, AfterViewInit {
 
   private _createSeries() {
     const graph = this.graph();
-    const scaler = graph.scaler;
+    const yscale = graph.yscaler, xscale = graph.xscaler;
     let x = 15, a = 120, b = 2, c = -13, d = 1.8;
     let demandSeries = [], supplySeries = [];
 
     let demand = (x: number): number => {
-      return scaler * (a - b * x);
+      return  (a - b * x);
     }
 
     let supply = (x: number): number => {
-      return scaler * (c + d * x);
+      return  (c + d * x);
     }
-    let qd = (y: number) => { return (y / scaler - a) / -b; }
-    let qs = (y: number) => { return (y / scaler - c) / d; }
+    let qd = (y: number) => { return xscale*((a - y) / b); }
+    let qs = (y: number) => { return xscale*((y - c) / d); }
 
     do {
       let point = {
         name: 'Quantity demanded:',
-        x: x,
-        y: demand(x)
+        x: x*xscale,
+        y: yscale*demand(x)
       }
       let point2 = {
         name: 'Quantity supplied:',
-        x: x,
-        y: supply(x)
+        x: x*xscale,
+        y: yscale*supply(x)
       }
       demandSeries.push(point);
       supplySeries.push(point2);
@@ -218,10 +234,42 @@ export class Interactive10Component implements OnInit, AfterViewInit {
 
     } while (x <= 55);
 
+    let eqX = (a - c) / (b + d);
+    let qStar = graph.price <= demand(eqX) ? qs(graph.price) : qd(graph.price);
+    let csUp = graph.price <= demand(eqX) ? demand(qStar) :graph.price,
+      psDown = graph.price <= demand(eqX) ? graph.price : supply(qStar);
+      
+    let eqSeries = [
+      { x: 0, y: yscale*demand(eqX), accessibility: { enabled: false } },
+      { name: 'Equilibrium:', x: xscale*eqX, y: yscale*demand(eqX), marker: { enabled: true } },
+      { x: xscale*eqX, y: 0, accessibility: { enabled: false } }
+    ];
+
+    let dwlSeries = [
+      { x: qStar, low: supply(qStar), high: demand(qStar) },
+      { x: eqX, low: demand(eqX), high: supply(eqX)}
+    ]; 
+
+    let csSeries = [
+      { x: 15, low: graph.price, high: demand(15), accessibility: { enabled: false } },
+      { x: qStar, low: graph.price, high: csUp, accessibility: { enabled: false } }
+    ],
+      psSeries = [
+        { x: 15, high: graph.price, low: supply(15), accessibility: { enabled: false } },
+        { x: qStar, high: graph.price, low: psDown, accessibility: { enabled: false } }
+        ];
+    let priceLine = [
+      { x: 10, y: graph.price },
+      { x: 50, y: graph.price}
+        
+      ];
+
+
 
     return {
       demand: demandSeries,
-      supply: supplySeries
+      supply: supplySeries,
+      EQ: eqSeries
     }
 
 
