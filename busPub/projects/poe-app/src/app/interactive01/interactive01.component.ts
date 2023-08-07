@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, Input, signal, computed } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Input, signal, Signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -14,6 +14,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { EconModel, ModelService } from '../model.service';
+import { ActivatedRoute } from '@angular/router';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -43,7 +45,11 @@ interface ShiftGroup {
 
 export class Interactive01Component implements OnInit, AfterViewInit {
 
-  @Input() mode: string = '0';
+
+  nMode!: number;
+  @Input() set mode(mode: string) {
+   this.nMode = Number(mode);
+  };
 
   // Mode 1 props
   shifterGroups: ShiftGroup[] = [
@@ -93,7 +99,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   });
   equation2 = computed(() => {
-    let series = this._createSeries();
+    let series = this.modelService.demandSupply(this.modelParams());
     let qd = series.QD, qs = series.QS;
 
     if (this.price() > 50) {
@@ -108,15 +114,35 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   });
 
   chart!: Highcharts.Chart;
+  modelParams: Signal<EconModel> = computed(() => {
 
-  constructor( private announcer: LiveAnnouncer) { }
+    return {
+      xMin: 18,
+      xMax: 57,
+      yscale: 1,
+      xscale: 1,
+      xStep: 5,
+      demandSlope: 2,
+      supplySlope: 1.8,
+      supplyIntercept: -13 + this.supplyShift(),
+      demandIntercept: 120 + this.demandShift(),
+      price1: this.price()
+
+    }
+
+  });
+
+  constructor(private announcer: LiveAnnouncer, private modelService: ModelService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this._createSeries();
+    // this._createSeries();
+    this.modelService.demandSupply(this.modelParams());
+
   }
 
   ngAfterViewInit(): void {
-    let series = this._createSeries();
+    // let series = this._createSeries();
+    let series = this.modelService.demandSupply(this.modelParams());
     this.chart = new Highcharts.Chart('chart1', {
       chart: {
         height: 550,
@@ -384,7 +410,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       ]
     });
 
-    if (this.mode === '1') {
+    if (this.nMode === 1) {
       this.chart.series[4].remove();
       this.chart.series[3].remove();
       this.chart.update(
@@ -403,7 +429,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         lineWidth: 2,
         zIndex: 1,
         color: 'rgb(69, 69, 69)',
-        data: series.EQref,
+        data: series.EQ,
         label: { enabled: false },
         marker: {
           fillColor: 'rgb(235, 235, 235)',
@@ -490,10 +516,12 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       this.supplyShift.set(direction * value);
     }
 
-    let series = this._createSeries();
+    // this.modelParams[curve!] = this.price();
 
-    switch (this.mode) {
-      case '0':
+    let series = this.modelService.demandSupply(this.modelParams());
+
+    switch (this.nMode) {
+      case 0:
         this.chart.series[3].update(
           {
             type: 'line',
@@ -607,74 +635,4 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   }
 
-  private _createSeries() {
-    let x = 18, a = 120 + this.demandShift(), b = 2, c = -13 - this.supplyShift(), d = 1.8;
-    let demandSeries = [], supplySeries = [];
-
-    let demand = (x: number): number => {
-      return a - b * x;
-    }
-
-    let supply = (x: number): number => {
-      return c + d * x;
-    }
-    let qd = (y: number) => { return (a - y) / b; }
-    let qs = (y: number) => { return (y - c) / d; }
-
-    do {
-      let point = {
-        name: 'Quantity demanded:',
-        x: x,
-        y: demand(x)
-      }
-      let point2 = {
-        name: 'Quantity supplied:',
-        x: x,
-        y: supply(x)
-      }
-      demandSeries.push(point);
-      supplySeries.push(point2);
-      x = x + 5;
-
-    } while (x <= 57);
-
-    let eqX = (a - c) / (b + d);
-
-    let eqSeries = [
-      { x: 0, y: demand(eqX), accessibility: { enabled: false } },
-      { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
-      { x: eqX, y: 9, accessibility: { enabled: false } }
-    ];
-
-    let eqRef = [
-      { x: 0, y: demand(eqX), accessibility: { enabled: false } },
-      { name: 'Initial equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
-      { x: eqX, y: 9, accessibility: { enabled: false } }
-    ]
-
-    let qsSeries = [
-      { x: 10, y: this.price(), accessibility: { enabled: false } },
-      { name: 'q<sup>s</sup>:', x: qs(this.price()), y: this.price(), marker: { enabled: true } },
-      { x: qs(this.price()), y: 10, accessibility: { enabled: false } }
-    ],
-      qdSeries = [
-        { x: 10, y: this.price(), accessibility: { enabled: false } },
-        { name: 'q<sup>d</sup>:', x: qd(this.price()), y: this.price(), marker: { enabled: true } },
-        { x: qd(this.price()), y: 10, accessibility: { enabled: false } }
-      ];
-
-    return {
-      demand: demandSeries,
-      supply: supplySeries,
-      EQ: eqSeries,
-      EQref: eqRef,
-      QD: qd(this.price()),
-      QS: qs(this.price()),
-      QSseries: qsSeries,
-      QDseries: qdSeries
-    }
-
-
-
-  }
 }
