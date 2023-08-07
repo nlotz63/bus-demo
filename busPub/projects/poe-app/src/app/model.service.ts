@@ -115,7 +115,9 @@ export class ModelService {
       QD: qd(qdPrice),
       QS: qs(qsPrice),
       QSseries: qsSeries,
-      QDseries: qdSeries
+      QDseries: qdSeries,
+      demFunct: demand,
+      supFunct: supply
 
     }
 
