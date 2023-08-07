@@ -15,7 +15,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { EconModel, ModelService } from '../model.service';
-import { ActivatedRoute } from '@angular/router';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -132,7 +131,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   });
 
-  constructor(private announcer: LiveAnnouncer, private modelService: ModelService, private route: ActivatedRoute) { }
+  constructor(private announcer: LiveAnnouncer, private modelService: ModelService) { }
 
   ngOnInit(): void {
     // this._createSeries();
