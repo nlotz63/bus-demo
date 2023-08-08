@@ -49,10 +49,10 @@ export class Interactive10Component implements OnInit, AfterViewInit {
 
 
   graph = computed(() => {
-    let xscaler = 10, yscaler = .005, xGood = 'Quantity of electricity produced (in billions of kWh)', yGood = 'Price (cents per kWh)', title = 'Market for Electricity Produced with Coal',caption = 'The market for electricity produced with coal. The supply and demand curves intersect at the market clearing price of $1,500 and quantity of 35 thousand apartments. ', price = 20, min = 0, max = 15, step = .25, xMin = 100, xMax = 600, yMin = 0, yMax = .5;
+    let xscaler = 10, yscaler = .005, xGood = 'Quantity of electricity produced (in billions of kWh)', yGood = 'Price (cents per kWh)', title = 'Market for Electricity Produced with Coal',caption = 'The market for electricity produced with coal in equilibrium without taking into account the negative externality.', price = .25, min = 0, max = 25, step = 5, xMin = 100, xMax = 600, yMin = 0, yMax = .5;
 
     if (this.mode() === 1) {
-      xscaler = 1.145, yscaler = .8, xGood = 'Quantity of education (in millions of years)', yGood = 'Price (in thousands of dollars)', title = 'Market for Education', caption = 'The market for Education in equilibrium without externalities. The supply and demand curves intersect at the market clearing price of $25 per pound and quantity of 35 thousand pounds.', price = 25, min = 0, max = 15, step = .5, xMin = 10, xMax = 70, yMin = 0, yMax = 80;
+      xscaler = 1.145, yscaler = .8, xGood = 'Quantity of education (in millions of years)', yGood = 'Price (in thousands of dollars)', title = 'Market for Education', caption = 'The market for education in equilibrium without taking into account the positive externality of education.', price = 25, min = 0, max = 25, step = 5, xMin = 10, xMax = 70, yMin = 0, yMax = 80;
 
     };
     return {
@@ -104,34 +104,56 @@ export class Interactive10Component implements OnInit, AfterViewInit {
 
   public setMode(value: number) {
     this.mode.set(value);
+    this.demandShift.set(0);
+    this.supplyShift.set(0);
     this._setupGraph();
   }
 
   public updateGraph(value: number) {
+    
     if (this.mode() === 0) {
       this.supplyShift.set(value);
     } else {
       this.demandShift.set(value);
     }
+    let series = this.modelService.demandSupply(this.modelParams());
+    let series1 = this.modelService.demandSupply({
+      xscale: 1,
+      yscale: 1
+    });
+    const dwlSeries = [
+      {
+        x: this.mode() === 0 ? 350 : 40,
+        low: this.mode() === 0 ? .25 : 40,
+        high: this.mode() === 0 ? series.supFunct(350) : series.demFunct(40)
+      },
+      {
+        x: series.EQ[1].x,
+        low: series.EQ[1].y,
+        high: series.supFunct(series.EQ[1].x)
+      }
+    ];
+    let hideDem = this.mode() === 1 && value >= 1 ? true : false;
+    let hideSup = this.mode() === 0 && value >= 1 ? true : false;
 
-      let series = this.modelService.demandSupply(this.modelParams());
+
       this.chart1.update({
         series: [
           {
             type: 'line',
-            name: 'D',
             lineWidth: 2,
             color: '#0771BD',
             zIndex: 0,
             data: series.demand,
+            visible: hideDem
           },
           {
             type: 'line',
-            name: 'S',
             lineWidth: 2,
             color: '#C62828',
             zIndex: 0,
-            data: series.supply
+            data: series.supply,
+            visible: hideSup
           },
           {
             type: 'line',
@@ -146,11 +168,18 @@ export class Interactive10Component implements OnInit, AfterViewInit {
               lineWidth: 1,
               fillColor: 'rgb(235, 235, 235)'
             }
-          }
+          },
+          {
+            type: 'arearange',
+            name: 'DWL',
+            zIndex: -1,
+            data: dwlSeries
+          },
+  
         ],
   
       });
-    
+    this.announcer.announce('The graph has been updated')
 
   }
 
@@ -208,19 +237,22 @@ export class Interactive10Component implements OnInit, AfterViewInit {
       series: [
         {
           type: 'line',
-          name: 'D',
+          name: 'MSB',
           lineWidth: 2,
           color: '#0771BD',
           zIndex: 0,
           data: series.demand,
+          visible: false
         },
         {
           type: 'line',
-          name: 'S',
+          name: 'MSC',
           lineWidth: 2,
           color: '#C62828',
           zIndex: 0,
-          data: series.supply
+          data: series.supply,
+          visible: false
+        
         },
         {
           type: 'line',
@@ -229,6 +261,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
           dashStyle: 'Dot',
           zIndex: 1,
           data: series.EQ,
+          label: {enabled: false},
           marker: {
             radius: 4,
             lineColor: 'black',
@@ -236,10 +269,15 @@ export class Interactive10Component implements OnInit, AfterViewInit {
             fillColor: 'rgb(235, 235, 235)'
           }
         },
+        {
+          type: 'arearange',
+          name: 'DWL',
+          data: []
+        },
         // Initial curves
         {
           type: 'line',
-          name: 'D',
+          name: 'Demand',
           lineWidth: 2,
           color: '#0771BD',
           zIndex: 0,
@@ -247,7 +285,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'S',
+          name: 'Supply',
           lineWidth: 2,
           color: '#C62828',
           zIndex: 0,
@@ -260,6 +298,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
           dashStyle: 'Dot',
           zIndex: 1,
           data: series.EQ,
+          label: {enabled: false},
           marker: {
             radius: 4,
             lineColor: 'black',
@@ -294,88 +333,13 @@ export class Interactive10Component implements OnInit, AfterViewInit {
             headerFormat: '<b>{series.name}: </b> ',
             pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
           },
-          label: { enabled: true }
+          label: { enabled: true, style: { fontSize: '.75em'} }
         }
       },
 
     });
+    let message = this.mode() === 0 ? 'The negative externality option has loaded' : 'The positive externality option has loaded';
+    this.announcer.announce(message);
 
   }
-
-/*   private _createSeries() {
-    const graph = this.graph();
-    const yscale = graph.yscaler, xscale = graph.xscaler;
-    let x = 15, a = 120, b = 2, c = -13, d = 1.8;
-    let demandSeries = [], supplySeries = [];
-
-    let demand = (x: number): number => {
-      return  (a - b * x);
-    }
-
-    let supply = (x: number): number => {
-      return  (c + d * x);
-    }
-    let qd = (y: number) => { return xscale*((a - y) / b); }
-    let qs = (y: number) => { return xscale*((y - c) / d); }
-
-    do {
-      let point = {
-        name: 'Quantity demanded:',
-        x: x*xscale,
-        y: yscale*demand(x)
-      }
-      let point2 = {
-        name: 'Quantity supplied:',
-        x: x*xscale,
-        y: yscale*supply(x)
-      }
-      demandSeries.push(point);
-      supplySeries.push(point2);
-      x = x + 5;
-
-    } while (x <= 55);
-
-    let eqX = (a - c) / (b + d);
-    let qStar = graph.price <= demand(eqX) ? qs(graph.price) : qd(graph.price);
-    let csUp = graph.price <= demand(eqX) ? demand(qStar) :graph.price,
-      psDown = graph.price <= demand(eqX) ? graph.price : supply(qStar);
-      
-    let eqSeries = [
-      { x: 0, y: yscale*demand(eqX), accessibility: { enabled: false } },
-      { name: 'Equilibrium:', x: xscale*eqX, y: yscale*demand(eqX), marker: { enabled: true } },
-      { x: xscale*eqX, y: 0, accessibility: { enabled: false } }
-    ];
-
-    let dwlSeries = [
-      { x: qStar, low: supply(qStar), high: demand(qStar) },
-      { x: eqX, low: demand(eqX), high: supply(eqX)}
-    ]; 
-
-    let csSeries = [
-      { x: 15, low: graph.price, high: demand(15), accessibility: { enabled: false } },
-      { x: qStar, low: graph.price, high: csUp, accessibility: { enabled: false } }
-    ],
-      psSeries = [
-        { x: 15, high: graph.price, low: supply(15), accessibility: { enabled: false } },
-        { x: qStar, high: graph.price, low: psDown, accessibility: { enabled: false } }
-        ];
-    let priceLine = [
-      { x: 10, y: graph.price },
-      { x: 50, y: graph.price}
-        
-      ];
-
-
-
-    return {
-      demand: demandSeries,
-      supply: supplySeries,
-      EQ: eqSeries
-    }
-
-
-  }
- */
-
-
 }

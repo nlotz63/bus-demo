@@ -13,48 +13,48 @@
             <div *ngIf="mode() === 0" @myAnimationTrigger>
                 <ul>
                     <li>
-                        For a price ceiling to be binding, it must be set below the market clearing price.
+                        A negative externality imposes an additional cost on society that is not explicitly recognized by the buyers and sellers, which results in overproduction. 
                     </li>
                     <li>
-                        Although a price ceiling can increase consumer surplus, it results in a deadweight loss and a
-                        decrease in producer surplus.
+                        Use the slider to increase the external cost. The curve shifting up and to the left is the marginal social cost (MSC) curve. It shows the private marginal cost of production plus the external cost.
                     </li>
                     <li>
-                        At the price ceiling, the quantity demanded is greater than the quantity supplied; therefore,
-                        less than the efficient quantity of apartments is being rented. This is the cause of the
-                        deadweight loss.
+                        If we determine the equilibrium using the MSC curve, the equilibrium price is higher, and the equilibrium quantity is lower.  This represents the efficient level of production. 
                     </li>
                     <li>
-                        In the presence of price ceilings, there is tendency for illicit market to form because
-                        potential renters are willing to pay higher rents.
+                        The shaded triangle labeled DWL shows the deadweight loss that occurs when markets don't “internalize” the external cost. The area represents the lost social surplus from producing where MSC is greater than marginal benefit (the demand curve).
                     </li>
                 </ul>
             </div>
             <div *ngIf="mode() === 1" @myAnimationTrigger>
                 <ul>
                     <li>
-                        For a price floor to be binding, it must be set above the market clearing price.
+                        A positive externality occurs when an economic activity has a spillover benefit that is not considered when people make their own decisions. 
                     </li>
                     <li>
-                        Although a price floor increases producer surplus, it results in a deadweight loss and a
-                        decrease in consumer surplus.
+                        Use the slider to increase the external benefit. The curve shifting up and to the right is the marginal social benefit (MSB) curve. It shows the private marginal benefit plus the external benefit.
                     </li>
                     <li>
-                        At the price floor, the quantity supplied is greater than the quantity demanded; therefore, less
-                        than the efficient quantity of cheese is being purchased. This is the cause of the deadweight
-                        loss.
+                        If we determine the equilibrium using the MSB curve, the equilibrium price is higher, and the equilibrium quantity is higher. This represents the efficient level of production.
                     </li>
                     <li>
-
+                        The shaded triangle labeled DWL show the deadweight loss when markets don't “internalize” the external benefit. The area represents the lost social surplus from underproduction: the quantity where MSB is greater than marginal cost (the supply curve).
                     </li>
                 </ul>
             </div>
-             <econ-slider class="econ-control" label="Price" showValue="false"
-                displayValue="{{ demandShift() | currency: 'USD' : 'symbol' : '0.0-0' }}" [min]="graph().min"
+             <econ-slider *ngIf="mode() === 0" class="econ-control" label="External cost" showValue="false"
+                displayValue="{{ supplyShift()*modelParams().yscale! | currency: 'USD' : 'symbol' : '0.3-3' }}" [min]="graph().min"
+                [max]="graph().max" [value]="supplyShift() " [step]="graph().step"
+                (valueChange)="updateGraph($event)"
+                 #value
+                ></econ-slider>
+                <econ-slider *ngIf="mode() === 1" class="econ-control" label="External benefit" showValue="false"
+                displayValue="{{ demandShift()*modelParams().yscale! | currency: 'USD' : 'symbol' : '0.0-2' }}" [min]="graph().min"
                 [max]="graph().max" [value]="demandShift()" [step]="graph().step"
                 (valueChange)="updateGraph($event)"
                  #value
                 ></econ-slider>
+
          </div>
         <div class="item-chart" id="chart1">
         </div>
