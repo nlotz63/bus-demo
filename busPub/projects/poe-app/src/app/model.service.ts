@@ -65,12 +65,20 @@ export class ModelService {
     let demand = (x: number): number => {
       return (a - b * x);
     }
+    
+    let demDescaled = (x: number): number => {
+      return yscale * (a - b * x / xscale);
+    }
 
     let supply = (x: number): number => {
       return (c + d * x);
     }
-    let qd = (y: number) => { return xscale * ((a - y) / b); }
-    let qs = (y: number) => { return xscale * ((y - c) / d); }
+
+    let supDescaled = (x: number): number => {
+      return yscale * (c + d * x / xscale);
+    }
+    let qd = (y: number) => { return xscale * ((a - y / yscale) / b); }
+    let qs = (y: number) => { return xscale * ((y / yscale - c) / d); }
 
     do {
       let point = {
@@ -107,17 +115,19 @@ export class ModelService {
         { x: qd(qdPrice), y: 10, accessibility: { enabled: false } }
       ];
 
+    
+
 
     return {
       demand: demandSeries,
       supply: supplySeries,
       EQ: eqSeries,
-      QD: qd(qdPrice),
-      QS: qs(qsPrice),
+      QD: qd,
+      QS: qs,
       QSseries: qsSeries,
       QDseries: qdSeries,
-      demFunct: demand,
-      supFunct: supply
+      demFunct: demDescaled,
+      supFunct: supDescaled
 
     }
 
