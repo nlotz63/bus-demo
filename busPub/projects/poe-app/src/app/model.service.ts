@@ -42,7 +42,7 @@ export class ModelService {
       demandSlope: 1,
       supplySlope: 1,
       xStep: 10,
-      demandName: 'Quantity supplied',
+      demandName: 'Quantity demanded',
       supplyName: 'Quantity supplied',
       price1: 50,
       price2: 75,
