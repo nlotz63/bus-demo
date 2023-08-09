@@ -1,1 +1,46 @@
-<p>interactive11 works!</p>
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">The Effects of Taxes</h1>
+    <div class="wrapper">
+        <div class="item-narrative">
+            <h2 class="mat-headline-6">Key Points:</h2>
+            <div @myAnimationTrigger>
+                <ul>
+                    <li>
+                        bullet one
+                    </li>
+                    <li>
+                        bullet two
+                    </li>
+                    <li>
+                        bullet three
+                    </li>
+                </ul>
+                <econ-slider
+                label="Demand elasticity"
+                [value] ="elasticityDemand()"
+                min=".01"
+                max="1.38"
+                step=".01"
+                (valueChange)="elasticityDemand.set($event);updateGraph($event)"
+                >
+
+                </econ-slider>
+                <econ-slider
+                label="Supply elasticity"
+                [value] ="elasticitySupply()"
+                min=".01"
+                max="1.26"
+                step=".01"
+                (valueChange)="elasticitySupply.set($event);updateGraph($event)"
+                >
+
+                </econ-slider>
+
+            </div>
+
+
+        </div>
+        <div class="item-chart" id="chart1">
+            chart here
+        </div>
+    </div>
