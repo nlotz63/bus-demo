@@ -45,10 +45,9 @@ export class Interactive11Component implements OnInit, AfterViewInit {
 
   chart1!: Highcharts.Chart;
   mode = signal(0);
-  elasticityDemand = signal(.75);
-  elasticitySupply = signal(.75);
+  elasticityDemand = signal(-1.45);
+  elasticitySupply = signal(1.7);
   tax = signal(0);
-
   graph = signal(
     {
       xGood: 'Quantity (plates per day)',
@@ -58,30 +57,44 @@ export class Interactive11Component implements OnInit, AfterViewInit {
       xMin: 0,
       xMax: 850,
       yMin: 0,
-      yMax: 10
-
-
+      yMax: 10,
+      xscale: 10,
+      yscale: .1
     }
   );
+  keyValues: any = {
+    yscale: .1,
+    xscale: 10
+  }
 
   modelParams: Signal<EconModel> = computed(() => {
+    let supplyShift = this.mode() === 0 ? this.tax()/this.graph().yscale: 0; 
+    let demandShift = this.mode() === 1 ? -this.tax() / this.graph().yscale : 0;
     return {
       xMin: 0,
       xMax: 80,
       step: 10,
-      xscale: 10,
-      yscale: .1,
-      demandIntercept: 47.5 + this.elasticityDemand()*37.5,
-      supplyIntercept: 47.5 - this.elasticitySupply()*37.5,
-      demandSlope: this.elasticityDemand(),
-      supplySlope: this.elasticitySupply()
+      xscale: this.graph().xscale,
+      yscale: this.graph().yscale,
+      demandIntercept: 47.5 + -47.5 / this.elasticityDemand() + demandShift,
+      supplyIntercept: 47.5 - 47.5 / this.elasticitySupply() + supplyShift,
+      demandSlope: -47.5 / (37.5 * this.elasticityDemand()),
+      supplySlope: 47.5 / (37.5 * this.elasticitySupply()),
     }
-  })
+  });
+
+  incidence = computed(() => this.elasticitySupply() / (-this.elasticityDemand() + this.elasticitySupply()));
 
 
   constructor(private el: ElementRef, private announcer: LiveAnnouncer, private modelService: ModelService) { }
 
   ngOnInit(): void {
+    let series = this.modelService.demandSupply(this.modelParams());
+    this.keyValues = {
+      initEQ: series.EQ[1].x,
+      initEP: series.EQ[1].y,
+    }
+
     
   }
 
@@ -90,8 +103,38 @@ export class Interactive11Component implements OnInit, AfterViewInit {
     
   }
 
-  public updateGraph(value: number) {
+  public reset() {
+    this.elasticityDemand.set(-1.45);
+    this.elasticitySupply.set(1.7);
+    this.tax.set(0);
+    this.updateGraph();
+  }
+
+  public updateGraph() {
     let series = this.modelService.demandSupply(this.modelParams());
+    let point: any = [], pointName = '', eqName = '';
+    switch (this.mode()) {
+      case 0:
+        pointName = 'Q<sub>d</sub>';
+        eqName = 'Q<sub>s</sub>';
+        point = [
+          { x: 0, y: series.EQ[1].y - this.tax() },
+          { x: series.EQ[1].x, y: series.EQ[1].y - this.tax(), marker: {enabled: true} },
+          { x: series.EQ[1].x, y: 0}
+        ]
+        
+        break;
+    
+      default:
+        point = [
+          { x: 0, y: series.EQ[1].y + this.tax() },
+          { x: series.EQ[1].x, y: series.EQ[1].y + this.tax(), marker: {enabled: true} },
+          { x: series.EQ[1].x, y: 0}
+        ]
+
+        break;
+    }
+
     this.chart1.update({
       series: [
         {
@@ -110,11 +153,25 @@ export class Interactive11Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Equilibrium',
+          name: eqName,
           color: 'black',
           dashStyle: 'Dot',
           zIndex: 1,
           data: series.EQ,
+          marker: {
+            radius: 4,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          }
+        },
+        {
+          type: 'line',
+          name: pointName,
+          color: 'black',
+          dashStyle: 'Dot',
+          zIndex: 1,
+          data: point,
           marker: {
             radius: 4,
             lineColor: 'black',
@@ -188,7 +245,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
       series: [
         {
           type: 'line',
-          name: 'MSB',
+          name: 'Demand<sub>tax</sub>',
           lineWidth: 2,
           color: '#0771BD',
           zIndex: 0,
@@ -196,7 +253,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'MSC',
+          name: 'Supply<sub>tax</sub>',
           lineWidth: 2,
           color: '#C62828',
           zIndex: 0,
@@ -219,10 +276,59 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           }
         },
         {
+          type: 'line',
+          name: '',
+          color: 'black',
+          dashStyle: 'Dot',
+          zIndex: 1,
+          data: [],
+          marker: {
+            radius: 4,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          }
+        },
+        {
           type: 'arearange',
           name: 'DWL',
           data: []
         },
+
+        // Initial curves
+        {
+          type: 'line',
+          name: 'Demand',
+          lineWidth: 2,
+          color: '#0771BD',
+          zIndex: 0,
+          data: series.demand,
+        },
+        {
+          type: 'line',
+          name: 'Supply',
+          lineWidth: 2,
+          color: '#C62828',
+          zIndex: 0,
+          data: series.supply,
+        
+        },
+        {
+          type: 'line',
+          name: 'Equilibrium',
+          color: 'black',
+          dashStyle: 'Dot',
+          zIndex: 1,
+          data: series.EQ,
+          label: {enabled: false},
+          marker: {
+            radius: 4,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          }
+        },
+
       ],
       xAxis: {
         lineColor: '#757575',
@@ -249,11 +355,12 @@ export class Interactive11Component implements OnInit, AfterViewInit {
             headerFormat: '<b>{series.name}: </b> ',
             pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
           },
-          label: { enabled: true, style: { fontSize: '.75em'} }
+          label: { useHTML: true, enabled: true, style: { fontSize: '.75em'} }
         }
       },
 
     });
+
 
   }
 }
