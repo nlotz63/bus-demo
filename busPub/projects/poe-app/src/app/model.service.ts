@@ -17,9 +17,25 @@ export interface EconModel {
   qdUseP1?: boolean,
   qsUseP1?: boolean,
   [key: string]: number | undefined | string | boolean
-
-
 }
+
+export interface MonopolyModel {
+  xscale?: number,
+  yscale?: number,
+  xMin?: number,
+  xMax?: number,
+  xStep?: number,
+  demandIntercept?: number,
+  demandSlope?: number,
+  fixed?: number,
+  c0?: number,
+  c1?: number,
+  exponent?: number,
+  [key: string]: number | string | undefined | boolean
+}
+
+export type points = [number, number, number]
+
 
 
 @Injectable({
@@ -130,7 +146,85 @@ export class ModelService {
       supFunct: supDescaled
 
     }
+  }
+
+  public monopolyModel(userParams: MonopolyModel) {
+    
+    let model: MonopolyModel = {
+      xscale: 1,
+      yscale: 1,
+      xMin: 0,
+      xMax: 100,
+      demandIntercept: 100,
+      demandSlope: 1,
+      xStep: 10,
+      fixed: 100,
+      c0: 1,
+      c1: 10,
+      exponent: 1
+
+    }
+    for (const key in userParams) {
+      if (key in userParams) {
+        model[key] = userParams[key];
+      }
+    }
+
+    const yscale = model.yscale!, xscale = model.xscale!;
+    let x = model.xMin!, a = model.demandIntercept!, b = model.demandSlope!, fc = model.fixed!, c0 = model.c0!, c1 = model.c1!, exp = model.exponent!, xMax = model.xMax!, xStep = model.xStep!;
+
+    let demandSeries: any[] = [], mr: any[] = [], mc: any[] = [], atcSeries: any[] = [];
 
 
+    let demand = (x: number): number => {
+      return (a - b * x);
+    }
+    
+    let demDescaled = (x: number): number => {
+      return yscale * (a - b * x / xscale);
+    }
+
+    let atc = (x: number): number => {
+      return fc / x + c0 * Math.pow(x, exp) / x + c1 * Math.pow(x, exp - 1) / x;
+    }
+
+    do {
+      demandSeries.push(
+        {
+          x: x,
+          y: demand(x)
+        }
+      );
+
+      x = x + xStep;
+    } while( x <= xMax )
+
+
+
+
+    return {
+      demand:demandSeries,
+      MR: mr,
+      MC: mc,
+      ATC: atcSeries
+
+    }
+  }
+
+  public createArea(points: points[]) {
+    let area: any[] = [];
+
+    points.forEach((el) => {
+      area.push(
+        {
+          x: el[0],
+          low: el[1],
+          high: el[2]
+        }
+      )
+    });
+
+
+    return area;
   }
 }
