@@ -1,1 +1,65 @@
-<p>interactive12 works!</p>
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">The Effects of Taxes</h1>
+    <div class="wrapper">
+        <div class="item-narrative">
+            <h2 class="mat-headline-6">Key Points:</h2>
+            <div @myAnimationTrigger>
+                <ul>
+                    <li>
+                        bullet one
+                    </li>
+                    <li>
+                        bullet two
+                    </li>
+                    <li>
+                        bullet three
+                    </li>
+                </ul>
+                <!--                 <div class="econ-control control-column">
+                    <label id="radio-label11">Choose who the tax is imposed on:</label><br />
+                    <mat-radio-group aria-labelledby="radio-label11" (change)="mode.set(+$event.value);reset()">
+                        <mat-radio-button checked="true" value="0">Sellers</mat-radio-button>
+                        <mat-radio-button value="1">Consumers</mat-radio-button>
+                    </mat-radio-group>
+                    <econ-slider
+                    label="Demand elasticity"
+                    showValue="false"
+                    [displayValue]="elasticityDemand()"
+                    [value] ="elasticityDemand()"
+                    min="-8"
+                    max="-.01"
+                    step=".01"
+                    (valueChange)="elasticityDemand.set($event);updateGraph()"
+                    ></econ-slider>
+                    <econ-slider
+                    label="Supply elasticity"
+                    showValue="false"
+                    [displayValue]="elasticitySupply()"
+                    [value] ="elasticitySupply()"
+                    min=".01"
+                    max="8"
+                    step=".01"
+                    (valueChange)="elasticitySupply.set($event);updateGraph()"
+                    ></econ-slider>
+                    <econ-slider
+                    label="Tax"
+                    showValue="false"
+                    displayValue="{{tax() | currency }}"
+                    [value]="tax()"
+                    min="0"
+                    max="2"
+                    step=".25"
+                    (valueChange)="tax.set($event);updateGraph()"
+                    ></econ-slider>
+    
+                </div>
+                <p>Tax incidence: {{ incidence()*tax() | currency }} </p>
+            -->
+            </div>
+ 
+
+            </div>
+            <div class="item-chart" id="chart1">
+                chart here
+            </div>
+        </div>
