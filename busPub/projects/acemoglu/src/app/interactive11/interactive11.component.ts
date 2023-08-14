@@ -68,7 +68,21 @@ export class Interactive11Component implements OnInit, AfterViewInit {
   }
 
   modelParams: Signal<EconModel> = computed(() => {
-    let supplyShift = this.mode() === 0 ? this.tax()/this.graph().yscale: 0; 
+    return {
+      xMin: 0,
+      xMax: 80,
+      step: 10,
+      xscale: this.graph().xscale,
+      yscale: this.graph().yscale,
+      demandIntercept: 47.5 + -47.5 / this.elasticityDemand(),
+      supplyIntercept: 47.5 - 47.5 / this.elasticitySupply(),
+      demandSlope: -47.5 / (37.5 * this.elasticityDemand()),
+      supplySlope: 47.5 / (37.5 * this.elasticitySupply()),
+    }
+  });
+
+  modelParams1: Signal<EconModel> = computed(() => {
+    let supplyShift = this.mode() === 0 ? this.tax() / this.graph().yscale : 0;
     let demandShift = this.mode() === 1 ? -this.tax() / this.graph().yscale : 0;
     return {
       xMin: 0,
@@ -83,6 +97,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
     }
   });
 
+
   incidence = computed(() => this.elasticitySupply() / (-this.elasticityDemand() + this.elasticitySupply()));
 
 
@@ -95,12 +110,12 @@ export class Interactive11Component implements OnInit, AfterViewInit {
       initEP: series.EQ[1].y,
     }
 
-    
+
   }
 
   ngAfterViewInit(): void {
     this._setupGraph();
-    
+
   }
 
   public reset() {
@@ -112,28 +127,40 @@ export class Interactive11Component implements OnInit, AfterViewInit {
 
   public updateGraph() {
     let series = this.modelService.demandSupply(this.modelParams());
-    let point: any = [], pointName = '', eqName = '';
+    let series1 = this.modelService.demandSupply(this.modelParams1());
+    let point: any = [], dwlArea: any[] = [], pointName = '', eqName = '';
+    let x0 = 0, x1 = series1.EQ[1].x, x2 = series.EQ[1].x;
+    let y0 = series.supply[0].y, y1 = 0, y3 = series1.EQ[1].y, y2 = series.EQ[1].y, y4 = series.demand[0].y, y5 = 0;
+
     switch (this.mode()) {
       case 0:
         pointName = 'Q<sub>d</sub>';
         eqName = 'Q<sub>s</sub>';
         point = [
-          { x: 0, y: series.EQ[1].y - this.tax() },
-          { x: series.EQ[1].x, y: series.EQ[1].y - this.tax(), marker: {enabled: true} },
-          { x: series.EQ[1].x, y: 0}
-        ]
-        
+          { x: 0, y: series1.EQ[1].y - this.tax() },
+          { x: series1.EQ[1].x, y: series1.EQ[1].y - this.tax(), marker: { enabled: true } },
+          { x: series1.EQ[1].x, y: 0 }
+        ];
+        y1 = series1.EQ[1].y - this.tax();
+        y3 = series1.EQ[1].y;
         break;
-    
-      default:
-        point = [
-          { x: 0, y: series.EQ[1].y + this.tax() },
-          { x: series.EQ[1].x, y: series.EQ[1].y + this.tax(), marker: {enabled: true} },
-          { x: series.EQ[1].x, y: 0}
-        ]
 
+      default:
+        y1 = series1.EQ[1].y;
+        y3 = series1.EQ[1].y + this.tax();
+
+        point = [
+          { x: 0, y: series1.EQ[1].y + this.tax() },
+          { x: series1.EQ[1].x, y: series1.EQ[1].y + this.tax(), marker: { enabled: true } },
+          { x: series1.EQ[1].x, y: 0 }
+        ];
         break;
     }
+    let dwl = this.modelService.createArea([[x1, y1, y3], [x2, y2, y2]]);
+    let cs = this.modelService.createArea([[x0, y3, y4], [x1, y3, y3]]);
+    let ps = this.modelService.createArea([[x0, y0, y1], [x1, y1, y1]]);
+    let ci = this.modelService.createArea([[x0, y2, y3], [x1, y2, y3]]);
+    let pi = this.modelService.createArea([[x0, y1, y2], [x1, y1, y2]]);
 
     this.chart1.update({
       series: [
@@ -142,14 +169,14 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           lineWidth: 2,
           color: '#0771BD',
           zIndex: 0,
-          data: series.demand,
+          data: series1.demand,
         },
         {
           type: 'line',
           lineWidth: 2,
           color: '#C62828',
           zIndex: 0,
-          data: series.supply,
+          data: series1.supply,
         },
         {
           type: 'line',
@@ -157,7 +184,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           color: 'black',
           dashStyle: 'Dot',
           zIndex: 1,
-          data: series.EQ,
+          data: series1.EQ,
           marker: {
             radius: 4,
             lineColor: 'black',
@@ -183,8 +210,65 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           type: 'arearange',
           name: 'DWL',
           zIndex: -1,
-          data: []
+          data: dwl
         },
+        {
+          type: 'arearange',
+          name: 'CS',
+          zIndex: -1,
+          data: cs
+        },
+        {
+          type: 'arearange',
+          name: 'PS',
+          data: ps
+        },
+        {
+          type: 'arearange',
+          zIndex: -1,
+          name: 'CI',
+          data: ci
+        },
+        {
+          type: 'arearange',
+          zIndex: -1,
+          name: 'PI',
+          data: pi
+        },
+        // Initial curves
+        {
+          type: 'line',
+          name: 'Demand',
+          lineWidth: 2,
+          color: '#0771BD',
+          zIndex: 0,
+          data: series.demand,
+        },
+        {
+          type: 'line',
+          name: 'Supply',
+          lineWidth: 2,
+          color: '#C62828',
+          zIndex: 0,
+          data: series.supply,
+
+        },
+        {
+          type: 'line',
+          name: 'Equilibrium',
+          color: 'black',
+          dashStyle: 'Dot',
+          zIndex: 1,
+          data: series.EQ,
+          label: { enabled: false },
+          marker: {
+            radius: 4,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          }
+        },
+
 
       ],
 
@@ -193,7 +277,9 @@ export class Interactive11Component implements OnInit, AfterViewInit {
   }
 
   private _setupGraph() {
-    let series = this.modelService.demandSupply(this.modelParams()); 
+    let series = this.modelService.demandSupply(this.modelParams());
+    let series1 = this.modelService.demandSupply(this.modelParams1());
+
     const container = this.el.nativeElement.querySelector('#chart1');
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
@@ -249,7 +335,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           lineWidth: 2,
           color: '#0771BD',
           zIndex: 0,
-          data: series.demand,
+          data: series1.demand,
         },
         {
           type: 'line',
@@ -257,8 +343,8 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           lineWidth: 2,
           color: '#C62828',
           zIndex: 0,
-          data: series.supply,
-        
+          data: series1.supply,
+
         },
         {
           type: 'line',
@@ -266,8 +352,8 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           color: 'black',
           dashStyle: 'Dot',
           zIndex: 1,
-          data: series.EQ,
-          label: {enabled: false},
+          data: series1.EQ,
+          label: { enabled: false },
           marker: {
             radius: 4,
             lineColor: 'black',
@@ -294,7 +380,26 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           name: 'DWL',
           data: []
         },
-
+        {
+          type: 'arearange',
+          name: 'CS',
+          data: []
+        },
+        {
+          type: 'arearange',
+          name: 'PS',
+          data: []
+        },
+        {
+          type: 'arearange',
+          name: 'CI',
+          data: []
+        },
+        {
+          type: 'arearange',
+          name: 'PI',
+          data: []
+        },
         // Initial curves
         {
           type: 'line',
@@ -311,7 +416,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           color: '#C62828',
           zIndex: 0,
           data: series.supply,
-        
+
         },
         {
           type: 'line',
@@ -320,7 +425,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           dashStyle: 'Dot',
           zIndex: 1,
           data: series.EQ,
-          label: {enabled: false},
+          label: { enabled: false },
           marker: {
             radius: 4,
             lineColor: 'black',
@@ -355,12 +460,12 @@ export class Interactive11Component implements OnInit, AfterViewInit {
             headerFormat: '<b>{series.name}: </b> ',
             pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
           },
-          label: { useHTML: true, enabled: true, style: { fontSize: '.75em'} }
+          label: { useHTML: true, enabled: true, style: { fontSize: '.75em' } }
         }
       },
 
     });
 
-
+    this.updateGraph();
   }
 }
