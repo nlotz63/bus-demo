@@ -157,11 +157,11 @@ export class ModelService {
       xMax: 100,
       demandIntercept: 100,
       demandSlope: 1,
-      xStep: 10,
+      xStep: 1,
       fixed: 100,
-      c0: 1,
+      c0: .25,
       c1: 10,
-      exponent: 1
+      exponent: 2
 
     }
     for (const key in userParams) {
@@ -173,7 +173,7 @@ export class ModelService {
     const yscale = model.yscale!, xscale = model.xscale!;
     let x = model.xMin!, a = model.demandIntercept!, b = model.demandSlope!, fc = model.fixed!, c0 = model.c0!, c1 = model.c1!, exp = model.exponent!, xMax = model.xMax!, xStep = model.xStep!;
 
-    let demandSeries: any[] = [], mr: any[] = [], mc: any[] = [], atcSeries: any[] = [];
+    let demandSeries: any[] = [], mrSeries: any[] = [], mcSeries: any[] = [], atcSeries: any[] = [];
 
 
     let demand = (x: number): number => {
@@ -184,29 +184,86 @@ export class ModelService {
       return yscale * (a - b * x / xscale);
     }
 
+    let qd = (y: number) => { return xscale * ((a - y / yscale) / b); }
+
+    let cost = (x: number): number => {
+      return fc + c0 * Math.pow(x, exp) + c1 * Math.pow(x, exp - 1);
+    }
+
     let atc = (x: number): number => {
-      return fc / x + c0 * Math.pow(x, exp) / x + c1 * Math.pow(x, exp - 1) / x;
+      return cost(x) / x;
+    }
+
+    let atcExt = (x: number): number => {
+      let q = x / xscale;
+      return yscale * cost(q) / q;
+    }
+
+    let mc = (x: number): number => {
+      return exp * c0 * Math.pow(x, exp - 1) + (exp - 1) * c1 * Math.pow(x, exp - 2);
+    }
+
+    let revenue = (x: number) => {
+      return demDescaled(x) * x; 
+      
+    }
+
+    let mr = (x: number) => {
+      return (a - 2 * b * x);
     }
 
     do {
       demandSeries.push(
         {
-          x: x,
-          y: demand(x)
+          x: xscale * x,
+          y: yscale * demand(x)
         }
       );
+      mrSeries.push({
+        x: xscale * x,
+        y: yscale * mr(x)
+      });
+      mcSeries.push({
+        x: xscale * x,
+        y: yscale * mc(x)
+      });
 
       x = x + xStep;
-    } while( x <= xMax )
+    } while (x <= xMax);
+    
+    // non-linear curve
+    x = model.xMin!+2.5;
+    do {
+      atcSeries.push({
+        x: xscale * x,
+        y: yscale * atc(x)
+      });
+
+      x = x < .25 * xMax ? x + xStep / 10 : x + xStep;
+    } while (x <= xMax);
+
+    let eqX = xscale*(a - c1) / (2 * (b + c0));
+
+    let eqSeries = [
+      { x: 0, y: demDescaled(eqX) },
+      {
+        x: eqX, y: demDescaled(eqX), marker: {enabled: true}
+      },
+      { x: eqX, y: 0}
+    ]
 
 
 
 
     return {
       demand:demandSeries,
-      MR: mr,
-      MC: mc,
-      ATC: atcSeries
+      MR: mrSeries,
+      MC: mcSeries,
+      ATC: atcSeries,
+      EQ: eqSeries,
+      revenueFun: revenue,
+      atcFun: atcExt,
+      demFun: demDescaled
 
     }
   }
