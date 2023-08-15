@@ -10,7 +10,6 @@ import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { MatRadioModule } from '@angular/material/radio';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { ModelService, EconModel } from 'projects/poe-app/src/app/model.service';
 
@@ -26,7 +25,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive12',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BusPubLibModule],
   templateUrl: './interactive12.component.html',
   styleUrls: ['./interactive12.component.scss'],
   animations: [
@@ -45,18 +44,22 @@ export class Interactive12Component implements OnInit, AfterViewInit {
 
   chart1!: Highcharts.Chart;
   mode = signal(0);
+  quantity = signal(0);
+  previousQ = 0;
+  revenueSeries: any[] = [[0, 0]];
+  series!: any;
 
   graph = signal(
     {
-      xGood: 'Quantity (plates per day)',
-      yGood: 'Price per plate',
-      title: 'Market for Jambalaya',
-      caption: 'The market for jambalaya in equilbrium.',
+      xGood: 'Quantity (in millions of pills)',
+      yGood: 'Price and cost (dollars per pill)',
+      title: 'Market for Claritin',
+      caption: 'The market for Claritin in equilibrium. Price and cost per pill shown on the left axis. Total revenue is shown on the right axis.',
       xMin: 0,
-      xMax: 125,
+      xMax: 1200,
       yMin: 0,
-      yMax: 110,
-      xscale: 10,
+      yMax: 7,
+      xscale: 12,
       yscale: .1
     }
   );
@@ -68,12 +71,14 @@ export class Interactive12Component implements OnInit, AfterViewInit {
   modelParams: Signal<EconModel> = computed(() => {
     return {
       xMin: 0,
-      xMax: 80,
-      step: 10,
+      xMax: 100,
+      xStep: 10,
       xscale: this.graph().xscale,
       yscale: this.graph().yscale,
-      demandIntercept: 100,
-      demandSlope: 1,
+      demandIntercept: 60,
+      demandSlope: .6,
+      c0: 0,
+      c1: 10
     }
   });
 
@@ -90,12 +95,27 @@ export class Interactive12Component implements OnInit, AfterViewInit {
     
   }
 
+  public updateGraph() {
+    let series = this.series;
+    let q = this.quantity()!;
+    this.revenueSeries = [];
+    for (let i = 0; i <= q; i++) {
+      this.revenueSeries.push( [i, series.revenueFun(i)] )
+    }
+    let profitSeries: any;
+   if(q > 100) profitSeries = this.modelService.createArea([[0, series.atcFun(q), series.demFun(q)], [.5*q, series.atcFun(q), series.demFun(q)], [.75*q, series.atcFun(q), series.demFun(q)], [.95*q, series.atcFun(q),  series.demFun(q)], [.99*q, series.atcFun(q),  series.demFun(q)], [q, series.demFun(q), series.atcFun(q)]]);
+    this.chart1.series[4].setData(this.revenueSeries, true, false, false);
+    this.chart1.series[5].setData(profitSeries, true, false, false);
+
+  }
+
 
 
 
   private _setupGraph() {
     const container = this.el.nativeElement.querySelector('#chart1');
-    let series = this.modelService.monopolyModel({});
+    this.series = this.modelService.monopolyModel(this.modelParams());
+    let series = this.series;
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
         height: 550,
@@ -147,9 +167,64 @@ export class Interactive12Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Demand',
-          data: series.demand
-        }
+          lineWidth: 2,
+          zIndex: 0,
 
+          data: series.demand
+        },
+        {
+          type: 'line',
+          name: 'MR',
+          lineWidth: 2,
+          zIndex: 0,
+
+          data: series.MR
+        },
+        {
+          type: 'line',
+          name: 'MC',
+          lineWidth: 2,
+          zIndex: 0,
+
+          data: series.MC
+        },
+        {
+          type: 'spline',
+          name: 'ATC',
+          lineWidth: 2,
+          zIndex: 0,
+
+          data: series.ATC
+        },
+        {
+          type: 'spline',
+          name: 'Total revenue',
+          lineWidth: 2,
+          zIndex: 0,
+          yAxis: 1,
+
+          data: []
+        },
+        {
+          type: 'arearange',
+          name: 'Profit',
+          data: []
+        },
+        {
+          type: 'line',
+          name: 'Equlibrium',
+          dashStyle: 'ShortDot',
+          color: 'black',
+          lineWidth: 1,
+          data: series.EQ,
+          label: { enabled: false },
+          marker: {
+            radius: 4,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          }
+        }
       ],
       xAxis: {
         lineColor: '#757575',
@@ -159,7 +234,7 @@ export class Interactive12Component implements OnInit, AfterViewInit {
         min: this.graph().xMin,
         max: this.graph().xMax
       },
-      yAxis: {
+      yAxis: [{
         gridLineWidth: 0,
         lineColor: '#757575',
         lineWidth: 1.,
@@ -167,8 +242,20 @@ export class Interactive12Component implements OnInit, AfterViewInit {
         tickWidth: 1,
         title: { useHTML: true, text: `${this.graph().yGood}` },
         min: this.graph().yMin,
-        max: this.graph().yMax
+        max: this.graph().yMax,
+        tickInterval: .5
       },
+        {
+          gridLineWidth: 0,
+          lineColor: '#757575',
+          lineWidth: 1.,
+          tickColor: '#757575',
+          tickWidth: 1,
+          opposite: true,
+          title: { text: 'Total revenue (millions of dollars)' },
+          min: 0,
+          max: 2400
+        }],
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
