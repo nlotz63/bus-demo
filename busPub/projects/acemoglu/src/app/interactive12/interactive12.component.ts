@@ -56,7 +56,7 @@ export class Interactive12Component implements OnInit, AfterViewInit {
       title: 'Market for Claritin',
       caption: 'The market for Claritin in equilibrium. Price and cost per pill shown on the left axis. Total revenue is shown on the right axis.',
       xMin: 0,
-      xMax: 1200,
+      xMax: 1250,
       yMin: 0,
       yMax: 7,
       xscale: 12,
