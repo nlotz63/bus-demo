@@ -24,7 +24,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive14',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BusPubLibModule],
   templateUrl: './interactive14.component.html',
   styleUrls: ['./interactive14.component.scss'],
   animations: [
@@ -47,6 +47,7 @@ export class Interactive14Component implements OnInit, AfterViewInit {
   previousQ = 0;
   revenueSeries: any[] = [[0, 0]];
   series!: any;
+  demandSlope = signal(.75);
 
   graph = signal(
     {
@@ -57,9 +58,9 @@ export class Interactive14Component implements OnInit, AfterViewInit {
       xMin: 0,
       xMax: 1200,
       yMin: 0,
-      yMax: 7,
-      xscale: 12,
-      yscale: .1
+      yMax: 10,
+      xscale: 11,
+      yscale: .1,
     }
   );
   keyValues: any = {
@@ -71,16 +72,16 @@ export class Interactive14Component implements OnInit, AfterViewInit {
     return {
       xMin: 0,
       xMax: 100,
-      xStep: 10,
+      xStep: 2,
       xscale: this.graph().xscale,
       yscale: this.graph().yscale,
-      demandIntercept: 60,
-      demandSlope: .6,
+      demandIntercept: 5 + this.demandSlope()*100,
+      demandSlope: this.demandSlope(),
       exponent: 3,
-      fixed: 100,
-      c0: .004,
-      c1: .001,
-      c2: 5
+      fixed: 250,
+      c0: .003225,
+      c1: .011333,
+      c2: -23
     }
   });
 
@@ -97,6 +98,13 @@ export class Interactive14Component implements OnInit, AfterViewInit {
     
   }
 
+  public updateGraph() {
+    let series = this.modelService.monopolyModel(this.modelParams());
+    this.chart1.series[0].setData(series.demand, false, false, false);
+    this.chart1.series[1].setData(series.MR, true, false, false);
+    this.chart1.series[5].setData(series.EQ, true, false, false);
+  }
+
   private _setupGraph() {
     const container = this.el.nativeElement.querySelector('#chart1');
     this.series = this.modelService.monopolyModel(this.modelParams());
@@ -107,6 +115,9 @@ export class Interactive14Component implements OnInit, AfterViewInit {
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
         borderRadius: 5,
         animation: false,
+        zooming: {
+          type: 'xy'
+        }
       },
       caption: {
         text: this.graph().caption
@@ -182,15 +193,6 @@ export class Interactive14Component implements OnInit, AfterViewInit {
           data: series.ATC
         },
         {
-          type: 'spline',
-          name: 'Total revenue',
-          lineWidth: 2,
-          zIndex: 0,
-          yAxis: 1,
-
-          data: []
-        },
-        {
           type: 'arearange',
           name: 'Profit',
           zIndex: -1,
@@ -232,17 +234,7 @@ export class Interactive14Component implements OnInit, AfterViewInit {
         max: this.graph().yMax,
         tickInterval: .5
       },
-        {
-          gridLineWidth: 0,
-          lineColor: '#757575',
-          lineWidth: 1.,
-          tickColor: '#757575',
-          tickWidth: 1,
-          opposite: true,
-          title: { text: 'Total revenue (millions of dollars)' },
-          min: 0,
-          max: 2400
-        }],
+],
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
