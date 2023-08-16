@@ -1,11 +1,13 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use "@angular/material" as mat;
+
 // Plus imports for other components in your app.
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+@import './app-mixins';
 
 
 // @import 'https://code.highcharts.com/css/highcharts.css';
@@ -181,24 +183,6 @@ caption {
   font-weight: bold;
   font-size: 1.2em;
 }
-
-/* .highcharts-background {
-  fill: white;
-}
-
-.highcharts-title {
-  fill: #434348;
-  font-weight: bold;
-  letter-spacing: 0.3em;
-  font-size: 1em;
-}
-
-.highcharts-caption {
-  font-size: smaller;
-  color: #b11717;
-}
-
- */
 li {
   margin-bottom: 10px;
 }
@@ -214,4 +198,78 @@ ul {
 
 .highcharts-annotation-label > span {
   font-size: 11.9px !important;
+}
+
+.wrapper {
+  @include flexbox();
+  flex-flow: row;
+  justify-content:space-between;
+  width: 100%;
+}
+
+.button-group-wrapper {
+  @include flexbox();
+  flex-flow:row;
+  justify-content: left;
+}
+
+.button-group-item {
+  flex: 0 1 40%;
+  button {
+    width: 95px;
+  }
+}
+
+.item-header {
+  flex: 1 0 100%;
+  width: 100%;
+}
+
+.item-chart {
+  @include flex(5.5 2 55%);
+}
+
+.item-narrative {
+  @include flex(4.5 .5 45% );
+  margin-right: 5px;
+}
+
+.econ-narative-block {
+  margin-right: 5px;
+}
+
+.control-column {
+  @include flexbox();
+  flex-flow: column;
+  justify-content: space-between;
+  margin-left: 5px;
+}
+
+@media all and (max-width: 750px) {
+  .wrapper {
+    @include flexbox();
+    flex-flow: column-reverse;
+  }
+
+  .item-chart {
+    @include flex(1 0 100%);
+  }
+
+  .item-narative {
+    @include flex(0 0 100%);
+      }
+}
+
+.econ-math {
+  font-size: .85rem;
+}
+
+h3 {
+  padding-top: 20px;
+  padding-bottom: 0px;
+}
+
+button {
+  margin: auto;
+  margin-top: 1rem;
 }
