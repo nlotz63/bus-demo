@@ -102,8 +102,8 @@ export class Interactive12Component implements OnInit, AfterViewInit {
     for (let i = 0; i <= q; i++) {
       this.revenueSeries.push( [i, series.revenueFun(i)] )
     }
-    let profitSeries: any;
-   if(q > 100) profitSeries = this.modelService.createArea([[0, series.atcFun(q), series.demFun(q)], [.5*q, series.atcFun(q), series.demFun(q)], [.75*q, series.atcFun(q), series.demFun(q)], [.95*q, series.atcFun(q),  series.demFun(q)], [.99*q, series.atcFun(q),  series.demFun(q)], [q, series.demFun(q), series.atcFun(q)]]);
+    let profitSeries: any[] = [];
+    profitSeries = this.modelService.createArea([[0, series.atcFun(q), series.demFun(q)], [ q, series.atcFun(q), series.demFun(q)]]);
     this.chart1.series[4].setData(this.revenueSeries, true, false, false);
     this.chart1.series[5].setData(profitSeries, true, false, false);
 
@@ -208,6 +208,7 @@ export class Interactive12Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           name: 'Profit',
+          zIndex: -1,
           data: []
         },
         {
@@ -219,7 +220,7 @@ export class Interactive12Component implements OnInit, AfterViewInit {
           data: series.EQ,
           label: { enabled: false },
           marker: {
-            radius: 4,
+            radius: 3,
             lineColor: 'black',
             lineWidth: 1,
             fillColor: 'rgb(235, 235, 235)'
