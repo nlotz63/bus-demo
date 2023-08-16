@@ -30,6 +30,7 @@ export interface MonopolyModel {
   fixed?: number,
   c0?: number,
   c1?: number,
+  c2?: number,
   exponent?: number,
   [key: string]: number | string | undefined | boolean
 }
@@ -81,7 +82,7 @@ export class ModelService {
     let demand = (x: number): number => {
       return (a - b * x);
     }
-    
+
     let demDescaled = (x: number): number => {
       return yscale * (a - b * x / xscale);
     }
@@ -131,7 +132,7 @@ export class ModelService {
         { x: qd(qdPrice), y: 10, accessibility: { enabled: false } }
       ];
 
-    
+
 
 
     return {
@@ -149,7 +150,7 @@ export class ModelService {
   }
 
   public monopolyModel(userParams: MonopolyModel) {
-    
+
     let model: MonopolyModel = {
       xscale: 1,
       yscale: 1,
@@ -161,6 +162,7 @@ export class ModelService {
       fixed: 100,
       c0: .25,
       c1: 10,
+      c2: 10,
       exponent: 2
 
     }
@@ -171,7 +173,7 @@ export class ModelService {
     }
 
     const yscale = model.yscale!, xscale = model.xscale!;
-    let x = model.xMin!, a = model.demandIntercept!, b = model.demandSlope!, fc = model.fixed!, c0 = model.c0!, c1 = model.c1!, exp = model.exponent!, xMax = model.xMax!, xStep = model.xStep!;
+    let x = model.xMin!, a = model.demandIntercept!, b = model.demandSlope!, fc = model.fixed!, c0 = model.c0!, c1 = model.c1!, c2 = model.c2!, exp = model.exponent!, xMax = model.xMax!, xStep = model.xStep!;
 
     let demandSeries: any[] = [], mrSeries: any[] = [], mcSeries: any[] = [], atcSeries: any[] = [];
 
@@ -179,7 +181,7 @@ export class ModelService {
     let demand = (x: number): number => {
       return (a - b * x);
     }
-    
+
     let demDescaled = (x: number): number => {
       return yscale * (a - b * x / xscale);
     }
@@ -187,7 +189,7 @@ export class ModelService {
     let qd = (y: number) => { return xscale * ((a - y / yscale) / b); }
 
     let cost = (x: number): number => {
-      return fc + c0 * Math.pow(x, exp) + c1 * Math.pow(x, exp - 1);
+      return fc + c0 * Math.pow(x, exp) + c1 * Math.pow(x, exp - 1) + c2 * Math.pow(x, exp - 2);
     }
 
     let atc = (x: number): number => {
@@ -200,16 +202,33 @@ export class ModelService {
     }
 
     let mc = (x: number): number => {
-      return exp * c0 * Math.pow(x, exp - 1) + (exp - 1) * c1 * Math.pow(x, exp - 2);
+      let term3 = exp >= 3 ? c2 * Math.pow(x, exp - 3) : 0;
+      return exp * c0 * Math.pow(x, exp - 1) + (exp - 1) * c1 * Math.pow(x, exp - 2) + term3;
     }
 
     let revenue = (x: number) => {
-      return demDescaled(x) * x; 
-      
+      return demDescaled(x) * x;
     }
 
     let mr = (x: number) => {
       return (a - 2 * b * x);
+    }
+
+    let findEqX = (): number => {
+      let epsilon = 0.00000001, xLower = model.xMin!, xUpper = xMax, diff: number, eqX: number, count = 0;
+      do {
+        let midx = (xLower + xUpper) / 2;
+        diff = mr(midx) - mc(midx);
+
+        if (diff > 0) {
+          xLower = midx;
+        } else if (diff < 0) {
+          xUpper = midx;
+        }
+        count++;
+        eqX = midx;
+      } while (Math.abs(diff) > epsilon && count < 100);
+      return eqX;
     }
 
     do {
@@ -230,33 +249,33 @@ export class ModelService {
 
       x = x + xStep;
     } while (x <= xMax);
-    
+
     // non-linear curve
-    x = model.xMin!+2.5;
+    x = model.xMin! + 2.5;
     do {
       atcSeries.push({
         x: xscale * x,
         y: yscale * atc(x)
       });
+      x = x < .3 * xMax ? x + xStep / 10 : x + xStep;
+    } while (x <= xMax + xStep*.5);
 
-      x = x < .25 * xMax ? x + xStep / 10 : x + xStep;
-    } while (x <= xMax);
-
-    let eqX = xscale*(a - c1) / (2 * (b + c0));
+    // let eqX = xscale*(a - c1) / (2 * (b + c0));
+    let eqX = xscale * findEqX();
 
     let eqSeries = [
       { x: 0, y: demDescaled(eqX) },
       {
-        x: eqX, y: demDescaled(eqX), marker: {enabled: true}
+        x: eqX, y: demDescaled(eqX), marker: { enabled: true }
       },
-      { x: eqX, y: 0}
+      { x: eqX, y: 0 }
     ]
 
 
 
 
     return {
-      demand:demandSeries,
+      demand: demandSeries,
       MR: mrSeries,
       MC: mcSeries,
       ATC: atcSeries,
