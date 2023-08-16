@@ -78,7 +78,8 @@ export class Interactive12Component implements OnInit, AfterViewInit {
       demandIntercept: 60,
       demandSlope: .6,
       c0: 0,
-      c1: 10
+      c1: -10,
+      c2: 0
     }
   });
 

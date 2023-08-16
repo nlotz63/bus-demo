@@ -189,7 +189,7 @@ export class ModelService {
     let qd = (y: number) => { return xscale * ((a - y / yscale) / b); }
 
     let cost = (x: number): number => {
-      return fc + c0 * Math.pow(x, exp) + c1 * Math.pow(x, exp - 1) + c2 * Math.pow(x, exp - 2);
+      return fc + c0 * Math.pow(x, exp) - c1 * Math.pow(x, exp - 1) - c2 * Math.pow(x, exp - 2);
     }
 
     let atc = (x: number): number => {
@@ -203,7 +203,7 @@ export class ModelService {
 
     let mc = (x: number): number => {
       let term3 = exp >= 3 ? c2 * Math.pow(x, exp - 3) : 0;
-      return exp * c0 * Math.pow(x, exp - 1) + (exp - 1) * c1 * Math.pow(x, exp - 2) + term3;
+      return exp * c0 * Math.pow(x, exp - 1) - (exp - 1) * c1 * Math.pow(x, exp - 2) - term3;
     }
 
     let revenue = (x: number) => {
