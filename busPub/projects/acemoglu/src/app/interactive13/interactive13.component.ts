@@ -12,6 +12,7 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { ModelService, EconModel } from 'projects/poe-app/src/app/model.service';
+import { MatRadioModule } from '@angular/material/radio';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -25,7 +26,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive13',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule],
+  imports: [CommonModule, BusPubLibModule, MatRadioModule],
   templateUrl: './interactive13.component.html',
   styleUrls: ['./interactive13.component.scss'],
   animations: [
@@ -45,8 +46,8 @@ export class Interactive13Component implements OnInit, AfterViewInit {
   chart1!: Highcharts.Chart;
   mode = signal(0);
   quantity = signal(0);
-  previousQ = 0;
-  revenueSeries: any[] = [[0, 0]];
+  price = signal(3);
+  revenueSeries: any[] = [];
   series!: any;
 
   graph = signal(
@@ -56,7 +57,7 @@ export class Interactive13Component implements OnInit, AfterViewInit {
       title: 'Market for Claritin',
       caption: 'The market for Claritin in equilibrium. Price and cost per pill shown on the left axis. Total revenue is shown on the right axis.',
       xMin: 0,
-      xMax: 1200,
+      xMax: 1300,
       yMin: 0,
       yMax: 7,
       xscale: 12,
@@ -95,11 +96,33 @@ export class Interactive13Component implements OnInit, AfterViewInit {
     
   }
 
+  public updateGraph() {
+    let series = this.series;
+    let startQty = series.QD(2);
+    let p0 = this.mode() === 0 ? 4 : 2, p1 = this.mode() === 1 ? 3 : 2;
+    let q0 = series.QD(p0), q1 = series.QD(p1);
+
+    let p0Series = [
+      { x: 0, y: p0},
+      { x: q0, y: p0, marker: { enabled: true } },
+      { x: q0, y: 0 }
+    ];
+
+    this.chart1.series[3].setData(p0Series, true, false, false);
+
+  }
+
 
   private _setupGraph() {
     const container = this.el.nativeElement.querySelector('#chart1');
     this.series = this.modelService.monopolyModel(this.modelParams());
     let series = this.series;
+
+    let startPoint = [
+      { x: 0, y: 3 },
+      { x: series.QD(3), y: 3, marker: { enabled: true } },
+      { x: series.QD(3), y: 0}
+    ]
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
         height: 550,
@@ -147,14 +170,75 @@ export class Interactive13Component implements OnInit, AfterViewInit {
           order: ['container', 'series', 'chartMenu']
         }
       },
-      series: [],
+      series: [
+        {
+          type: 'line',
+          name: 'Demand',
+          lineWidth: 2,
+          zIndex: 0,
+
+          data: series.demand
+        },
+        {
+          type: 'line',
+          name: 'MR',
+          lineWidth: 2,
+          zIndex: 0,
+
+          data: series.MR
+        },
+        {
+          type: 'line',
+          name: 'Mid-point',
+          dashStyle: 'ShortDot',
+          color: 'black',
+          lineWidth: 1,
+          data: startPoint,
+          label: { enabled: false },
+          marker: {
+            radius: 3,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          }
+        },
+        {
+          type: 'line',
+          name: 'Start price',
+          dashStyle: 'ShortDot',
+          color: 'black',
+          lineWidth: 1,
+          data: [],
+          label: { enabled: false },
+          marker: {
+            radius: 3,
+            lineColor: 'black',
+            lineWidth: 1,
+            fillColor: 'rgb(235, 235, 235)'
+          }
+        },
+        {
+          type: 'arearange',
+          name: 'Price effect',
+          data: []
+        },
+        {
+          type: 'arearange',
+          name: 'Quantity effect',
+          data: []
+        }
+
+
+
+      ],
       xAxis: {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
         title: { useHTML: true, text: `${this.graph().xGood}` },
         min: this.graph().xMin,
-        max: this.graph().xMax
+        max: this.graph().xMax,
+        tickInterval: 200
       },
       yAxis: [{
         gridLineWidth: 0,
@@ -165,19 +249,9 @@ export class Interactive13Component implements OnInit, AfterViewInit {
         title: { useHTML: true, text: `${this.graph().yGood}` },
         min: this.graph().yMin,
         max: this.graph().yMax,
-        tickInterval: .5
+        tickInterval: 1
       },
-        {
-          gridLineWidth: 0,
-          lineColor: '#757575',
-          lineWidth: 1.,
-          tickColor: '#757575',
-          tickWidth: 1,
-          opposite: true,
-          title: { text: 'Total revenue (millions of dollars)' },
-          min: 0,
-          max: 2400
-        }],
+    ],
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
@@ -189,5 +263,6 @@ export class Interactive13Component implements OnInit, AfterViewInit {
         }
       },
     });
+    this.updateGraph();
   }
 }

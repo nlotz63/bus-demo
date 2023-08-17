@@ -1,5 +1,5 @@
 <div class="econ-interactive-container">
-    <h1 class="mat-headline-5">The Effects of Taxes</h1>
+    <h1 class="mat-headline-5">Decomposing a Price Change</h1>
     <div class="wrapper">
         <div class="item-narrative">
             <h2 class="mat-headline-6">Key Points:</h2>
@@ -16,14 +16,12 @@
                     </li>
                 </ul>
                 <div class="econ-control control-column">
-<!--                     <econ-slider 
-                    label="Quantity produced" 
-                    showValue="false" 
-                    [displayValue]="quantity()"
-                        [value]="quantity()" min="0" max="1200" step="50"
-                        (valueChange)="quantity.set($event);updateGraph()"></econ-slider>
- -->
-                </div>
+                    <label id="radio-label11">Choose who the tax is imposed on:</label><br />
+                    <mat-radio-group aria-labelledby="radio-label11" (change)="mode.set(+$event.value);updateGraph()">
+                        <mat-radio-button checked="true" value="0">Sellers</mat-radio-button>
+                        <mat-radio-button value="1">Consumers</mat-radio-button>
+                    </mat-radio-group>
+            </div>
 
             </div>
 

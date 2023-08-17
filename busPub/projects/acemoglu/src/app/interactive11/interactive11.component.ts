@@ -13,6 +13,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatRadioModule } from '@angular/material/radio';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { ModelService, EconModel } from 'projects/poe-app/src/app/model.service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -25,7 +26,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive11',
   standalone: true,
-  imports: [CommonModule, MatRadioModule, BusPubLibModule],
+  imports: [CommonModule, MatRadioModule, BusPubLibModule, MatSlideToggleModule],
   templateUrl: './interactive11.component.html',
   styleUrls: ['./interactive11.component.scss'],
   animations: [
@@ -47,7 +48,11 @@ export class Interactive11Component implements OnInit, AfterViewInit {
   mode = signal(0);
   elasticityDemand = signal(-1.45);
   elasticitySupply = signal(1.7);
-  tax = signal(0);
+  applyTax = signal(false);
+  tax = computed((): number => {
+    return this.applyTax() ? 2 : 0;
+  });
+  taxLabel = computed(() => this.applyTax() ? '$2 tax' : 'No tax');
   graph = signal(
     {
       xGood: 'Quantity (plates per day)',
@@ -121,7 +126,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
   public reset() {
     this.elasticityDemand.set(-1.45);
     this.elasticitySupply.set(1.7);
-    this.tax.set(0);
+    this.applyTax.set(false);
     this.updateGraph();
   }
 

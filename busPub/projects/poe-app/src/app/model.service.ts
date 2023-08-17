@@ -282,7 +282,8 @@ export class ModelService {
       EQ: eqSeries,
       revenueFun: revenue,
       atcFun: atcExt,
-      demFun: demDescaled
+      demFun: demDescaled,
+      QD: qd
 
     }
   }

@@ -48,6 +48,7 @@ export class Interactive14Component implements OnInit, AfterViewInit {
   revenueSeries: any[] = [[0, 0]];
   series!: any;
   demandSlope = signal(.75);
+  firms = signal(1);
 
   graph = signal(
     {
@@ -75,8 +76,8 @@ export class Interactive14Component implements OnInit, AfterViewInit {
       xStep: 2,
       xscale: this.graph().xscale,
       yscale: this.graph().yscale,
-      demandIntercept: 5 + this.demandSlope()*100,
-      demandSlope: this.demandSlope(),
+      demandIntercept: 5 + (0.694 - 0.025*this.firms())*100,
+      demandSlope: .694 - 0.025*this.firms(),
       exponent: 3,
       fixed: 250,
       c0: .003225,

@@ -15,12 +15,7 @@
                         bullet three
                     </li>
                 </ul>
-                <div class="econ-control control-column">
-                    <label id="radio-label11">Choose who the tax is imposed on:</label><br />
-                    <mat-radio-group aria-labelledby="radio-label11" (change)="mode.set(+$event.value);reset()">
-                        <mat-radio-button checked="true" value="0">Sellers</mat-radio-button>
-                        <mat-radio-button value="1">Consumers</mat-radio-button>
-                    </mat-radio-group>
+                <div class="control-column">
                     <econ-slider
                     label="Demand elasticity"
                     showValue="false"
@@ -41,19 +36,20 @@
                     step=".01"
                     (valueChange)="elasticitySupply.set($event);updateGraph()"
                     ></econ-slider>
-                    <econ-slider
-                    label="Tax"
-                    showValue="false"
-                    displayValue="{{tax() | currency }}"
-                    [value]="tax()"
-                    min="0"
-                    max="2"
-                    step=".25"
-                    (valueChange)="tax.set($event);updateGraph()"
-                    ></econ-slider>
-    
+                    <div>
+                        <label id="radio-label11">Choose who the tax is imposed on:</label><br />
+                        <mat-radio-group aria-labelledby="radio-label11" (change)="mode.set(+$event.value);reset()">
+                            <mat-radio-button checked="true" value="0">Sellers</mat-radio-button>
+                            <mat-radio-button value="1">Consumers</mat-radio-button>
+                        </mat-radio-group>
+                        <mat-slide-toggle (change)="applyTax.set($event.checked);updateGraph()">{{taxLabel()}}</mat-slide-toggle>
+                        </div>
+   
                 </div>
+
+
                 <p>Tax incidence: {{ incidence()*tax() | currency }} </p>
+                <p> {{ applyTax()}}</p>
 
             </div>
 
