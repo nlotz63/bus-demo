@@ -1,30 +1,51 @@
 <div class="econ-interactive-container">
-    <h1 class="mat-headline-5">The Effects of Taxes</h1>
+    <h1 class="mat-headline-5">Marginal Revenue and Revenue</h1>
     <div class="wrapper">
         <div class="item-narrative">
-            <h2 class="mat-headline-6">Key Points:</h2>
+            <h2 class="mat-headline-6">Instructions:</h2>
             <div @myAnimationTrigger>
                 <ul>
                     <li>
-                        bullet one
+                        Use the slider to increase the quantity produced to discover four key quantities.
                     </li>
                     <li>
-                        bullet two
+                        When a key quantity is attained, additional information will be shown in the message area.
                     </li>
                     <li>
-                        bullet three
+                        Profit and revenue equations will be updated as you change the quantity.
                     </li>
                 </ul>
                 <div class="econ-control control-column">
                     <econ-slider 
-                    label="Quantity produced" 
+                    label="Quantity" 
                     showValue="false" 
                     [displayValue]="quantity()"
-                        [value]="quantity()" min="0" max="1200" step="50"
+                        [value]="quantity()" min="0" max="1200" step="25"
                         (valueChange)="quantity.set($event);updateGraph()"></econ-slider>
 
                 </div>
-
+                <div aria-live="polite" >
+                    <h2  class="mat-headline-6">Key equations and values:</h2>
+                    <p>
+                        <span econMath="$$ \text{ Profit } = (P - ATC)\times Q $$"></span>
+                        <span econMath="$$ {{keyValues().profit | currency}} = ({{keyValues().price | currency}} - {{keyValues().ATC | currency}})\times {{quantity()}} $$"></span>
+                        <span econMath="$$ \text{ Revenue} =  P \times Q $$"></span>
+                        <span econMath="$$ {{ keyValues().revenue | currency }} = {{ keyValues().price | currency }} \times {{ quantity() }} $$"></span>
+                    </p>
+                    <h2  class="mat-headline-6">Message area:</h2>
+                    <p *ngIf="quantity() === 500">
+                       Marginal revenue equals marginal cost. At this quantity, profit is maximized.
+                    </p>
+                    <p *ngIf="quantity() === 600">
+                        Marginal revenue equals zero. At this quantity, revenue is maximized. This model shows that maximizing revenue is not the same as maximizing profit. Recall profit is maxizmed at a quantity of 600 million pills.
+                     </p>
+                     <p *ngIf="quantity() === 975">
+                        Price (demand curve) equals average total cost (ATC). At this quantity, profit equals zero (or normal economic profit). 
+                     </p>
+                     <p *ngIf="quantity() === 1000">
+                       Price (from the demand curve) equals marginal cost (MC). At this quantity, the monopolist is earning a negative profit.
+                     </p>
+                    </div>
             </div>
 
 
