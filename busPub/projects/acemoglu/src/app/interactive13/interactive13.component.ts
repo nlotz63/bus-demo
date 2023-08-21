@@ -56,8 +56,8 @@ export class Interactive13Component implements OnInit, AfterViewInit {
     {
       xGood: 'Quantity (in millions of pills)',
       yGood: 'Price and cost (dollars per pill)',
-      title: 'Market for Claritin',
-      caption: 'The market for Claritin in equilibrium. Price and cost per pill shown on the left axis. Total revenue is shown on the right axis.',
+      title: 'Market Demand for Claritin',
+      caption: 'When the price is $3 the quantity demanded is 600 million pills. At this point, price elasticity equals negative one. At prices above this point, demand is elastic and at prices below this point, demand is inelastic.',
       xMin: 0,
       xMax: 1300,
       yMin: 0,

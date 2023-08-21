@@ -33,7 +33,7 @@
                     <p *ngIf="mode() === 1">In the inelastic portion of the demand curve, a one-dollar decrease in the price will decrease total revenue by {{ -keyValues().MR | currency }}.</p>
 
                         <span econMath="$$ MR = PE + QE $$"></span>
-                        <span econMath="$$ {{ keyValues().MR}} =  {{keyValues().PE}} + {{keyValues().QE}} $$"></span>
+                        <span econMath="$$ {{ keyValues().MR | currency: 'USD' : 'symbol' : '0.0-0'}} =  {{keyValues().PE | currency: 'USD' : 'symbol' : '0.0-0' }} + {{keyValues().QE | currency: 'USD' : 'symbol' : '0.0-0' }} $$"></span>
                     
                 </div>
 
