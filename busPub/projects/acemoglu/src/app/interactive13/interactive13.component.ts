@@ -45,8 +45,10 @@ export class Interactive13Component implements OnInit, AfterViewInit {
 
   chart1!: Highcharts.Chart;
   mode = signal(0);
-  quantity = signal(0);
-  price = signal(3);
+  q0 = signal(400);
+  p0 = signal(4);
+  q1 = signal(600);
+  p1 = signal(3);
   revenueSeries: any[] = [];
   series!: any;
 
@@ -64,10 +66,13 @@ export class Interactive13Component implements OnInit, AfterViewInit {
       yscale: .1
     }
   );
-  keyValues: any = {
-    yscale: .1,
-    xscale: 10
-  }
+  keyValues = computed(() => {
+    return {
+      PE: (this.p1() - this.p0()) * this.q0(),
+      QE: this.p1() * (this.q1() - this.q0()),
+      MR: (this.p1() - this.p0()) * this.q0() + this.p1() * (this.q1() - this.q0())
+    }
+  });
 
   modelParams: Signal<EconModel> = computed(() => {
     return {
@@ -88,28 +93,43 @@ export class Interactive13Component implements OnInit, AfterViewInit {
   constructor(private el: ElementRef, private announcer: LiveAnnouncer, private modelService: ModelService) { }
 
   ngOnInit(): void {
-    
+
   }
 
   ngAfterViewInit(): void {
     this._setupGraph();
-    
+
   }
 
   public updateGraph() {
+    const resultsRef = this.el.nativeElement.querySelector('#results');
     let series = this.series;
-    let startQty = series.QD(2);
-    let p0 = this.mode() === 0 ? 4 : 2, p1 = this.mode() === 1 ? 3 : 2;
+    let p0 = this.mode() === 0 ? 4 : 3, p1 = this.mode() === 0 ? 3 : 2;
     let q0 = series.QD(p0), q1 = series.QD(p1);
 
     let p0Series = [
-      { x: 0, y: p0},
+      { x: 0, y: p0 },
       { x: q0, y: p0, marker: { enabled: true } },
       { x: q0, y: 0 }
     ];
 
-    this.chart1.series[3].setData(p0Series, true, false, false);
+    let p1Series = [
+      { x: 0, y: p1 },
+      { x: q1, y: p1, marker: { enabled: true } },
+      { x: q1, y: 0 }
+    ]
 
+    let dpArea = this.modelService.createArea([[0, p0, p1], [q0, p0, p1]]);
+    let dqArea = this.modelService.createArea([[q0, 0, p1], [q1, 0, p1]]);
+
+
+    this.chart1.series[2].setData(p0Series, true, false, false);
+    this.chart1.series[3].setData(p1Series, true, false, false);
+    this.chart1.series[4].setData(dpArea, true, false, false);
+    this.chart1.series[5].setData(dqArea, true, false, false);
+
+    this.p0.set(p0), this.p1.set(p1), this.q0.set(q0), this.q1.set(q1);
+    this.announcer.announce('The graph has been updated.');
   }
 
 
@@ -121,7 +141,7 @@ export class Interactive13Component implements OnInit, AfterViewInit {
     let startPoint = [
       { x: 0, y: 3 },
       { x: series.QD(3), y: 3, marker: { enabled: true } },
-      { x: series.QD(3), y: 0}
+      { x: series.QD(3), y: 0 }
     ]
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
@@ -146,7 +166,7 @@ export class Interactive13Component implements OnInit, AfterViewInit {
 
         }
       },
-      legend: { enabled: false },
+      legend: { enabled: true },
       tooltip: { useHTML: true, enabled: true },
       sonification: {
         duration: 6000,
@@ -174,25 +194,29 @@ export class Interactive13Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Demand',
+          color: '#0771BD',
           lineWidth: 2,
           zIndex: 0,
-
+          showInLegend: false,
           data: series.demand
         },
         {
           type: 'line',
           name: 'MR',
+          color: '#2C89F3',
           lineWidth: 2,
           zIndex: 0,
-
+          showInLegend: false,
+          visible: true,
           data: series.MR
         },
         {
           type: 'line',
-          name: 'Mid-point',
+          name: 'Start price',
           dashStyle: 'ShortDot',
           color: 'black',
           lineWidth: 1,
+          showInLegend: false,
           data: startPoint,
           label: { enabled: false },
           marker: {
@@ -204,10 +228,11 @@ export class Interactive13Component implements OnInit, AfterViewInit {
         },
         {
           type: 'line',
-          name: 'Start price',
+          name: 'End price',
           dashStyle: 'ShortDot',
           color: 'black',
           lineWidth: 1,
+          showInLegend: false,
           data: [],
           label: { enabled: false },
           marker: {
@@ -220,11 +245,15 @@ export class Interactive13Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           name: 'Price effect',
+          color: '#FFA2A4',
+          zIndex: -1,
           data: []
         },
         {
           type: 'arearange',
           name: 'Quantity effect',
+          color: '#94C780',
+          zIndex: -1,
           data: []
         }
 
@@ -251,7 +280,7 @@ export class Interactive13Component implements OnInit, AfterViewInit {
         max: this.graph().yMax,
         tickInterval: 1
       },
-    ],
+      ],
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
