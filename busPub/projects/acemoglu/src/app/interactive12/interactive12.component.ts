@@ -219,6 +219,7 @@ export class Interactive12Component implements OnInit, AfterViewInit {
         {
           type: 'spline',
           name: 'Total revenue',
+          color: '#2C89F3',
           lineWidth: 2,
           zIndex: 1,
           yAxis: 1,

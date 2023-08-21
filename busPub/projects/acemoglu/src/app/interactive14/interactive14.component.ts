@@ -164,14 +164,15 @@ export class Interactive14Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Demand',
+          color: '#0771BD',
           lineWidth: 2,
-          zIndex: 0,
 
           data: series.demand
         },
         {
           type: 'line',
           name: 'MR',
+          color: '#2C89F3',
           lineWidth: 2,
           zIndex: 0,
 
@@ -180,6 +181,7 @@ export class Interactive14Component implements OnInit, AfterViewInit {
         {
           type: 'spline',
           name: 'MC',
+          color: '#C63F43',
           lineWidth: 2,
           zIndex: 0,
 
@@ -190,12 +192,13 @@ export class Interactive14Component implements OnInit, AfterViewInit {
           name: 'ATC',
           lineWidth: 2,
           zIndex: 0,
-
+          color: '#37723B',
           data: series.ATC
         },
         {
           type: 'arearange',
           name: 'Profit',
+          
           zIndex: -1,
           data: []
         },
