@@ -8,6 +8,7 @@ import HC_data from 'highcharts/modules/data';
 import HC_sonify from 'highcharts/modules/sonification';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
+import HC_pattern from 'highcharts/modules/pattern-fill';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatRadioModule } from '@angular/material/radio';
@@ -16,6 +17,7 @@ import { ModelService, EconModel } from 'projects/poe-app/src/app/model.service'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 HC_more(Highcharts);
+HC_pattern(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
 HC_sonify(Highcharts);
@@ -383,26 +385,52 @@ export class Interactive11Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           name: 'DWL',
+          color: '#FED9D5',
+          zIndex: -1,
           data: []
         },
         {
           type: 'arearange',
           name: 'CS',
+          color: '#FEC88F',
+          zIndex: -1,
           data: []
         },
         {
           type: 'arearange',
           name: 'PS',
+          color: '#ADEEE9',
+          zIndex: -1,
           data: []
         },
         {
           type: 'arearange',
           name: 'CI',
+          zIndex: -1,
+          color: {
+            patternIndex: 8,
+            pattern: { 
+             // path: 'M 0 0 L 10 10 M 9 - 1 L 11 1 M - 1 9 L 1 11',
+              width: 5,
+              height: 5,
+            }
+          },
+          label: { style: { color: 'black' } },
           data: []
         },
         {
           type: 'arearange',
           name: 'PI',
+          zIndex: -1,
+          color: {
+            patternIndex: 9,
+            pattern: { 
+             // path: 'M 0 0 L 10 10 M 9 - 1 L 11 1 M - 1 9 L 1 11',
+              width: 5,
+              height: 5,
+            }
+          },
+          label: { style: { color: 'black' } },
           data: []
         },
         // Initial curves
