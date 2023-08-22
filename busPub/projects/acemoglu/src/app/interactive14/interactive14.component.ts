@@ -42,20 +42,18 @@ HC_accessibility(Highcharts);
 })
 export class Interactive14Component implements OnInit, AfterViewInit {
   chart1!: Highcharts.Chart;
-  mode = signal(0);
   quantity = signal(0);
   previousQ = 0;
   revenueSeries: any[] = [[0, 0]];
   series!: any;
-  demandSlope = signal(.75);
   firms = signal(1);
 
   graph = signal(
     {
-      xGood: 'Quantity (in millions of pills)',
-      yGood: 'Price and cost (dollars per pill)',
-      title: 'Market for Claritin',
-      caption: 'The market for Claritin in equilibrium. Price and cost per pill shown on the left axis. Total revenue is shown on the right axis.',
+      xGood: 'Quantity (cups of coffee per day)',
+      yGood: 'Price and cost (dollars per cup)',
+      title: 'Monopolistic Firm',
+      caption: 'The graph shows the cost curves for a typical firm in the market for gourmet coffee, along with the demand curve and associated marginal revenue curve it faces.',
       xMin: 0,
       xMax: 1200,
       yMin: 0,
@@ -64,25 +62,29 @@ export class Interactive14Component implements OnInit, AfterViewInit {
       yscale: .1,
     }
   );
-  keyValues: any = {
-    yscale: .1,
-    xscale: 10
-  }
+  keyValues = signal(
+    {
+      price: 5.16,
+      atc: 3.39,
+      quantity: 334,
+      profit: 591.18
+    }
+  );
 
   modelParams: Signal<EconModel> = computed(() => {
     return {
       xMin: 0,
       xMax: 100,
-      xStep: 2,
+      xStep: 5,
       xscale: this.graph().xscale,
       yscale: this.graph().yscale,
-      demandIntercept: 5 + (0.694 - 0.025*this.firms())*100,
-      demandSlope: .694 - 0.025*this.firms(),
+      demandIntercept: 5 + (0.694 - 0.025 * this.firms()) * 100,
+      demandSlope: .694 - 0.025 * this.firms(),
       exponent: 3,
       fixed: 250,
       c0: .003225,
       c1: .011333,
-      c2: -23
+      c2: -23.1
     }
   });
 
@@ -91,20 +93,46 @@ export class Interactive14Component implements OnInit, AfterViewInit {
   constructor(private el: ElementRef, private announcer: LiveAnnouncer, private modelService: ModelService) { }
 
   ngOnInit(): void {
-    
+
   }
 
   ngAfterViewInit(): void {
     this._setupGraph();
-    
+
   }
 
   public updateGraph() {
     let series = this.modelService.monopolyModel(this.modelParams());
+
+    const q0 = 0, q1 = series.EQ[1].x, low = this.firms() <= 12 ? series.atcFun(q1) : series.EQ[1].y, high = this.firms() < 12 ? series.EQ[1].y : series.atcFun(q1);
+    const profitTitle = this.firms() <= 12 ? 'Profit' : 'Loss';
+    const profitColor = this.firms() <= 12 ? '#AFD5A0' : '#FFA2A4';
+
+    let profitSeries = this.modelService.createArea([[q0, low, high], [q1, low, high]]);
+    this.keyValues.set(
+      {
+        price: Number(series.demFun(q1).toFixed(2)),
+        atc: Number(series.atcFun(q1).toFixed(2)),
+        quantity: Number(q1.toFixed(0)),
+        profit: (+series.demFun(q1).toFixed(2) - +series.atcFun(q1).toFixed(2))*+q1.toFixed(0)
+      }
+    );
+
     this.chart1.series[0].setData(series.demand, false, false, false);
-    this.chart1.series[1].setData(series.MR, true, false, false);
+    this.chart1.series[1].setData(series.MR, false, false, false);
     this.chart1.series[5].setData(series.EQ, true, false, false);
+    this.chart1.series[4].update(
+      {
+        type: 'arearange',
+        name: profitTitle,
+        color: profitColor,
+        data: profitSeries
+      },
+      true
+    );
+    this.announcer.announce('The graph has been updated');
   }
+
 
   private _setupGraph() {
     const container = this.el.nativeElement.querySelector('#chart1');
@@ -136,25 +164,12 @@ export class Interactive14Component implements OnInit, AfterViewInit {
 
         }
       },
-      legend: { enabled: false },
-      tooltip: { useHTML: true, enabled: true },
-      sonification: {
-        duration: 6000,
-        afterSeriesWait: 1000,
-        defaultInstrumentOptions: {
-          instrument: 'piano',
-          mapping: {
-            pitch: {
-              min: 'c2',
-              max: 'c6',
-              scale: Highcharts.sonification.Scales?.majorPentatonic
-            }
-          }
-        },
-      },
+      legend: { enabled: true },
+      tooltip: { useHTML: true, enabled: true, style: { fontWeight: '400', fontSize: '.85em'} },
+
       accessibility: {
         point: {
-          valueDescriptionFormat: `quantity: {point.x:.0f}, {point.name}: {point.y:.2f} dollars.`
+          valueDescriptionFormat: `quantity: {point.x:.0f}, {point.y:.2f} dollars.`
         },
         keyboardNavigation: {
           order: ['container', 'series', 'chartMenu']
@@ -166,8 +181,16 @@ export class Interactive14Component implements OnInit, AfterViewInit {
           name: 'Demand',
           color: '#0771BD',
           lineWidth: 2,
+          showInLegend: false,
+          data: series.demand,
+          tooltip: {
+            headerFormat: `<b>{series.name}:</b><br/>`,
+            pointFormat: ` Price: \${point.y:,.2f}<br/> Quantity: {point.x:.0f}`
+          },
 
-          data: series.demand
+          accessibility: {
+            description: 'A straight line that slopes down from left to right.'
+          }
         },
         {
           type: 'line',
@@ -175,8 +198,11 @@ export class Interactive14Component implements OnInit, AfterViewInit {
           color: '#2C89F3',
           lineWidth: 2,
           zIndex: 0,
-
-          data: series.MR
+          showInLegend: false,
+          data: series.MR,
+          accessibility: {
+            description: 'A straight line that slopes down from left to right.'
+          }
         },
         {
           type: 'spline',
@@ -184,8 +210,11 @@ export class Interactive14Component implements OnInit, AfterViewInit {
           color: '#C63F43',
           lineWidth: 2,
           zIndex: 0,
-
-          data: series.MC
+          showInLegend: false,
+          data: series.MC,
+          accessibility: {
+            description: 'A curved line that slopes up from left to right.'
+          }
         },
         {
           type: 'spline',
@@ -193,12 +222,16 @@ export class Interactive14Component implements OnInit, AfterViewInit {
           lineWidth: 2,
           zIndex: 0,
           color: '#37723B',
-          data: series.ATC
+          showInLegend: false,
+          data: series.ATC,
+          accessibility: {
+            description: 'A curved line that forms a U-shaped curve.'
+          }
         },
         {
           type: 'arearange',
           name: 'Profit',
-          
+          color: '#AFD5A0',
           zIndex: -1,
           data: []
         },
@@ -208,6 +241,7 @@ export class Interactive14Component implements OnInit, AfterViewInit {
           dashStyle: 'ShortDot',
           color: 'black',
           lineWidth: 1,
+          showInLegend: false,
           data: series.EQ,
           label: { enabled: false },
           marker: {
@@ -215,6 +249,10 @@ export class Interactive14Component implements OnInit, AfterViewInit {
             lineColor: 'black',
             lineWidth: 1,
             fillColor: 'rgb(235, 235, 235)'
+          },
+          tooltip: {
+            headerFormat: '<b>{series.name}</b><br/>',
+            pointFormat: 'Price: \${point.y:.2f}<br/>Quantity: {point.x:.0f}',
           }
         }
 
@@ -236,20 +274,21 @@ export class Interactive14Component implements OnInit, AfterViewInit {
         title: { useHTML: true, text: `${this.graph().yGood}` },
         min: this.graph().yMin,
         max: this.graph().yMax,
-        tickInterval: .5
+        tickInterval: 1
       },
-],
+      ],
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
-            headerFormat: '<b>{series.name}: </b> ',
+            headerFormat: `<b>{series.name}:</b> `,
             pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
           },
           label: { useHTML: true, enabled: true, style: { fontSize: '.75em' } }
         }
       },
     });
+    this.updateGraph();
   }
 
 

@@ -2,17 +2,17 @@
     <h1 class="mat-headline-5">The Effects of Entry on Profit</h1>
     <div class="wrapper">
         <div class="item-narrative">
-            <h2 class="mat-headline-6">Key Points:</h2>
+            <h2 class="mat-headline-6">Overview:</h2>
             <div @myAnimationTrigger>
                 <ul>
                     <li>
-                        bullet one
+                        A monopolistic market is characterized by differentiated products and free entry and exit (no or low barriers to entry).
                     </li>
                     <li>
-                        bullet two
+                        Positive economic profit will attract new firms to the market, which causes the firm’s demand curve to become flatter. This reduces the profit maximizing price and quantity.
                     </li>
                     <li>
-                        bullet three
+                        Use the slider to see how entry affects the firm’s profits.
                     </li>
                 </ul>
                 <div class="econ-control control-column">
@@ -20,10 +20,17 @@
                     label="Number of firms" 
                     showValue="false" 
                     [displayValue]="firms()"
-                        [value]="firms()" min="1" max="20" step="1"
+                        [value]="firms()" min="1" max="17" step="1"
                         (valueChange)="firms.set($event);updateGraph()"></econ-slider>
-
                 </div>
+                <h2 class="mat-headline-6">Results:</h2>
+                <p aria-live="polite" >
+                    <span econMath="$$ \text{ Profit } = (P - ATC) \times Q $$"></span>
+                    <span econMath="$$ {{ keyValues().profit | currency: 'USD' : 'symbol': '0.2-2' }} = ( {{keyValues().price | currency: 'USD': 'symbol': '0.2-2'}} - {{keyValues().atc | currency: 'USD': 'symbol': '0.2-2'}}) \times {{ keyValues().quantity | number: '0.0-0'}} $$"></span>
+                    <span *ngIf="firms() < 12">The firm is earning positve economic profit. Other firms will enter the market, but as they do, each firm will earn lower profits.</span>
+                    <span *ngIf="firms() === 12">The firm is earning zero economic profit. At this point, there is no incentive for additional firms to enter the market. The market is in long-run equilibrium.</span>
+                    <span *ngIf="firms() > 12">Firms are earning negative economic profit (a loss). Some firms will exit the market until the remaining firms are earning zero economic profit.</span>
+                </p>
 
             </div>
 
