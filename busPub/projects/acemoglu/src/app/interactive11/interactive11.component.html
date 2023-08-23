@@ -2,17 +2,14 @@
     <h1 class="mat-headline-5">The Effects of Taxes</h1>
     <div class="wrapper">
         <div class="item-narrative">
-            <h2 class="mat-headline-6">Key Points:</h2>
+            <h2 class="mat-headline-6">Instructions:</h2>
             <div @myAnimationTrigger>
-                <ul>
+                <ul >
                     <li>
-                        bullet one
+                        Explore how varying the elasticities of supply and demand effect the deadweight loss <span econMath="\((DWL)\)"></span>, and the tax burden on consumers <span econMath="\((C_{burden})\)" ></span> and producers <span econMath="\((P_{burden})\)" ></span>.  
                     </li>
                     <li>
-                        bullet two
-                    </li>
-                    <li>
-                        bullet three
+                        Prove that regardless of who pays the tax, the distribution of the tax burden will be the same.
                     </li>
                 </ul>
                 <div class="control-column">
@@ -37,23 +34,37 @@
                     (valueChange)="elasticitySupply.set($event);updateGraph()"
                     ></econ-slider>
                     <div>
-                        <label id="radio-label11">Choose who the tax is imposed on:</label><br />
-                        <mat-radio-group aria-labelledby="radio-label11" (change)="mode.set(+$event.value);reset()">
-                            <mat-radio-button checked="true" value="0">Sellers</mat-radio-button>
-                            <mat-radio-button value="1">Consumers</mat-radio-button>
+                        <label id="radio-label11">Choose Options:</label><br />
+                        <mat-radio-group aria-labelledby="radio-label11" (change)="mode.set(+$event.value);updateGraph()">
+                            <mat-radio-button checked="true" value="0">Sellers taxed</mat-radio-button>
+                            <mat-radio-button value="1">Consumers taxed</mat-radio-button>
                         </mat-radio-group>
-                        <mat-slide-toggle (change)="applyTax.set($event.checked);updateGraph()">{{taxLabel()}}</mat-slide-toggle>
+                        <mat-slide-toggle aria-labelledby="radio-label11" style="margin-left: 10px" (change)="applyTax.set($event.checked);updateGraph()">{{taxLabel()}}</mat-slide-toggle>
                         </div>
    
                 </div>
-
-
-                <p>Tax incidence: {{ incidence()*tax() | currency }} </p>
-                <p> {{ applyTax()}}</p>
+                <div aria-live="polite">
+                    <h2 class="mat-headline-6">Results:</h2>
+                    <div *ngIf="applyTax()">
+                        <p>The tax is generating {{ keyValues().revenue | currency}} in revenue for the government. The tax incidence on consumers is {{ keyValues().incidence | percent: '0.0-2' }}. In other words, consumers are paying {{ keyValues().incidence | percent: '0.0-2' }} (or {{ keyValues().incidence*keyValues().revenue | currency }}) of the {{ keyValues().revenue | currency}} collected.
+                        
+                        </p>
+                        <p>
+                            The tax incidence on producers is {{1 - keyValues().incidence | percent: '0.0-2' }}. In other words, producers are paying {{ 1 - keyValues().incidence | percent: '0.0-2' }} (or {{ ( 1  - keyValues().incidence)*keyValues().revenue | currency }}) of the {{ keyValues().revenue | currency}} collected.
+                        </p>
+                        <p>
+                            The deadweight loss <span econMath="\((DWL)\)"></span> is {{keyValues().DWL | currency: 'USD': 'symbol': '0.0-0'}}.
+                        </p>
+                    </div>
+                    <div *ngIf="!applyTax()">
+                        <p>
+                            Without a tax, social welfare is maximized. In other words, there is no deadweight loss <span econMath="\((DWL)\)"></span>. Use the slide toggle to apply a tax of two dollars per plate.
+                        </p>
+                    </div>
+    
+                </div>
 
             </div>
-
-
         </div>
         <div class="item-chart" id="chart1">
             chart here
