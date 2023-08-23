@@ -263,8 +263,6 @@ export class Interactive11Component implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Equilibrium',
-          color: 'black',
-          dashStyle: 'Dot',
           zIndex: 1,
           data: series.EQ,
           label: { enabled: false },
@@ -311,7 +309,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
 
         }
       },
-      legend: { enabled: false },
+      legend: { enabled: true },
       tooltip: { useHTML: true, enabled: true },
       sonification: {
         duration: 6000,
@@ -343,6 +341,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           color: '#0771BD',
           zIndex: 0,
           data: series1.demand,
+          showInLegend: false
         },
         {
           type: 'line',
@@ -351,7 +350,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           color: '#C62828',
           zIndex: 0,
           data: series1.supply,
-
+          showInLegend: false
         },
         {
           type: 'line',
@@ -366,7 +365,8 @@ export class Interactive11Component implements OnInit, AfterViewInit {
             lineColor: 'black',
             lineWidth: 1,
             fillColor: 'rgb(235, 235, 235)'
-          }
+          },
+          showInLegend: false
         },
         {
           type: 'line',
@@ -380,7 +380,8 @@ export class Interactive11Component implements OnInit, AfterViewInit {
             lineColor: 'black',
             lineWidth: 1,
             fillColor: 'rgb(235, 235, 235)'
-          }
+          },
+          showInLegend: false
         },
         {
           type: 'arearange',
@@ -407,31 +408,35 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           type: 'arearange',
           name: 'CI',
           zIndex: -1,
+          label: { style: { color: 'black' } },
+          data: [],
           color: {
             patternIndex: 8,
-            pattern: { 
-             // path: 'M 0 0 L 10 10 M 9 - 1 L 11 1 M - 1 9 L 1 11',
-              width: 5,
-              height: 5,
+            pattern: {
+              //path: 'M 0 0 H 5 M 5 5 H 10 ',
+              width: 10,
+              height: 10,
+              color: '#E0602F'
             }
-          },
-          label: { style: { color: 'black' } },
-          data: []
+          }
         },
         {
           type: 'arearange',
           name: 'PI',
-          zIndex: -1,
+          zIndex: 1,
+          label: { style: { color: 'black' } },
+          data: [],
           color: {
-            patternIndex: 9,
-            pattern: { 
-             // path: 'M 0 0 L 10 10 M 9 - 1 L 11 1 M - 1 9 L 1 11',
-              width: 5,
-              height: 5,
+            patternIndex: 6,
+
+            pattern: {
+              path: 'M 0 10 L 2 8 M 4 6 L 6 4',
+              width: 10,
+              height: 10,
+              color: '#6277C2',
+              backgroundColor: 'white',
             }
           },
-          label: { style: { color: 'black' } },
-          data: []
         },
         // Initial curves
         {
@@ -441,6 +446,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           color: '#0771BD',
           zIndex: 0,
           data: series.demand,
+          showInLegend: false
         },
         {
           type: 'line',
@@ -449,13 +455,14 @@ export class Interactive11Component implements OnInit, AfterViewInit {
           color: '#C62828',
           zIndex: 0,
           data: series.supply,
-
+          showInLegend: false
         },
         {
           type: 'line',
           name: 'Equilibrium',
           color: 'black',
-          dashStyle: 'Dot',
+          dashStyle: 'Dash',
+          lineWidth: 1,
           zIndex: 1,
           data: series.EQ,
           label: { enabled: false },
@@ -464,7 +471,8 @@ export class Interactive11Component implements OnInit, AfterViewInit {
             lineColor: 'black',
             lineWidth: 1,
             fillColor: 'rgb(235, 235, 235)'
-          }
+          },
+          showInLegend: false
         },
 
       ],
@@ -494,7 +502,10 @@ export class Interactive11Component implements OnInit, AfterViewInit {
             pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
           },
           label: { useHTML: true, enabled: true, style: { fontSize: '.75em' } }
+        },
+        arearange: {
         }
+
       },
 
     });
