@@ -50,7 +50,7 @@ export class Interactive11Component implements OnInit, AfterViewInit {
   chart1!: Highcharts.Chart;
   mode = signal(0);
   elasticityDemand = signal(-1.45);
-  elasticitySupply = signal(1.7);
+  elasticitySupply = signal(1.45);
   applyTax = signal(false);
   taxLabel = computed(() => this.applyTax() ? '$2 tax' : 'No tax');
   eqX = signal(375);
@@ -59,11 +59,11 @@ export class Interactive11Component implements OnInit, AfterViewInit {
       xGood: 'Quantity (plates per day)',
       yGood: 'Price per plate',
       title: 'Market for Jambalaya',
-      caption: 'The market for jambalaya in equilbrium.',
+      caption: 'The graph initially shows the market for jambalaya in equilibrium without a tax. Key areas are shaded in the graph. Hover over these areas in the legend to highlight that specific area of the graph.',
       xMin: 0,
       xMax: 850,
       yMin: 0,
-      yMax: 10,
+      yMax: 9,
       xscale: 10,
       yscale: .1
     }
@@ -210,11 +210,12 @@ export class Interactive11Component implements OnInit, AfterViewInit {
       },
       {
         type: 'line',
-        name: '',
+        name: 'Separator',
         dashStyle: 'Dash',
         color: 'black',
         data: [],
-        showInLegend: false
+        showInLegend: false,
+        label: { enabled: false }
       },
       {
         type: 'arearange',
@@ -328,7 +329,8 @@ export class Interactive11Component implements OnInit, AfterViewInit {
       tickWidth: 1,
       title: { useHTML: true, text: `${this.graph().yGood}` },
       min: this.graph().yMin,
-      max: this.graph().yMax
+      max: this.graph().yMax,
+      tickInterval: 1
     },
     plotOptions: {
       series: {
