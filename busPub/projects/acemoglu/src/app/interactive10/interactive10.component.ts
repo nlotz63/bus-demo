@@ -172,6 +172,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
           {
             type: 'arearange',
             name: 'DWL',
+            color: '#FED9D5',
             zIndex: -1,
             data: dwlSeries
           },
@@ -338,7 +339,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
       },
 
     });
-    let message = this.mode() === 0 ? 'The negative externality option has loaded' : 'The positive externality option has loaded';
+    let message = this.mode() === 0 ? 'The negative externality option has loaded. Narrative and graph updated' : 'The positive externality option has loaded. Narrative and graph updated.';
     this.announcer.announce(message);
 
   }

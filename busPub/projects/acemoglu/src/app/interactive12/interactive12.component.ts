@@ -230,7 +230,7 @@ export class Interactive12Component implements OnInit, AfterViewInit {
           type: 'arearange',
           name: 'Profit',
           lineWidth: 1,
-          color: '#307AFC',
+          color: '#AFD5A0',
           zIndex: -1,
           data: []
         },
