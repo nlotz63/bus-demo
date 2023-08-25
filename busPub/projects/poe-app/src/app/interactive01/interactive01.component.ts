@@ -99,7 +99,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   });
   equation2 = computed(() => {
     let series = this.modelService.demandSupply(this.modelParams());
-    let qd = series.QD, qs = series.QS;
+    let qd: any = series.QD, qs: any = series.QS;
 
     if (this.price() > 50) {
       return `$$ \\text{Excess supply} = ${qs.toFixed(2)} - ${qd.toFixed(2)} = ${(qs - qd).toFixed(2)} $$`;
@@ -558,7 +558,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
                         yAxis: 0
                       },
                       {
-                        x: this.price() < 50 ? series.QD - .5 : series.QD + .5,
+                        x: this.price() < 50 ? +series.QD - .5 : +series.QD + .5,
                         y: this.price(),
                         xAxis: 0,
                         yAxis: 0
@@ -579,7 +579,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
                         yAxis: 0
                       },
                       {
-                        x: this.price() < 50 ? series.QS + .5 : series.QS - .5,
+                        x: this.price() < 50 ? +series.QS + .5 : +series.QS - .5,
                         y: this.price(),
                         xAxis: 0,
                         yAxis: 0

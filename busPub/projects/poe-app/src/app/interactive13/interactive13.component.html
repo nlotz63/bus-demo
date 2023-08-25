@@ -1,0 +1,47 @@
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">The Quantity & Price Effects from a Price Decrease</h1>
+    <div class="wrapper">
+        <div class="item-narrative">
+            <h2 class="mat-headline-6">Key Points:</h2>
+            <div @myAnimationTrigger>
+                <ul>
+                    <li>
+                        Marginal revenue (MR), following a price decrease, can be decomposed into two parts: price effect (PE), and quantity effect (QE).
+                    </li>
+                    <li>
+                        The decrease in price, lowers total revenue, while the increased quantity sold increases total
+                        revenue.
+                    </li>
+                    <li>
+                        When the price change occurs in the elastic portion of the demand curve (prices above $3), the
+                        quantity effect dominates, resulting in marginal revenue being positive.
+                    </li>
+                    <li>
+                        When the price change occurs in the inelastic portion of the demand curve (prices below $3), the
+                        price effect dominates, resulting in marginal revenue being negative.
+                    </li>
+                </ul>
+                <div class="econ-control control-column">
+                    <label id="radio-label11">Choose an option:</label><br />
+                    <mat-radio-group aria-labelledby="radio-label11" (change)="mode.set(+$event.value);updateGraph()">
+                        <mat-radio-button checked="true" value="0">Elastic</mat-radio-button>
+                        <mat-radio-button value="1">Inelastic</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div id="results" aria-live="polite">
+                    <p *ngIf="mode() === 0">In the elastic portion of the demand curve, a one-dollar decrease in the price will increase total revenue by {{ keyValues().MR | currency }}.</p>
+                    <p *ngIf="mode() === 1">In the inelastic portion of the demand curve, a one-dollar decrease in the price will decrease total revenue by {{ -keyValues().MR | currency }}.</p>
+
+                        <span econMath="$$ MR = PE + QE $$"></span>
+                        <span econMath="$$ {{ keyValues().MR | currency: 'USD' : 'symbol' : '0.0-0'}} =  {{keyValues().PE | currency: 'USD' : 'symbol' : '0.0-0' }} + {{keyValues().QE | currency: 'USD' : 'symbol' : '0.0-0' }} $$"></span>
+                    
+                </div>
+
+            </div>
+
+
+        </div>
+        <div class="item-chart" id="chart1">
+            chart here
+        </div>
+    </div>
