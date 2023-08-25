@@ -1,0 +1,48 @@
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">Gains from Specialization</h1>
+    <div class="wrapper">
+        <div class="item-narrative" @myAnimationTrigger>
+            <h2 class="mat-headline-6">Key Points:</h2>
+
+            <ul>
+                <li>
+                    Use the inputs below to set maximium number of each type of production.
+                </li>
+                <li>
+                    Assuming constant opportunity, the PPC is a straight line connecting the extremes.
+                </li>
+                <li>
+                    The opportunity cost of producing websites is the slope of the PPC.
+                </li>
+            </ul>
+            <p>{{profile.player1}}'s opportunity cost: {{keyValue().oppCost1 | number: '0.1-2'}}</p>
+            <div class="control-group">
+                <mat-form-field class="econ-input" appearance="outline">
+                    <mat-label>Websites per day: </mat-label>
+                    <input matInput #value1 title="oppCost" type="number" min="2" max="20" step="1"
+                        (input)="goodX1.set(+value1.value)" [value]="goodX1()" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Computer programs per day:</mat-label>
+                    <input matInput #value2 title="oppCost" type="number" min="2" max="12" step="1" (input)="goodY1.set(+value2.value)" [value]="goodY1()" />
+                </mat-form-field>
+                </div>
+                <p>{{profile.player2}}'s opportunity cost: {{keyValue().oppCost2 | number: '0.1-2'}} </p>
+
+                <div  class="control-group">
+                    <mat-form-field class="econ-input" appearance="outline">
+                        <mat-label>Websites per day: </mat-label>
+                        <input matInput #value3 title="oppCost" type="number" min="2" max="20" step="1"
+                            (input)="goodX2.set(+value3.value)" [value]="goodX2()" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Computer programs per day:</mat-label>
+                        <input matInput #value4 title="oppCost" type="number" min="2" max="20" step="1" (input)="goodY2.set(+value4.value)" [value]="goodY2()" />
+                    </mat-form-field>
+                    </div>
+        </div>
+        <div class="item-chart" id="chart1">
+
+        </div>
+    </div>
+</div>

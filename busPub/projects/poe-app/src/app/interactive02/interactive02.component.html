@@ -1,0 +1,47 @@
+<div class="econ-interactive-container">
+  <h1 class="mat-headline-5">Budget Constraint</h1>
+  <div class="wrapper">
+    <div class="item-narrative">
+      <h2 class="mat-headline-6">Key Points</h2>
+      <ul class="mat-body-1">
+        <li>
+          The budget set, the area of the triangle, summarizes the bundles of {{xGood}} and {{yGood}} that could be purchased.
+        </li>
+        <li>
+          The budget constraint, the solid line, shows the bundles that exactly exhaust the entire budget.
+        </li>
+        <li>
+          Change the prices and clothing budget to explore how these  variables affect the budget constraint and budget set.
+        </li>
+      </ul>
+      <h2 class="mat-headline-6">Prices and Budget</h2>
+      <form [formGroup]="budgetProps" class="control-column">
+        <div>
+        <mat-form-field class="form-field" color="accent" appearance="outline">
+          <mat-label>Price of {{xGood}}: </mat-label>
+          <input title="Price" matInput type="number" step=".25" [min]="minX()" max="75" formControlName="priceX">
+          <span matTextPrefix>$</span>
+          <mat-error *ngIf="budgetProps.controls.priceX.errors?.['min']" >Enter a price of ${{minX()}} or higher.</mat-error>
+          </mat-form-field>
+        <mat-form-field class="form-field" color="accent" appearance="outline">
+          <mat-label>Price of {{yGood}}</mat-label>
+          <input title="price" matInput type="number" step=".25" [min]="minY()" max="40" formControlName="priceY">
+          <span matTextPrefix>$</span>
+          <mat-error *ngIf="budgetProps.controls.priceY.errors?.['min']" >Enter a price of ${{minY()}} or higher.</mat-error>
+        </mat-form-field>
+        </div>
+
+        <mat-form-field class="form-field" color="accent" appearance="outline">
+          <mat-label>{{budgetTitle}}</mat-label>
+          <input title="income" matInput type="number" step="25" min="100" max="500" formControlName="income">
+          <span matTextPrefix>$</span>
+          <mat-error *ngIf="budgetProps.controls.income.errors?.['min'] || budgetProps.controls.income.errors?.['max']" >Enter budget greater than $100 and less than $500.</mat-error>
+
+        </mat-form-field>
+
+      </form>
+
+    </div>
+    <div class="item-chart" id="chart1"></div>
+  </div>
+</div>

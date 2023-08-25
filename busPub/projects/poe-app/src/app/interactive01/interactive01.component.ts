@@ -28,6 +28,7 @@ interface Shifters {
   viewValue: string;
 }
 
+
 interface ShiftGroup {
   disabled?: boolean;
   name: string;
@@ -49,6 +50,8 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   @Input() set mode(mode: string) {
    this.nMode = Number(mode);
   };
+
+
 
   // Mode 1 props
   shifterGroups: ShiftGroup[] = [
@@ -99,7 +102,8 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   });
   equation2 = computed(() => {
     let series = this.modelService.demandSupply(this.modelParams());
-    let qd: any = series.QD, qs: any = series.QS;
+    let p = this.price(), qd = series.QD(p), qs: any = series.QS(p);
+    console.log( series.QD )
 
     if (this.price() > 50) {
       return `$$ \\text{Excess supply} = ${qs.toFixed(2)} - ${qd.toFixed(2)} = ${(qs - qd).toFixed(2)} $$`;
@@ -123,7 +127,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       xStep: 5,
       demandSlope: 2,
       supplySlope: 1.8,
-      supplyIntercept: -13 + this.supplyShift(),
+      supplyIntercept: -13 - this.supplyShift(),
       demandIntercept: 120 + this.demandShift(),
       price1: this.price()
 

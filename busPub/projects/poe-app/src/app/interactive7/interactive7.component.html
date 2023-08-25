@@ -1,0 +1,51 @@
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">PPC: Change in Technology</h1>
+    <div class="wrapper">
+        <div class="item-narrative" >
+            <h2 class="mat-headline-6">Key Points:</h2>
+
+            <ul class="mat-body-1">
+                <li>
+                    Changes in technology can favor one product over the other.
+                </li>
+                <li>
+                    Use the first slider to allocate how much a change in technology benefits each product.
+                </li>
+                <li>
+                    Then use the second slider to simulate an increase in technology.
+                </li>
+                <li>
+                    Notice at the extremes, a change in technology has no effect on the other good.
+                </li>
+                <li>
+                    When split 50-50, each good benefits equally and the PPC shifts parallel to the initial curve.
+                </li>
+            </ul>
+            <econ-slider
+            class="econ-control"
+            label="Oranges {{ orangeWeight() | percent }}"
+            displayValue="Apples {{appleWeight() | percent }}"
+            showValue="false"
+            [value]="appleWeight()"
+            step=".05"
+            min="0"
+            max="1"
+            (valueChange)="appleWeight.set($event);updateGraph()"
+            ></econ-slider><br/>
+            <econ-slider
+            class="econ-control"
+            label="Change in technology"
+            [value]="technology()"
+            (valueChange)="technology.set($event);updateGraph()"
+            min="0"
+            max="2.75"
+            step=".25"
+            >
+
+            </econ-slider>
+        </div>
+        <div class="item-chart" id="container1">
+
+        </div>
+    </div>
+</div>
