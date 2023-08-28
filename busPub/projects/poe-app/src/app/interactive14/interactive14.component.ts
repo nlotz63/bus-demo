@@ -88,8 +88,6 @@ export class Interactive14Component implements OnInit, AfterViewInit {
     }
   });
 
-
-
   constructor(private el: ElementRef, private announcer: LiveAnnouncer, private modelService: ModelService) { }
 
   ngOnInit(): void {

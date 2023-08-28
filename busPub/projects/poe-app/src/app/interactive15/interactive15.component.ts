@@ -1,0 +1,196 @@
+import { AfterViewInit, Component, ElementRef, OnInit, signal, computed, Signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { transition, trigger, style, animate } from '@angular/animations';
+import * as Highcharts from 'highcharts';
+import HC_more from 'highcharts/highcharts-more';
+import HC_export from 'highcharts/modules/exporting';
+import HC_data from 'highcharts/modules/data';
+import HC_sonify from 'highcharts/modules/sonification';
+import HC_annotate from 'highcharts/modules/annotations';
+import HC_labels from 'highcharts/modules/series-label';
+import HC_accessibility from 'highcharts/modules/accessibility';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatRadioModule } from '@angular/material/radio';
+import { BusPubLibModule } from 'bus-pub-lib';
+import { ModelService } from 'projects/poe-app/src/app/model.service';
+import { ActivatedRoute } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+
+HC_more(Highcharts);
+HC_export(Highcharts);
+HC_data(Highcharts);
+HC_sonify(Highcharts);
+HC_annotate(Highcharts);
+HC_labels(Highcharts);
+HC_accessibility(Highcharts);
+
+@Component({
+  selector: 'app-interactive15',
+  standalone: true,
+  imports: [CommonModule, BusPubLibModule, MatRadioModule, MatButtonModule],
+  templateUrl: './interactive15.component.html',
+  styleUrls: ['./interactive15.component.scss'],
+  animations: [
+    trigger('myAnimationTrigger', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('400ms 30ms ease-in', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('0s', style({ opacity: 0 }))
+      ])
+    ])
+  ],
+})
+export class Interactive15Component implements OnInit, AfterViewInit {
+
+  chart1!: Highcharts.Chart;
+  mode = signal(0);
+  tech1 = signal(5);
+  tech2 = signal(5);
+  labor = signal(100);
+  exponent = signal(.52);
+
+
+  graph = signal(
+    {
+      xTitle: 'Guns',
+      yTitle: 'Butter',
+      title: 'Production Possibilities',
+      caption: 'The graph shows',
+      xMin: 0,
+      xMax: 500,
+      yMin: 0,
+      yMax: 500,
+      xScale: 1,
+      yScale: 1
+    }
+  );
+
+  modelParams = computed(() => {
+    return {
+      tech1: this.tech1(),
+      tech2: this.tech2(),
+      labor: this.labor(),
+      exponent: this.exponent()
+  }
+    });
+
+
+  constructor(private el: ElementRef, private annoucer: LiveAnnouncer, private modelService: ModelService, private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      let mode = params['mode'] ? +params['mode'] : 0;
+      this.mode.set(mode);
+    });
+    this._setupGraph();
+  }
+
+  ngAfterViewInit(): void {
+
+  }
+
+  public updateGraph() {
+
+    const series = this.modelService.createPPF(this.modelParams());
+
+    this.chart1.series[0].setData(series.PPF, true, false, false);
+
+  }
+
+  public reset() {
+    
+  }
+
+  private _setupGraph() {
+    const container = this.el.nativeElement.querySelector('#chart1');
+    const series = this.modelService.createPPF(this.modelParams());
+
+    this.chart1 = new Highcharts.Chart(container, {
+      chart: {
+        height: 550,
+        shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
+        borderRadius: 5,
+        animation: false,
+      },
+      caption: {
+        text: this.graph().caption
+      },
+      credits: {
+        text: `Pearson Education`,
+        href: 'javascript:window.open("https://www.pearson.com/", "_blank")',
+      },
+      title: {
+        text: `${this.graph().title}`,
+        style: {
+          fontFamily: 'sans-serif',
+          fontWeight: '300',
+          fontSize: '1.2em'
+
+        }
+      },
+      legend: { enabled: false },
+      tooltip: { useHTML: true, enabled: true },
+      sonification: {
+        duration: 6000,
+        afterSeriesWait: 1000,
+        defaultInstrumentOptions: {
+          instrument: 'piano',
+          mapping: {
+            pitch: {
+              min: 'c2',
+              max: 'c6',
+              scale: Highcharts.sonification.Scales?.majorPentatonic
+            }
+          }
+        },
+      },
+      accessibility: {
+        point: {
+          valueDescriptionFormat: `quantity: {point.x:.0f}, {point.name}: {point.y:.2f} dollars.`
+        },
+        keyboardNavigation: {
+          order: ['container', 'series', 'chartMenu']
+        }
+      },
+      series: [
+        {
+          type: 'spline',
+          name: 'PPF',
+          lineWidth: 2,
+          data: series.PPF
+        }
+      ],
+      xAxis: {
+        lineColor: '#757575',
+        lineWidth: 1.,
+        tickColor: '#757575',
+        title: { useHTML: true, text: `${this.graph().xTitle}` },
+        min: this.graph().xMin,
+        max: this.graph().xMax
+      },
+      yAxis: {
+        gridLineWidth: 0,
+        lineColor: '#757575',
+        lineWidth: 1.,
+        tickColor: '#757575',
+        tickWidth: 1,
+        title: { useHTML: true, text: `${this.graph().yTitle}` },
+        min: this.graph().yMin,
+        max: this.graph().yMax
+      },
+      plotOptions: {
+        series: {
+          marker: { enabled: false, symbol: 'circle', radius: 2 },
+          tooltip: {
+            headerFormat: '<b>{series.name}: </b> ',
+            pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.2f}<br/>Opportunity Cost: {point.oppCost:.2f}`
+          },
+          label: { enabled: true, style: { fontSize: '.75em' } }
+        }
+      },
+    });
+  }
+
+}

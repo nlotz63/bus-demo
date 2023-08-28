@@ -35,6 +35,14 @@ export interface MonopolyModel {
   [key: string]: number | string | undefined | boolean
 }
 
+export interface ppfModel {
+  tech1: number,
+  tech2: number,
+  labor: number,
+  exponent: number,
+  [key: string]: number | string | undefined | boolean
+}
+
 export type points = [number, number, number]
 
 
@@ -303,5 +311,49 @@ export class ModelService {
 
 
     return area;
+  }
+
+  public createPPF(userParams: ppfModel) {
+    let model: ppfModel = {
+      exponent: .5,
+      labor: 100,
+      tech1: 1,
+      tech2: 1,
+    }
+    for (const key in userParams) {
+      if (key in userParams) {
+        model[key] = userParams[key];
+      }
+    }
+
+    let x = 0, labor = model.labor, tech1 = model.tech1, tech2 = model.tech2, exponent = model.exponent;
+    let qMax: number, count = 0;
+    let ppfSeries = [];
+    
+    let labor1 = (x: number) => Math.pow(x / tech1, 1 / exponent);
+    let q2 = (x: number) => tech2 * Math.pow(labor - labor1(x), exponent);
+    let dq2 = (x: number): number => -exponent * tech2 * Math.pow(labor - Math.pow((x / tech1), 1 / exponent), exponent - 1) * (1 / exponent) / Math.pow(tech1, 1 / exponent) * Math.pow(x, 1 / exponent - 1);
+
+    do {
+      let y = q2(x) > 0 ? q2(x) : 0;
+      ppfSeries.push({
+        x: x,
+        y: y,
+        oppCost: !isFinite(dq2(x)) ? 'infinity' : -dq2(x)
+      });
+      qMax = y;
+      x = x + 1;
+      count++;
+
+    } while (qMax > 0 && count <= 999);
+
+    return {
+      PPF: ppfSeries
+    }
+
+
+
+
+
   }
 }

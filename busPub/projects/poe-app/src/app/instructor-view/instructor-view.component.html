@@ -33,6 +33,12 @@
       (mouseleave)="interactive = savedInteractive">
       PPF Change in Technology
     </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]=""
+    skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
+    (mouseleave)="interactive = savedInteractive">
+    PPF New
+  </a>
+
   </mat-menu>
   <mat-menu #chapter3>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive01']" [queryParams]="{ mode: 0 }"

@@ -86,7 +86,7 @@ export class Interactive10Component implements OnInit, AfterViewInit {
       supplyIntercept: -13 + this.supplyShift(),
       supplySlope: 1.8
     }
-  })
+  });
 
 
   constructor(private el: ElementRef, private announcer: LiveAnnouncer, private modelService: ModelService) { }
