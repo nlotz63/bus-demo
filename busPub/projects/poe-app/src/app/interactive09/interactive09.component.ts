@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, signal, computed } from '@angular/core';
+import { AfterViewInit, Component, OnInit, signal, computed, ElementRef } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -58,7 +58,7 @@ export class Interactive09Component implements OnInit, AfterViewInit {
 
 
 
-  constructor(private announcer: LiveAnnouncer) { }
+  constructor(private announcer: LiveAnnouncer, private el: ElementRef) { }
 
   ngOnInit(): void {
     this._createSeries();
@@ -66,9 +66,9 @@ export class Interactive09Component implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-
     let series = this._createSeries();
-    this.chart = new Highcharts.Chart('chart1', {
+    const container = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart(container, {
       chart: {
         height: 550,
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },

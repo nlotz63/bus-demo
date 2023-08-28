@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, Input, signal, Signal, computed } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Input, signal, Signal, computed, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -48,10 +48,8 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   nMode!: number;
   @Input() set mode(mode: string) {
-   this.nMode = Number(mode);
+    this.nMode = Number(mode);
   };
-
-
 
   // Mode 1 props
   shifterGroups: ShiftGroup[] = [
@@ -103,7 +101,6 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   equation2 = computed(() => {
     let series = this.modelService.demandSupply(this.modelParams());
     let p = this.price(), qd = series.QD(p), qs: any = series.QS(p);
-    console.log( series.QD )
 
     if (this.price() > 50) {
       return `$$ \\text{Excess supply} = ${qs.toFixed(2)} - ${qd.toFixed(2)} = ${(qs - qd).toFixed(2)} $$`;
@@ -135,7 +132,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   });
 
-  constructor(private announcer: LiveAnnouncer, private modelService: ModelService) { }
+  constructor(private announcer: LiveAnnouncer, private modelService: ModelService, private el: ElementRef) { }
 
   ngOnInit(): void {
     // this._createSeries();
@@ -144,9 +141,9 @@ export class Interactive01Component implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // let series = this._createSeries();
     let series = this.modelService.demandSupply(this.modelParams());
-    this.chart = new Highcharts.Chart('chart1', {
+    const container = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart( container, {
       chart: {
         height: 550,
         styledMode: false,
