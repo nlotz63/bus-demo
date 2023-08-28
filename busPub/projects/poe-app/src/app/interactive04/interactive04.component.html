@@ -44,7 +44,7 @@
         <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
-    <div class="item-narrative" *ngIf="mode === 1">
+    <div class="item-narrative" *ngIf="mode === 1" @myAnimationTrigger>
       <h2 class="mat-headline-6">Key Points:</h2>
       <ul>
         <li>
@@ -81,7 +81,7 @@
 
       </div>
     </div>
-    <div class="item-narrative" *ngIf="mode === 2">
+    <div class="item-narrative" *ngIf="mode === 2" @myAnimationTrigger>
       <h2 class="mat-headline-6">Key Points:</h2>
       <ul>
         <li>

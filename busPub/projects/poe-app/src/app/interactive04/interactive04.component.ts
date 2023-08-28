@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, signal } from '@angular/core';
+import { Component, OnInit, AfterViewInit, signal, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -13,6 +13,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatButtonModule } from '@angular/material/button';
+import { ActivatedRoute } from '@angular/router';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -43,7 +44,7 @@ HC_accessibility(Highcharts);
 
 export class Interactive04Component implements OnInit, AfterViewInit {
 
-  @Input() mode?: string | number;
+  mode?: number = 0;
   chart?: Highcharts.Chart;
 
   title: string = 'Cost Curves';
@@ -66,24 +67,27 @@ export class Interactive04Component implements OnInit, AfterViewInit {
   prevVariable = 0;
   prevFixed = 0;
 
-  constructor(private announcer: LiveAnnouncer) { }
+  constructor(private announcer: LiveAnnouncer, private el: ElementRef, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    if (this.mode) {
-      this.mode = +this.mode;
-    } else { this.mode = 0; }
-
-    switch (this.mode) {
-      case 0:
-        this.title = 'Cost Curves of a Firm';
-        break;
-      case 1:
-        this.title = 'A Firm\'s Costs and the Effect of Price on Profit';
-        break;
-      default:
-        this.title = 'A Firm\'s Profit Maximizing Output';
-        break;
-    }
+    this.route.queryParams.subscribe((params) => {
+      this.mode = params['mode'] ? +params['mode'] : 0;
+      switch (this.mode) {
+        case 0:
+          this.title = 'Cost Curves of a Firm';
+          this.sliderGroup.patchValue({ price: 1.056 });
+          break;
+        case 1:
+          this.title = 'A Firm\'s Costs and the Effect of Price on Profit';
+          this.sliderGroup.patchValue({ price: 1.056 });
+          break;
+        default:
+          this.title = 'A Firm\'s Profit Maximizing Output';
+          this.sliderGroup.patchValue({ price: 1.25 });
+          break;
+      }
+      this._setupStep();
+    });
 
     Highcharts.setOptions({
       lang: {
@@ -169,7 +173,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
   private _setupStep() {
     if (this.mode === 2) this.sliderGroup.patchValue({ price: 1.25 });
     let series = this._createSeries();
-    this.chart = new Highcharts.Chart('chart1', {
+    const container = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart(container, {
       chart: {
         height: 550,
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
@@ -177,7 +182,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         animation: false,
       },
       caption: {
-        text: `The Wisconsin Cheeseman is a producer of cheese boxes. The graph shows the firm’s cost curves and its demand curve. Per unit costs and market price are shown on the y-axis and the quantity produced is shown on the x-axis.`
+        text: `The Wisconsin Cheeseman is a producer of cheese boxes. The graph shows the firm's cost curves and its demand curve. Per unit costs and market price are shown on the y-axis and the quantity produced is shown on the x-axis.`
       },
       credits: {
         text: `Pearson Education`,
