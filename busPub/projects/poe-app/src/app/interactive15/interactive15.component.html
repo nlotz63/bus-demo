@@ -29,7 +29,7 @@
                 class="econ-control"
                   aria-label="Choose whether the graph shows constant opportunity cost or increasing oppotunity cost."
                   [selected]="default"
-                  (change)="exponent.set($event.value);updateGraph()"
+                  (change)="exponent.set(+$event.value);updateGraph()"
                 >
                   <mat-radio-button value="1" labelPosition="before">Constant opportunity cost:</mat-radio-button>
                   <mat-radio-button value=".5" #default labelPosition="before">Increasing opportunity cost:</mat-radio-button>

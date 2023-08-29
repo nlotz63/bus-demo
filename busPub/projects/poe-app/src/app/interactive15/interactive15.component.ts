@@ -24,6 +24,11 @@ HC_annotate(Highcharts);
 HC_labels(Highcharts);
 HC_accessibility(Highcharts);
 
+interface ExtendedSVGElement extends Highcharts.SVGElement {
+  drag: boolean;
+}
+
+
 @Component({
   selector: 'app-interactive15',
   standalone: true,
@@ -45,27 +50,28 @@ HC_accessibility(Highcharts);
 export class Interactive15Component implements OnInit, AfterViewInit {
 
   chart1!: Highcharts.Chart;
+  series!: any;
   mode = signal(0);
-  tech1 = signal(5);
-  tech2 = signal(5);
+  tech1 = signal(4);
+  tech2 = signal(8);
   labor = signal(100);
-  exponent = signal(.52);
+  exponent = signal(.5);
 
 
-  graph = signal(
-    {
+  graph = computed(() => {
+    return {
       xTitle: 'Guns',
       yTitle: 'Butter',
       title: 'Production Possibilities',
       caption: 'The graph shows',
       xMin: 0,
-      xMax: 500,
+      xMax: this.exponent() === 1 ? 150 * this.tech1() : 15 * this.tech1(),
       yMin: 0,
-      yMax: 500,
+      yMax: this.exponent() === 1 ? 150 * this.tech2() : 15 * this.tech2(),
       xScale: 1,
       yScale: 1
     }
-  );
+  });
 
   modelParams = computed(() => {
     return {
@@ -73,8 +79,8 @@ export class Interactive15Component implements OnInit, AfterViewInit {
       tech2: this.tech2(),
       labor: this.labor(),
       exponent: this.exponent()
-  }
-    });
+    }
+  });
 
 
   constructor(private el: ElementRef, private annoucer: LiveAnnouncer, private modelService: ModelService, private route: ActivatedRoute) { }
@@ -95,17 +101,46 @@ export class Interactive15Component implements OnInit, AfterViewInit {
 
     const series = this.modelService.createPPF(this.modelParams());
 
-    this.chart1.series[0].setData(series.PPF, true, false, false);
+    this.chart1.update({
+      series: [
+        {
+          type: 'spline',
+          name: 'PPF',
+          lineWidth: 2,
+          data: series.PPF
+        }
+      ],
+      xAxis: {
+        lineColor: '#757575',
+        lineWidth: 1.,
+        tickColor: '#757575',
+        title: { useHTML: true, text: `${this.graph().xTitle}` },
+        min: this.graph().xMin,
+        max: this.graph().xMax
+      },
+      yAxis: {
+        gridLineWidth: 0,
+        lineColor: '#757575',
+        lineWidth: 1.,
+        tickColor: '#757575',
+        tickWidth: 1,
+        title: { useHTML: true, text: `${this.graph().yTitle}` },
+        min: this.graph().yMin,
+        max: this.graph().yMax
+      },
+
+    });
 
   }
 
   public reset() {
-    
+
   }
 
   private _setupGraph() {
     const container = this.el.nativeElement.querySelector('#chart1');
     const series = this.modelService.createPPF(this.modelParams());
+    this.series = series;
 
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
@@ -113,6 +148,88 @@ export class Interactive15Component implements OnInit, AfterViewInit {
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
         borderRadius: 5,
         animation: false,
+        events: {
+          load() {
+            let chart = this;
+            let x: number = 0, y: number = 0;
+      
+            let radius = 4,
+              draggablePoint = chart.renderer
+                .circle(210, 344.35 , radius)
+                .attr({
+                  fill: '#C41B1B',
+                  zIndex: 5,
+                  id: 'draggablePoint',
+                  stroke: 'black',
+                  'stroke-width': 1,
+                  tabIndex: 0,
+                  role: 'img',
+                  alt: 'Draggable Point'
+      
+                })
+                .add() as ExtendedSVGElement,
+              draggableText = chart.renderer.
+                text('Inefficient', 220, 330).
+                attr({
+                  id: 'draggableText'
+                }).
+                add();
+      /*                   Highcharts.A11yChartUtilities.unhideChartElementFromAT(
+                  chart, draggablePoint.element
+              ); */
+            chart.container.onmousemove = function (e) {
+      
+              if (draggablePoint.drag) {
+                let normalizedEvent = chart.pointer.normalize(e),
+                  extremes = {
+                    left: chart.plotLeft,
+                    right: chart.plotLeft + chart.plotWidth,
+                    top: chart.plotTop,
+                    bottom: chart.plotTop + chart.plotHeight
+                  };
+      
+                // Move line
+                if (
+                  normalizedEvent.chartX >= extremes.left &&
+                  normalizedEvent.chartX <= extremes.right &&
+                  normalizedEvent.chartY >= extremes.top &&
+                  normalizedEvent.chartY <= extremes.bottom
+                ) {
+                  draggablePoint.attr({
+                    x: normalizedEvent.chartX,
+                    y: normalizedEvent.chartY
+                  });
+                  draggableText.attr({
+                    x: normalizedEvent.chartX + 10,
+                    y: normalizedEvent.chartY - 10
+      
+                  });
+                }
+                Highcharts.fireEvent(chart, 'click');
+      
+              }
+            };
+            draggablePoint.element.onmouseover = function () {
+              draggablePoint.css({ 'cursor': 'pointer' })
+            }
+      
+            draggablePoint.element.onmousedown = function () {
+              draggablePoint.css({ 'color': 'green' });
+              draggablePoint.drag = true;
+            };
+      
+            draggablePoint.element.onmouseup = function () {
+              draggablePoint.drag = false;
+              draggablePoint.css({ 'color': '#C41B1B' });
+            };
+          },
+          click: () => {
+            let point = document.getElementById('draggablePoint');
+            let text = document.getElementById('draggableText');
+            this._updateDraggablePointData(point, text);
+      
+          }
+        },
       },
       caption: {
         text: this.graph().caption
@@ -184,13 +301,38 @@ export class Interactive15Component implements OnInit, AfterViewInit {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
-            headerFormat: '<b>{series.name}: </b> ',
-            pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.2f}<br/>Opportunity Cost: {point.oppCost:.2f}`
+            headerFormat: '',
+            pointFormat: `<b>${this.graph().xTitle }: </b>{point.x:,.2f}<br/><b>${this.graph().yTitle}:</b> {point.y:.2f}<br/><b>Opp. Cost:</b> {point.oppCost:.2f} ${this.graph().yTitle}`
           },
           label: { enabled: true, style: { fontSize: '.75em' } }
         }
       },
     });
   }
+
+  private _updateDraggablePointData(point: any, text: any) {
+
+    let message: string = '';
+    let xValue = point.getAttribute('cx'),
+      yValue = point.getAttribute('cy'),
+      epsilon = this.series.yMax < 100 ? .15 : 1.5;
+    let x = this.chart1.xAxis[0].toValue(Number(xValue)),
+      y = this.chart1.yAxis[0].toValue(Number(yValue));
+/*     this.good1 = x;
+    this.good2 = y;
+ */
+    let q2 = this.series.ppfFun(x);
+    // set text
+    if (y < q2 - epsilon) {
+      message = 'Inefficient';
+    } else if (y > q2 + epsilon || isNaN(q2)) {
+      message = 'Unattainable';
+    } else {
+      message = 'Efficient';
+    }
+    text.innerHTML = message;
+
+  }
+
 
 }
