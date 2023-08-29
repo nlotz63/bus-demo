@@ -107,11 +107,32 @@ class="col-1-4"
 </a>
 <a
 [routerLink]="['/interactive15']"
+[queryParams]="{mode: 0}"
 [skipLocationChange]="enable"
 class="col-1-4"
 >
 <div class="module hero">
-  <h4>PPF New</h4>
+  <h4>PPF: Opportunity Cost</h4>
+</div>
+</a>
+<a
+[routerLink]="['/interactive15']"
+[queryParams]="{mode: 1}"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>PPF: Efficient Production</h4>
+</div>
+</a>
+<a
+[routerLink]="['/interactive15']"
+[queryParams]="{mode: 2}"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>PPF: Shift Factors</h4>
 </div>
 </a>
 

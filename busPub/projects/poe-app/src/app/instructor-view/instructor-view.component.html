@@ -33,11 +33,22 @@
       (mouseleave)="interactive = savedInteractive">
       PPF Change in Technology
     </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]=""
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 0 }"
     skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
     (mouseleave)="interactive = savedInteractive">
-    PPF New
+    PPF: Opportunity Cost
   </a>
+  <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 1 }"
+  skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
+  (mouseleave)="interactive = savedInteractive">
+  PPF: Efficient Production
+</a>
+<a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 2 }"
+skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
+(mouseleave)="interactive = savedInteractive">
+PPF: Shift Factors
+</a>
+
 
   </mat-menu>
   <mat-menu #chapter3>
