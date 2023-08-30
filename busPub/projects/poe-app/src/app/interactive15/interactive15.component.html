@@ -25,7 +25,6 @@
         
                 </p>
                 <mat-radio-group
-                fxLayout="column"
                 class="econ-control"
                   aria-label="Choose whether the graph shows constant opportunity cost or increasing oppotunity cost."
                   [selected]="default"
@@ -78,53 +77,62 @@
                   </div>
                         
             </div>
-            <div *ngIf="mode() === 2" fxLayout="column">
-                <h2>Changes in capital</h2>
+            <div *ngIf="mode() === 2">
+              <h2 class="mat-headline-6">Changes in {{ factor() }}</h2>
+              <div>
+                <div class="control-column">
+                  <label id="radio-label">Choose a production input to change:</label>
+                  <mat-radio-group
+                  class="econ-control"
+                    aria-labelledby="radio-label"
+                    [selected]="default"
+                    (change)="factor.set($event.value)"
+                  >
+                    <mat-radio-button #default value="capital" >Capital</mat-radio-button>
+                    <mat-radio-button value="labor" >Labor</mat-radio-button>
+                    <mat-radio-button value="technology">Technology</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+                </div>
                 <p>
-                  Use the sliders to simulate changes in capital and their effect
-                  on production.
+                  Then use the sliders to simulate how a change in {{factor()}} effects production.
                 </p>
-                <!-- <econ-slider
-                  [label]="ppfOptions.good1"
-                  min="-45"
-                  max="45"
-                  [value]="tech1Percent.toString()"
-                  step="1"
+                <div class="control-column">
+                  <econ-slider
+                  [label]="graph().xTitle"
+                  min="-.45"
+                  max=".45"
+                  [value]="0"
+                  step=".05"
                   showValue="false"
-                  displayValue="{{(tech1Percent < 0 ? -1*tech1Percent/100 : tech1Percent/100 ) | percent: '1.0-1' }}"
-                  units="{{ tech1Dir }} in {{ shifter }}"
-                  (valueChange)="updateGraph('tech1', $event)"
+                  displayValue="{{(tech1Percent() < 0 ? -tech1Percent() : tech1Percent()) | percent}} {{ tech1Percent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}" 
+                  (valueChange)="tech1Percent.set($event);updateGraph()"
                 ></econ-slider>
                 <econ-slider
-                  [label]="ppfOptions.good2"
-                  min="-45"
-                  max="45"
-                  [value]="tech2Percent.toString()"
-                  step="1"
-                  showValue="false"
-                  displayValue="{{ (tech2Percent < 0 ? -1*tech2Percent/100 : tech2Percent/100) | percent: '1.0-1' }}"
-                  units="{{ tech2Dir }} in {{ shifter }}"
-                  (valueChange)="updateGraph('tech2', $event)"
-                ></econ-slider>
-                <econ-slider
-                  label="Both equally"
-                  min="-45"
-                  max="45"
-                  [value]="tech3Percent.toString()"
-                  step="1"
-                  showValue="false"
-                  displayValue="{{ (tech3Percent < 0 ? -1*tech3Percent/100 : tech3Percent/100) | percent: '1.0-1'}}"
-                  units="{{ tech3Dir }} in {{ shifter }}"
-                  (valueChange)="updateGraph('both', $event)"
-                ></econ-slider> -->
-                <button mat-raised-button (click)="reset()">Reset</button>
+                [label]="graph().yTitle"
+                min="-.45"
+                max=".45"
+                [value]="0"
+                step=".05"
+                showValue="false"
+                displayValue="{{(tech2Percent() < 0 ? -tech2Percent() : tech2Percent()) | percent}} {{ tech2Percent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}" 
+                (valueChange)="tech2Percent.set($event);updateGraph()"
+              ></econ-slider>
+              <econ-slider
+              label="Both equally"
+              min="-.45"
+              max=".45"
+              [value]="0"
+              step=".05"
+              showValue="false"
+              displayValue="{{(tech2Percent() < 0 ? -tech2Percent() : tech2Percent()) | percent}} {{ tech2Percent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}" 
+              (valueChange)="tech2Percent.set($event);tech1Percent.set($event);updateGraph()"
+            ></econ-slider>
+            <button mat-raised-button (click)="reset()">Reset</button>
+              </div>
               </div> 
-        
         </div>
         <div class="item-chart" id="chart1"></div>
-
-
-
     </div>
 
 

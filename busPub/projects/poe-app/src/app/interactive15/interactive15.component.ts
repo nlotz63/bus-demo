@@ -60,6 +60,9 @@ export class Interactive15Component implements OnInit, AfterViewInit {
   yGoodValue = signal(34);
   xMax = signal(0);
   yMax = signal(0);
+  factor = signal('capital');
+  tech1Percent = signal(0);
+  tech2Percent = signal(0);
 
 
   graph = computed(() => {
@@ -79,8 +82,8 @@ export class Interactive15Component implements OnInit, AfterViewInit {
 
   modelParams = computed(() => {
     return {
-      tech1: this.tech1(),
-      tech2: this.tech2(),
+      tech1: (1+ this.tech1Percent())*this.tech1(),
+      tech2: (1+ this.tech2Percent())*this.tech1(),
       labor: this.labor(),
       exponent: this.exponent()
     }
@@ -116,7 +119,7 @@ export class Interactive15Component implements OnInit, AfterViewInit {
       text.setAttribute('x', pixX + 10);
       text.setAttribute( 'y', pixY - 10)
       this._updateDraggablePointData(point, text);
-    }
+    } 
 
     this.chart1.update({
       series: [
