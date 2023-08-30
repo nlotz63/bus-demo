@@ -49,32 +49,34 @@
                   </li>
                 </ul>
                 <p>Drag the point on the graph or use the sliders to view different combinations of the two goods.</p>
-                <econ-slider
-                [label]="graph().xTitle"
-                min="0"
-                [max]="2"
-                [value]="2"
-                step=".01"
-                showValue="false"
-                displayValue="{{graph().xTitle | number: '1.2-2'}}"
-                units=""
-                (valueChange)="updateGraph()"
-        
-              ></econ-slider>
-                <!--  <econ-slider
-                [label]="ppfOptions.good2"
-                min="0"
-                [max]="yMax.toString()"
-                [value]="good2.toString()"
-                step=".01"
-                showValue="false"
-                displayValue="{{ good2 | number: '1.2-2'}}"
-                units=""
-                (valueChange)="updateGraph('good2', $event)"
-                (change)="updateScreenreader()"
-        
-              ></econ-slider>
-                -->        
+
+                <div class="control-column">
+                  <econ-slider
+                  [label]="graph().xTitle"
+                  min="0"
+                  [max]="xMax()"
+                  [value]="xGoodValue()"
+                  step=".1"
+                  showValue="false"
+                  displayValue="{{xGoodValue() | number: '1.2-2'}}"
+                  units=""
+                  (valueChange)="xGoodValue.set($event);updateGraph()"
+          
+                ></econ-slider>
+                  <econ-slider
+                  [label]="graph().yTitle"
+                  min="0"
+                  [max]="yMax()"
+                  [value]="yGoodValue()"
+                  step=".1"
+                  showValue="false"
+                  displayValue="{{ yGoodValue() | number: '1.2-2'}}"
+                  units=""
+                  (valueChange)="yGoodValue.set($event);updateGraph()"
+          
+                ></econ-slider>
+                  </div>
+                        
             </div>
             <div *ngIf="mode() === 2" fxLayout="column">
                 <h2>Changes in capital</h2>

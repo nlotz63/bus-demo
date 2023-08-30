@@ -56,6 +56,10 @@ export class Interactive15Component implements OnInit, AfterViewInit {
   tech2 = signal(8);
   labor = signal(100);
   exponent = signal(.5);
+  xGoodValue = signal(20);
+  yGoodValue = signal(34);
+  xMax = signal(0);
+  yMax = signal(0);
 
 
   graph = computed(() => {
@@ -65,9 +69,9 @@ export class Interactive15Component implements OnInit, AfterViewInit {
       title: 'Production Possibilities',
       caption: 'The graph shows',
       xMin: 0,
-      xMax: this.exponent() === 1 ? 150 * this.tech1() : 15 * this.tech1(),
+      xMax: this.xMax(),
       yMin: 0,
-      yMax: this.exponent() === 1 ? 150 * this.tech2() : 15 * this.tech2(),
+      yMax: this.yMax(),
       xScale: 1,
       yScale: 1
     }
@@ -100,6 +104,19 @@ export class Interactive15Component implements OnInit, AfterViewInit {
   public updateGraph() {
 
     const series = this.modelService.createPPF(this.modelParams());
+
+    if (this.mode() === 1) {
+      const point = this.el.nativeElement.querySelector('#draggablePoint'),
+        text = this.el.nativeElement.querySelector('#draggableText');
+      
+      const pixX = this.chart1.xAxis[0].toPixels(this.xGoodValue(), false),
+        pixY = this.chart1.yAxis[0].toPixels(this.yGoodValue(), false);
+      point.setAttribute('cx', pixX);
+      point.setAttribute('cy', pixY);
+      text.setAttribute('x', pixX + 10);
+      text.setAttribute( 'y', pixY - 10)
+      this._updateDraggablePointData(point, text);
+    }
 
     this.chart1.update({
       series: [
@@ -141,6 +158,8 @@ export class Interactive15Component implements OnInit, AfterViewInit {
     const container = this.el.nativeElement.querySelector('#chart1');
     const series = this.modelService.createPPF(this.modelParams());
     this.series = series;
+    this.xMax.set(series.xMax);
+    this.yMax.set(series.yMax);
 
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
@@ -152,10 +171,10 @@ export class Interactive15Component implements OnInit, AfterViewInit {
           load() {
             let chart = this;
             let x: number = 0, y: number = 0;
-      
+
             let radius = 4,
               draggablePoint = chart.renderer
-                .circle(210, 344.35 , radius)
+                .circle(225, 341, radius)
                 .attr({
                   fill: '#C41B1B',
                   zIndex: 5,
@@ -165,20 +184,20 @@ export class Interactive15Component implements OnInit, AfterViewInit {
                   tabIndex: 0,
                   role: 'img',
                   alt: 'Draggable Point'
-      
+
                 })
                 .add() as ExtendedSVGElement,
               draggableText = chart.renderer.
-                text('Inefficient', 220, 330).
+                text('Inefficient', 235, 330).
                 attr({
                   id: 'draggableText'
                 }).
                 add();
-      /*                   Highcharts.A11yChartUtilities.unhideChartElementFromAT(
-                  chart, draggablePoint.element
-              ); */
+            /*                   Highcharts.A11yChartUtilities.unhideChartElementFromAT(
+                        chart, draggablePoint.element
+                    ); */
             chart.container.onmousemove = function (e) {
-      
+
               if (draggablePoint.drag) {
                 let normalizedEvent = chart.pointer.normalize(e),
                   extremes = {
@@ -187,7 +206,7 @@ export class Interactive15Component implements OnInit, AfterViewInit {
                     top: chart.plotTop,
                     bottom: chart.plotTop + chart.plotHeight
                   };
-      
+
                 // Move line
                 if (
                   normalizedEvent.chartX >= extremes.left &&
@@ -202,32 +221,32 @@ export class Interactive15Component implements OnInit, AfterViewInit {
                   draggableText.attr({
                     x: normalizedEvent.chartX + 10,
                     y: normalizedEvent.chartY - 10
-      
+
                   });
                 }
                 Highcharts.fireEvent(chart, 'click');
-      
+
               }
             };
             draggablePoint.element.onmouseover = function () {
               draggablePoint.css({ 'cursor': 'pointer' })
             }
-      
+
             draggablePoint.element.onmousedown = function () {
               draggablePoint.css({ 'color': 'green' });
               draggablePoint.drag = true;
             };
-      
+
             draggablePoint.element.onmouseup = function () {
               draggablePoint.drag = false;
               draggablePoint.css({ 'color': '#C41B1B' });
             };
           },
           click: () => {
-            let point = document.getElementById('draggablePoint');
-            let text = document.getElementById('draggableText');
+            let point = this.el.nativeElement.querySelector('#draggablePoint');
+            let text = this.el.nativeElement.querySelector('#draggableText');
             this._updateDraggablePointData(point, text);
-      
+
           }
         },
       },
@@ -302,12 +321,19 @@ export class Interactive15Component implements OnInit, AfterViewInit {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
             headerFormat: '',
-            pointFormat: `<b>${this.graph().xTitle }: </b>{point.x:,.2f}<br/><b>${this.graph().yTitle}:</b> {point.y:.2f}<br/><b>Opp. Cost:</b> {point.oppCost:.2f} ${this.graph().yTitle}`
+            pointFormat: `<b>${this.graph().xTitle}: </b>{point.x:,.2f}<br/><b>${this.graph().yTitle}:</b> {point.y:.2f}<br/><b>Opp. Cost:</b> {point.oppCost:.2f} ${this.graph().yTitle}`
           },
           label: { enabled: true, style: { fontSize: '.75em' } }
         }
       },
     });
+    if (this.mode() !== 1) {
+      const point = this.el.nativeElement.querySelector('#draggablePoint');
+      const text = this.el.nativeElement.querySelector('#draggableText');
+      point.remove();
+      text.remove();
+    }
+
   }
 
   private _updateDraggablePointData(point: any, text: any) {
@@ -315,12 +341,11 @@ export class Interactive15Component implements OnInit, AfterViewInit {
     let message: string = '';
     let xValue = point.getAttribute('cx'),
       yValue = point.getAttribute('cy'),
-      epsilon = this.series.yMax < 100 ? .15 : 1.5;
+      epsilon = this.series.yMax < 100 ? .1 : 1;
     let x = this.chart1.xAxis[0].toValue(Number(xValue)),
       y = this.chart1.yAxis[0].toValue(Number(yValue));
-/*     this.good1 = x;
-    this.good2 = y;
- */
+    this.xGoodValue.set(x);
+    this.yGoodValue.set(y);
     let q2 = this.series.ppfFun(x);
     // set text
     if (y < q2 - epsilon) {
