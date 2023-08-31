@@ -9,6 +9,8 @@
   <mat-menu #chapter="matMenu">
     <button mat-menu-item [matMenuTriggerFor]="chapter2">2: Interdependence and Gains from Trade</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter3">3: Demand, Supply and Market Equilibrium</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter4">4: Government Intervention in Markets</button>
+
     <button mat-menu-item [matMenuTriggerFor]="chapter6">6: Consumer and Producer Surplus and Market Efficiency</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter7">7: Consumer Theory</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter11">11: Perfect Competition</button>
@@ -23,31 +25,31 @@
   </mat-menu>
 
   <mat-menu #chapter2>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive06']" [queryParams]=""
-      skipLocationChange (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive06']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       Gains from Specialization
     </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive07']" [queryParams]=""
-      skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive07']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       PPF Change in Technology
     </a>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 0 }"
-    skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
-    (mouseleave)="interactive = savedInteractive">
-    PPF: Opportunity Cost
-  </a>
-  <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 1 }"
-  skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
-  (mouseleave)="interactive = savedInteractive">
-  PPF: Efficient Production
-</a>
-<a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 2 }"
-skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
-(mouseleave)="interactive = savedInteractive">
-PPF: Shift Factors
-</a>
+      skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      PPF: Opportunity Cost
+    </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 1 }"
+      skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      PPF: Efficient Production
+    </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 2 }"
+      skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      PPF: Shift Factors
+    </a>
 
 
   </mat-menu>
@@ -58,57 +60,67 @@ PPF: Shift Factors
       Equilibrium
     </a>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive01']" [queryParams]="{ mode: 1 }"
-    skipLocationChange (mouseover)="interactive = 4" (click)="savedInteractive = interactive"
-    (mouseleave)="interactive = savedInteractive">
-    Shifts in supply and demand
-  </a>
-
+      skipLocationChange (mouseover)="interactive = 4" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Shifts in supply and demand
+    </a>
   </mat-menu>
+  <mat-menu #chapter4>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive05']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Price Ceilings & Price Floors
+    </a>
+  </mat-menu>
+
   <mat-menu #chapter6>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive03']" [queryParams]=""
-      skipLocationChange (mouseover)="interactive = 5" (click)="savedInteractive = interactive"
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive03']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 5" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       Computing Consumer Surplus
     </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive09']" [queryParams]=""
-      skipLocationChange (mouseover)="interactive = 6" (click)="savedInteractive = interactive"
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive09']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 6" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       Computing Producer Surplus
     </a>
   </mat-menu>
   <mat-menu #chapter7>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive02']" [queryParams]=""
-      skipLocationChange (mouseover)="interactive = 7" (click)="savedInteractive = interactive"
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive02']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 7" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       Budget Constraint
     </a>
   </mat-menu>
   <mat-menu #chapter11>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 0}" skipLocationChange (mouseover)="interactive = 8"
-      (click)="savedInteractive = interactive" (mouseleave)="interactive = savedInteractive">
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 0}" skipLocationChange
+      (mouseover)="interactive = 8" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
       Cost Curves
     </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 1}" skipLocationChange (mouseover)="interactive = 8"
-    (click)="savedInteractive = interactive" (mouseleave)="interactive = savedInteractive">
-    Profit
-  </a>
-  <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 2}" skipLocationChange (mouseover)="interactive = 8"
-  (click)="savedInteractive = interactive" (mouseleave)="interactive = savedInteractive">
-  Profit Maximizing Output
-</a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 1}" skipLocationChange
+      (mouseover)="interactive = 8" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Profit
+    </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 2}" skipLocationChange
+      (mouseover)="interactive = 8" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Profit Maximizing Output
+    </a>
 
   </mat-menu>
   <mat-menu #chapter12>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive12']" [queryParams]=""
-      skipLocationChange (mouseover)="interactive = 12" (click)="savedInteractive = interactive"
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive12']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 12" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       Marginal Revenue & Revenue
     </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive13']" [queryParams]=""
-    skipLocationChange (mouseover)="interactive = 12" (click)="savedInteractive = interactive"
-    (mouseleave)="interactive = savedInteractive">
-    Quantity & Price Effects of a Price Decrease
-  </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive13']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 12" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Quantity & Price Effects of a Price Decrease
+    </a>
 
   </mat-menu>
   <mat-menu #chapter13>
@@ -144,7 +156,7 @@ PPF: Shift Factors
   <div class="econ-model-container" id="model">
     <router-outlet></router-outlet>
   </div>
-<!--   <div class="econ-keypoints">
+  <!--   <div class="econ-keypoints">
     <div class="berk-key-points col-1-8" *ngIf="interactive === 1">
       <h2>Key Points for Key Diagram 1: Production Function</h2>
       <ol>
