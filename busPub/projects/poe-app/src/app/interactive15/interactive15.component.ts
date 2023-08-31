@@ -63,6 +63,8 @@ export class Interactive15Component implements OnInit, AfterViewInit {
   factor = signal('capital');
   tech1Percent = signal(0);
   tech2Percent = signal(0);
+  techBothPercent = signal(0);
+  disableReset = true
 
 
   graph = computed(() => {
@@ -70,20 +72,18 @@ export class Interactive15Component implements OnInit, AfterViewInit {
       xTitle: 'Guns',
       yTitle: 'Butter',
       title: 'Production Possibilities',
-      caption: 'The graph shows',
+      caption: 'The production possibilities frontier (PPF) with guns on the horizontal axis and butter on the vertical axis.',
       xMin: 0,
       xMax: this.xMax(),
       yMin: 0,
       yMax: this.yMax(),
-      xScale: 1,
-      yScale: 1
     }
   });
 
   modelParams = computed(() => {
     return {
       tech1: (1+ this.tech1Percent())*this.tech1(),
-      tech2: (1+ this.tech2Percent())*this.tech1(),
+      tech2: (1+ this.tech2Percent())*this.tech2(),
       labor: this.labor(),
       exponent: this.exponent()
     }
@@ -96,8 +96,9 @@ export class Interactive15Component implements OnInit, AfterViewInit {
     this.route.queryParams.subscribe((params) => {
       let mode = params['mode'] ? +params['mode'] : 0;
       this.mode.set(mode);
+      this._setupGraph();
+
     });
-    this._setupGraph();
   }
 
   ngAfterViewInit(): void {
@@ -105,8 +106,9 @@ export class Interactive15Component implements OnInit, AfterViewInit {
   }
 
   public updateGraph() {
-
+    if (this.disableReset) this.disableReset = false;
     const series = this.modelService.createPPF(this.modelParams());
+    this.series = series;
 
     if (this.mode() === 1) {
       const point = this.el.nativeElement.querySelector('#draggablePoint'),
@@ -120,6 +122,7 @@ export class Interactive15Component implements OnInit, AfterViewInit {
       text.setAttribute( 'y', pixY - 10)
       this._updateDraggablePointData(point, text);
     } 
+
 
     this.chart1.update({
       series: [
@@ -148,12 +151,31 @@ export class Interactive15Component implements OnInit, AfterViewInit {
         min: this.graph().yMin,
         max: this.graph().yMax
       },
+      plotOptions: {
+        series: {
+          marker: { enabled: false, symbol: 'circle', radius: 2 },
+          tooltip: {
+            headerFormat: '',
+            pointFormat: `<b>${this.graph().xTitle}: </b>{point.x:,.2f}<br/><b>${this.graph().yTitle}:</b> {point.y:.2f}<br/><b>Opp. Cost:</b> {point.oppCost:.2f} ${this.graph().yTitle}`
+          },
+          label: { enabled: true, style: { fontSize: '.75em' } }
+        }
+      },
 
     });
+    this.annoucer.announce('The graph and narrative have been updated.');
+  }
 
+  public updateMode0Graph() {
+    this._setupGraph();
   }
 
   public reset() {
+    this.tech1Percent.set(0);
+    this.tech2Percent.set(0);
+    this.techBothPercent.set(0);
+    this.updateGraph();
+    this.disableReset = true;
 
   }
 
@@ -171,80 +193,6 @@ export class Interactive15Component implements OnInit, AfterViewInit {
         borderRadius: 5,
         animation: false,
         events: {
-          load() {
-            let chart = this;
-            let x: number = 0, y: number = 0;
-
-            let radius = 4,
-              draggablePoint = chart.renderer
-                .circle(225, 341, radius)
-                .attr({
-                  fill: '#C41B1B',
-                  zIndex: 5,
-                  id: 'draggablePoint',
-                  stroke: 'black',
-                  'stroke-width': 1,
-                  tabIndex: 0,
-                  role: 'img',
-                  alt: 'Draggable Point'
-
-                })
-                .add() as ExtendedSVGElement,
-              draggableText = chart.renderer.
-                text('Inefficient', 235, 330).
-                attr({
-                  id: 'draggableText'
-                }).
-                add();
-            /*                   Highcharts.A11yChartUtilities.unhideChartElementFromAT(
-                        chart, draggablePoint.element
-                    ); */
-            chart.container.onmousemove = function (e) {
-
-              if (draggablePoint.drag) {
-                let normalizedEvent = chart.pointer.normalize(e),
-                  extremes = {
-                    left: chart.plotLeft,
-                    right: chart.plotLeft + chart.plotWidth,
-                    top: chart.plotTop,
-                    bottom: chart.plotTop + chart.plotHeight
-                  };
-
-                // Move line
-                if (
-                  normalizedEvent.chartX >= extremes.left &&
-                  normalizedEvent.chartX <= extremes.right &&
-                  normalizedEvent.chartY >= extremes.top &&
-                  normalizedEvent.chartY <= extremes.bottom
-                ) {
-                  draggablePoint.attr({
-                    x: normalizedEvent.chartX,
-                    y: normalizedEvent.chartY
-                  });
-                  draggableText.attr({
-                    x: normalizedEvent.chartX + 10,
-                    y: normalizedEvent.chartY - 10
-
-                  });
-                }
-                Highcharts.fireEvent(chart, 'click');
-
-              }
-            };
-            draggablePoint.element.onmouseover = function () {
-              draggablePoint.css({ 'cursor': 'pointer' })
-            }
-
-            draggablePoint.element.onmousedown = function () {
-              draggablePoint.css({ 'color': 'green' });
-              draggablePoint.drag = true;
-            };
-
-            draggablePoint.element.onmouseup = function () {
-              draggablePoint.drag = false;
-              draggablePoint.css({ 'color': '#C41B1B' });
-            };
-          },
           click: () => {
             let point = this.el.nativeElement.querySelector('#draggablePoint');
             let text = this.el.nativeElement.querySelector('#draggableText');
@@ -298,7 +246,19 @@ export class Interactive15Component implements OnInit, AfterViewInit {
           type: 'spline',
           name: 'PPF',
           lineWidth: 2,
+          color: '#0771BD',
+          zIndex: 0,
           data: series.PPF
+        },
+        {
+          type: 'spline',
+          name: 'Initial PPF',
+          dashStyle: 'LongDash',
+          lineWidth: 1,
+          zIndex: -1,
+          color: 'rgb(95, 95, 95)',
+          data: [],
+          label: { enabled: false }
         }
       ],
       xAxis: {
@@ -330,12 +290,9 @@ export class Interactive15Component implements OnInit, AfterViewInit {
         }
       },
     });
-    if (this.mode() !== 1) {
-      const point = this.el.nativeElement.querySelector('#draggablePoint');
-      const text = this.el.nativeElement.querySelector('#draggableText');
-      point.remove();
-      text.remove();
-    }
+    if (this.mode() === 1) this.addDraggablePoint();
+
+    if(this.mode() === 2 ) this.chart1.series[1].setData(series.PPF)
 
   }
 
@@ -344,7 +301,7 @@ export class Interactive15Component implements OnInit, AfterViewInit {
     let message: string = '';
     let xValue = point.getAttribute('cx'),
       yValue = point.getAttribute('cy'),
-      epsilon = this.series.yMax < 100 ? .1 : 1;
+      epsilon = this.series.yMax <= 120 ? .5 : 1.5;
     let x = this.chart1.xAxis[0].toValue(Number(xValue)),
       y = this.chart1.yAxis[0].toValue(Number(yValue));
     this.xGoodValue.set(x);
@@ -362,5 +319,74 @@ export class Interactive15Component implements OnInit, AfterViewInit {
 
   }
 
+  private addDraggablePoint() {
+    let chart = this.chart1;
+    let radius = 4,
+      draggablePoint = chart.renderer
+        .circle(225, 341, radius)
+        .attr({
+          fill: '#C41B1B',
+          zIndex: 5,
+          id: 'draggablePoint',
+          stroke: 'black',
+          'stroke-width': 1,
+          tabIndex: 0,
+          role: 'img',
+          alt: 'Draggable Point'
 
+        })
+        .add() as ExtendedSVGElement,
+      draggableText = chart.renderer.
+        text('Inefficient', 235, 330).
+        attr({
+          id: 'draggableText'
+        }).
+        add();
+    chart.container.onmousemove = function (e) {
+
+      if (draggablePoint.drag) {
+        let normalizedEvent = chart.pointer.normalize(e),
+          extremes = {
+            left: chart.plotLeft,
+            right: chart.plotLeft + chart.plotWidth,
+            top: chart.plotTop,
+            bottom: chart.plotTop + chart.plotHeight
+          };
+
+        // Move line
+        if (
+          normalizedEvent.chartX >= extremes.left &&
+          normalizedEvent.chartX <= extremes.right &&
+          normalizedEvent.chartY >= extremes.top &&
+          normalizedEvent.chartY <= extremes.bottom
+        ) {
+          draggablePoint.attr({
+            x: normalizedEvent.chartX,
+            y: normalizedEvent.chartY
+          });
+          draggableText.attr({
+            x: normalizedEvent.chartX + 10,
+            y: normalizedEvent.chartY - 10
+
+          });
+        }
+        Highcharts.fireEvent(chart, 'click');
+
+      }
+    };
+    draggablePoint.element.onmouseover = function () {
+      draggablePoint.css({ 'cursor': 'pointer' })
+    }
+
+    draggablePoint.element.onmousedown = function () {
+      draggablePoint.css({ 'color': 'green' });
+      draggablePoint.drag = true;
+    };
+
+    draggablePoint.element.onmouseup = function () {
+      draggablePoint.drag = false;
+      draggablePoint.css({ 'color': '#C41B1B' });
+    };
+
+  }
 }

@@ -345,7 +345,7 @@ export class ModelService {
       x = x + xStep;
       count++;
 
-    } while (qMax > 0 && count <= 999);
+    } while (qMax > 0.02 && count <= 999);
 
     return {
       PPF: ppfSeries,
