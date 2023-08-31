@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, signal, computed } from '@angular/core';
+import { AfterViewInit, Component, OnInit, signal, computed, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import * as Highcharts from 'highcharts';
@@ -56,7 +56,7 @@ export class Interactive02Component implements OnInit, AfterViewInit {
     }
   )
 
-  constructor(announcer: LiveAnnouncer) {}
+  constructor(announcer: LiveAnnouncer, private el: ElementRef) {}
 
   ngOnInit(): void {
     this.budgetProps.valueChanges.subscribe((value) => {
@@ -72,7 +72,9 @@ export class Interactive02Component implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     let series = this._createSeries();
-    this.chart = new Highcharts.Chart('chart1', {
+    const container = this.el.nativeElement.querySelector('#chart1');
+
+    this.chart = new Highcharts.Chart(container, {
       chart: {
         height: 550,
         styledMode: false,

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, Input, signal, computed } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Input, signal, computed, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
@@ -109,7 +109,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   chart!: Highcharts.Chart;
 
-  constructor( private announcer: LiveAnnouncer) { }
+  constructor( private announcer: LiveAnnouncer, private el: ElementRef) { }
 
   ngOnInit(): void {
     this._createSeries();
@@ -117,7 +117,8 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     let series = this._createSeries();
-    this.chart = new Highcharts.Chart('chart1', {
+    const container = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart( container, {
       chart: {
         height: 550,
         styledMode: false,

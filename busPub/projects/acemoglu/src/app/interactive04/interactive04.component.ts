@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, signal } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, signal, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -66,7 +66,7 @@ export class Interactive04Component implements OnInit, AfterViewInit {
   prevVariable = 0;
   prevFixed = 0;
 
-  constructor(private announcer: LiveAnnouncer) { }
+  constructor(private announcer: LiveAnnouncer, private el: ElementRef) { }
 
   ngOnInit(): void {
     if (this.mode) {
@@ -169,7 +169,8 @@ export class Interactive04Component implements OnInit, AfterViewInit {
   private _setupStep() {
     if (this.mode === 2) this.sliderGroup.patchValue({ price: 1.25 });
     let series = this._createSeries();
-    this.chart = new Highcharts.Chart('chart1', {
+    const container = this.el.nativeElement.querySelector('#chart1');
+    this.chart = new Highcharts.Chart(container, {
       chart: {
         height: 550,
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
