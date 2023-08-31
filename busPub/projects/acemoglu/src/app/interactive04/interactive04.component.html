@@ -5,7 +5,7 @@
       <h2 class="mat-headline-6">Key Points:</h2>
       <ul>
         <li>
-          A variable cost is the cost of variable factors of production, which change along with a firm’s output.
+          A variable cost is the cost of variable factors of production, which change along with a firm's output.
         </li>
         <li>
           Average variable cost, average total cost, and marginal cost are all affected by changes in the price of
@@ -15,7 +15,7 @@
           A fixed cost is the cost of fixed factors of production, which a firm must pay even if it produces zero
           output.</li>
         <li>
-          Only average total cost is affected by changes in the cost of a fixed factor. It’s worth noting that the
+          Only average total cost is affected by changes in the cost of a fixed factor. It's worth noting that the
           average fixed cost is the vertical distance between average total cost and average variable cost.
         </li>
         <li>
@@ -44,7 +44,7 @@
         <button mat-raised-button (click)="reset()">Reset</button>
       </div>
     </div>
-    <div class="item-narrative" *ngIf="mode === 1">
+    <div class="item-narrative" *ngIf="mode === 1" @myAnimationTrigger>
       <h2 class="mat-headline-6">Key Points:</h2>
       <ul>
         <li>
@@ -81,7 +81,7 @@
 
       </div>
     </div>
-    <div class="item-narrative" *ngIf="mode === 2">
+    <div class="item-narrative" *ngIf="mode === 2" @myAnimationTrigger>
       <h2 class="mat-headline-6">Key Points:</h2>
       <ul>
         <li>
