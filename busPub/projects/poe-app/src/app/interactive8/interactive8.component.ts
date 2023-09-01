@@ -328,6 +328,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           name: 'CS',
+          color: '#FFD6AB',
           zIndex: -1,
           lineWidth: 2,
           legendIndex: 0,
@@ -337,6 +338,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           name: 'PS',
+          color: '#C2F3EF',
           legendIndex: 1,
           zIndex: -1,
           data: series.PS,
@@ -345,6 +347,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           name: 'Revenue',
+          color: '#C3E0B8',
           legendIndex: 3,
           zIndex: -1,
           data: series.REV,
@@ -354,6 +357,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           name: 'DWL<sub>1</sub>',
+          color: '#FFE3E0',
           legendIndex: 2,
           zIndex: -1,
           data: series.DWL1,
@@ -363,6 +367,7 @@ export class Interactive8Component implements OnInit, AfterViewInit {
         {
           type: 'arearange',
           name: 'DWL<sub>2</sub>',
+          color: '#FFE3E0',
           zIndex: -1,
           legendIndex: 4,
           data: series.DWL2,

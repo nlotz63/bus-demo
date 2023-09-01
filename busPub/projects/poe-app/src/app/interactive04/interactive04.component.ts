@@ -341,7 +341,10 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'arearange',
           name: 'profit',
-          opacity: .5,
+          color: '#C3E0B8',
+          lineWidth: 1,
+          lineColor: 'black',
+          opacity: .75,
           zIndex: -1,
           data: series.profit
         });
@@ -360,7 +363,10 @@ export class Interactive04Component implements OnInit, AfterViewInit {
         this.chart.addSeries({
           type: 'arearange',
           name: 'profit',
-          opacity: .5,
+          color: '#C3E0B8',
+          lineWidth: 1,
+          lineColor: 'black',
+          opacity: .75,
           zIndex: -1,
           data: series.profit,
           enableMouseTracking: false
