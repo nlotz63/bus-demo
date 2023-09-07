@@ -1,7 +1,7 @@
 <div class="econ-interactive-container">
   <h1 class="mat-headline-5">Equilibrium in the Supply/Demand Model</h1>
   <div class="wrapper">
-    <div class="item-narrative" *ngIf="mode === '0'">
+    <div class="item-narrative" *ngIf="mode() === 0">
       <h2 class="mat-headline-6">Equilibrium and disequilibrium</h2>
       <ul class="mat-body-1">
         <li>
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Mode 1 shifts in supply and demand-->
-    <div class="item-narrative" *ngIf="mode === '1'" >
+    <div class="item-narrative" *ngIf="mode() === 1" >
       <h2 class="mat-headline-6">Shifts in supply and demand</h2>
       <ul class="mat-body-1">
         <li>
