@@ -15,6 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { EconModel, ModelService } from '../model.service';
+import { ActivatedRoute } from '@angular/router';
 
 HC_export(Highcharts);
 HC_data(Highcharts);
@@ -46,11 +47,7 @@ interface ShiftGroup {
 export class Interactive01Component implements OnInit, AfterViewInit {
 
 
-  nMode!: number;
-  @Input() set mode(mode: string) {
-    this.nMode = Number(mode);
-  };
-
+  mode = signal(0);
   // Mode 1 props
   shifterGroups: ShiftGroup[] = [
     {
@@ -132,15 +129,208 @@ export class Interactive01Component implements OnInit, AfterViewInit {
 
   });
 
-  constructor(private announcer: LiveAnnouncer, private modelService: ModelService, private el: ElementRef) { }
+  constructor(private announcer: LiveAnnouncer, private modelService: ModelService, private el: ElementRef, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    // this._createSeries();
-    this.modelService.demandSupply(this.modelParams());
+    this.route.queryParams.subscribe(params => {
+      const mode = params['mode'] ? +params['mode'] : 0;
+      this.mode.set(mode);
+      this.selected = [];
+      this.demandLabel = '';
+      this.supplyLabel = '';
+      this.shifterGroups[0].disabled = false;
+      this.shifterGroups[1].disabled = false;
+      this.radioValue = 1;
+      this.supplyDirection = 1;
+      this.supplyShift.set(0);
+      this.demandShift.set(0);
+      this.price.set(50);
+      this._setupGraph();
+
+
+
+    });
 
   }
 
   ngAfterViewInit(): void {
+  }
+
+  public updateUX(event: MatSelectChange) {
+    let valueArray = event.value, arrLength = valueArray.length;
+    let message = '';
+
+    valueArray.forEach((el: string) => {
+      let value = Number(el);
+      if (value < 5) {
+        this.demandShiftValue = value;
+        this.shifterGroups[0].disabled = true;
+        this.demandLabel = this.shifterGroups[0].shifters[value].viewValue;
+        message = 'Slider added.';
+      } else {
+        this.supplyShiftValue = value;
+        value = value - 5;
+        this.shifterGroups[1].disabled = true;
+        this.supplyLabel = this.shifterGroups[1].shifters[value].viewValue;
+        if (value === 0) { this.supplyDirection = -1; }
+        message = 'Slider added.'
+      }
+    });
+    if (arrLength < 2) message = 'Slider and reset buttons added.';
+    this.announcer.announce(message);
+  }
+
+  public reset(slidersOnly: boolean) {
+    if (slidersOnly) {
+      this.supplyDirection = 1;
+      this.supplyShift.set(0);
+      this.demandShift.set(0);
+      this.updateGraph();
+      this.announcer.announce('The graph and sliders have been reset.');
+    } else {
+      this.selected = [];
+      this.demandLabel = '';
+      this.supplyLabel = '';
+      this.shifterGroups[0].disabled = false;
+      this.shifterGroups[1].disabled = false;
+      this.radioValue = 1;
+      this.supplyDirection = 1;
+      this.supplyShift.set(0);
+      this.demandShift.set(0);
+      this.updateGraph();
+      this.announcer.announce('The interactive has been reset.');
+    }
+
+  }
+
+  public updateGraph(value?: number, curve?: string) {
+    let direction = curve === 'demand' ? Number(this.radioValue) : this.supplyDirection;
+    if (value && curve === 'demand') {
+      this.demandShift.set(direction * value);
+    } else if (value && curve === 'supply') {
+      this.supplyShift.set(direction * value);
+    }
+
+    // this.modelParams[curve!] = this.price();
+
+    let series = this.modelService.demandSupply(this.modelParams());
+
+    switch (this.mode()) {
+      case 0:
+        this.chart.series[3].update(
+          {
+            type: 'line',
+            data: series.QSseries,
+            zIndex: this.price() < 50 ? 2 : 1
+
+          },
+          false
+        );
+        this.chart.series[4].update(
+          {
+            type: 'line',
+            data: series.QDseries,
+            zIndex: this.price() < 50 ? 1 : 2
+
+          },
+          false
+        );
+        this.chart.update(
+          {
+            annotations: [
+              {
+                visible: this.price() !== 50 ? true : false,
+                draggable: '',
+                shapes: [
+                  {
+                    stroke: 'black',
+                    type: 'path',
+                    strokeWidth: 1,
+                    points: [
+                      {
+                        x: 35,
+                        y: this.price(),
+                        xAxis: 0,
+                        yAxis: 0
+                      },
+                      {
+                        x: this.price() < 50 ? +series.QD - .5 : +series.QD + .5,
+                        y: this.price(),
+                        xAxis: 0,
+                        yAxis: 0
+                      },
+                    ],
+                    markerEnd: 'arrow',
+
+                  },
+                  {
+                    stroke: 'black',
+                    type: 'path',
+                    strokeWidth: 1,
+                    points: [
+                      {
+                        x: 35,
+                        y: this.price(),
+                        xAxis: 0,
+                        yAxis: 0
+                      },
+                      {
+                        x: this.price() < 50 ? +series.QS + .5 : +series.QS - .5,
+                        y: this.price(),
+                        xAxis: 0,
+                        yAxis: 0
+                      },
+                    ],
+                    markerEnd: 'arrow',
+                  },
+                ],
+                labels: [
+                  {
+                    point: {
+                      x: 35,
+                      y: this.price(),
+                      xAxis: 0,
+                      yAxis: 0
+                    },
+                    text: this.price() > 50 ? 'Excess supply' : 'Excess demand',
+                    accessibility: {
+                      description: `a horizontal double-arrow line at the market price between the supply and demand curves, indicating excess supply or excess demand.`
+                    }
+                  }
+                ],
+                labelOptions: {
+                  backgroundColor: 'white',
+                },
+              }
+            ]
+          },
+          true
+        );
+        break;
+      default:
+        this.chart.update({
+          series: [
+            {
+              type: 'line',
+              data: series.EQ
+            },
+            {
+              type: 'line',
+              data: series.demand
+            },
+            {
+              type: 'line',
+              data: series.supply
+            }
+          ]
+        });
+        break;
+    }
+    this.announcer.announce('The graph has been updated.');
+
+  }
+
+  private _setupGraph() {
     let series = this.modelService.demandSupply(this.modelParams());
     const container = this.el.nativeElement.querySelector('#chart1');
     this.chart = new Highcharts.Chart( container, {
@@ -410,7 +600,7 @@ export class Interactive01Component implements OnInit, AfterViewInit {
       ]
     });
 
-    if (this.nMode === 1) {
+    if (this.mode() === 1) {
       this.chart.series[4].remove();
       this.chart.series[3].remove();
       this.chart.update(
@@ -460,178 +650,6 @@ export class Interactive01Component implements OnInit, AfterViewInit {
         label: { enabled: false }
       }, true);
     }
-  }
-
-  public updateUX(event: MatSelectChange) {
-    let valueArray = event.value, arrLength = valueArray.length;
-    let message = '';
-
-    valueArray.forEach((el: string) => {
-      let value = Number(el);
-      if (value < 5) {
-        this.demandShiftValue = value;
-        this.shifterGroups[0].disabled = true;
-        this.demandLabel = this.shifterGroups[0].shifters[value].viewValue;
-        message = 'Slider added.';
-      } else {
-        this.supplyShiftValue = value;
-        value = value - 5;
-        this.shifterGroups[1].disabled = true;
-        this.supplyLabel = this.shifterGroups[1].shifters[value].viewValue;
-        if (value === 0) { this.supplyDirection = -1; }
-        message = 'Slider added.'
-      }
-    });
-    if (arrLength < 2) message = 'Slider and reset buttons added.';
-    this.announcer.announce(message);
-  }
-
-  public reset(slidersOnly: boolean) {
-    if (slidersOnly) {
-      this.supplyDirection = 1;
-      this.supplyShift.set(0);
-      this.demandShift.set(0);
-      this.updateGraph();
-      this.announcer.announce('The graph and sliders have been reset.');
-    } else {
-      this.selected = [];
-      this.demandLabel = '';
-      this.supplyLabel = '';
-      this.shifterGroups[0].disabled = false;
-      this.shifterGroups[1].disabled = false;
-      this.radioValue = 1;
-      this.supplyDirection = 1;
-      this.supplyShift.set(0);
-      this.demandShift.set(0);
-      this.updateGraph();
-      this.announcer.announce('The interactive has been reset.');
-    }
-  }
-
-  public updateGraph(value?: number, curve?: string) {
-    let direction = curve === 'demand' ? Number(this.radioValue) : this.supplyDirection;
-    if (value && curve === 'demand') {
-      this.demandShift.set(direction * value);
-    } else if (value && curve === 'supply') {
-      this.supplyShift.set(direction * value);
-    }
-
-    // this.modelParams[curve!] = this.price();
-
-    let series = this.modelService.demandSupply(this.modelParams());
-
-    switch (this.nMode) {
-      case 0:
-        this.chart.series[3].update(
-          {
-            type: 'line',
-            data: series.QSseries,
-            zIndex: this.price() < 50 ? 2 : 1
-
-          },
-          false
-        );
-        this.chart.series[4].update(
-          {
-            type: 'line',
-            data: series.QDseries,
-            zIndex: this.price() < 50 ? 1 : 2
-
-          },
-          false
-        );
-        this.chart.update(
-          {
-            annotations: [
-              {
-                visible: this.price() !== 50 ? true : false,
-                draggable: '',
-                shapes: [
-                  {
-                    stroke: 'black',
-                    type: 'path',
-                    strokeWidth: 1,
-                    points: [
-                      {
-                        x: 35,
-                        y: this.price(),
-                        xAxis: 0,
-                        yAxis: 0
-                      },
-                      {
-                        x: this.price() < 50 ? +series.QD - .5 : +series.QD + .5,
-                        y: this.price(),
-                        xAxis: 0,
-                        yAxis: 0
-                      },
-                    ],
-                    markerEnd: 'arrow',
-
-                  },
-                  {
-                    stroke: 'black',
-                    type: 'path',
-                    strokeWidth: 1,
-                    points: [
-                      {
-                        x: 35,
-                        y: this.price(),
-                        xAxis: 0,
-                        yAxis: 0
-                      },
-                      {
-                        x: this.price() < 50 ? +series.QS + .5 : +series.QS - .5,
-                        y: this.price(),
-                        xAxis: 0,
-                        yAxis: 0
-                      },
-                    ],
-                    markerEnd: 'arrow',
-                  },
-                ],
-                labels: [
-                  {
-                    point: {
-                      x: 35,
-                      y: this.price(),
-                      xAxis: 0,
-                      yAxis: 0
-                    },
-                    text: this.price() > 50 ? 'Excess supply' : 'Excess demand',
-                    accessibility: {
-                      description: `a horizontal double-arrow line at the market price between the supply and demand curves, indicating excess supply or excess demand.`
-                    }
-                  }
-                ],
-                labelOptions: {
-                  backgroundColor: 'white',
-                },
-              }
-            ]
-          },
-          true
-        );
-        break;
-      default:
-        this.chart.update({
-          series: [
-            {
-              type: 'line',
-              data: series.EQ
-            },
-            {
-              type: 'line',
-              data: series.demand
-            },
-            {
-              type: 'line',
-              data: series.supply
-            }
-          ]
-        });
-        break;
-    }
-    this.announcer.announce('The graph has been updated.');
 
   }
 
