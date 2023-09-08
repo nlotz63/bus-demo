@@ -12,7 +12,7 @@ import HC_seriesLabel from 'highcharts/modules/series-label';
 import HC_annotate from 'highcharts/modules/annotations';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/export-data';
-import { PlayerComponent } from '../../player/player.component';
+import { PlayerComponent } from '../player/player.component';
 import { BusPubLibModule } from 'bus-pub-lib';
 import { NgIf, CurrencyPipe } from '@angular/common';
 

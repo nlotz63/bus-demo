@@ -1,0 +1,154 @@
+<div class="econ-interactive-container">
+  <h1 class="mat-headline-5">Equilibrium in the Supply/Demand Model</h1>
+  <div class="wrapper">
+    <div class="item-narrative" *ngIf="mode() === 0">
+      <h2 class="mat-headline-6">Equilibrium and disequilibrium</h2>
+      <ul class="mat-body-1">
+        <li>
+          The competitive equilibrium price is the price at which quantity
+          supplied (q<sup>s</sup>) and quantity demanded (q<sup>d</sup>) are the
+          same (the instersection of the supply and demand curves). This is
+          sometimes referred to as the market clearing price.
+        </li>
+        <li>
+          When the market price is above the competitive equilibrium price,
+          quantity supplied exceeds quantity demanded, creating a surplus.
+        </li>
+        <li>
+          When market price is below the competitive equilibrium price, quantity
+          demanded exceeds quantity supplied, creating a shortage.
+        </li>
+        <li>
+          Use the market price slider to explore various outcomes. All
+          quantities are in millions of bottles per week.
+        </li>
+      </ul>
+      <econ-slider
+        class="econ-control"
+        label="Market price:"
+        showValue="false"
+        min="10"
+        max="40"
+        step=".25"
+        [value]="price()"
+        displayValue="{{ price() | currency }}"
+        (valueChange)="price.set($event); updateGraph($event, 'price1' )"
+      >
+      </econ-slider>
+      <div aria-live="polite">
+        <h3 class="mat-subtitle-1">Results</h3>
+        <span class="econ-math" [econMath]="equation1()"></span>
+        <span class="econ-math" [econMath]="equation2()"></span>
+      </div>
+    </div>
+
+    <!-- Mode 1 shifts in supply and demand-->
+    <div class="item-narrative" *ngIf="mode() === 1" >
+      <h2 class="mat-headline-6">Shifts in supply and demand</h2>
+      <ul class="mat-body-1">
+        <li>
+          When factors other than the goods own price change, either the demand or supply curve will shift.
+        </li>
+        <li>
+          The combo box below lists these factors, grouped by demand and supply. You can choose one from each group.
+        </li>
+        <li>
+          Explore how changes in these factors affect the equilibrium price and the equilibrium quantity.
+        </li>
+        <li>
+          Moving the slider to the right increases the selected factor.
+        </li>
+      </ul>
+
+      <mat-form-field appearance="outline" class="econ-control">
+        <mat-label>Shift factors</mat-label>
+        <mat-select
+          (selectionChange)="updateUX($event)"
+          [(value)]="selected"
+          multiple
+        >
+          <mat-optgroup
+            *ngFor="let group of shifterGroups"
+            [label]="group.name"
+            [disabled]="group.disabled"
+          >
+            <mat-option
+              *ngFor="let shifter of group.shifters"
+              [value]="shifter.value"
+            >
+              {{ shifter.viewValue }}
+            </mat-option>
+          </mat-optgroup>
+        </mat-select>
+      </mat-form-field>
+      <div class="control-column">
+        <div *ngIf="demandLabel !== ''">
+          <mat-radio-group
+            (change)="radioValue = $event.value"
+            *ngIf="demandShiftValue === 2"
+            aria-label="Select an option"
+          >
+            <mat-radio-button checked value="1">Substitute</mat-radio-button>
+            <mat-radio-button value="-1">Complement</mat-radio-button>
+          </mat-radio-group>
+          <mat-radio-group
+            (change)="radioValue = $event.value"
+            *ngIf="demandShiftValue === 1"
+            aria-label="Select an option"
+          >
+            <mat-radio-button checked value="1">Normal good</mat-radio-button>
+            <mat-radio-button value="-1"
+              >Inferior good</mat-radio-button
+            > </mat-radio-group
+          ><br/>
+          <econ-slider
+            label="{{ demandLabel }}"
+            showValue="false"
+            [showPercent]="true"
+            min="-20"
+            max="20"
+            step="0.25"
+            [value]="demandShift()"
+            (valueChange)="updateGraph($event, 'demand')"
+          >
+          </econ-slider>
+        </div>
+        <div *ngIf="supplyLabel !== ''">
+          <econ-slider
+            label="{{ supplyLabel }}"
+            showValue="false"
+            [showPercent]="true"
+            min="-20"
+            max="20"
+            step="0.25"
+            [value]="supplyShift()"
+            (valueChange)="updateGraph($event, 'supply')"
+          >
+          </econ-slider>
+          <mat-radio-group
+          (change)="supplyDirection = $event.value"
+          *ngIf="supplyShiftValue === 9"
+          aria-label="Select an option"
+        >
+          <mat-radio-button checked value="1">Substitute</mat-radio-button>
+          <mat-radio-button value="-1">Complement</mat-radio-button>
+        </mat-radio-group>
+
+        </div>
+      </div>
+      <div class="button-group-wrapper" *ngIf="supplyLabel !== '' || demandLabel !== ''">
+        <div class="button-group-item">
+          <button mat-raised-button (click)="reset(false)">
+            Reset Interactive
+          </button>
+          </div>
+          <div class="button-group-item">
+            <button mat-raised-button (click)="reset(true)">
+              Reset graph only
+            </button>
+              </div>
+      </div>
+    </div>
+    <div class="item-chart" id="chart1"></div>
+  </div>
+</div>
