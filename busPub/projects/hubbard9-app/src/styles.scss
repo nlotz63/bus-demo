@@ -3,6 +3,10 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+@import './app-mixins';
+
+
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
@@ -14,8 +18,8 @@ $hubbard-palette: (
   100: #00b2e2,
   200: #00aad8,
   300: #51aacd,
-  400: #007fa3,
-  500: #E91E63,
+  400: #A7194B,
+  500: #9D0038,
   600: #006f89,
   700: #00748f,
   800: #214876,
@@ -67,14 +71,68 @@ $hubbard9-app-theme: mat.define-light-theme((
 
 
 /* You can add global styles to this file, and also import other style files */
+html,
+body {
+  max-height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+$my-custom-typography-config: mat.define-typography-config(
+  $headline-1:
+    mat.define-typography-level(24px, 112px, 300, $letter-spacing: -0.05em),
+  $headline-2:
+    mat.define-typography-level(56px, 56px, 400, $letter-spacing: -0.02em),
+  $headline-3:
+    mat.define-typography-level(45px, 48px, 400, $letter-spacing: -0.005em),
+  $headline-4: mat.define-typography-level(34px, 40px, 400),
+  $headline-5: mat.define-typography-level(24px, 30px, 400),
+  $headline-6: mat.define-typography-level(22px, 30px, 500),
+  $subtitle-1: mat.define-typography-level(20px, 22px, 400),
+
+  $body-1:
+    mat.define-typography-level(
+      .9rem,
+      $line-height: normal,
+      $font-weight: 400,
+      $font-family: "Roboto"
+    ),
+/*     $body-2:
+    mat.define-typography-level(
+      1.0rem,
+      $line-height: normal,
+      $font-weight: 300,
+      $font-family: "Roboto"
+    ),
+ */
+);
+
+@include mat.typography-hierarchy($my-custom-typography-config);
+
+.mat-headline-5 {
+  //  color: map-get($acemoglu-primary, contrast);
+    background-color: #0066B2;
+    color:#FCFBF2;
+    margin: -5px -5px 5px -5px !important;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .mat-headline-6 {
+    color: map-get($hubbard9-app-primary, 400);
+    font-weight: 300;
+  }
+  .mat-subtitle-1 {
+    color: #525252;
+  
+  }
 
 .econ-interactive-container {
   max-width: 1000px;
   //min-height: 550px;
-  background-color: rgb(218, 237, 250);
+  background-color: #FCFBF2;
   margin-left: 5px;
   padding: 0.25rem;
   border: 1px solid lightgrey;
@@ -97,7 +155,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 h1 {
   font-size: large;
-  color: #214876;
+  color: map-get($hubbard9-app-primary, 900);
   text-align: center;
 }
 
@@ -115,22 +173,108 @@ caption {
   margin-left: 5px;
 }
 
- .econ-message div.mdc-snackbar__surface {
+.econ-message div.mdc-snackbar__surface {
   background-color: white;
   color: black;
   width: 450px !important;
-  }
+}
 
-  .econ-message div.mdc-snackbar__label  {
-    color: black;
-  }
+.econ-message div.mdc-snackbar__label {
+  color: black;
+}
 
 .econ-message button span {
   color: rgb(4, 123, 156);
   font-weight: bold;
   font-size: 1.2em;
 }
+li {
+  margin-bottom: 10px;
+}
+
+ul {
+  padding-left: 30px;
+
+}
+
+.econ-math {
+  font-size: .9rem;
+}
+
+.highcharts-annotation-label > span {
+  font-size: 11.9px !important;
+}
 
 .wrapper {
+  @include flexbox();
+  flex-flow: row;
+  justify-content:space-between;
   width: 100%;
+}
+
+.button-group-wrapper {
+  @include flexbox();
+  flex-flow:row;
+  justify-content: left;
+}
+
+.button-group-item {
+  flex: 0 1 40%;
+  button {
+    width: 95px;
+  }
+}
+
+.item-header {
+  flex: 1 0 100%;
+  width: 100%;
+}
+
+.item-chart {
+  @include flex(5.5 2 55%);
+}
+
+.item-narrative {
+  @include flex(4.5 .5 45% );
+  margin-right: 5px;
+}
+
+.econ-narative-block {
+  margin-right: 5px;
+}
+
+.control-column {
+  @include flexbox();
+  flex-flow: column;
+  justify-content: space-between;
+  margin-left: 5px;
+}
+
+@media all and (max-width: 750px) {
+  .wrapper {
+    @include flexbox();
+    flex-flow: column-reverse;
+  }
+
+  .item-chart {
+    @include flex(1 0 100%);
+  }
+
+  .item-narative {
+    @include flex(0 0 100%);
+      }
+}
+
+.econ-math {
+  font-size: .85rem;
+}
+
+h3 {
+  padding-top: 20px;
+  padding-bottom: 0px;
+}
+
+button {
+  margin: auto;
+  margin-top: 1rem;
 }
