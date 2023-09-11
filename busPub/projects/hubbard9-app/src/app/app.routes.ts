@@ -1,12 +1,10 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-    { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent), title: 'POE: Dashboard' },
-/*     { path: 'interactive01', loadComponent: () => import('./interactive01/interactive01.component').then(m => m.Interactive01Component), title: 'POE: supply/demand model' },
- */
+    { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent), title: 'HO: Dashboard' },
     {
      path: 'Figure3.1', loadComponent: () => import('./figure31/figure31.component').then(m => m.Figure31Component), title: 'HO: Demand Schedule' },
-
+     { path: 'interactive01', loadComponent: () => import('./interactive01/interactive01.component').then(m => m.Interactive01Component), title: 'HO: supply/demand model' },
 
     // child routes for instructor view
     {
