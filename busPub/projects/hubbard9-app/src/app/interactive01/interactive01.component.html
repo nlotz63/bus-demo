@@ -44,24 +44,24 @@
 
     <!-- Mode 1 shifts in supply and demand-->
     <div class="item-narrative" *ngIf="mode() === 1" >
-      <h2 class="mat-headline-6">Shifts in supply and demand</h2>
+      <h2 class="mat-headline-6">Shifts in Supply and Demand</h2>
       <ul class="mat-body-1">
         <li>
           When factors other than the goods own price change, either the demand or supply curve will shift.
         </li>
         <li>
-          The combo box below lists these factors, grouped by demand and supply. You can choose one from each group.
+          The combo box below lists these factors, grouped by demand and supply curves.
         </li>
         <li>
-          Explore how changes in these factors affect the equilibrium price and the equilibrium quantity.
+          Explore how changes in these factors affect the equilibrium price and quantity.
         </li>
         <li>
-          Moving the slider to the right increases the selected factor.
+          Moving the slider to the right increases the effect of the selected factor.
         </li>
       </ul>
 
       <mat-form-field appearance="outline" class="econ-control">
-        <mat-label>Shift factors</mat-label>
+        <mat-label>Shift Factors</mat-label>
         <mat-select
           (selectionChange)="updateUX($event)"
           [(value)]="selected"

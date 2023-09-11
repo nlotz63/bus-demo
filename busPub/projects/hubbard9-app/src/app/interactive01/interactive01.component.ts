@@ -131,7 +131,7 @@ export class Interactive01Component implements OnInit {
   });
 
   graph = signal({
-    title: 'Market for Water Bottles',
+    title: 'Market for Reusable Water Bottles',
     caption: 'The market for reusable water bottles in equilibrium. The supply and demand curves intersect at the market-clearing price of $25 per bottle and a quantity of 5 million bottles per week.',
     xTitle: 'Quantity (millions of bottles per week)',
     yTitle: 'Price (dollars per bottle)',
