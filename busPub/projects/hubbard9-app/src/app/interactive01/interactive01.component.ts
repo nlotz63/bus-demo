@@ -77,10 +77,10 @@ export class Interactive01Component implements OnInit {
   supplyLabel: string = '';
   demandShiftValue!: number;
   supplyShiftValue!: number;
-  radioValue: number = 1;
   demandShift = signal(0);
   supplyShift = signal(0);
-  supplyDirection: number = 1;
+  supplyDirection = signal(1);
+  demandDirection = signal(1);
 
 
   // Mode 0 props
@@ -122,8 +122,8 @@ export class Interactive01Component implements OnInit {
       xStep: 5,
       demandSlope: 2,
       supplySlope: 1.8,
-      supplyIntercept: -13 - this.supplyShift(),
-      demandIntercept: 120 + this.demandShift(),
+      supplyIntercept: -13 - this.supplyShift() * this.supplyDirection(),
+      demandIntercept: 120 + this.demandShift() * this.demandDirection(),
       price1: this.price()
 
     }
@@ -153,8 +153,7 @@ export class Interactive01Component implements OnInit {
       this.supplyLabel = '';
       this.shifterGroups[0].disabled = false;
       this.shifterGroups[1].disabled = false;
-      this.radioValue = 1;
-      this.supplyDirection = 1;
+      this.supplyDirection.set(1);
       this.supplyShift.set(0);
       this.demandShift.set(0);
       this.price.set(25);
@@ -176,13 +175,18 @@ export class Interactive01Component implements OnInit {
         this.demandShiftValue = value;
         this.shifterGroups[0].disabled = true;
         this.demandLabel = this.shifterGroups[0].shifters[value].viewValue;
+        this.demandDirection.set(1);
         message = 'Slider added.';
       } else {
         this.supplyShiftValue = value;
         value = value - 5;
         this.shifterGroups[1].disabled = true;
         this.supplyLabel = this.shifterGroups[1].shifters[value].viewValue;
-        if (value === 0) { this.supplyDirection = -1; }
+        if (value === 0 || value === 3 || value === 4) {
+          this.supplyDirection.set(-1);
+        } else {
+          this.supplyDirection.set(1);
+        }
         message = 'Slider added.'
       }
     });
@@ -192,7 +196,6 @@ export class Interactive01Component implements OnInit {
 
   public reset(slidersOnly: boolean) {
     if (slidersOnly) {
-      this.supplyDirection = 1;
       this.supplyShift.set(0);
       this.demandShift.set(0);
       this.updateGraph();
@@ -203,8 +206,8 @@ export class Interactive01Component implements OnInit {
       this.supplyLabel = '';
       this.shifterGroups[0].disabled = false;
       this.shifterGroups[1].disabled = false;
-      this.radioValue = 1;
-      this.supplyDirection = 1;
+      this.supplyDirection.set(1);
+      this.demandDirection.set(1);
       this.supplyShift.set(0);
       this.demandShift.set(0);
       this.updateGraph();
@@ -213,15 +216,7 @@ export class Interactive01Component implements OnInit {
 
   }
 
-  public updateGraph(value?: number, curve?: string) {
-    let direction = curve === 'demand' ? Number(this.radioValue) : this.supplyDirection;
-    if (value && curve === 'demand') {
-      this.demandShift.set(direction * value);
-    } else if (value && curve === 'supply') {
-      this.supplyShift.set(direction * value);
-    }
-
-    // this.modelParams[curve!] = this.price();
+  public updateGraph() {
 
     let series = this.modelService.demandSupply(this.modelParams());
 
@@ -343,7 +338,7 @@ export class Interactive01Component implements OnInit {
   private _setupGraph() {
     let series = this.modelService.demandSupply(this.modelParams());
     const container = this.el.nativeElement.querySelector('#chart1');
-    this.chart = new Highcharts.Chart( container, {
+    this.chart = new Highcharts.Chart(container, {
       chart: {
         height: 550,
         styledMode: false,

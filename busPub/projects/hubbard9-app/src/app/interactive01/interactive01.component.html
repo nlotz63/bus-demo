@@ -23,17 +23,8 @@
           quantities are in millions of bottles per week.
         </li>
       </ul>
-      <econ-slider
-        class="econ-control"
-        label="Market price:"
-        showValue="false"
-        min="10"
-        max="40"
-        step=".25"
-        [value]="price()"
-        displayValue="{{ price() | currency }}"
-        (valueChange)="price.set($event); updateGraph($event, 'price1' )"
-      >
+      <econ-slider class="econ-control" label="Market price:" showValue="false" min="10" max="40" step=".25"
+        [value]="price()" displayValue="{{ price() | currency }}" (valueChange)="price.set($event); updateGraph()">
       </econ-slider>
       <div aria-live="polite">
         <h3 class="mat-subtitle-1">Results</h3>
@@ -43,7 +34,7 @@
     </div>
 
     <!-- Mode 1 shifts in supply and demand-->
-    <div class="item-narrative" *ngIf="mode() === 1" >
+    <div class="item-narrative" *ngIf="mode() === 1">
       <h2 class="mat-headline-6">Shifts in Supply and Demand</h2>
       <ul class="mat-body-1">
         <li>
@@ -62,20 +53,9 @@
 
       <mat-form-field appearance="outline" class="econ-control">
         <mat-label>Shift Factors</mat-label>
-        <mat-select
-          (selectionChange)="updateUX($event)"
-          [(value)]="selected"
-          multiple
-        >
-          <mat-optgroup
-            *ngFor="let group of shifterGroups"
-            [label]="group.name"
-            [disabled]="group.disabled"
-          >
-            <mat-option
-              *ngFor="let shifter of group.shifters"
-              [value]="shifter.value"
-            >
+        <mat-select (selectionChange)="updateUX($event)" [(value)]="selected" multiple>
+          <mat-optgroup *ngFor="let group of shifterGroups" [label]="group.name" [disabled]="group.disabled">
+            <mat-option *ngFor="let shifter of group.shifters" [value]="shifter.value">
               {{ shifter.viewValue }}
             </mat-option>
           </mat-optgroup>
@@ -83,57 +63,28 @@
       </mat-form-field>
       <div class="control-column">
         <div *ngIf="demandLabel !== ''">
-          <mat-radio-group
-            (change)="radioValue = $event.value"
-            *ngIf="demandShiftValue === 2"
-            aria-label="Select an option"
-          >
+          <mat-radio-group (change)="demandDirection.set($event.value);updateGraph()" *ngIf="demandShiftValue === 2"
+            aria-label="Select an option">
             <mat-radio-button checked value="1">Substitute</mat-radio-button>
             <mat-radio-button value="-1">Complement</mat-radio-button>
           </mat-radio-group>
-          <mat-radio-group
-            (change)="radioValue = $event.value"
-            *ngIf="demandShiftValue === 1"
-            aria-label="Select an option"
-          >
+          <mat-radio-group (change)="demandDirection.set($event.value);updateGraph()" *ngIf="demandShiftValue === 1"
+            aria-label="Select an option">
             <mat-radio-button checked value="1">Normal good</mat-radio-button>
-            <mat-radio-button value="-1"
-              >Inferior good</mat-radio-button
-            > </mat-radio-group
-          ><br/>
-          <econ-slider
-            label="{{ demandLabel }}"
-            showValue="false"
-            [showPercent]="true"
-            min="-20"
-            max="20"
-            step="0.25"
-            [value]="demandShift()"
-            (valueChange)="updateGraph($event, 'demand')"
-          >
+            <mat-radio-button value="-1">Inferior good</mat-radio-button> </mat-radio-group><br />
+          <econ-slider label="{{ demandLabel }}" showValue="false" [showPercent]="true" min="-20" max="20" step="0.25"
+            [value]="demandShift()" (valueChange)="demandShift.set($event);updateGraph()">
           </econ-slider>
         </div>
         <div *ngIf="supplyLabel !== ''">
-          <econ-slider
-            label="{{ supplyLabel }}"
-            showValue="false"
-            [showPercent]="true"
-            min="-20"
-            max="20"
-            step="0.25"
-            [value]="supplyShift()"
-            (valueChange)="updateGraph($event, 'supply')"
-          >
+          <mat-radio-group (change)="supplyDirection.set($event.value);updateGraph()" *ngIf="supplyShiftValue === 9"
+            aria-label="Select an option">
+            <mat-radio-button checked value="-1">Substitute</mat-radio-button>
+            <mat-radio-button value="1">Complement</mat-radio-button>
+          </mat-radio-group><br/>
+          <econ-slider label="{{ supplyLabel }}" showValue="false" [showPercent]="true" min="-20" max="20" step="0.25"
+            [value]="supplyShift()" (valueChange)="supplyShift.set($event);updateGraph()">
           </econ-slider>
-          <mat-radio-group
-          (change)="supplyDirection = $event.value"
-          *ngIf="supplyShiftValue === 9"
-          aria-label="Select an option"
-        >
-          <mat-radio-button checked value="1">Substitute</mat-radio-button>
-          <mat-radio-button value="-1">Complement</mat-radio-button>
-        </mat-radio-group>
-
         </div>
       </div>
       <div class="button-group-wrapper" *ngIf="supplyLabel !== '' || demandLabel !== ''">
@@ -141,12 +92,12 @@
           <button mat-raised-button (click)="reset(false)">
             Reset Interactive
           </button>
-          </div>
-          <div class="button-group-item">
-            <button mat-raised-button (click)="reset(true)">
-              Reset graph only
-            </button>
-              </div>
+        </div>
+        <div class="button-group-item">
+          <button mat-raised-button (click)="reset(true)">
+            Reset graph only
+          </button>
+        </div>
       </div>
     </div>
     <div class="item-chart" id="chart1"></div>
