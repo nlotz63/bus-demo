@@ -17,7 +17,7 @@ $hubbard-palette: (
   50: #00c8ff,
   100: #00b2e2,
   200: #00aad8,
-  300: #51aacd,
+  300: #0066B2,
   400: #A7194B,
   500: #9D0038,
   600: #006f89,
@@ -145,7 +145,10 @@ $my-custom-typography-config: mat.define-typography-config(
 .econ-control {
   position: relative;
   left: 10%;
+  font-size: 1.08rem;
+  font-weight: 400;
 }
+
 .model-container:focus-within {
   border: solid rgb(4, 123, 156) 2px;
 }
@@ -164,6 +167,10 @@ h2 {
   font-size: 18pt;
   font-weight: 500;
   margin-left: 5px;
+}
+
+h3 {
+  color: map-get($hubbard9-app-primary, 300);
 }
 caption {
   color: #00245D;

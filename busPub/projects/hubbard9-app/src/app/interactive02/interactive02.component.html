@@ -1,0 +1,152 @@
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">Production Possibilities Frontier</h1>
+    <div class="wrapper">
+        <div class="item-narrative">
+          <label class="mat-headline-6" id="radio1-label">Choose a Concept</label><br/>
+          <mat-radio-group
+          class=""
+            aria-labelledby="radio1-label"
+            [selected]="default"
+            (change)="mode.set(+$event.value);updateMode0Graph()"
+          >
+            <mat-radio-button value="0" #default labelPosition="after">Opportunity cost</mat-radio-button>
+            <mat-radio-button value="1"  labelPosition="after">Efficiency</mat-radio-button>
+            <mat-radio-button value="2"  labelPosition="after">Shifters</mat-radio-button>
+
+          </mat-radio-group>
+
+            <div *ngIf="mode() === 0">
+                <h3>Opportunity Cost</h3>
+                <ul>
+                  <li>
+                    The amount of <b>{{ graph().yTitle | lowercase }}</b> that must be
+                    given up to produce another unit of
+                    <b>{{ graph().xTitle | lowercase }}</b> is the opportunity cost of
+                    producing {{ graph().xTitle | lowercase }}.
+                  </li>
+                  <li>
+                    It is equal to the slope of the PPF.
+                  </li>
+                  <li>
+                    For a straight line, the opporunity cost is constant, while for a bowed out PPF, the opportunity cost increases as more {{ graph().xTitle | lowercase }} are produced.
+                  </li>
+                  <li>
+                    Mouseover points on the PPF to view the opportunity cost at that point.
+                  </li>
+                </ul>
+                <p>
+        
+                </p>
+                <mat-radio-group
+                class="econ-control"
+                  aria-label="Choose whether the graph shows constant opportunity cost or increasing oppotunity cost."
+                  [selected]="default"
+                  (change)="exponent.set(+$event.value);updateMode0Graph()"
+                >
+                  <mat-radio-button value="1" labelPosition="before">Constant opportunity cost:</mat-radio-button>
+                  <mat-radio-button value=".5" #default labelPosition="before">Increasing opportunity cost:</mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <div *ngIf="mode() === 1" >
+                <h3 >Efficient production</h3>
+                <ul>
+                  <li>
+                    All points along the PPF are efficient.
+                  </li>
+                  <li>
+                    Points within the PPF are attainable but not efficient.
+                  </li>
+                  <li>
+                    Points outside the PPF are unattainable.
+                  </li>
+                </ul>
+                <p>Drag the point on the graph or use the sliders to view different combinations of the two goods.</p>
+
+                <div class="control-column">
+                  <econ-slider
+                  [label]="graph().xTitle"
+                  min="0"
+                  [max]="xMax()"
+                  [value]="xGoodValue()"
+                  step=".1"
+                  showValue="false"
+                  displayValue="{{xGoodValue() | number: '1.2-2'}}"
+                  units=""
+                  (valueChange)="xGoodValue.set($event);updateGraph()"
+          
+                ></econ-slider>
+                  <econ-slider
+                  [label]="graph().yTitle"
+                  min="0"
+                  [max]="yMax()"
+                  [value]="yGoodValue()"
+                  step=".1"
+                  showValue="false"
+                  displayValue="{{ yGoodValue() | number: '1.2-2'}}"
+                  units=""
+                  (valueChange)="yGoodValue.set($event);updateGraph()"
+          
+                ></econ-slider>
+                  </div>
+                        
+            </div>
+            <div *ngIf="mode() === 2">
+              <h3>Changes in {{ factor() }}</h3>
+              <div>
+                <div class="control-column">
+                  <label id="radio-label">Choose a production input to change:</label>
+                  <mat-radio-group
+                  class=""
+                    aria-labelledby="radio-label"
+                    [selected]="default"
+                    (change)="factor.set($event.value);reset()"
+                  >
+                    <mat-radio-button #default value="capital" >Capital</mat-radio-button>
+                    <mat-radio-button value="labor" >Labor</mat-radio-button>
+                    <mat-radio-button value="technology">Technology</mat-radio-button>
+                  </mat-radio-group>
+                </div>
+                </div>
+                <p>
+                  Then use the sliders to simulate how a change in {{factor()}} effects production.
+                </p>
+                <div class="control-column">
+                  <econ-slider
+                  [label]="graph().xTitle"
+                  min="-.45"
+                  max=".45"
+                  [value]="tech1Percent()"
+                  step=".05"
+                  showValue="false"
+                  displayValue="{{(tech1Percent() < 0 ? -tech1Percent() : tech1Percent()) | percent}} {{ tech1Percent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}" 
+                  (valueChange)="tech1Percent.set($event);updateGraph()"
+                ></econ-slider>
+                <econ-slider
+                [label]="graph().yTitle"
+                min="-.45"
+                max=".45"
+                [value]="tech2Percent()"
+                step=".05"
+                showValue="false"
+                displayValue="{{(tech2Percent() < 0 ? -tech2Percent() : tech2Percent()) | percent}} {{ tech2Percent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}" 
+                (valueChange)="tech2Percent.set($event);updateGraph()"
+              ></econ-slider>
+              <econ-slider
+              label="Both equally"
+              min="-.45"
+              max=".45"
+              [value]="techBothPercent()"
+              step=".05"
+              showValue="false"
+              displayValue="{{(techBothPercent() < 0 ? -techBothPercent() : techBothPercent()) | percent}} {{ techBothPercent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}" 
+              (valueChange)="techBothPercent.set($event);tech2Percent.set($event);tech1Percent.set($event);updateGraph()"
+            ></econ-slider>
+            <button mat-raised-button [disabled]="disableReset" (click)="reset()">Reset</button>
+              </div>
+              </div> 
+        </div>
+        <div class="item-chart" id="chart1"></div>
+    </div>
+
+
+</div>
