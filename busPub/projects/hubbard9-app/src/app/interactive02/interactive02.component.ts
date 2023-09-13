@@ -52,8 +52,12 @@ export class Interactive02Component implements OnInit, AfterViewInit {
   chart1!: Highcharts.Chart;
   series!: any;
   mode = signal(0);
-  tech1 = signal(4);
-  tech2 = signal(8);
+  tech1 = computed(() => {
+    return this.exponent() === 1 ? .8 : 8;
+  });
+  tech2 = computed(() => {
+    return this.exponent() === 1 ? 1.2 : 12;
+  });
   labor = signal(100);
   exponent = signal(.5);
   xGoodValue = signal(20);
@@ -69,14 +73,14 @@ export class Interactive02Component implements OnInit, AfterViewInit {
 
   graph = computed(() => {
     return {
-      xTitle: 'Guns',
-      yTitle: 'Butter',
+      xTitle: 'Lightnings',
+      yTitle: 'Gasoline F-150s',
       title: 'Production Possibilities Frontier',
-      caption: 'The production possibilities frontier (PPF) with guns on the horizontal axis and butter on the vertical axis.',
+      caption: 'The production possibilities frontier (PPF) with Lightnings on the horizontal axis and F-150s on the vertical axis.',
       xMin: 0,
       xMax: this.xMax(),
       yMin: 0,
-      yMax: this.yMax(),
+      yMax: this.yMax()*.8,
     }
   });
 
@@ -267,7 +271,8 @@ export class Interactive02Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         title: { useHTML: true, text: `${this.graph().xTitle}` },
         min: this.graph().xMin,
-        max: this.graph().xMax
+        max: this.graph().xMax,
+        tickInterval: 20
       },
       yAxis: {
         gridLineWidth: 0,
@@ -277,7 +282,8 @@ export class Interactive02Component implements OnInit, AfterViewInit {
         tickWidth: 1,
         title: { useHTML: true, text: `${this.graph().yTitle}` },
         min: this.graph().yMin,
-        max: this.graph().yMax
+        max: this.graph().yMax,
+        tickInterval: 20
       },
       plotOptions: {
         series: {
