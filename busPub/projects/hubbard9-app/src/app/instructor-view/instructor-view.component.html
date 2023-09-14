@@ -7,8 +7,8 @@
     <h1>Hubbard/O'Brien: Interactive Models</h1>
   </div>
   <mat-menu #chapter="matMenu">
-    <button mat-menu-item [matMenuTriggerFor]="chapter2">2: Interdependence and Gains from Trade</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter3">3: Demand, Supply and Market Equilibrium</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter2">2: Trade-offs, Comparative Advantage, and the Market System</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter3">3: Where Prices Come From: The Interaction of Demand and Supply</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter4">4: Government Intervention in Markets</button>
 
     <button mat-menu-item [matMenuTriggerFor]="chapter6">6: Consumer and Producer Surplus and Market Efficiency</button>
@@ -25,33 +25,11 @@
   </mat-menu>
 
   <mat-menu #chapter2>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive06']" [queryParams]="" skipLocationChange
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive02']" [queryParams]="" skipLocationChange
       (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      Gains from Specialization
+      Production Possibilities (PPF)
     </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive07']" [queryParams]="" skipLocationChange
-      (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      PPF Change in Technology
-    </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 0 }"
-      skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      PPF: Opportunity Cost
-    </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 1 }"
-      skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      PPF: Efficient Production
-    </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive15']" [queryParams]="{ mode: 2 }"
-      skipLocationChange (mouseover)="interactive = 2" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      PPF: Shift Factors
-    </a>
-
-
   </mat-menu>
   <mat-menu #chapter3>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive01']" [queryParams]="{ mode: 0 }"
