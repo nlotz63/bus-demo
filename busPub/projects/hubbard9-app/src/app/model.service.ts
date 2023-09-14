@@ -325,26 +325,22 @@ export class ModelService {
     }
 
     let x = 0, labor = model.labor, tech1 = model.tech1, tech2 = model.tech2, exponent = model.exponent;
-    let qMax: number, count = 0, xStep = exponent !== 1 ? tech1/20 : 10;
     let ppfSeries = [];
     
     let labor1 = (x: number) => Math.pow(x / tech1, 1 / exponent);
     let q2 = (x: number) => tech2 * Math.pow(labor - labor1(x), exponent);
+    let xMax = Math.pow(labor, exponent)*tech1, xStep = exponent !== 1 ? xMax/200 : xMax/4;
     let dq2 = (x: number): number => -exponent * tech2 * Math.pow(labor - Math.pow((x / tech1), 1 / exponent), exponent - 1) * (1 / exponent) / Math.pow(tech1, 1 / exponent) * Math.pow(x, 1 / exponent - 1);
 
     do {
-      let y = q2(x) > 0 ? q2(x) : 0;
+      let y = isNaN(q2(x)) ? q2(xMax) : q2(x);
       ppfSeries.push({
         x: x,
         y: y,
         oppCost: !isFinite(dq2(x)) ? 'infinity' : -dq2(x)
       });
-      qMax = y;
       x = x + xStep;
-      count++;
-
-    } while (qMax > 0.02 && count <= 999);
-
+    } while (x <= xMax+.02 );
     return {
       PPF: ppfSeries,
       ppfFun: q2,

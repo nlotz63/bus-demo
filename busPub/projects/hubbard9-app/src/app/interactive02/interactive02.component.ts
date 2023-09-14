@@ -12,7 +12,7 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatRadioModule } from '@angular/material/radio';
 import { BusPubLibModule } from 'bus-pub-lib';
-import { ModelService } from 'projects/poe-app/src/app/model.service';
+import { ModelService } from '../model.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -109,6 +109,15 @@ export class Interactive02Component implements OnInit, AfterViewInit {
 
   }
 
+  public modeChange() {
+    this.exponent.set(.5);
+    this.tech1Percent.set(0);
+    this.tech2Percent.set(0);
+    this.techBothPercent.set(0);
+
+    this._setupGraph();
+  }
+
   public updateGraph() {
     if (this.disableReset) this.disableReset = false;
     const series = this.modelService.createPPF(this.modelParams());
@@ -178,6 +187,7 @@ export class Interactive02Component implements OnInit, AfterViewInit {
     this.tech1Percent.set(0);
     this.tech2Percent.set(0);
     this.techBothPercent.set(0);
+  //  this.exponent.set(.5);
     this.updateGraph();
     this.disableReset = true;
 
