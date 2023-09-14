@@ -15,17 +15,16 @@
         <h3>Opportunity Cost</h3>
         <ul>
           <li>
-            The amount of {{ graph().yTitle }} that must be
-            given up to produce another unit of
-            {{ graph().xTitle }} is the opportunity cost of
-            producing {{ graph().xTitle}}.
+            The amount of {{ yGood() }} that must be
+            given up to produce more {{ xGood() }} is the opportunity cost of
+            producing {{ xGood()}}.
           </li>
           <li>
             It is equal to the slope of the PPF.
           </li>
           <li>
             For a straight line, the opporunity cost is constant, while for a bowed out PPF, the opportunity cost
-            increases as more {{ graph().xTitle }} are produced.
+            increases as more {{ xGood() }} are produced.
           </li>
           <li>
             Mouseover points on the PPF to view the opportunity cost at that point.
@@ -68,17 +67,17 @@
             <mat-radio-button value=".5" #default labelPosition="after">Increasing</mat-radio-button>
           </mat-radio-group>
 
-          <econ-slider  [label]="graph().xTitle" min="0" [max]="xMax()" [value]="xGoodValue()" step=".1"
+          <econ-slider  [label]="xGood()" min="0" [max]="xMax()" [value]="xGoodValue()" step=".1"
             showValue="false" displayValue="{{xGoodValue() | number: '1.2-2'}}" units=""
             (valueChange)="xGoodValue.set($event);updateGraph()"></econ-slider>
-          <econ-slider  [label]="graph().yTitle" min="0" [max]="yMax()" [value]="yGoodValue()" step=".1"
+          <econ-slider  [label]="yGood()" min="0" [max]="yMax()" [value]="yGoodValue()" step=".1"
             showValue="false" displayValue="{{ yGoodValue() | number: '1.2-2'}}" units=""
             (valueChange)="yGoodValue.set($event);updateGraph()"></econ-slider>
         </div>
 
       </div>
       <div *ngIf="mode() === 2">
-        <h3>Factors that Shfit the PPF</h3>
+        <h3>Factors that Shift the PPF</h3>
         <div>
           <div class="control-column">
             <label id="radio-label">Production Input to Change:</label>
@@ -103,15 +102,15 @@
         </p>
         <div class="control-column">
 
-          <econ-slider [label]="graph().xTitle" min="-.45" max=".45" [value]="tech1Percent()" step=".05"
+          <econ-slider [label]="xGood()" min="-.45" max=".45" [value]="tech1Percent()" step=".05"
             showValue="false"
             displayValue="{{(tech1Percent() < 0 ? -tech1Percent() : tech1Percent()) | percent}} {{ tech1Percent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}"
             (valueChange)="tech1Percent.set($event);updateGraph()"></econ-slider>
-          <econ-slider [label]="graph().yTitle" min="-.45" max=".45" [value]="tech2Percent()" step=".05"
+          <econ-slider [label]="yGood()" min="-.45" max=".45" [value]="tech2Percent()" step=".05"
             showValue="false"
             displayValue="{{(tech2Percent() < 0 ? -tech2Percent() : tech2Percent()) | percent}} {{ tech2Percent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}"
             (valueChange)="tech2Percent.set($event);updateGraph()"></econ-slider>
-          <econ-slider label="Both equally" min="-.45" max=".45" [value]="techBothPercent()" step=".1" showValue="false"
+          <econ-slider label="Both equally" min="-.45" max=".45" [value]="techBothPercent()" step=".05" showValue="false"
             displayValue="{{(techBothPercent() < 0 ? -techBothPercent() : techBothPercent()) | percent}} {{ techBothPercent() < 0 ? 'decrease' : 'increase' }} in {{factor()}}"
             (valueChange)="techBothPercent.set($event);tech2Percent.set($event);tech1Percent.set($event);updateGraph()"></econ-slider>
           <button mat-raised-button [disabled]="disableReset" (click)="reset()">Reset</button>

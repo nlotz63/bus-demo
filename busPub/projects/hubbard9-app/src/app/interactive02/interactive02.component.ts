@@ -68,15 +68,18 @@ export class Interactive02Component implements OnInit, AfterViewInit {
   tech1Percent = signal(0);
   tech2Percent = signal(0);
   techBothPercent = signal(0);
+  xGood = signal('Lightnings');
+  yGood = signal('Gasoline F-150s')
+  
   disableReset = true
 
 
   graph = computed(() => {
     return {
-      xTitle: 'Lightnings',
-      yTitle: 'Gasoline F-150s',
+      xTitle: 'Quantity of Lightnings',
+      yTitle: 'Quantity of gasoline F-150s',
       title: 'Production Possibilities Frontier',
-      caption: 'The production possibilities frontier (PPF) with Lightnings on the horizontal axis and F-150s on the vertical axis.',
+      caption: 'Ford\'s production possibilities for two truck models: The all-electric Lightning (x-axis) and the gasoline powered F-150 (y-axis).',
       xMin: 0,
       xMax: this.xMax(),
       yMin: 0,
