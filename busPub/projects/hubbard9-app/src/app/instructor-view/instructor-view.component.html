@@ -30,6 +30,12 @@
       (mouseleave)="interactive = savedInteractive">
       Production Possibilities (PPF)
     </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive03']" [queryParams]="" skipLocationChange
+    (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
+    (mouseleave)="interactive = savedInteractive">
+    Comparative Advantage
+  </a>
+
   </mat-menu>
   <mat-menu #chapter3>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive01']" [queryParams]="{ mode: 0 }"

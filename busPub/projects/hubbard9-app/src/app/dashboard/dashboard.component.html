@@ -1,6 +1,25 @@
 <h1>Acemolu/Laibson/List: Interactive Models</h1>
 <div class="grid grid-pad">
   <a
+[routerLink]="['/interactive02']"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Production Possibilities Frontier</h4>
+</div>
+</a>
+<a
+[routerLink]="['/interactive03']"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Comparative Advantage</h4>
+</div>
+</a>
+
+  <a
   [routerLink]="['/interactive01']"
   [skipLocationChange]="enable"
   [queryParams]="{ mode: '0' }"
@@ -18,24 +37,6 @@ class="col-1-4"
 >
 <div class="module hero">
   <h4>Shifts in supply and demand</h4>
-</div>
-</a>
-<a
-[routerLink]="['/interactive02']"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>Production Possibilities Frontier</h4>
-</div>
-</a>
-<a
-[routerLink]="['/interactive03']"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>Consumer surplus</h4>
 </div>
 </a>
 <a
