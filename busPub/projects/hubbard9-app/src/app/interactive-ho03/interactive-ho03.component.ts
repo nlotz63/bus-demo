@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, signal, computed, Signal } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, computed, Signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -14,6 +14,7 @@ import { BusPubLibModule } from 'bus-pub-lib';
 import { ModelService } from '../model.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -25,7 +26,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive-ho03',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './interactive-ho03.component.html',
   styleUrls: ['./interactive-ho03.component.scss'],
   animations: [
@@ -45,6 +46,21 @@ export class InteractiveHO03Component implements OnInit {
 
   chart!: Highcharts.Chart;
 
+  // signals
+  p1x = signal(20);
+  p2x = signal(30);
+  p1y = signal(25);
+  p2y = signal(30);
+
+  p1oppCost = computed(() => {
+    return this.p1y() / this.p1x();
+  });
+
+  pc1y = signal(0);
+  pc1x = computed(() => {
+    return this.p1x() - 1 / this.p1oppCost() * this.pc1y();
+  });
+
   graph = computed(() => {
     return {
       title: 'PPF',
@@ -63,6 +79,7 @@ export class InteractiveHO03Component implements OnInit {
   constructor(private el: ElementRef, private announcer: LiveAnnouncer, private modelService: ModelService) { }
   
   ngOnInit(): void {
+    const yourPPF: any[] =  [{ x: 0, y: this.p1y(), oppCost: this.p1oppCost()}, {x: this.p1x(), y: 0, oppCost: this.p1oppCost()} ]
     const container = this.el.nativeElement.querySelector('#chart1');
     this.chart = new Highcharts.Chart(container, {
       chart: {
@@ -102,13 +119,13 @@ export class InteractiveHO03Component implements OnInit {
           type: 'line',
           name: 'Your PPF',
           lineWidth: 2,
-          data: [{ x: 0, y: 20}, {x: 25, y: 0} ]
+          data: yourPPF
         },
         {
           type: 'line',
           name: 'Neighbor\'s PPF',
           lineWidth: 2,
-          data: [{ x: 0, y: 45 }, {x: 35, y: 0} ]
+          data: [{ x: 0, y: this.p2y(), name: this.p1oppCost() }, {x: this.p2x(), y: 0} ]
         }
 
       ],
@@ -119,6 +136,7 @@ export class InteractiveHO03Component implements OnInit {
         title: { useHTML: true, text: `${this.graph().xTitle}` },
         min: this.graph().xMin,
         max: this.graph().xMax,
+        tickInterval: 5
       },
       yAxis: {
         gridLineWidth: 0,
@@ -129,6 +147,7 @@ export class InteractiveHO03Component implements OnInit {
         title: { useHTML: true, text: `${this.graph().yTitle}` },
         min: this.graph().yMin,
         max: this.graph().yMax,
+        tickInterval: 5
       },
       plotOptions: {
         series: {
@@ -142,6 +161,34 @@ export class InteractiveHO03Component implements OnInit {
       },
     });
       
+    
+  }
+
+  public updateView(input: WritableSignal<number>, event: any) {
+    let value = event.target.valueAsNumber;
+    input.set(value);
+    console.log(event);
+
+    this.chart.update({
+      series: [
+        {
+          type: 'line',
+          name: 'Your PPF',
+          lineWidth: 2,
+          data: [{ x: 0, y: this.p1y()}, {x: this.p1x(), y: 0} ]
+        },
+        {
+          type: 'line',
+          name: 'Neighbor\'s PPF',
+          lineWidth: 2,
+          data: [{ x: 0, y: this.p2y() }, {x: this.p2x(), y: 0} ]
+        }
+
+      ],
+    });
+
+
+    
     
   }
 

@@ -1,0 +1,42 @@
+input {
+    width: 30px;
+}
+input:out-of-range {
+    border: solid 3px;
+    border-color: red;
+}
+
+table  {
+    border-collapse: collapse;
+}
+
+caption {
+    font-weight: 500;
+}
+
+.ppf {
+
+    width: 30%;
+}
+
+.you-ppf {
+    background-color: beige;
+    width: 20%;
+}
+
+.neighbor-ppf {
+    background-color: lightblue;
+    width: 20%;
+}
+
+tr {
+    text-align: center;
+    td, th {
+        border: solid 1px black;
+    }
+}
+
+th {
+    font-weight: 500;
+}
+
