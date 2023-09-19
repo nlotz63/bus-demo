@@ -1,5 +1,5 @@
 <div class="econ-interactive-container">
-    <h1 class="mat-headline-5" >Comparative Advantage</h1>
+    <h1 class="mat-headline-5">Comparative Advantage</h1>
     <div class="wrapper">
         <div class="item-narrative">
             <table id="production">
@@ -9,17 +9,35 @@
                     <col span="2" class="you-ppf" />
                     <col span="2" class="neighbor-ppf" />
                 </colgroup>
-                    <tr>
-                        <th></th><th colspan="2">You</th><th colspan="2">Your Neighbor</th>
-                    </tr>
-                    <tr>
-                        <th></th><th>Apples<br/>(pounds)</th><th>Cherries<br/>(pounds)</th><th>Apples<br/>(pounds)</th><th>Cherries<br/>(pounds)</th>
-                    </tr>
                 <tr>
-                    <td>Devote all time to picking apples</td><td><input name="you_apples" aria-label="Your max apples" type="number" [value]="p1x()" min="10" max="30" step="5" (change)="updateView(p1x, $event)" /> </td><td>0 </td><td><input name="neighbor_apples" aria-label="Neighbors max apples" type="number" [value]="p2x()" min="20" max="40" step="5" (change)="updateView(p2x, $event)" /> </td><td>0 </td>
+                    <th></th>
+                    <th colspan="2">You</th>
+                    <th colspan="2">Your Neighbor</th>
                 </tr>
                 <tr>
-                    <td>Devote all time to picking cherries</td><td>0 </td><td><input name="you_cherries" aria-label="Your max cherries" type="number" [value]="p1y()" min="10" max="30" step="5"  (change)="updateView(p1y, $event)" /> </td><td>0 </td><td><input id="p2y" name="neibor_cherries" aria-label="Neighbor max cherries" type="number" [value]="p2y()" min="20" max="40" step="5" (change)="updateView(p2y, $event)" /> </td>
+                    <th></th>
+                    <th>Apples<br />(pounds)</th>
+                    <th>Cherries<br />(pounds)</th>
+                    <th>Apples<br />(pounds)</th>
+                    <th>Cherries<br />(pounds)</th>
+                </tr>
+                <tr>
+                    <td>Devote all time to picking apples</td>
+                    <td><input name="you_apples" aria-label="Your max apples" type="number" [value]="p1y()" min="10"
+                            max="60" step="5" (change)="updateView(p1y, $event)" /> </td>
+                    <td>0 </td>
+                    <td><input name="neighbor_apples" aria-label="Neighbors max apples" type="number" [value]="p2y()"
+                            min="10" max="60" step="5" (change)="updateView(p2y, $event)" /> </td>
+                    <td>0 </td>
+                </tr>
+                <tr>
+                    <td>Devote all time to picking cherries</td>
+                    <td>0 </td>
+                    <td><input name="you_cherries" aria-label="Your max cherries" type="number" [value]="p1x()" min="10"
+                            max="60" step="5" (change)="updateView(p1x, $event)" /> </td>
+                    <td>0 </td>
+                    <td><input id="p2x" name="neibor_cherries" aria-label="Neighbor max cherries" type="number"
+                            [value]="p2x()" min="10" max="60" step="5" (change)="updateView(p2x, $event)" /> </td>
                 </tr>
             </table>
 
@@ -30,31 +48,59 @@
                     <col span="2" class="you-ppf" />
                     <col span="2" class="neighbor-ppf" />
                 </colgroup>
-                    <tr>
-                        <th></th><th colspan="2">You</th><th colspan="2">Your Neighbor</th>
-                    </tr>
-                    <tr>
-                        <th></th><th>Apples<br/>(pounds)</th><th>Cherries<br/>(pounds)</th><th>Apples<br/>(pounds)</th><th>Cherries<br/>(pounds)</th>
-                    </tr>
                 <tr>
-                    <td>Production & consumption without trade</td><td><input name="you_apples" aria-label="Your max apples" type="number" [value]="pc1y()" min="0" [max]="p1y()" step="5" (change)="updateView(pc1y, $event)" /> </td><td>{{pc1x()}} </td><td><input name="neighbor_apples" aria-label="Neighbors max apples" type="number" [value]="p2x()" min="20" max="40" step="5" (change)="updateView(p2x, $event)" /> </td><td>0 </td>
+                    <th></th>
+                    <th colspan="2">You</th>
+                    <th colspan="2">Your Neighbor</th>
                 </tr>
                 <tr>
-                    <td>Production with trade</td><td>0 </td><td><input name="you_cherries" aria-label="Your max cherries" type="number" [value]="p1y()" min="10" max="30" step="5"  (change)="updateView(p1y, $event)" /> </td><td>0 </td><td><input id="p2y" name="neibor_cherries" aria-label="Neighbor max cherries" type="number" [value]="p2y()" min="20" max="40" step="5" (change)="updateView(p2y, $event)" /> </td>
+                    <th></th>
+                    <th>Apples<br />(pounds)</th>
+                    <th>Cherries<br />(pounds)</th>
+                    <th>Apples<br />(pounds)</th>
+                    <th>Cherries<br />(pounds)</th>
                 </tr>
                 <tr>
-                    <td>Consumption with trade</td><td>0 </td><td><input name="you_cherries" aria-label="Your max cherries" type="number" [value]="p1y()" min="10" max="30" step="5"  (change)="updateView(p1y, $event)" /> </td><td>0 </td><td><input id="p2y" name="neibor_cherries" aria-label="Neighbor max cherries" type="number" [value]="p2y()" min="20" max="40" step="5" (change)="updateView(p2y, $event)" /> </td>
+                    <td>Production & consumption without trade</td>
+                    <td>{{pc1y() | number: '0.0-2'}}</td>
+                    <td><input name="you_apples" aria-label="Your max apples" type="number" [value]="pc1x()" min="0"
+                            [max]="p1x()" step="1" (change)="updateView(pc1x, $event)" /></td>
+                    <td>{{pc2y() | number: '0.0-2'}}</td>
+                    <td><input name="neighbor_apples" aria-label="Neighbors max apples" type="number" [value]="pc2x()"
+                            min="0" [max]="p2x()" step="1" (change)="updateView(pc2x, $event)" /></td>
                 </tr>
                 <tr>
-                    <td>Gains from trade</td><td>0 </td><td><input name="you_cherries" aria-label="Your max cherries" type="number" [value]="p1y()" min="10" max="30" step="5"  (change)="updateView(p1y, $event)" /> </td><td>0 </td><td><input id="p2y" name="neibor_cherries" aria-label="Neighbor max cherries" type="number" [value]="p2y()" min="20" max="40" step="5" (change)="updateView(p2y, $event)" /> </td>
+                    <td>Production with trade</td>
+                    <td>{{pwt1y()}}</td>
+                    <td>{{pwt1x()}}</td>
+                    <td>{{pwt2y()}}</td>
+                    <td>{{pwt2x()}}</td>
+                </tr>
+                <tr>
+                    <td>Consumption with trade</td>
+                    <td>{{trade().cwt1y }}</td>
+                    <td>{{trade().cwt1x }}</td>
+                    <td>{{trade().cwt2y}}</td>
+                    <td>{{trade().cwt2x}}</td>
+                </tr>
+                <tr>
+                    <td>Gains from trade</td>
+                    <td>{{gains().g1y}}</td>
+                    <td>{{gains().g1x}}</td>
+                    <td>{{gains().g2y}}</td>
+                    <td>{{gains().g2x}}</td>
                 </tr>
 
 
             </table>
 
-            
+            <p class="terms-narrative">You have the comparative advantage in producing {{ ca1()}}. You can trade one pound of {{ca1()}} for {{exRate() }} pounds of {{ ca2() }}. You trade <input type="number" aria-label="number to trade" [value]="trd1()" min="0" [max]="trade().tradeMax" (change)="updateView(trd1, $event)" /> pounds of {{ca1() }} and in return you receive {{trade().receive}} pounds of {{ca2() }}.</p>
+
+
 
         </div>
-        <div class="item-chart" id="chart1"></div>
+        <div class="item-chart">
+            <div id="chart1"></div>
+            <div id="chart2"></div>
+        </div>
     </div>
-</div>

@@ -1,3 +1,15 @@
+@import '../../app-mixins';
+
+.item-chart {
+    @include flex(5.5 2 55%);
+  }
+  
+  .item-narrative {
+    @include flex(6 .6 60% );
+    margin-right: 5px;
+  }
+  
+
 input {
     width: 30px;
 }
@@ -8,6 +20,8 @@ input:out-of-range {
 
 table  {
     border-collapse: collapse;
+    width: 95%;
+    margin: auto;
 }
 
 caption {
@@ -16,7 +30,7 @@ caption {
 
 .ppf {
 
-    width: 30%;
+    width: 40%;
 }
 
 .you-ppf {
@@ -26,7 +40,7 @@ caption {
 
 .neighbor-ppf {
     background-color: lightblue;
-    width: 20%;
+    width: 40%;
 }
 
 tr {
@@ -38,5 +52,11 @@ tr {
 
 th {
     font-weight: 500;
+}
+
+.terms-narrative {
+    width: 95%;
+    margin: auto;
+    margin-top: 1em;
 }
 
