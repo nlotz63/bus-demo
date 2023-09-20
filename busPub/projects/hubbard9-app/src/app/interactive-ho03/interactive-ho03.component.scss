@@ -11,7 +11,8 @@
   
 
 input {
-    width: 30px;
+    width: 40px;
+    text-align: center;
 }
 input:out-of-range {
     border: solid 3px;

@@ -90,8 +90,8 @@ export class InteractiveHO03Component implements OnInit {
   }); 
 
   exRate = computed(() => {
-    let rate = (this.p1oppCost() + this.p2oppCost()) / 2;
-    return this.p1oppCost() < this.p2oppCost() ? +rate.toPrecision(2) : +(1/ rate).toPrecision(2);
+    let rate = this.p1oppCost() < this.p2oppCost() ? (this.p1oppCost() + this.p2oppCost()) / 2 : (1 / this.p1oppCost() + 1 / this.p2oppCost()) / 2;
+    return rate;
   });
 
   ca1 = computed(() => {
@@ -108,11 +108,11 @@ export class InteractiveHO03Component implements OnInit {
       rec1 = this.exRate() * this.trd1();
     
     return {
-      cwt1x: caCherries ? +(prod1Max - this.trd1()).toPrecision(2) : +rec1.toPrecision(2),
-      cwt1y: !caCherries ? +(prod1Max - this.trd1()).toPrecision(2) : +rec1.toPrecision(2),
-      cwt2x: caCherries ? +rec1.toPrecision(2) : +(prod2Max - this.trd1()).toPrecision(2),
-      cwt2y: !caCherries ? +rec1.toPrecision(2) : +(prod2Max - this.trd1()).toPrecision(2),
-      receive: rec1.toPrecision(2),
+      cwt1x: caCherries ? +(prod1Max - this.trd1()) : +rec1,
+      cwt1y: !caCherries ? +(prod1Max - this.trd1()) : +rec1,
+      cwt2x: caCherries ? this.trd1() : +(prod2Max - rec1),
+      cwt2y: !caCherries ? this.trd1() : +(prod2Max - rec1),
+      receive: rec1,
       tradeMax: prod1Max
     }
   });

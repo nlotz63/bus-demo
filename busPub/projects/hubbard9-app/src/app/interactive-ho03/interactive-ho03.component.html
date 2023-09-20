@@ -78,23 +78,23 @@
                 </tr>
                 <tr>
                     <td>Consumption with trade</td>
-                    <td>{{trade().cwt1y }}</td>
-                    <td>{{trade().cwt1x }}</td>
-                    <td>{{trade().cwt2y}}</td>
-                    <td>{{trade().cwt2x}}</td>
+                    <td>{{trade().cwt1y | number: '0.0-2' }}</td>
+                    <td>{{trade().cwt1x | number: '0.0-2' }}</td>
+                    <td>{{trade().cwt2y | number: '0.0-2'}}</td>
+                    <td>{{trade().cwt2x | number: '0.0-2'}}</td>
                 </tr>
                 <tr>
                     <td>Gains from trade</td>
-                    <td>{{gains().g1y}}</td>
-                    <td>{{gains().g1x}}</td>
-                    <td>{{gains().g2y}}</td>
-                    <td>{{gains().g2x}}</td>
+                    <td>{{gains().g1y | number: '0.0-2'}}</td>
+                    <td>{{gains().g1x | number: '0.0-2'}}</td>
+                    <td>{{gains().g2y | number: '0.0-2'}}</td>
+                    <td>{{gains().g2x | number: '0.0-2'}}</td>
                 </tr>
 
 
             </table>
 
-            <p class="terms-narrative">You have the comparative advantage in producing {{ ca1()}}. You can trade one pound of {{ca1()}} for {{exRate() }} pounds of {{ ca2() }}. You trade <input type="number" aria-label="number to trade" [value]="trd1()" min="0" [max]="trade().tradeMax" (change)="updateView(trd1, $event)" /> pounds of {{ca1() }} and in return you receive {{trade().receive}} pounds of {{ca2() }}.</p>
+            <p class="terms-narrative">You have the comparative advantage in producing {{ ca1()}}. You can trade one pound of {{ca1()}} for {{exRate() | number: '0.0-3' }} pounds of {{ ca2() }}. You trade <input type="number" aria-label="number to trade" [value]="trd1()" min="0" [max]="trade().tradeMax" (change)="updateView(trd1, $event)" /> pounds of {{ca1() }} and in return you receive {{trade().receive | number: '0.0-2'}} pounds of {{ca2() }}.</p>
 
 
 
