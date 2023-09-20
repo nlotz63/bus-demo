@@ -52,7 +52,7 @@ export class InteractiveHO03Component implements OnInit {
   p2x = signal(60);
   p1y = signal(20);
   p2y = signal(30);
-  trd1 = signal(0);
+  trd1 = signal(10);
 
   p1oppCost = computed(() => {
     return this.p1y() / this.p1x();
@@ -63,12 +63,12 @@ export class InteractiveHO03Component implements OnInit {
   });
 
 
-  pc1x = signal(5);
+  pc1x = signal(12);
   pc1y = computed(() => {
     return this.p1y() - this.p1oppCost() * this.pc1x();
   });
 
-  pc2x = signal(5);
+  pc2x = signal(42);
   pc2y = computed(() => {
     return this.p2y() - this.p2oppCost() * this.pc2x();
   });
@@ -120,20 +120,18 @@ export class InteractiveHO03Component implements OnInit {
   gains = computed(() => {
 
     return {
-      g1x: this.trade().cwt1x - this.pc1x(),
-      g1y: this.trade().cwt1y - this.pc1y(),
-      g2x: this.trade().cwt2x - this.pc2x(),
-      g2y: this.trade().cwt2y - this.pc2y(),
+      g1x: +(this.trade().cwt1x - this.pc1x()).toPrecision(2),
+      g1y: +(this.trade().cwt1y - this.pc1y()).toPrecision(2),
+      g2x: +(this.trade().cwt2x - this.pc2x()).toPrecision(2),
+      g2y: +(this.trade().cwt2y - this.pc2y()).toPrecision(2),
     }
     
   });
 
-
-
   graph1 = computed(() => {
     return {
       title: 'Your PPF',
-      caption: 'Your have the absolute',
+      caption: 'Hover over key points and the line to display additional information.',
       xTitle: 'Cherries (in pounds)',
       yTitle: 'Apples (in pounds)',
       xMin: 0,
@@ -146,7 +144,7 @@ export class InteractiveHO03Component implements OnInit {
   graph2 = computed(() => {
     return {
       title: 'Your Neighbor\'s PPF',
-      caption: 'Your have the absolute',
+      caption: 'Hover over key points and the line to display additional information.',
       xTitle: 'Cherries (in pounds)',
       yTitle: 'Apples (in pounds)',
       xMin: 0,
@@ -179,14 +177,21 @@ export class InteractiveHO03Component implements OnInit {
       title: {
         text: `${this.graph1().title}`,
         style: {
-          fontFamily: 'sans-serif',
           fontWeight: '300',
-          fontSize: '1.2em'
+          fontSize: '1em'
 
         }
       },
       legend: { enabled: false },
-      tooltip: { useHTML: true, enabled: true },
+      tooltip: {
+        useHTML: true, enabled: true,
+        positioner: function (w, h, p) {
+          const x = this.chart.plotWidth - .75*w, y = h;
+          return {x: x, y: y}
+        },
+        borderWidth: 0,
+        shadow: false
+      },
       accessibility: {
         point: {
           valueDescriptionFormat: `quantity: {point.x:.0f}, {point.name}: {point.y:.2f} dollars.`
@@ -202,7 +207,53 @@ export class InteractiveHO03Component implements OnInit {
           lineWidth: 2,
           color: '#779A3D',
           data: yourPPF,
-          label: {enabled: false}
+          label: { enabled: false },
+          tooltip: {
+            headerFormat: `<b>Your PPF</b><br/>`,
+            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p1oppCost().toFixed(2)} pounds of apples.`
+          }
+        },
+        {
+          type: 'line',
+          name: 'Production',
+          color: '#F5F5DC',
+          data: [{
+            x: this.ca1() === 'cherries' ? this.pwt1x() : 0,
+            y: this.ca1() === 'cherries' ? 0  : this.pwt1y()
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Production point</b><br/>',
+            pointFormat: `You have the comparative<br/>advantage in producing ${this.ca1()}.`
+          }
+        },
+        {
+          type: 'line',
+          name: 'Production & Consumption',
+          color: '#F5F5DC',
+          data: [{
+            x: this.pc1x(),
+            y: this.pc1y()
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Production & Consumption</b><br/>',
+            pointFormat: `Your production and consumption<br/>without trade.`
+          }
+        },
+        {
+          type: 'line',
+          name: 'Consumption with Trade',
+          color: '#F5F5DC',
+          data: [{
+            x: this.trade().cwt1x,
+            y: this.trade().cwt1y
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Consumption with Trade</b><br/>',
+            pointFormat: `Your Consumption with trade.`
+          }
         },
       ],
       xAxis: {
@@ -228,10 +279,6 @@ export class InteractiveHO03Component implements OnInit {
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
-          tooltip: {
-            headerFormat: '',
-            pointFormat: `<b>${this.graph1().xTitle}: </b>{point.x:,.2f}<br/><b>${this.graph1().yTitle}:</b> {point.y:.2f}<br/><b>Opp. Cost:</b> {point.oppCost:.2f} ${this.graph1().yTitle}`
-          },
           label: { enabled: true, style: { fontSize: '.75em' } }
         }
       },
@@ -253,14 +300,21 @@ export class InteractiveHO03Component implements OnInit {
       title: {
         text: `${this.graph2().title}`,
         style: {
-          fontFamily: 'sans-serif',
           fontWeight: '300',
-          fontSize: '1.2em'
+          fontSize: '1em'
 
         }
       },
       legend: { enabled: false },
-      tooltip: { useHTML: true, enabled: true },
+      tooltip: {
+        useHTML: true, enabled: true,
+        positioner: function (w, h, p) {
+          const x = this.chart.plotWidth - .75*w, y = h;
+          return {x: x, y: y}
+        },
+        borderWidth: 0,
+        shadow: false
+      },
       accessibility: {
         point: {
           valueDescriptionFormat: `quantity: {point.x:.0f}, {point.name}: {point.y:.2f} dollars.`
@@ -276,9 +330,54 @@ export class InteractiveHO03Component implements OnInit {
           lineWidth: 2,
           color: '#779A3D',
           data: [{ x: 0, y: this.p2y(), name: this.p1oppCost() }, { x: this.p2x(), y: 0 }],
-          label: {enabled: false}
-        }
-
+          label: { enabled: false },
+          tooltip: {
+            headerFormat: `<b>Neighbor's PPF</b><br/>`,
+            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p2oppCost().toFixed(2)} pounds of apples.`
+          }
+        },
+        {
+          type: 'line',
+          name: 'Production',
+          color: '#ADD8E6',
+          data: [{
+            x: this.ca2() === 'cherries' ? this.pwt2x() : 0,
+            y: this.ca2() === 'cherries' ? 0  : this.pwt2y()
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Production point</b><br/>',
+            pointFormat: `Your neighbor has the comparative<br/>advantage in producing ${this.ca2()}.`,
+          }
+        },
+        {
+          type: 'line',
+          name: 'Production & Consumption',
+          color: '#ADD8E6',
+          data: [{
+            x: this.pc2x(),
+            y: this.pc2y()
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Production & Consumption</b><br/>',
+            pointFormat: `Your neighbor's production and<br/>consumption without trade.`
+          }
+        },
+        {
+          type: 'line',
+          name: 'Consumption with Trade',
+          color: '#ADD8E6',
+          data: [{
+            x: this.trade().cwt2x,
+            y: this.trade().cwt2y
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Consumption with Trade</b><br/>',
+            pointFormat: `Your neighbor's Consumption<br/>with trade.`
+          }
+        },
       ],
       xAxis: {
         lineColor: '#757575',
@@ -303,10 +402,6 @@ export class InteractiveHO03Component implements OnInit {
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
-          tooltip: {
-            headerFormat: '',
-            pointFormat: `<b>${this.graph2().xTitle}: </b>{point.x:,.2f}<br/><b>${this.graph2().yTitle}:</b> {point.y:.2f}<br/><b>Opp. Cost:</b> {point.oppCost:.2f} ${this.graph2().yTitle}`
-          },
           label: { enabled: true, style: { fontSize: '.75em' } }
         }
       },
@@ -319,7 +414,6 @@ export class InteractiveHO03Component implements OnInit {
   public updateView(input: WritableSignal<number>, event: any) {
     let value = event.target.valueAsNumber;
     input.set(value);
-    console.log(event);
 
     this.chart.update({
       series: [
@@ -327,9 +421,40 @@ export class InteractiveHO03Component implements OnInit {
           type: 'line',
           name: 'Your PPF',
           lineWidth: 2,
-          data: [{ x: 0, y: this.p1y()}, {x: this.p1x(), y: 0} ]
+          data: [{ x: 0, y: this.p1y() }, { x: this.p1x(), y: 0 }],
+          tooltip: {
+            headerFormat: `<b>Your PPF</b><br/>`,
+            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p1oppCost().toFixed(2)} pounds of apples.`
+          }
         },
-
+        {
+          type: 'line',
+          name: 'Production',
+          data: [{
+            x: this.ca1() === 'cherries' ? this.pwt1x() : 0,
+            y: this.ca1() === 'cherries' ? 0  : this.pwt1y()
+          }],
+          tooltip: {
+            headerFormat: '<b>Production point</b><br/>',
+            pointFormat: `You have the<br/>comparative advantage in producing ${this.ca1()}.`
+          }
+        },
+        {
+          type: 'line',
+          name: 'Production & Consumption',
+          data: [{
+            x: this.pc1x(),
+            y: this.pc1y()
+          }],
+        },
+        {
+          type: 'line',
+          name: 'Consumption with Trade',
+          data: [{
+            x: this.trade().cwt1x,
+            y: this.trade().cwt1y
+          }],
+        },
       ],
     });
 
@@ -339,9 +464,51 @@ export class InteractiveHO03Component implements OnInit {
           type: 'line',
           name: 'Neighbor\'s PPF',
           lineWidth: 2,
-          data: [{ x: 0, y: this.p2y() }, {x: this.p2x(), y: 0} ]
-        }
-
+          data: [{ x: 0, y: this.p2y() }, { x: this.p2x(), y: 0 }],
+          tooltip: {
+            headerFormat: `<b>Your PPF</b><br/>`,
+            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p2oppCost().toFixed(2) } pounds of apples.`,
+          }
+        },
+        {
+          type: 'line',
+          name: 'Production',
+          data: [{
+            x: this.ca2() === 'cherries' ? this.pwt2x() : 0,
+            y: this.ca2() === 'cherries' ? 0  : this.pwt2y()
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Production point</b><br/>',
+            pointFormat: `Your neighbor has the comparative advantage<br/>in producing ${this.ca2()}.`
+          }
+        },
+        {
+          type: 'line',
+          name: 'Production & Consumption',
+          data: [{
+            x: this.pc2x(),
+            y: this.pc2y()
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Production & Consumption</b><br/>',
+            pointFormat: `Your neighbor's production and<br/>consumption without trade.`
+          }
+        },
+        {
+          type: 'line',
+          name: 'Consumption with Trade',
+          data: [{
+            x: this.trade().cwt2x,
+            y: this.trade().cwt2y
+          }],
+          marker: { enabled: true, radius: 3.5, lineColor: 'black', lineWidth: 1 },
+          tooltip: {
+            headerFormat: '<b>Consumption with Trade</b><br/>',
+            pointFormat: `Your neighbor's Consumption<br/>with trade.`
+          }
+        },
       ]
 
     });
