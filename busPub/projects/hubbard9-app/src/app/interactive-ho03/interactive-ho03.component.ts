@@ -9,12 +9,7 @@ import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { MatRadioModule } from '@angular/material/radio';
-import { BusPubLibModule } from 'bus-pub-lib';
 import { ModelService } from '../model.service';
-import { ActivatedRoute } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -26,7 +21,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-interactive-ho03',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule ],
   templateUrl: './interactive-ho03.component.html',
   styleUrls: ['./interactive-ho03.component.scss'],
   animations: [
@@ -131,7 +126,7 @@ export class InteractiveHO03Component implements OnInit {
   graph1 = computed(() => {
     return {
       title: 'Your PPF',
-      caption: 'Hover over key points and the line to display additional information.',
+      caption: 'Hover over key points and the PPF to display additional information.',
       xTitle: 'Cherries (in pounds)',
       yTitle: 'Apples (in pounds)',
       xMin: 0,
@@ -144,7 +139,7 @@ export class InteractiveHO03Component implements OnInit {
   graph2 = computed(() => {
     return {
       title: 'Your Neighbor\'s PPF',
-      caption: 'Hover over key points and the line to display additional information.',
+      caption: 'Hover over key points and the PPF to display additional information.',
       xTitle: 'Cherries (in pounds)',
       yTitle: 'Apples (in pounds)',
       xMin: 0,
@@ -210,7 +205,7 @@ export class InteractiveHO03Component implements OnInit {
           label: { enabled: false },
           tooltip: {
             headerFormat: `<b>Your PPF</b><br/>`,
-            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p1oppCost().toFixed(2)} pounds of apples.`
+            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p1y()}/${this.p1x()} = ${this.p1oppCost().toFixed(2)} pounds of apples.`
           }
         },
         {
@@ -333,7 +328,7 @@ export class InteractiveHO03Component implements OnInit {
           label: { enabled: false },
           tooltip: {
             headerFormat: `<b>Neighbor's PPF</b><br/>`,
-            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p2oppCost().toFixed(2)} pounds of apples.`
+            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p2y()}/${this.p2x()} = ${this.p2oppCost().toFixed(2)} pounds of apples.`
           }
         },
         {
@@ -413,7 +408,7 @@ export class InteractiveHO03Component implements OnInit {
 
   public updateView(input: WritableSignal<number>, event: any) {
     let value = event.target.valueAsNumber;
-    input.set(value);
+    input.set(value); //?
 
     this.chart.update({
       series: [
@@ -424,7 +419,7 @@ export class InteractiveHO03Component implements OnInit {
           data: [{ x: 0, y: this.p1y() }, { x: this.p1x(), y: 0 }],
           tooltip: {
             headerFormat: `<b>Your PPF</b><br/>`,
-            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p1oppCost().toFixed(2)} pounds of apples.`
+            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p1y()}/${this.p1x()} = ${this.p1oppCost().toFixed(2)} pounds of apples.`
           }
         },
         {
@@ -467,7 +462,7 @@ export class InteractiveHO03Component implements OnInit {
           data: [{ x: 0, y: this.p2y() }, { x: this.p2x(), y: 0 }],
           tooltip: {
             headerFormat: `<b>Your PPF</b><br/>`,
-            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p2oppCost().toFixed(2) } pounds of apples.`,
+            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p2y()}/${this.p2x()} = ${this.p2oppCost().toFixed(2)} pounds of apples.`
           }
         },
         {

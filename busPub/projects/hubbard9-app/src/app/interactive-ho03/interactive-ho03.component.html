@@ -2,6 +2,18 @@
     <h1 class="mat-headline-5">Comparative Advantage</h1>
     <div class="wrapper">
         <div class="item-narrative">
+            <ul>
+                <li>Use this interactive to explore a variety of scenarios to help you better understand comparative advantage and gains from trade.</li>
+                <li>
+                    The graphs show the opportunity cost of producing cherries for each person, which is simply the slope of the PPF.                                                                                                                                     
+                </li>
+                <li>
+                    The opportunity cost of picking apples is the inverse of the opportunity cost of picking cherries. 
+                </li>
+                <li>
+                    Whoever has the lowest opportunity cost picking cherries has the comparative advantage picking cherries. The other person has the comparative advantage picking apples.
+                </li>
+            </ul>
             <table id="production">
                 <caption>Production Possibilities</caption>
                 <colgroup>
@@ -42,7 +54,7 @@
             </table>
 
             <table id="trade">
-                <caption>Production and Consumption</caption>
+                <caption>Production, Consumption, and Trade</caption>
                 <colgroup>
                     <col class="ppf" />
                     <col span="2" class="you-ppf" />
@@ -94,7 +106,11 @@
 
             </table>
 
-            <p class="terms-narrative">You have the comparative advantage in producing {{ ca1()}}. You can trade one pound of {{ca1()}} for {{exRate() | number: '0.0-3' }} pounds of {{ ca2() }}. You trade <input type="number" aria-label="number to trade" [value]="trd1()" min="0" [max]="trade().tradeMax" (change)="updateView(trd1, $event)" /> pounds of {{ca1() }} and in return you receive {{trade().receive | number: '0.0-2'}} pounds of {{ca2() }}.</p>
+            <p *ngIf="p2oppCost() !== p1oppCost()" class="terms-narrative">You have the comparative advantage in producing {{ ca1()}}. Suppose you can trade 1 pound of {{ca1()}} for {{exRate() | number: '0.0-3' }} pounds of {{ ca2() }}. You trade <input type="number" aria-label="number to trade" [value]="trd1()" min="0" [max]="trade().tradeMax" (change)="updateView(trd1, $event)" /> pounds of {{ca1() }} for {{trade().receive | number: '0.0-2'}} pounds of {{ca2() }}.</p>
+
+            <p *ngIf="p2oppCost() === p1oppCost()" class="terms-narrative">
+                You and your neighbor have the same opportunity cost picking cherries; therefore, neither of you have a comparative advantage. You can still trade but there will be no gain. You trade <input type="number" aria-label="number to trade" [value]="trd1()" min="0" [max]="trade().tradeMax" (change)="updateView(trd1, $event)" /> pounds of {{ca1() }} for {{trade().receive | number: '0.0-2'}} pounds of {{ca2() }}.
+            </p>
 
 
 
