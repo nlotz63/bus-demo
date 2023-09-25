@@ -33,7 +33,7 @@ table  {
 
 caption {
     font-weight: 400;
-    font-size: 1.5em;
+    font-size: 1.25em;
     margin-top: .6em;
 }
 
@@ -80,6 +80,12 @@ th {
     border-top: none;
     border-bottom: none;
 }
+
+tr td:nth-child(-n+1) {
+    text-align: left;
+    padding-left: 2%;
+}
+
 .top-right-corner {
     border-top-right-radius: 5px;
 }
