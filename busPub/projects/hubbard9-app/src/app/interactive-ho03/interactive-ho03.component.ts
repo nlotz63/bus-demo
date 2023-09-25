@@ -205,7 +205,8 @@ export class InteractiveHO03Component implements OnInit {
           label: { enabled: false },
           tooltip: {
             headerFormat: `<b>Your PPF</b><br/>`,
-            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p1y()}/${this.p1x()} = ${this.p1oppCost().toFixed(2)} pounds of apples.`
+            pointFormat: `Opportunity cost per pound of:<br/>cherries is ${this.p1y()}/${this.p1x()} = ${this.p1oppCost().toFixed(2)} pounds of apples<br/>
+            apples is ${this.p1x()}/${this.p1y()} = ${(1/this.p1oppCost()).toFixed(2)} pounds of cherries`
           }
         },
         {
@@ -328,7 +329,8 @@ export class InteractiveHO03Component implements OnInit {
           label: { enabled: false },
           tooltip: {
             headerFormat: `<b>Neighbor's PPF</b><br/>`,
-            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p2y()}/${this.p2x()} = ${this.p2oppCost().toFixed(2)} pounds of apples.`
+            pointFormat: `Opportunity cost per pound of:<br/>cherries is ${this.p2y()}/${this.p2x()} = ${this.p2oppCost().toFixed(2)} pounds of apples<br/>
+            apples is ${this.p2x()}/${this.p2y()} = ${(1/this.p2oppCost()).toFixed(2)} pounds of cherries`
           }
         },
         {
@@ -419,7 +421,8 @@ export class InteractiveHO03Component implements OnInit {
           data: [{ x: 0, y: this.p1y() }, { x: this.p1x(), y: 0 }],
           tooltip: {
             headerFormat: `<b>Your PPF</b><br/>`,
-            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p1y()}/${this.p1x()} = ${this.p1oppCost().toFixed(2)} pounds of apples.`
+            pointFormat: `Opportunity cost per pound of:<br/>cherries is ${this.p1y()}/${this.p1x()} = ${this.p1oppCost().toFixed(2)} pounds of apples<br/>
+            apples is ${this.p1x()}/${this.p1y()} = ${(1/this.p1oppCost()).toFixed(2)} pounds of cherries`
           }
         },
         {
@@ -462,7 +465,8 @@ export class InteractiveHO03Component implements OnInit {
           data: [{ x: 0, y: this.p2y() }, { x: this.p2x(), y: 0 }],
           tooltip: {
             headerFormat: `<b>Your PPF</b><br/>`,
-            pointFormat: `Opportunity cost per pound of<br/>cherries is ${this.p2y()}/${this.p2x()} = ${this.p2oppCost().toFixed(2)} pounds of apples.`
+            pointFormat: `Opportunity cost per pound of:<br/>cherries is ${this.p2y()}/${this.p2x()} = ${this.p2oppCost().toFixed(2)} pounds of apples<br/>
+            apples is ${this.p2x()}/${this.p2y()} = ${(1/this.p2oppCost()).toFixed(2)} pounds of cherries`
           }
         },
         {
