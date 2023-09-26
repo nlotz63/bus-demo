@@ -464,7 +464,7 @@ export class InteractiveHO03Component implements OnInit {
           lineWidth: 2,
           data: [{ x: 0, y: this.p2y() }, { x: this.p2x(), y: 0 }],
           tooltip: {
-            headerFormat: `<b>Your PPF</b><br/>`,
+            headerFormat: `<b>Neighbor's PPF</b><br/>`,
             pointFormat: `Opportunity cost per pound of:<br/>cherries is ${this.p2y()}/${this.p2x()} = ${this.p2oppCost().toFixed(2)} pounds of apples<br/>
             apples is ${this.p2x()}/${this.p2y()} = ${(1/this.p2oppCost()).toFixed(2)} pounds of cherries`
           }
