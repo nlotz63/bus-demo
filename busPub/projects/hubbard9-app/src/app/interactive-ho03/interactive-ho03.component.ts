@@ -35,7 +35,6 @@ HC_accessibility(Highcharts);
       ])
     ])
   ],
-
 })
 export class InteractiveHO03Component implements OnInit {
 

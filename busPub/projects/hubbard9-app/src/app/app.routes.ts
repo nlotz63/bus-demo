@@ -1,3 +1,4 @@
+import { Macro01hoComponent } from './macro01ho/macro01ho.component';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -6,6 +7,7 @@ export const routes: Routes = [
     { path: 'interactive01', loadComponent: () => import('./interactive01/interactive01.component').then(m => m.Interactive01Component), title: 'HO: supply/demand model' },
     { path: 'interactive02', loadComponent: () => import('./interactive02/interactive02.component').then(m => m.Interactive02Component), title: 'HO: PPF Model' },
     { path: 'interactive03', loadComponent: () => import('./interactive-ho03/interactive-ho03.component').then(m => m.InteractiveHO03Component), title: 'HO: comparative advantage' },
+    { path: 'macrointeractive01', loadComponent: () => import('./macro01ho/macro01ho.component').then( m => m.Macro01hoComponent), title: 'HO: Expenditure model'},
 
 
     // child routes for instructor view
@@ -16,6 +18,8 @@ export const routes: Routes = [
             { path: 'interactive02', loadComponent: () => import('./interactive02/interactive02.component').then(m => m.Interactive02Component), title: 'HO: PPF Model' },
             { path: 'interactive03', loadComponent: () => import('./interactive-ho03/interactive-ho03.component').then(m => m.InteractiveHO03Component), title: 'HO: comparative advantage' },
             { path: 'Figure 3.1', loadComponent: () => import('./figure31/figure31.component').then(m => m.Figure31Component), title: 'HO: Demand Schedule' },
+            { path: 'macrointeractive01', loadComponent: () => import('./macro01ho/macro01ho.component').then( m => m.Macro01hoComponent), title: 'HO: Expenditure model'},
+
 
         ]
     },

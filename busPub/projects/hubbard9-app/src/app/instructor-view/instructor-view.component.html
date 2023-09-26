@@ -18,8 +18,9 @@
     <button mat-menu-item [matMenuTriggerFor]="chapter13">13: Monopolistic Competition</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter15">15: Externalities</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter17">17: Taxation and Government Spending</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter20">20: International Trade</button>
-
+    <button mat-menu-item [matMenuTriggerFor]="chapter20">20: Economic Growth</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter21">21: Long-Run Economic Growth</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter22">22: Aggregate Expenditure and Output in the Short Run</button>
     <button mat-menu-item (click)="viewFullscreen()">View Fullscreen</button>
 
   </mat-menu>
@@ -135,8 +136,20 @@
       The Effects of Tariffs
     </a>
   </mat-menu>
-
-
+  <mat-menu #chapter21>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive08']" skipLocationChange
+      (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      The Effects of Tariffs
+    </a>
+  </mat-menu>
+  <mat-menu #chapter22>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive01']" skipLocationChange
+      (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Aggregate Expenditure Model
+    </a>
+  </mat-menu>
   <div class="econ-model-container" id="model">
     <router-outlet></router-outlet>
   </div>
