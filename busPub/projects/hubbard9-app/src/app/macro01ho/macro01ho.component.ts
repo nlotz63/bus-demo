@@ -1,4 +1,5 @@
-import { Component, ElementRef, OnInit, signal, computed, Signal, WritableSignal } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, computed } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -9,8 +10,8 @@ import HC_annotate from 'highcharts/modules/annotations';
 import HC_labels from 'highcharts/modules/series-label';
 import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ModelService } from '../model.service';
 import { MacroModelService } from '../macro-model.service';
+import { BusPubLibModule } from 'bus-pub-lib';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -21,7 +22,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-macro01ho',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BusPubLibModule],
   templateUrl: './macro01ho.component.html',
   styleUrls: ['./macro01ho.component.scss'],
   animations: [
@@ -35,7 +36,6 @@ HC_accessibility(Highcharts);
       ])
     ])
   ],
-
 })
   
   
@@ -43,7 +43,7 @@ export class Macro01hoComponent implements OnInit {
 
   chart!: Highcharts.Chart;
   // signals here
-
+  shiftC0 = signal(5);
 
   graph = signal({
     title: 'Aggregate Expenditure',
@@ -56,18 +56,39 @@ export class Macro01hoComponent implements OnInit {
     yMax: 28,
   });
 
+  modelParams = computed(() => {
+
+    return {
+      c0: this.shiftC0(),
+      mpc: .6,
+      T: .25,
+      i0: 1,
+      iy: 0,
+      ir: .03
+    }
+  });
+
+  modelParams$ = toObservable(this.modelParams);
+
   constructor(private announcer: LiveAnnouncer, private el: ElementRef, private macroService: MacroModelService) {}
 
   ngOnInit(): void {
-    this._setupGraph();
-    
+
+    this.modelParams$.subscribe((params) => {
+      this.macroService.setParamters(params);
+      this._setupGraph();
+    })
+  // this._setupGraph();
   }
   public updateGraph() {
 
   }
 
   private _setupGraph() {
+    const consumption = this.macroService.AE(0).consumption;
+    const cPlusI = this.macroService.AE(1).consumption;
     const container = this.el.nativeElement.querySelector('#chart1');
+    console.log();
     this.chart = new Highcharts.Chart(container, {
       chart: {
         height: 550,
@@ -111,7 +132,18 @@ export class Macro01hoComponent implements OnInit {
       series: [
         {
           type: 'line',
-          name: '45 degree line',
+          lineWidth: 2,
+          data: consumption
+        },
+        {
+          type: 'line',
+          lineWidth: 2,
+          data: cPlusI
+      },
+
+        {
+          type: 'line',
+          name: 'Y = AE',
           lineWidth: 1,
           color: 'black',
           data: [[0,0], [26, 26]]
@@ -141,7 +173,8 @@ export class Macro01hoComponent implements OnInit {
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
-          label: { enabled: true, style: { fontSize: '.75em' } }
+          label: { enabled: true, style: { fontSize: '.75em' } },
+          animation: false
         }
       },
 
