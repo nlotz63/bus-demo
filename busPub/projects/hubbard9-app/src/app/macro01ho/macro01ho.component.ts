@@ -43,7 +43,7 @@ export class Macro01hoComponent implements OnInit {
 
   chart!: Highcharts.Chart;
   // signals here
-  shiftC0 = signal(5);
+  shiftC0 = signal(1);
 
   graph = signal({
     title: 'Aggregate Expenditure',
@@ -60,11 +60,14 @@ export class Macro01hoComponent implements OnInit {
 
     return {
       c0: this.shiftC0(),
-      mpc: .6,
-      T: .25,
-      i0: 1,
+      mpc: .75,
+      t0: .09,
+      t1: 0.05,
+      i0: 2.5,
       iy: 0,
-      ir: .03
+      ir: .03,
+      g0: 2.5,
+      nx0: -1
     }
   });
 
@@ -85,10 +88,9 @@ export class Macro01hoComponent implements OnInit {
   }
 
   private _setupGraph() {
-    const consumption = this.macroService.AE(0).consumption;
-    const cPlusI = this.macroService.AE(1).consumption;
+    const consumption = this.macroService.seriesMaker(0, 30, .5, (x: number) => 1 + .5*x);
+    const cPlusI = this.macroService.AE(3).consumption;
     const container = this.el.nativeElement.querySelector('#chart1');
-    console.log();
     this.chart = new Highcharts.Chart(container, {
       chart: {
         height: 550,

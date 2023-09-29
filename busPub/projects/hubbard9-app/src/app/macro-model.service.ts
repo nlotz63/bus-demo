@@ -1,37 +1,66 @@
 import { Injectable } from '@angular/core';
 
+export interface MacroModel {
+  c0: number,
+  mpc: number,
+  t0: number,
+  t1: number,
+  i0: number,
+  iy: number,
+  ir: number,
+  g0: number,
+  nx0: number,
+  nxy: number,
+  nxyf: number,
+
+
+  [key: string]: number 
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class MacroModelService {
 
-  c0 = 5;
-  mpc = .6;
-  T = .25;
-  i0 = 1;
-  iy = .1;
-  ir = .03;
+  params: MacroModel = {
+    c0: 5,
+    mpc: .6,
+    t0: .25,
+    t1: .002,
+    i0: 3.4,
+    iy: .1,
+    ir: .03,
+    g0: 3.1,
+    nx0: .9,
+    nxy: 0,
+    nxyf: 0
+  }
 
   constructor() { }
 
   public setParamters(userParams: any) {
 
-    this.c0 = userParams.c0;
-    this.mpc = userParams.mpc;
-    this.T = userParams.T;
-    this.i0 = userParams.i0;
-    this.iy = userParams.iy;
-    this.ir = userParams.ir;
+    for (const key in userParams) {
+      if (key in userParams) {
+        this.params[key] = userParams[key];
+      }
+    }
 
+  }
 
+  private T(x: number) {
+    const param = this.params;
+    return param.t0 + param.t1 * x;
   }
 
   private C(x: number) {
-    return this.c0 + this.mpc * (x - this.T);
+    const param = this.params;
+    return param.c0 + param.mpc * (x - this.T(x));
   }
 
   private I(x: number, r: number) {
-    return this.i0 + this.iy * x - this.ir * r;
+    const param = this.params;
+    return param.i0 + param.iy * x - param.ir * r;
   }
 
   public consumptionSeries() {
@@ -75,6 +104,8 @@ export class MacroModelService {
 
   public AE(components: number) {
     let aeSeries: any[] = [], x = 0, xMax = 100;
+    const param = this.params;
+
     do {
       let y;
       switch (components) {
@@ -82,10 +113,13 @@ export class MacroModelService {
           y = this.C(x);
           break;
         case 1:
-          y = this.C(x) + this.I(x, 0)
+          y = this.C(x) + this.I(x, 0);
           break;
         case 2:
+          y = this.C(x) + this.I(x, 0) + param.g0;
+          break;
         default:
+          y = this.C(x) + this.I(x, 0) + param.g0 + param.nx0;
           break;
       }
 
@@ -96,7 +130,7 @@ export class MacroModelService {
         }
       );
 
-      x = x + 5;
+      x = x + .25;
 
     } while (x <= xMax)
 
@@ -106,6 +140,24 @@ export class MacroModelService {
       consumption: aeSeries
     }
 
+
+  }
+
+  public seriesMaker(xMin: number, xMax: number, step: number, myMethod: CallableFunction) {
+    let series: any[] = [], x = xMin;
+
+    do {
+      series.push({
+        x: x,
+        y: myMethod(x)
+
+      });
+
+      x = x + step;
+
+    } while (x <= xMax);
+
+    return series
 
   }
 

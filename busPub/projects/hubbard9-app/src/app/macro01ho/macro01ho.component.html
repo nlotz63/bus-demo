@@ -16,9 +16,9 @@
             </ul>
             <econ-slider
             label="Consumption"
-            min="2"
-            max="8"
-            value="5"
+            min="0"
+            max="2"
+            [value]="shiftC0()"
             step=".1"
             (valueChange)="shiftC0.set($event)"
             ></econ-slider>
