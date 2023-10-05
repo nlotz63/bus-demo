@@ -43,17 +43,17 @@ export class Macro01hoComponent implements OnInit {
 
   chart!: Highcharts.Chart;
   // signals here
-  shiftC0 = signal(2);
+  shiftC0 = signal(.8);
 
   graph = signal({
     title: 'Aggregate Expenditure',
     caption: '',
     xTitle: 'Real GDP, Y (trillions of 2012 dollars)',
     yTitle: 'Real aggregate expenditure, AE (tillions of 2012 dollars)',
-    xMin: 0,
-    xMax: 28,
-    yMin: 0,
-    yMax: 28,
+    xMin: 19,
+    xMax: 21,
+    yMin: 19,
+    yMax: 21,
   });
 
   modelParams = computed(() => {
@@ -61,11 +61,11 @@ export class Macro01hoComponent implements OnInit {
     return {
       c0: this.shiftC0(),
       cy: .75,
-      t0: 0.25,
+      t0: 0,
       t1: 0,
-      i0: 2,
+      i0: 2.5,
       iy: 0,
-      ir: .35,
+      ir: 0,
       g0: 2.5,
       nx0: -1
     }
@@ -79,17 +79,39 @@ export class Macro01hoComponent implements OnInit {
 
     this.modelParams$.subscribe((params) => {
       this.macroService.setParamters(params);
-      this._setupGraph();
+      this.updateGraph();
     })
-  // this._setupGraph();
+   this._setupGraph();
   }
   public updateGraph() {
+    const series = this.macroService.AEModel('AE');
+
+    this.chart.update({
+      series: [
+        {
+          type: 'line',
+          name: 'AE',
+          lineWidth: 2,
+          zIndex: 0,
+          data: series.AE
+        },
+        {
+          type: 'line',
+          lineWidth: 1,
+          dashStyle: 'Dot',
+          color: 'black',
+          zIndex: 1,
+          data: series.EQ,
+          marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1}
+        },
+
+      ]
+    });
 
   }
 
   private _setupGraph() {
-    const consumption = this.macroService.AE('AE').consumption;
-    const cPlusI = this.macroService.AE('C').consumption;
+    const series = this.macroService.AEModel('AE');
     const container = this.el.nativeElement.querySelector('#chart1');
     this.chart = new Highcharts.Chart(container, {
       chart: {
@@ -117,8 +139,8 @@ export class Macro01hoComponent implements OnInit {
       tooltip: {
         useHTML: true, enabled: true,
         positioner: function (w, h, p) {
-          const x = this.chart.plotWidth - .75*w, y = h;
-          return {x: x, y: y}
+          const x = this.chart.plotWidth - .75 * w, y = h;
+          return { x: x, y: y }
         },
         borderWidth: 0,
         shadow: false
@@ -134,22 +156,41 @@ export class Macro01hoComponent implements OnInit {
       series: [
         {
           type: 'line',
+          name: 'AE',
+          color: '#9F8F6D',
           lineWidth: 2,
-          data: consumption
+          zIndex: 0,
+          data: series.AE
         },
         {
           type: 'line',
-          lineWidth: 2,
-          data: cPlusI
-      },
-
+          name: 'Equlibrium',
+          lineWidth: 1,
+          dashStyle: 'Dot',
+          color: 'black',
+          zIndex: 1,
+          data: series.EQ,
+          marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1 },
+          label: {enabled: false}
+        },
         {
           type: 'line',
           name: 'Y = AE',
           lineWidth: 1,
           color: 'black',
           data: [[0,0], [26, 26]]
-        }
+        },
+        {
+          type: 'line',
+          name: 'Initial AE',
+          color: '#9F8F6D',
+          lineWidth: 1,
+          dashStyle: 'LongDash',
+          zIndex: 0,
+          data: series.AE,
+          label: {enabled: false}
+        },
+
 
       ],
       xAxis: {
@@ -159,8 +200,7 @@ export class Macro01hoComponent implements OnInit {
         title: { useHTML: true, text: `${this.graph().xTitle}` },
         min: this.graph().xMin,
         max: this.graph().xMax,
-        tickInterval: 2
-      },
+        tickInterval: .2      },
       yAxis: {
         gridLineWidth: 0,
         lineColor: '#757575',
@@ -170,7 +210,7 @@ export class Macro01hoComponent implements OnInit {
         title: { useHTML: true, text: `${this.graph().yTitle}` },
         min: this.graph().yMin,
         max: this.graph().yMax,
-        tickInterval: 2
+        tickInterval: .2
       },
       plotOptions: {
         series: {

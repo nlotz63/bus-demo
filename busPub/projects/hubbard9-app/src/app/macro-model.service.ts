@@ -95,8 +95,10 @@ export class MacroModelService {
 
   private LM = (x: number) => { return (-this.params.M + this.params.l0 * this.params.P - this.params.lr * this.params.P * this.params.piE + this.params.ly * this.params.P * x) / (this.params.lr * this.params.P); }
 
+  private AE = (x: number) => this.C(x) + this.I(x, 0) + this.G(x) + this.params.nx0;
+
   private findEq = (xLower: number, xUpper: number, objective1: CallableFunction, objective2: CallableFunction) => {
-    let epsilon = 0.00000001, diff: number, eqX: number, count = 0;
+    let epsilon = 0.0000000001, diff: number, eqX: number, count = 0;
 
     do {
       let midx = (xLower + xUpper) / 2;
@@ -115,7 +117,7 @@ export class MacroModelService {
   }
 
 
-  public AE(components: string) {
+  public AEModel(components: string) {
     let aeSeries: any[] = [], x = 0, xMax = 100;
     const param = this.params;
 
@@ -132,7 +134,7 @@ export class MacroModelService {
           y = param.g0;
           break;
         default:
-          y = this.C(x) + this.I(x, 0) + param.g0 + param.nx0;
+          y = this.AE(x);
           break;
       }
       aeSeries.push(
@@ -145,12 +147,28 @@ export class MacroModelService {
       x = x + .25;
 
     } while (x <= xMax)
-    const eq = this.findEq(0, 28, (value: number) => value, this.IS)
+    const eq = this.findEq(0, 28, (value: number) => value, this.AE)
 
-    console.log(eq);
+    const eqSeries = [
+      {
+        x: 0,
+        y: this.AE(eq)
+      },
+      {
+        x: eq,
+        y: this.AE(eq),
+        marker: {enabled: true}
+      },
+      {
+        x: eq,
+        y: 0
+      }
+    ]
+
 
     return {
-      consumption: aeSeries
+      AE: aeSeries,
+      EQ: eqSeries
     }
 
 

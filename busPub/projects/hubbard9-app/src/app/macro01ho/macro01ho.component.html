@@ -1,7 +1,9 @@
 <div class="econ-interactive-container">
-    <h1 class="mat-headline-5">Comparative Advantage</h1>
+    <h1 class="mat-headline-5">Expenditure Model</h1>
     <div class="wrapper">
         <div class="item-narrative">
+            <h2 class="mat-headline-6">The Multiplier Effect</h2>
+
             <ul>
                 <li>Use this interactive to explore a variety of scenarios to help you better understand comparative advantage and the gains from trade.</li>
                 <li>
@@ -16,10 +18,10 @@
             </ul>
             <econ-slider
             label="Consumption"
-            min="0"
-            max="2"
+            min=".55"
+            max="1.25"
             [value]="shiftC0()"
-            step=".1"
+            step=".05"
             (valueChange)="shiftC0.set($event)"
             ></econ-slider>
 
