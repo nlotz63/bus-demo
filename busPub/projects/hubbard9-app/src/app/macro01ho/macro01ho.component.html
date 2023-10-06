@@ -4,26 +4,31 @@
         <div class="item-narrative">
             <h2 class="mat-headline-6">The Multiplier Effect</h2>
 
-            <ul>
-                <li>Use this interactive to explore a variety of scenarios to help you better understand comparative advantage and the gains from trade.</li>
+            <ol>
+                <li>Change potential GDP and the marginal propensity to consume, to set up a specific recession condition.</li>
                 <li>
-                    The graphs show the opportunity cost of producing cherries for each person, or simply the slope of the PPF.                                                                                                             
+                    Your task now is to choose the change in government spending that will restore full employment, considering the multiplier effect.                                                                                                           
                 </li>
                 <li>
-                    The opportunity cost of picking apples is the inverse of the opportunity cost of picking cherries. 
+                    Click "Play" to see how you did. 
                 </li>
-                <li>
-                    Whoever has the lowest opportunity cost picking cherries has a comparative advantage in picking cherries. The other person has a comparative advantage in picking apples.
-                </li>
-            </ul>
+            </ol>
             <econ-slider
             label="Consumption"
-            min=".55"
-            max="1.25"
-            [value]="shiftC0()"
-            step=".05"
-            (valueChange)="shiftC0.set($event)"
+            min="19.4"
+            max="20.2"
+            [value]="potGDP()"
+            step=".2"
+            (valueChange)="potGDP.set($event)"
             ></econ-slider>
+            <mat-form-field appearance="outline">
+                <mat-label>MPC</mat-label>
+                <mat-select [(value)]="cy" (selectionChange)="mpc.set($event.value)"
+                >
+                <mat-option [value]="option" *ngFor=" let option of mpcOptions">{{option}}</mat-option>
+                </mat-select>
+                </mat-form-field>
+                <p>You slected: {{cy}}</p>
 
         </div>
         <div id="chart1" class="item-chart"></div>

@@ -12,6 +12,9 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MacroModelService } from '../macro-model.service';
 import { BusPubLibModule } from 'bus-pub-lib';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -22,7 +25,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-macro01ho',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule],
+  imports: [CommonModule, BusPubLibModule, MatSelectModule, MatFormFieldModule, FormsModule],
   templateUrl: './macro01ho.component.html',
   styleUrls: ['./macro01ho.component.scss'],
   animations: [
@@ -43,31 +46,37 @@ export class Macro01hoComponent implements OnInit {
 
   chart!: Highcharts.Chart;
   // signals here
-  shiftC0 = signal(.8);
+  deltaG0 = signal(0);
+  potGDP = signal(19.8);
+  mpc = signal(.75);
+  mpcOptions = [.5, .6, .75, .8];
+  cy = this.mpcOptions[1];
 
   graph = signal({
     title: 'Aggregate Expenditure',
     caption: '',
-    xTitle: 'Real GDP, Y (trillions of 2012 dollars)',
-    yTitle: 'Real aggregate expenditure, AE (tillions of 2012 dollars)',
-    xMin: 19,
-    xMax: 21,
-    yMin: 19,
-    yMax: 21,
+    xTitle: 'Real GDP, Y (trillions of 2017 dollars)',
+    yTitle: 'Real aggregate expenditure, AE (tillions of 2017 dollars)',
+    xMin: 18.4,
+    xMax: 20.4,
+    yMin: 18.4,
+    yMax: 20.4,
   });
 
   modelParams = computed(() => {
 
     return {
-      c0: this.shiftC0(),
-      cy: .75,
+      c0: 15.400001 - this.mpc()*19.2,
+      cy: this.mpc(),
       t0: 0,
       t1: 0,
       i0: 2.5,
       iy: 0,
       ir: 0,
-      g0: 2.5,
-      nx0: -1
+      g0: 2.3 + this.deltaG0(),
+      nx0: -1,
+      potSeries: [ [this.potGDP(), 0], [ this.potGDP(), 22.2]
+      ]
     }
   });
 
@@ -90,13 +99,6 @@ export class Macro01hoComponent implements OnInit {
       series: [
         {
           type: 'line',
-          name: 'AE',
-          lineWidth: 2,
-          zIndex: 0,
-          data: series.AE
-        },
-        {
-          type: 'line',
           lineWidth: 1,
           dashStyle: 'Dot',
           color: 'black',
@@ -104,7 +106,17 @@ export class Macro01hoComponent implements OnInit {
           data: series.EQ,
           marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1}
         },
-
+        {
+          type: 'line',
+          name: 'AE',
+          lineWidth: 2,
+          zIndex: 0,
+          data: series.AE
+        },
+        {
+          type: 'line',
+          data: this.modelParams().potSeries
+        },
       ]
     });
 
@@ -119,6 +131,9 @@ export class Macro01hoComponent implements OnInit {
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
         borderRadius: 5,
         animation: false,
+        zooming: {
+          type: 'xy'
+        }
       },
       caption: {
         text: this.graph().caption
@@ -156,14 +171,6 @@ export class Macro01hoComponent implements OnInit {
       series: [
         {
           type: 'line',
-          name: 'AE',
-          color: '#9F8F6D',
-          lineWidth: 2,
-          zIndex: 0,
-          data: series.AE
-        },
-        {
-          type: 'line',
           name: 'Equlibrium',
           lineWidth: 1,
           dashStyle: 'Dot',
@@ -172,6 +179,22 @@ export class Macro01hoComponent implements OnInit {
           data: series.EQ,
           marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1 },
           label: {enabled: false}
+        },
+        {
+          type: 'line',
+          name: 'AE',
+          color: '#9F8F6D',
+          lineWidth: 2,
+          zIndex: 0,
+          data: series.AE
+        },
+        {
+          type: 'line',
+          name: 'Potental GDP',
+          lineWidth: 1,
+          color: 'black',
+          zIndex: 1,
+          data: this.modelParams().potSeries
         },
         {
           type: 'line',
