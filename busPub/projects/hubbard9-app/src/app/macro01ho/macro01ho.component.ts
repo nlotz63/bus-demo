@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, signal, computed } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { interval } from 'rxjs';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
 import HC_more from 'highcharts/highcharts-more';
@@ -15,6 +16,7 @@ import { BusPubLibModule } from 'bus-pub-lib';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -25,7 +27,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-macro01ho',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule, MatSelectModule, MatFormFieldModule, FormsModule],
+  imports: [CommonModule, BusPubLibModule, MatSelectModule, MatFormFieldModule, FormsModule, MatButtonModule],
   templateUrl: './macro01ho.component.html',
   styleUrls: ['./macro01ho.component.scss'],
   animations: [
@@ -47,10 +49,15 @@ export class Macro01hoComponent implements OnInit {
   chart!: Highcharts.Chart;
   // signals here
   deltaG0 = signal(0);
-  potGDP = signal(19.8);
+  potGDP = signal(19.2);
   mpc = signal(.75);
-  mpcOptions = [.5, .6, .75, .8];
-  cy = this.mpcOptions[1];
+  options = signal({
+    mpc: [.5, .6, .75, .8],
+    pot: [19.2, 19.4, 19.6, 19.8, 20.0, 20.2]
+  });
+  cy = this.options().mpc[2];
+  pot = this.options().pot[0];
+  period = interval(250);
 
   graph = signal({
     title: 'Aggregate Expenditure',
@@ -64,7 +71,6 @@ export class Macro01hoComponent implements OnInit {
   });
 
   modelParams = computed(() => {
-
     return {
       c0: 15.400001 - this.mpc()*19.2,
       cy: this.mpc(),
@@ -73,24 +79,32 @@ export class Macro01hoComponent implements OnInit {
       i0: 2.5,
       iy: 0,
       ir: 0,
-      g0: 2.3 + this.deltaG0(),
+      g0: 2.3,
       nx0: -1,
       potSeries: [ [this.potGDP(), 0], [ this.potGDP(), 22.2]
       ]
     }
   });
 
+  simParams = computed(() => {
+    return {
+      g0: 2.3 + this.deltaG0()/1000,
+
+    }
+  });
+
+
   modelParams$ = toObservable(this.modelParams);
 
   constructor(private announcer: LiveAnnouncer, private el: ElementRef, private macroService: MacroModelService) {}
 
   ngOnInit(): void {
-
+    this.macroService.setParamters(this.modelParams());
+    this._setupGraph();
     this.modelParams$.subscribe((params) => {
       this.macroService.setParamters(params);
       this.updateGraph();
-    })
-   this._setupGraph();
+    });
   }
   public updateGraph() {
     const series = this.macroService.AEModel('AE');
@@ -99,25 +113,39 @@ export class Macro01hoComponent implements OnInit {
       series: [
         {
           type: 'line',
-          lineWidth: 1,
-          dashStyle: 'Dot',
-          color: 'black',
-          zIndex: 1,
-          data: series.EQ,
-          marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1}
-        },
-        {
-          type: 'line',
           name: 'AE',
-          lineWidth: 2,
-          zIndex: 0,
           data: series.AE
         },
         {
           type: 'line',
+          name: 'Initial AE',
+          data: series.AE,
+          label: {enabled: false}
+        },
+        {
+          type: 'line',
+          name: 'Potental GDP',
           data: this.modelParams().potSeries
         },
       ]
+    });
+
+  }
+
+  public simulation() {
+    let count = 0
+    let path = [19.2, 19.2], delta = 0;
+    const myInterval = this.period.subscribe(() => {
+      if (count === 0) {
+        this.deltaG0.set(150);
+        this.macroService.setParamters(this.simParams());
+        const series = this.macroService.AEModel('AE');
+        this.chart.series[0].setData(series.AE);
+      }
+      delta = Math.pow(this.modelParams().cy, count);
+      count++;
+      console.log(count);
+      if (count >= 20) myInterval.unsubscribe();
     });
 
   }
@@ -171,37 +199,11 @@ export class Macro01hoComponent implements OnInit {
       series: [
         {
           type: 'line',
-          name: 'Equlibrium',
-          lineWidth: 1,
-          dashStyle: 'Dot',
-          color: 'black',
-          zIndex: 1,
-          data: series.EQ,
-          marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1 },
-          label: {enabled: false}
-        },
-        {
-          type: 'line',
           name: 'AE',
           color: '#9F8F6D',
           lineWidth: 2,
           zIndex: 0,
           data: series.AE
-        },
-        {
-          type: 'line',
-          name: 'Potental GDP',
-          lineWidth: 1,
-          color: 'black',
-          zIndex: 1,
-          data: this.modelParams().potSeries
-        },
-        {
-          type: 'line',
-          name: 'Y = AE',
-          lineWidth: 1,
-          color: 'black',
-          data: [[0,0], [26, 26]]
         },
         {
           type: 'line',
@@ -214,7 +216,32 @@ export class Macro01hoComponent implements OnInit {
           label: {enabled: false}
         },
 
-
+        {
+          type: 'line',
+          name: 'Potental GDP',
+          lineWidth: 1,
+          color: 'black',
+          zIndex: 1,
+          data: this.modelParams().potSeries
+        },
+        {
+          type: 'line',
+          name: 'Equlibrium',
+          lineWidth: 1,
+          dashStyle: 'Dot',
+          color: 'black',
+          zIndex: 1,
+          data: series.EQ,
+          marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1 },
+          label: {enabled: false}
+        },
+        {
+          type: 'line',
+          name: 'Y = AE',
+          lineWidth: 1,
+          color: 'black',
+          data: [[0,0], [26, 26]]
+        },
       ],
       xAxis: {
         lineColor: '#757575',

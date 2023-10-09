@@ -116,7 +116,6 @@ export class MacroModelService {
 
   }
 
-
   public AEModel(components: string) {
     let aeSeries: any[] = [], x = 0, xMax = 100;
     const param = this.params;
@@ -165,12 +164,10 @@ export class MacroModelService {
       }
     ]
 
-
     return {
       AE: aeSeries,
       EQ: eqSeries
     }
-
 
   }
 
@@ -191,7 +188,5 @@ export class MacroModelService {
     return series
 
   }
-
-
 
 }

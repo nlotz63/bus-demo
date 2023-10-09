@@ -3,33 +3,22 @@
     <div class="wrapper">
         <div class="item-narrative">
             <h2 class="mat-headline-6">The Multiplier Effect</h2>
-
-            <ol>
-                <li>Change potential GDP and the marginal propensity to consume, to set up a specific recession condition.</li>
-                <li>
-                    Your task now is to choose the change in government spending that will restore full employment, considering the multiplier effect.                                                                                                           
-                </li>
-                <li>
-                    Click "Play" to see how you did. 
-                </li>
-            </ol>
-            <econ-slider
-            label="Consumption"
-            min="19.4"
-            max="20.2"
-            [value]="potGDP()"
-            step=".2"
-            (valueChange)="potGDP.set($event)"
-            ></econ-slider>
+            <p>Create a recession by increasing potential GDP. Additionally, you can change the marginal propensity to consume (mpc).</p>
+            <mat-form-field appearance="outline">
+                <mat-label>Potential GDP</mat-label>
+                <mat-select [(value)]="pot" (selectionChange)="potGDP.set($event.value)" >
+                    <mat-option [value]="option" *ngFor=" let option of options().pot">{{option}}</mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-label>MPC</mat-label>
                 <mat-select [(value)]="cy" (selectionChange)="mpc.set($event.value)"
                 >
-                <mat-option [value]="option" *ngFor=" let option of mpcOptions">{{option}}</mat-option>
+                <mat-option [value]="option" *ngFor=" let option of options().mpc">{{option}}</mat-option>
                 </mat-select>
                 </mat-form-field>
-                <p>You slected: {{cy}}</p>
-
+                <p>Taking into account the spending multiplier, you can acheive full employment by increaseing goverment spending by <input #spending type="number" [value]="deltaG0()" min="0" max="600" aria-label="Change in goverment spending" /> billion dollars. Then, click play to see how you did.</p>
+                <button type="button" mat-raised-button (click)="simulation()" >Play</button>
         </div>
         <div id="chart1" class="item-chart"></div>
     </div>
