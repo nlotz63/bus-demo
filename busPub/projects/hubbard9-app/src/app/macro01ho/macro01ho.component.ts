@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, signal, computed } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { interval } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
 import HC_more from 'highcharts/highcharts-more';
@@ -42,8 +42,8 @@ HC_accessibility(Highcharts);
     ])
   ],
 })
-  
-  
+
+
 export class Macro01hoComponent implements OnInit {
 
   chart!: Highcharts.Chart;
@@ -57,7 +57,10 @@ export class Macro01hoComponent implements OnInit {
   });
   cy = this.options().mpc[2];
   pot = this.options().pot[0];
-  period = interval(250);
+  period = interval(500);
+  doReset = signal(false);
+  buttonTitle = signal('Play');
+  myInterval!: Subscription;
 
   graph = signal({
     title: 'Aggregate Expenditure',
@@ -72,7 +75,7 @@ export class Macro01hoComponent implements OnInit {
 
   modelParams = computed(() => {
     return {
-      c0: 15.400001 - this.mpc()*19.2,
+      c0: 15.400001 - this.mpc() * 19.2,
       cy: this.mpc(),
       t0: 0,
       t1: 0,
@@ -81,22 +84,30 @@ export class Macro01hoComponent implements OnInit {
       ir: 0,
       g0: 2.3,
       nx0: -1,
-      potSeries: [ [this.potGDP(), 0], [ this.potGDP(), 22.2]
+      potSeries: [[this.potGDP(), 0], [this.potGDP(), 22.2]
       ]
     }
   });
 
   simParams = computed(() => {
     return {
-      g0: 2.3 + this.deltaG0()/1000,
+      g0: 2.3 + this.deltaG0() / 1000,
 
     }
+  });
+
+  tableProps = signal({
+    round: 0,
+    deltaG: 0,
+    induced: 0,
+    deltaY: 0,
+    equation: ``
   });
 
 
   modelParams$ = toObservable(this.modelParams);
 
-  constructor(private announcer: LiveAnnouncer, private el: ElementRef, private macroService: MacroModelService) {}
+  constructor(private announcer: LiveAnnouncer, private el: ElementRef, private macroService: MacroModelService) { }
 
   ngOnInit(): void {
     this.macroService.setParamters(this.modelParams());
@@ -120,7 +131,7 @@ export class Macro01hoComponent implements OnInit {
           type: 'line',
           name: 'Initial AE',
           data: series.AE,
-          label: {enabled: false}
+          label: { enabled: false }
         },
         {
           type: 'line',
@@ -134,18 +145,41 @@ export class Macro01hoComponent implements OnInit {
 
   public simulation() {
     let count = 0
-    let path = [19.2, 19.2], delta = 0;
-    const myInterval = this.period.subscribe(() => {
+    if (this.buttonTitle() === 'Play') {
+      this.buttonTitle.set('Reset');
+    } else {
+      this._reset();
+      this.buttonTitle.set('Play');
+      return;
+    }
+    let path = [19.2, 19.2], newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0;
+    this.myInterval = this.period.subscribe(() => {
       if (count === 0) {
-        this.deltaG0.set(150);
         this.macroService.setParamters(this.simParams());
         const series = this.macroService.AEModel('AE');
         this.chart.series[0].setData(series.AE);
       }
-      delta = Math.pow(this.modelParams().cy, count);
+      delta = Math.pow(this.modelParams().cy, count) * this.deltaG0() / 1000;
+      let currentEQ = newEQ.map((el) => {
+
+        return {
+          x: el.x + delta,
+          y: el.y + delta,
+          marker: { enabled: true }
+        }
+
+      });
+      newEQ = currentEQ;
+      this.tableProps.set({
+        round: count,
+        deltaG: count === 0 ? this.deltaG0() : 0,
+        induced: delta,
+        deltaY: currentEQ[0].x,
+        equation: `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{${this.tableProps().round}}^{50} {${this.mpc()}}^{${this.tableProps().round}} = ${(currentEQ[0].x).toFixed(2)} \\text{ billion} $$`
+      });
       count++;
-      console.log(count);
-      if (count >= 20) myInterval.unsubscribe();
+      this.chart.series[3].setData(newEQ, true, false, false);
+      if (count >= 50) this.myInterval.unsubscribe();
     });
 
   }
@@ -213,7 +247,7 @@ export class Macro01hoComponent implements OnInit {
           dashStyle: 'LongDash',
           zIndex: 0,
           data: series.AE,
-          label: {enabled: false}
+          label: { enabled: false }
         },
 
         {
@@ -233,14 +267,14 @@ export class Macro01hoComponent implements OnInit {
           zIndex: 1,
           data: series.EQ,
           marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1 },
-          label: {enabled: false}
+          label: { enabled: false }
         },
         {
           type: 'line',
           name: 'Y = AE',
           lineWidth: 1,
           color: 'black',
-          data: [[0,0], [26, 26]]
+          data: [[0, 0], [26, 26]]
         },
       ],
       xAxis: {
@@ -250,7 +284,8 @@ export class Macro01hoComponent implements OnInit {
         title: { useHTML: true, text: `${this.graph().xTitle}` },
         min: this.graph().xMin,
         max: this.graph().xMax,
-        tickInterval: .2      },
+        tickInterval: .2
+      },
       yAxis: {
         gridLineWidth: 0,
         lineColor: '#757575',
@@ -272,5 +307,16 @@ export class Macro01hoComponent implements OnInit {
 
     });
 
+  }
+
+  private _reset() {
+    this.myInterval.unsubscribe();
+    this.mpc.set(.75);
+    this.potGDP.set(19.2);
+    this.cy = .75;
+    this.pot = 19.2;
+    this.deltaG0.set(0);
+    this.macroService.setParamters(this.simParams());
+    this._setupGraph();
   }
 }

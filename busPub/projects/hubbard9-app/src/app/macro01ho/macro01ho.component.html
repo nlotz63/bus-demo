@@ -17,8 +17,9 @@
                 <mat-option [value]="option" *ngFor=" let option of options().mpc">{{option}}</mat-option>
                 </mat-select>
                 </mat-form-field>
-                <p>Taking into account the spending multiplier, you can acheive full employment by increaseing goverment spending by <input #spending type="number" [value]="deltaG0()" min="0" max="600" aria-label="Change in goverment spending" /> billion dollars. Then, click play to see how you did.</p>
-                <button type="button" mat-raised-button (click)="simulation()" >Play</button>
+                <p>Taking into account the spending multiplier, you can acheive full employment by increaseing goverment spending by <input #spending type="number" #g0Value [value]="deltaG0()" min="0" max="600" aria-label="Change in goverment spending" (change)="deltaG0.set(+g0Value.value)"/> billion dollars. Then, click play to see how you did.</p>
+                <button type="button" mat-raised-button (click)="simulation()" >{{buttonTitle()}}</button>
+                <p [econMath]="tableProps().equation"></p>
         </div>
         <div id="chart1" class="item-chart"></div>
     </div>
