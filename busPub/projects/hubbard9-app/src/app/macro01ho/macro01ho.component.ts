@@ -57,7 +57,7 @@ export class Macro01hoComponent implements OnInit {
   });
   cy = this.options().mpc[2];
   pot = this.options().pot[0];
-  period = interval(500);
+  period = interval(750);
   doReset = signal(false);
   buttonTitle = signal('Play');
   myInterval!: Subscription;
@@ -101,7 +101,8 @@ export class Macro01hoComponent implements OnInit {
     deltaG: 0,
     induced: 0,
     deltaY: 0,
-    equation: ``
+    equation: ``,
+    equation2: ``
   });
 
 
@@ -152,7 +153,7 @@ export class Macro01hoComponent implements OnInit {
       this.buttonTitle.set('Play');
       return;
     }
-    let path = [19.2, 19.2], newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0;
+    let path = [19.2, 19.2], newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0, sum = 0;
     this.myInterval = this.period.subscribe(() => {
       if (count === 0) {
         this.macroService.setParamters(this.simParams());
@@ -160,6 +161,7 @@ export class Macro01hoComponent implements OnInit {
         this.chart.series[0].setData(series.AE);
       }
       delta = Math.pow(this.modelParams().cy, count) * this.deltaG0() / 1000;
+      sum = sum + delta*1000;
       let currentEQ = newEQ.map((el) => {
 
         return {
@@ -175,11 +177,12 @@ export class Macro01hoComponent implements OnInit {
         deltaG: count === 0 ? this.deltaG0() : 0,
         induced: delta,
         deltaY: currentEQ[0].x,
-        equation: `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{${this.tableProps().round}}^{50} {${this.mpc()}}^{${this.tableProps().round}} = ${(currentEQ[0].x).toFixed(2)} \\text{ billion} $$`
+        equation: `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{${this.tableProps().round}}^{50} {${this.mpc()**this.tableProps().round}} = ${(sum).toFixed(0)} \\text{ billion} $$`,
+        equation2: `$$ \\text{Multiplier} = \\sum_{i = 0}^{\\infty} ${this.mpc()}^i = 1 + ${this.mpc()} + ${this.mpc()}^2 + \\cdots = \\frac{1}{1- ${this.mpc()}} = ${1/(1-this.mpc())} $$`
       });
       count++;
       this.chart.series[3].setData(newEQ, true, false, false);
-      if (count >= 50) this.myInterval.unsubscribe();
+      if (count >= 62) this.myInterval.unsubscribe();
     });
 
   }
@@ -305,6 +308,11 @@ export class Macro01hoComponent implements OnInit {
         }
       },
 
+    });
+    this.tableProps.mutate((value) => {
+      value.round = 0;
+      value.equation = `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{${this.tableProps().round}}^{50} {${this.mpc()}}^{${this.tableProps().round}} = 0 \\text{ billion} $$`;
+      value.equation2 = `$$ \\text{Multiplier} = \\sum_{i = 0}^{\\infty} ${this.mpc()}^i = 1 + ${this.mpc()} + ${this.mpc()}^2 + \\cdots = \\frac{1}{1- ${this.mpc()}} = ${1/(1-this.mpc())} $$`
     });
 
   }
