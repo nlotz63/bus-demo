@@ -136,7 +136,7 @@ export class Macro01hoComponent implements OnInit {
         },
         {
           type: 'line',
-          name: 'Potental GDP',
+          name: 'Potential GDP',
           data: this.modelParams().potSeries
         },
       ]
@@ -153,7 +153,8 @@ export class Macro01hoComponent implements OnInit {
       this.buttonTitle.set('Play');
       return;
     }
-    let path = [19.2, 19.2], newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0, sum = 0;
+    let path = [19.2, 19.2], newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0, sum = 0, compMultiplier = 0;
+    const gap = 1 / (1 - this.mpc()) * this.deltaG0();
     this.myInterval = this.period.subscribe(() => {
       if (count === 0) {
         this.macroService.setParamters(this.simParams());
@@ -161,6 +162,7 @@ export class Macro01hoComponent implements OnInit {
         this.chart.series[0].setData(series.AE);
       }
       delta = Math.pow(this.modelParams().cy, count) * this.deltaG0() / 1000;
+      compMultiplier = compMultiplier + Math.pow(this.modelParams().cy, count);
       sum = sum + delta*1000;
       let currentEQ = newEQ.map((el) => {
 
@@ -177,12 +179,12 @@ export class Macro01hoComponent implements OnInit {
         deltaG: count === 0 ? this.deltaG0() : 0,
         induced: delta,
         deltaY: currentEQ[0].x,
-        equation: `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{${this.tableProps().round}}^{50} {${this.mpc()**this.tableProps().round}} = ${(sum).toFixed(0)} \\text{ billion} $$`,
-        equation2: `$$ \\text{Multiplier} = \\sum_{i = 0}^{\\infty} ${this.mpc()}^i = 1 + ${this.mpc()} + ${this.mpc()}^2 + \\cdots = \\frac{1}{1- ${this.mpc()}} = ${1/(1-this.mpc())} $$`
+        equation: `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{i = ${count}}^{\\infty} {${(this.mpc()**count).toPrecision(2)}} = ${(sum).toFixed(0)} \\text{ billion} $$`,
+        equation2: `$$ \\text{Multiplier} = \\sum_{i = 0}^{\\infty} ${this.mpc()}^i = 1 + ${this.mpc()} + ${this.mpc()}^2 + \\cdots = \\frac{1}{1- ${this.mpc()}} = ${compMultiplier.toFixed(2)} $$`
       });
       count++;
       this.chart.series[3].setData(newEQ, true, false, false);
-      if (count >= 62) this.myInterval.unsubscribe();
+      if (gap - sum < .5) this.myInterval.unsubscribe();
     });
 
   }
@@ -255,7 +257,7 @@ export class Macro01hoComponent implements OnInit {
 
         {
           type: 'line',
-          name: 'Potental GDP',
+          name: 'Potential GDP',
           lineWidth: 1,
           color: 'black',
           zIndex: 1,
@@ -311,7 +313,7 @@ export class Macro01hoComponent implements OnInit {
     });
     this.tableProps.mutate((value) => {
       value.round = 0;
-      value.equation = `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{${this.tableProps().round}}^{50} {${this.mpc()}}^{${this.tableProps().round}} = 0 \\text{ billion} $$`;
+      value.equation = `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{i = ${this.tableProps().round}}^{\\infty} {${this.mpc()}}^{i} = 0 \\text{ billion} $$`;
       value.equation2 = `$$ \\text{Multiplier} = \\sum_{i = 0}^{\\infty} ${this.mpc()}^i = 1 + ${this.mpc()} + ${this.mpc()}^2 + \\cdots = \\frac{1}{1- ${this.mpc()}} = ${1/(1-this.mpc())} $$`
     });
 
