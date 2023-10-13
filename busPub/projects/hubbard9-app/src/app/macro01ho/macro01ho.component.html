@@ -19,8 +19,10 @@
                 </mat-form-field>
                 <p>Taking into account the spending multiplier, you can acheive full employment by increaseing goverment spending by <input #spending type="number" #g0Value [value]="deltaG0()" min="0" max="600" aria-label="Change in goverment spending" (change)="deltaG0.set(+g0Value.value)"/> billion dollars. Then, click play to see how you did.</p>
                 <button type="button" mat-raised-button (click)="simulation()" >{{buttonTitle()}}</button>
-                <span [econMath]="tableProps().equation2"></span>
-                <span [econMath]="tableProps().equation"></span>
+                <h3>Multiplier:</h3>
+                <span [econMath]="equations().equation2"></span>
+                <h3>Change in GDP:</h3>
+                <span [econMath]="equations().equation1"></span>
 
         </div>
         <div id="chart1" class="item-chart"></div>

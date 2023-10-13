@@ -105,6 +105,14 @@ export class Macro01hoComponent implements OnInit {
     equation2: ``
   });
 
+  equations = signal({
+    equation1: ``,
+    equation2: ``,
+    deltaGDP: 0,
+    multiplier: 0,
+  });
+  saveEq2 = ``;
+
 
   modelParams$ = toObservable(this.modelParams);
 
@@ -145,7 +153,6 @@ export class Macro01hoComponent implements OnInit {
   }
 
   public simulation() {
-    let count = 0
     if (this.buttonTitle() === 'Play') {
       this.buttonTitle.set('Reset');
     } else {
@@ -155,7 +162,10 @@ export class Macro01hoComponent implements OnInit {
     }
     let path = [19.2, 19.2], newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0, sum = 0, compMultiplier = 0;
     const gap = 1 / (1 - this.mpc()) * this.deltaG0();
-    this.myInterval = this.period.subscribe(() => {
+    let eqCount = 0, equation1 = ``, equation2 = ``;
+
+    this.myInterval = this.period.subscribe((count) => {
+      eqCount = count;
       if (count === 0) {
         this.macroService.setParamters(this.simParams());
         const series = this.macroService.AEModel('AE');
@@ -165,14 +175,18 @@ export class Macro01hoComponent implements OnInit {
       compMultiplier = compMultiplier + Math.pow(this.modelParams().cy, count);
       sum = sum + delta*1000;
       let currentEQ = newEQ.map((el) => {
-
         return {
           x: el.x + delta,
           y: el.y + delta,
           marker: { enabled: true }
         }
-
       });
+
+      if (gap - sum >= .0005) {
+        this._equationBuilder(count);
+        equation2 = equation2 + `{${(this.mpc() ** count).toPrecision(2)}} + `;
+        
+      }
       newEQ = currentEQ;
       this.tableProps.set({
         round: count,
@@ -180,11 +194,10 @@ export class Macro01hoComponent implements OnInit {
         induced: delta,
         deltaY: currentEQ[0].x,
         equation: `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{i = ${count}}^{\\infty} {${(this.mpc()**count).toPrecision(2)}} = ${(sum).toFixed(0)} \\text{ billion} $$`,
-        equation2: `$$ \\text{Multiplier} = \\sum_{i = 0}^{\\infty} ${this.mpc()}^i = 1 + ${this.mpc()} + ${this.mpc()}^2 + \\cdots = \\frac{1}{1- ${this.mpc()}} = ${compMultiplier.toFixed(2)} $$`
+        equation2: `$$ \\sum_{${eqCount}}^{\\infty} ${this.mpc()}^{${eqCount}} = ` + equation2 + `$$`
       });
-      count++;
       this.chart.series[3].setData(newEQ, true, false, false);
-      if (gap - sum < .5) this.myInterval.unsubscribe();
+      if (gap - sum < .0005) this.myInterval.unsubscribe();
     });
 
   }
@@ -311,10 +324,9 @@ export class Macro01hoComponent implements OnInit {
       },
 
     });
+    this._equationBuilder(null);
     this.tableProps.mutate((value) => {
       value.round = 0;
-      value.equation = `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{i = ${this.tableProps().round}}^{\\infty} {${this.mpc()}}^{i} = 0 \\text{ billion} $$`;
-      value.equation2 = `$$ \\text{Multiplier} = \\sum_{i = 0}^{\\infty} ${this.mpc()}^i = 1 + ${this.mpc()} + ${this.mpc()}^2 + \\cdots = \\frac{1}{1- ${this.mpc()}} = ${1/(1-this.mpc())} $$`
     });
 
   }
@@ -328,5 +340,56 @@ export class Macro01hoComponent implements OnInit {
     this.deltaG0.set(0);
     this.macroService.setParamters(this.simParams());
     this._setupGraph();
+  }
+
+  private _equationBuilder(count: number | null) {
+    const req = /\$/g;
+    let eq1 = this.equations().equation1.replace(req, ''), eq2 = this.equations().equation2.replace(req, ''), deltaGDP = this.equations().deltaGDP, multiplier = this.equations().multiplier;
+
+    multiplier = multiplier + this.mpc() ** count!;
+    deltaGDP = this.deltaG0() * multiplier;
+    if (count === null) {
+      this.equations.mutate(value => {
+        value.equation2 = `$$ \\sum_{i = 0}^{\\infty} \\text{mpc}^i = 1 + \\text{ mpc} + \\text{ mpc}^2 + \\text{ mpc}^3 + \\cdots = \\frac{1}{1- \\text{mpc}} $$`;
+        value.equation1 = `$$ \\Delta G \\times \\text{multiplier} = \\Delta GDP $$`
+      });
+    } else if (count === 0) {
+      eq1 = `${this.deltaG0()} \\times ${multiplier} = ${deltaGDP}`;
+      eq2 = `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = 1`;
+      this.equations.set({
+        equation1: `$$` + eq1 + `$$`,
+        equation2: `$$` + eq2 + `$$`,
+        deltaGDP: this.deltaG0(),
+        multiplier: 1,
+          });
+    } else if(count <= 4) {
+      eq1 = `${this.deltaG0()} \\times ${multiplier.toPrecision(5)} = ${deltaGDP.toPrecision(4)}`;
+      let newEq2 = `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = `;
+      for (let i = 0; i <= count; i++) {
+        if (i < 4) {
+          newEq2 = newEq2 + ` + ${(this.mpc() ** i).toPrecision(2)}`;
+        } else if (i === 4) {
+          newEq2 = newEq2 + `+ \\cdots `;
+          this.saveEq2 = newEq2;
+        }
+      }
+      this.equations.set({
+        equation1: `$$` + eq1 + `$$`,
+        equation2: `$$` + newEq2 +`= ${multiplier.toPrecision(5)}` + `$$`,
+        deltaGDP: this.deltaG0(),
+        multiplier: multiplier,
+      });
+
+    } else {
+      eq1 = `${this.deltaG0()} \\times ${multiplier.toPrecision(5)} = ${deltaGDP.toPrecision(4)}`;
+      this.equations.set({
+        equation1: `$$` + eq1 + `$$`,
+        equation2: `$$` + this.saveEq2 + `= ${multiplier.toPrecision(5)}` + `$$`,
+        deltaGDP: this.deltaG0(),
+        multiplier: multiplier,
+          });
+
+    }
+
   }
 }
