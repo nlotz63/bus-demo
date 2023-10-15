@@ -57,7 +57,7 @@ export class Macro01hoComponent implements OnInit {
   });
   cy = this.options().mpc[2];
   pot = this.options().pot[0];
-  period = interval(750);
+  period = interval(1000);
   doReset = signal(false);
   buttonTitle = signal('Play');
   myInterval!: Subscription;
@@ -182,7 +182,7 @@ export class Macro01hoComponent implements OnInit {
         }
       });
 
-      if (gap - sum >= .0005) {
+      if (gap - sum >= .3) {
         this._equationBuilder(count);
         equation2 = equation2 + `{${(this.mpc() ** count).toPrecision(2)}} + `;
         
@@ -197,7 +197,7 @@ export class Macro01hoComponent implements OnInit {
         equation2: `$$ \\sum_{${eqCount}}^{\\infty} ${this.mpc()}^{${eqCount}} = ` + equation2 + `$$`
       });
       this.chart.series[3].setData(newEQ, true, false, false);
-      if (gap - sum < .0005) this.myInterval.unsubscribe();
+      if (gap - sum < .3) this.myInterval.unsubscribe();
     });
 
   }
@@ -339,6 +339,9 @@ export class Macro01hoComponent implements OnInit {
     this.pot = 19.2;
     this.deltaG0.set(0);
     this.macroService.setParamters(this.simParams());
+    this.equations.mutate((value) => {
+      value.multiplier = 0;
+    });
     this._setupGraph();
   }
 
@@ -346,45 +349,36 @@ export class Macro01hoComponent implements OnInit {
     const req = /\$/g;
     let eq1 = this.equations().equation1.replace(req, ''), eq2 = this.equations().equation2.replace(req, ''), deltaGDP = this.equations().deltaGDP, multiplier = this.equations().multiplier;
 
-    multiplier = multiplier + this.mpc() ** count!;
-    deltaGDP = this.deltaG0() * multiplier;
+    multiplier = (multiplier + this.mpc() ** count!);
+    deltaGDP = +(this.deltaG0() * multiplier).toFixed(0);
     if (count === null) {
       this.equations.mutate(value => {
         value.equation2 = `$$ \\sum_{i = 0}^{\\infty} \\text{mpc}^i = 1 + \\text{ mpc} + \\text{ mpc}^2 + \\text{ mpc}^3 + \\cdots = \\frac{1}{1- \\text{mpc}} $$`;
         value.equation1 = `$$ \\Delta G \\times \\text{multiplier} = \\Delta GDP $$`
       });
-    } else if (count === 0) {
-      eq1 = `${this.deltaG0()} \\times ${multiplier} = ${deltaGDP}`;
-      eq2 = `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = 1`;
-      this.equations.set({
-        equation1: `$$` + eq1 + `$$`,
-        equation2: `$$` + eq2 + `$$`,
-        deltaGDP: this.deltaG0(),
-        multiplier: 1,
-          });
-    } else if(count <= 4) {
-      eq1 = `${this.deltaG0()} \\times ${multiplier.toPrecision(5)} = ${deltaGDP.toPrecision(4)}`;
-      let newEq2 = `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = `;
+    }  else if(count <= 4) {
+      eq1 = `${this.deltaG0()} \\times ${multiplier.toFixed(2)} = ${deltaGDP}`;
+      let newEq2 = ``;
       for (let i = 0; i <= count; i++) {
         if (i < 4) {
-          newEq2 = newEq2 + ` + ${(this.mpc() ** i).toPrecision(2)}`;
+          newEq2 = newEq2 + `${(this.mpc() ** i).toFixed(2)} + `;
         } else if (i === 4) {
-          newEq2 = newEq2 + `+ \\cdots `;
+          newEq2 = newEq2 + `\\cdots `;
           this.saveEq2 = newEq2;
         }
       }
       this.equations.set({
         equation1: `$$` + eq1 + `$$`,
-        equation2: `$$` + newEq2 +`= ${multiplier.toPrecision(5)}` + `$$`,
+        equation2: `$$` + `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = ` + newEq2 +`= ${multiplier.toFixed(2)}` + `$$`,
         deltaGDP: this.deltaG0(),
         multiplier: multiplier,
       });
 
     } else {
-      eq1 = `${this.deltaG0()} \\times ${multiplier.toPrecision(5)} = ${deltaGDP.toPrecision(4)}`;
+      eq1 = `${this.deltaG0()} \\times ${multiplier.toFixed(2)} = ${(+multiplier.toFixed(2)*this.deltaG0()).toFixed(0)}`;
       this.equations.set({
         equation1: `$$` + eq1 + `$$`,
-        equation2: `$$` + this.saveEq2 + `= ${multiplier.toPrecision(5)}` + `$$`,
+        equation2: `$$` + `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = ` + this.saveEq2 + `= ${multiplier.toFixed(2)}` + `$$`,
         deltaGDP: this.deltaG0(),
         multiplier: multiplier,
           });
