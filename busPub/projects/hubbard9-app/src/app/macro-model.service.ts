@@ -117,7 +117,7 @@ export class MacroModelService {
   }
 
   public AEModel(components: string) {
-    let aeSeries: any[] = [], x = 0, xMax = 100;
+    let aeSeries: any[] = [], x = 18.4, xMax = 20.4;
     const param = this.params;
 
     do {
@@ -143,7 +143,7 @@ export class MacroModelService {
         }
       );
 
-      x = x + .25;
+      x = x + .2;
 
     } while (x <= xMax)
     const eq = this.findEq(0, 28, (value: number) => value, this.AE)
@@ -160,7 +160,7 @@ export class MacroModelService {
       },
       {
         x: eq,
-        y: 0
+        y: 18.4
       }
     ]
 
