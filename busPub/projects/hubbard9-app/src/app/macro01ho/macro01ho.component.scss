@@ -1,6 +1,50 @@
 input {
-    width: 75px;
+    width: 50px;
 }
 span {
     font-size: .95em;
+}
+
+::ng-deep.mat-mdc-text-field-wrapper {
+    height: 35px !important;
+    input {
+        vertical-align: top;
+    }
+}
+
+::ng-deep.mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+
+mat-form-field {
+    width: 30%;
+    margin-right: 20px;
+
+}
+
+.mat-mdc-table {
+ //   max-height: 280px;
+  //  overflow: auto;
+    tr {
+        height: 10px;
+    }
+    th {
+        font-size: .9em;
+        text-align: center;
+        vertical-align: baseline;
+    }
+    td {
+        text-align: center;
+        text-indent: 10%;
+
+    }
+}
+
+button {
+    margin: 0px;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, signal, computed } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, computed, ViewChild, AfterViewInit } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Subscription, interval } from 'rxjs';
@@ -17,6 +17,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule, MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+
+export interface MultiplierData {
+  round: number;
+  autonomous: number;
+  induced: number;
+  total: number;
+}
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -27,7 +37,7 @@ HC_accessibility(Highcharts);
 @Component({
   selector: 'app-macro01ho',
   standalone: true,
-  imports: [CommonModule, BusPubLibModule, MatSelectModule, MatFormFieldModule, FormsModule, MatButtonModule],
+  imports: [CommonModule, BusPubLibModule, MatSelectModule, MatFormFieldModule, FormsModule, MatButtonModule, MatTabsModule, MatTableModule, MatPaginatorModule],
   templateUrl: './macro01ho.component.html',
   styleUrls: ['./macro01ho.component.scss'],
   animations: [
@@ -44,7 +54,15 @@ HC_accessibility(Highcharts);
 })
 
 
-export class Macro01hoComponent implements OnInit {
+export class Macro01hoComponent implements OnInit, AfterViewInit {
+
+  displayedColumns: string[] = ['round', 'autonomous', 'induced', 'total'];
+
+  dataSource!: MatTableDataSource<MultiplierData>;
+  data = [{ round: 1, autonomous: 2, induced: 2, total: 2 }];
+
+  @ViewChild(MatTable) table!: MatTable<any>;
+  @ViewChild(MatPaginator) paginator!: MatPaginator
 
   chart!: Highcharts.Chart;
   // signals here
@@ -64,12 +82,12 @@ export class Macro01hoComponent implements OnInit {
 
   graph = signal({
     title: 'Aggregate Expenditure',
-    caption: '',
+    caption: 'The Y = AE line shows all the points where real GDP equals real aggregate expenditure. The slope of the AE curve is equal the marginal propensity to consume (MPC). To better visualize the movement toward a new equilibrium during the simulation, you can use your mouse to zoom in. Simply left-click and hold the mouse button and drag to form a rectangle around the area to enlarge.',
     xTitle: 'Real GDP, Y (trillions of 2017 dollars)',
     yTitle: 'Real aggregate expenditure, AE (tillions of 2017 dollars)',
     xMin: 18.4,
     xMax: 20.4,
-    yMin: 18.4,
+    yMin: 18.5,
     yMax: 20.4,
   });
 
@@ -84,7 +102,7 @@ export class Macro01hoComponent implements OnInit {
       ir: 0,
       g0: 2.3,
       nx0: -1,
-      potSeries: [[this.potGDP(), 0], [this.potGDP(), 22.2]
+      potSeries: [[this.potGDP(), 18.4], [this.potGDP(), 22.2]
       ]
     }
   });
@@ -96,15 +114,6 @@ export class Macro01hoComponent implements OnInit {
     }
   });
 
-  tableProps = signal({
-    round: 0,
-    deltaG: 0,
-    induced: 0,
-    deltaY: 0,
-    equation: ``,
-    equation2: ``
-  });
-
   equations = signal({
     equation1: ``,
     equation2: ``,
@@ -113,10 +122,11 @@ export class Macro01hoComponent implements OnInit {
   });
   saveEq2 = ``;
 
-
   modelParams$ = toObservable(this.modelParams);
 
-  constructor(private announcer: LiveAnnouncer, private el: ElementRef, private macroService: MacroModelService) { }
+  constructor(private announcer: LiveAnnouncer, private el: ElementRef, private macroService: MacroModelService) {
+    this.dataSource = new MatTableDataSource(this.data);
+  }
 
   ngOnInit(): void {
     this.macroService.setParamters(this.modelParams());
@@ -126,6 +136,11 @@ export class Macro01hoComponent implements OnInit {
       this.updateGraph();
     });
   }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
   public updateGraph() {
     const series = this.macroService.AEModel('AE');
 
@@ -160,12 +175,10 @@ export class Macro01hoComponent implements OnInit {
       this.buttonTitle.set('Play');
       return;
     }
-    let path = [19.2, 19.2], newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0, sum = 0, compMultiplier = 0;
+    let newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0, sum = 0, compMultiplier = 0;
     const gap = 1 / (1 - this.mpc()) * this.deltaG0();
-    let eqCount = 0, equation1 = ``, equation2 = ``;
 
     this.myInterval = this.period.subscribe((count) => {
-      eqCount = count;
       if (count === 0) {
         this.macroService.setParamters(this.simParams());
         const series = this.macroService.AEModel('AE');
@@ -173,7 +186,7 @@ export class Macro01hoComponent implements OnInit {
       }
       delta = Math.pow(this.modelParams().cy, count) * this.deltaG0() / 1000;
       compMultiplier = compMultiplier + Math.pow(this.modelParams().cy, count);
-      sum = sum + delta*1000;
+      sum = sum + delta * 1000;
       let currentEQ = newEQ.map((el) => {
         return {
           x: el.x + delta,
@@ -182,22 +195,19 @@ export class Macro01hoComponent implements OnInit {
         }
       });
 
-      if (gap - sum >= .3) {
+      if (gap - sum > .3) {
         this._equationBuilder(count);
-        equation2 = equation2 + `{${(this.mpc() ** count).toPrecision(2)}} + `;
-        
+
+      } else {
+        const req = /\$/g;
+        let eq2 = this.equations().equation2.replace(req, '')
+        this.myInterval.unsubscribe();
+        this.equations.mutate((value) => {
+          value.equation2 = '$$' + eq2 + ` = \\frac{1}{(1- ${this.mpc()})} $$`;
+        });
       }
       newEQ = currentEQ;
-      this.tableProps.set({
-        round: count,
-        deltaG: count === 0 ? this.deltaG0() : 0,
-        induced: delta,
-        deltaY: currentEQ[0].x,
-        equation: `$$ ${this.deltaG0()} \\text{ billion} \\times \\sum_{i = ${count}}^{\\infty} {${(this.mpc()**count).toPrecision(2)}} = ${(sum).toFixed(0)} \\text{ billion} $$`,
-        equation2: `$$ \\sum_{${eqCount}}^{\\infty} ${this.mpc()}^{${eqCount}} = ` + equation2 + `$$`
-      });
       this.chart.series[3].setData(newEQ, true, false, false);
-      if (gap - sum < .3) this.myInterval.unsubscribe();
     });
 
   }
@@ -207,7 +217,7 @@ export class Macro01hoComponent implements OnInit {
     const container = this.el.nativeElement.querySelector('#chart1');
     this.chart = new Highcharts.Chart(container, {
       chart: {
-        height: 550,
+        height: 625,
         shadow: { color: 'grey', offsetX: 1, offsetY: 1 },
         borderRadius: 5,
         animation: false,
@@ -233,12 +243,7 @@ export class Macro01hoComponent implements OnInit {
       legend: { enabled: false },
       tooltip: {
         useHTML: true, enabled: true,
-        positioner: function (w, h, p) {
-          const x = this.chart.plotWidth - .75 * w, y = h;
-          return { x: x, y: y }
-        },
-        borderWidth: 0,
-        shadow: false
+        style: {textAlign: 'right'}
       },
       accessibility: {
         point: {
@@ -263,7 +268,7 @@ export class Macro01hoComponent implements OnInit {
           color: '#9F8F6D',
           lineWidth: 1,
           dashStyle: 'LongDash',
-          zIndex: 0,
+          zIndex: -1,
           data: series.AE,
           label: { enabled: false }
         },
@@ -292,7 +297,7 @@ export class Macro01hoComponent implements OnInit {
           name: 'Y = AE',
           lineWidth: 1,
           color: 'black',
-          data: [[0, 0], [26, 26]]
+          data: [[18.4, 18.4], [20.4, 20.4]]
         },
       ],
       xAxis: {
@@ -319,15 +324,17 @@ export class Macro01hoComponent implements OnInit {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           label: { enabled: true, style: { fontSize: '.75em' } },
-          animation: false
+          animation: false,
+          tooltip: {
+            headerFormat: '{series.name}<br/>',
+            pointFormat: `Y: \${point.x:.1f} trillion<br/>AE: \${point.y:.1f} trillion`
+            
+          }
         }
       },
 
     });
     this._equationBuilder(null);
-    this.tableProps.mutate((value) => {
-      value.round = 0;
-    });
 
   }
 
@@ -342,6 +349,8 @@ export class Macro01hoComponent implements OnInit {
     this.equations.mutate((value) => {
       value.multiplier = 0;
     });
+    this.data = [];
+    this.dataSource.data = this.data;
     this._setupGraph();
   }
 
@@ -349,14 +358,17 @@ export class Macro01hoComponent implements OnInit {
     const req = /\$/g;
     let eq1 = this.equations().equation1.replace(req, ''), eq2 = this.equations().equation2.replace(req, ''), deltaGDP = this.equations().deltaGDP, multiplier = this.equations().multiplier;
 
-    multiplier = (multiplier + this.mpc() ** count!);
+    if (count !== null) multiplier = multiplier + Math.pow(this.mpc(), count!);
+
     deltaGDP = +(this.deltaG0() * multiplier).toFixed(0);
     if (count === null) {
+      this.data = []
+      this.dataSource.data = this.data;
       this.equations.mutate(value => {
         value.equation2 = `$$ \\sum_{i = 0}^{\\infty} \\text{mpc}^i = 1 + \\text{ mpc} + \\text{ mpc}^2 + \\text{ mpc}^3 + \\cdots = \\frac{1}{1- \\text{mpc}} $$`;
-        value.equation1 = `$$ \\Delta G \\times \\text{multiplier} = \\Delta GDP $$`
+        value.equation1 = `$$ \\Delta G \\times \\text{multiplier} = \\Delta Y $$`
       });
-    }  else if(count <= 4) {
+    } else if (count <= 4) {
       eq1 = `${this.deltaG0()} \\times ${multiplier.toFixed(2)} = ${deltaGDP}`;
       let newEq2 = ``;
       for (let i = 0; i <= count; i++) {
@@ -369,21 +381,35 @@ export class Macro01hoComponent implements OnInit {
       }
       this.equations.set({
         equation1: `$$` + eq1 + `$$`,
-        equation2: `$$` + `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = ` + newEq2 +`= ${multiplier.toFixed(2)}` + `$$`,
+        equation2: `$$` + `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = ` + newEq2 + `= ${multiplier.toFixed(2)}` + `$$`,
         deltaGDP: this.deltaG0(),
         multiplier: multiplier,
       });
 
     } else {
-      eq1 = `${this.deltaG0()} \\times ${multiplier.toFixed(2)} = ${(+multiplier.toFixed(2)*this.deltaG0()).toFixed(0)}`;
+      eq1 = `${this.deltaG0()} \\times ${multiplier.toFixed(2)} = ${(+multiplier.toFixed(2) * this.deltaG0()).toFixed(0)}`;
       this.equations.set({
         equation1: `$$` + eq1 + `$$`,
         equation2: `$$` + `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = ` + this.saveEq2 + `= ${multiplier.toFixed(2)}` + `$$`,
         deltaGDP: this.deltaG0(),
         multiplier: multiplier,
-          });
+      });
 
     }
-
+    // build the table
+    if (count !== null && count >= 0) {
+      this.data.push(
+        {
+          round: count + 1,
+          autonomous: count === 0 ? this.deltaG0() : 0,
+          induced: count > 0 ? +(this.mpc() ** count * this.deltaG0()).toPrecision(4) : 0,
+          total: +(multiplier * this.deltaG0()).toFixed(0),
+        }
+      );
+      this.dataSource.data = this.data;
+      this.table.renderRows();
+      this.paginator.lastPage();
+    }
   }
+
 }
