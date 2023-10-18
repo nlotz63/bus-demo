@@ -194,7 +194,6 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       compMultiplier = compMultiplier + Math.pow(this.modelParams().cy, count);
       sum = sum + delta * 1000;
       let currentEQ = newEQ.map((el, indx) => {
-        console.log(el);
         switch (indx) {
           case 0:
             return { x: 0, y: el.y + delta}
