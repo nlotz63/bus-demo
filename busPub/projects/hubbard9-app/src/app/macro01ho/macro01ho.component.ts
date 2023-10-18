@@ -195,7 +195,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
         }
       });
 
-      if (gap - sum > .1) {
+      if (gap - sum > .004) {
         this._equationBuilder(count);
 
       } else {
@@ -402,8 +402,8 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
         {
           round: count + 1,
           autonomous: count === 0 ? this.deltaG0() : 0,
-          induced: count > 0 ? +(this.mpc() ** count * this.deltaG0()).toPrecision(4) : 0,
-          total: +(multiplier * this.deltaG0()).toFixed(0),
+          induced: count > 0 ? +(this.mpc() ** count * this.deltaG0()) : 0,
+          total: +(multiplier * this.deltaG0()),
         }
       );
       this.dataSource.data = this.data;

@@ -68,19 +68,19 @@
                             <ng-container matColumnDef="autonomous">
                                 <th mat-header-cell *matHeaderCellDef><span econMath="\(\Delta G \)"></span><br />(in
                                     billions)</th>
-                                <td mat-cell *matCellDef="let element">{{element.autonomous}}</td>
+                                <td mat-cell *matCellDef="let element">{{element.autonomous | currency: 'USD': 'symbol': '0.0-2'}}</td>
                             </ng-container>
                             <!-- induced column-->
                             <ng-container matColumnDef="induced">
                                 <th mat-header-cell *matHeaderCellDef><span econMath="\(\Delta C \)"></span><br />(in
                                     billions)</th>
-                                <td class="number" mat-cell *matCellDef="let element">{{element.induced}}</td>
+                                <td class="number" mat-cell *matCellDef="let element">{{element.induced | currency: 'USD': 'symbol': '0.0-4'}}</td>
                             </ng-container>
                             <!-- total column-->
                             <ng-container matColumnDef="total">
                                 <th mat-header-cell *matHeaderCellDef>Total <span
                                         econMath="\( \Delta Y \)"></span><br />(in billions)</th>
-                                <td mat-cell *matCellDef="let element">{{element.total}}
+                                <td mat-cell *matCellDef="let element">{{element.total | currency: 'USD': 'symbol': '0.0-2'}}
                             </ng-container>
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
