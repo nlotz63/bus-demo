@@ -124,6 +124,9 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
   });
   saveEq2 = ``;
 
+  disableInput = signal(false);
+  enablePlay = computed(() => this.potGDP() !== 19.2 ? false : true);
+
   modelParams$ = toObservable(this.modelParams);
 
   constructor(private announcer: LiveAnnouncer, private el: ElementRef, private macroService: MacroModelService) {
@@ -172,6 +175,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
   public simulation() {
     if (this.buttonTitle() === 'Play') {
       this.buttonTitle.set('Reset');
+      this.disableInput.set(true);
     } else {
       this._reset();
       this.buttonTitle.set('Play');
@@ -355,6 +359,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
     });
     this.data = [];
     this.dataSource.data = this.data;
+    this.disableInput.set(false);
     this._setupGraph();
   }
 
