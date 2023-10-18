@@ -197,6 +197,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
 
       if (gap - sum > .004) {
         this._equationBuilder(count);
+        this._readerMessage(count, false);
 
       } else {
         const req = /\$/g;
@@ -205,6 +206,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
         this.equations.mutate((value) => {
           value.equation2 = '$$' + eq2 + ` = \\frac{1}{(1- ${this.mpc()})} $$`;
         });
+        this._readerMessage(count, true);
       }
       newEQ = currentEQ;
       this.chart.series[3].setData(newEQ, true, false, false);
@@ -243,11 +245,11 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       legend: { enabled: false },
       tooltip: {
         useHTML: true, enabled: true,
-        style: {textAlign: 'right'}
+        style: { textAlign: 'right' }
       },
       accessibility: {
         point: {
-          valueDescriptionFormat: `quantity: {point.x:.0f}, {point.name}: {point.y:.2f} dollars.`
+          valueDescriptionFormat: `real GDP, Y: {point.x:.1f} trillion dollars, aggregate expenditure, AE: {point.y:.1f} trillion dollars.`
         },
         keyboardNavigation: {
           order: ['container', 'series', 'chartMenu']
@@ -328,7 +330,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
           tooltip: {
             headerFormat: '{series.name}<br/>',
             pointFormat: `Y: \${point.x:.1f} trillion<br/>AE: \${point.y:.1f} trillion`
-            
+
           }
         }
       },
@@ -412,4 +414,23 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
     }
   }
 
+  private _readerMessage(count: number, stop: boolean) {
+    let message = ``, feedback1 = '';
+    const gap = (this.potGDP() - 19.2) * 1000, multiplier = 1 / (1 - this.cy),
+      urDeltaG = this.deltaG0(), reqDeltaG = +(gap / multiplier).toFixed(2);
+
+    if (urDeltaG === reqDeltaG) {
+      feedback1 = 'Congratulations!'
+    } else {
+      feedback1 = urDeltaG < reqDeltaG ? 'Unfortunately, you didn\'t increase spending enough.' : 'Unfortunately, you increased spending too much.';
+    }
+
+    if (count === 0 && !stop) {
+      message = `The simulation has started. The graph, table, and math will update every second until the new equilibrium is reached. A point on the Y equals AE line will move up along the line toward potential GDP. An announcement at the end of the simulation will let you know how you did. Depending on your choices, the simulation can take up to a minute and a half to complete.`
+    } else if (count > 0 && stop) {
+      message = `The simulation has ended. To restore full employment you needed to increase real GDP by ${reqDeltaG} billion dollars, you increased government spending by ${urDeltaG} billion dollars. ${feedback1}`;
+    } else { return; }
+
+    this.announcer.announce(message);
+  }
 }
