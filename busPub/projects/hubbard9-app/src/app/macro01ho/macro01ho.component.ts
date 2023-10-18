@@ -181,7 +181,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       this.buttonTitle.set('Play');
       return;
     }
-    let newEQ = [{ x: 19.2, y: 19.2, marker: { enabled: true } }], delta = 0, sum = 0, compMultiplier = 0;
+    let newEQ = [{ x: 0, y: 19.2 }, { x: 19.2, y: 19.2, marker: { enabled: true } }, {x: 19.2, y: 18.4}], delta = 0, sum = 0, compMultiplier = 0;
     const gap = 1 / (1 - this.mpc()) * this.deltaG0();
 
     this.myInterval = this.period.subscribe((count) => {
@@ -193,11 +193,19 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       delta = Math.pow(this.modelParams().cy, count) * this.deltaG0() / 1000;
       compMultiplier = compMultiplier + Math.pow(this.modelParams().cy, count);
       sum = sum + delta * 1000;
-      let currentEQ = newEQ.map((el) => {
-        return {
-          x: el.x + delta,
-          y: el.y + delta,
-          marker: { enabled: true }
+      let currentEQ = newEQ.map((el, indx) => {
+        console.log(el);
+        switch (indx) {
+          case 0:
+            return { x: 0, y: el.y + delta}
+          case 1:
+            return {
+              x: el.x + delta,
+              y: el.y + delta,
+              marker: { enabled: true }
+            }
+          default:
+            return { x: el.x + delta, y: 18.4 }
         }
       });
 
@@ -307,6 +315,18 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
           color: 'black',
           data: [[18.4, 18.4], [20.4, 20.4]]
         },
+        {
+          type: 'line',
+          name: 'Initial Equlibrium',
+          lineWidth: 1,
+          dashStyle: 'Dot',
+          color: 'black',
+          zIndex: 1,
+          data: series.EQ,
+          marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1 },
+          label: { enabled: false }
+        },
+
       ],
       xAxis: {
         lineColor: '#757575',
