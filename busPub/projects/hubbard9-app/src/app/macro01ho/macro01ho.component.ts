@@ -102,6 +102,8 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       ir: 0,
       g0: 2.3,
       nx0: -1,
+      xMin: 18.4,
+      xMax: 20.4,
       potSeries: [[this.potGDP(), 18.4], [this.potGDP(), 22.2]
       ]
     }

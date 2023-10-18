@@ -23,7 +23,9 @@ export interface MacroModel {
   piE: number,
   ly: number,
   xScale?: number,
-  yScale?: number
+  yScale?: number,
+  xMin: number,
+  xMax: number
 
   [key: string]: number | undefined
 }
@@ -54,7 +56,9 @@ export class MacroModelService {
     l0: 5,
     lr: .5,
     ly: .5,
-    piE: 2
+    piE: 2,
+    xMin: 0,
+    xMax: 26
   }
 
   constructor() { }
@@ -117,7 +121,7 @@ export class MacroModelService {
   }
 
   public AEModel(components: string) {
-    let aeSeries: any[] = [], x = 18.4, xMax = 20.4;
+    let aeSeries: any[] = [], x = this.params.xMin, xMax = this.params.xMax, step = (xMax - x)/4;
     const param = this.params;
 
     do {
@@ -143,7 +147,7 @@ export class MacroModelService {
         }
       );
 
-      x = x + .2;
+      x = x + step;
 
     } while (x <= xMax)
     const eq = this.findEq(0, 28, (value: number) => value, this.AE)
