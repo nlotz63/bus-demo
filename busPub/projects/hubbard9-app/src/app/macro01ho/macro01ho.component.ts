@@ -195,7 +195,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
         }
       });
 
-      if (gap - sum > .3) {
+      if (gap - sum > .1) {
         this._equationBuilder(count);
 
       } else {
@@ -369,7 +369,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
         value.equation1 = `$$ \\Delta G \\times \\text{multiplier} = \\Delta Y $$`
       });
     } else if (count <= 4) {
-      eq1 = `${this.deltaG0()} \\times ${multiplier.toFixed(2)} = ${deltaGDP}`;
+      eq1 = `\$${this.deltaG0()} \\text{ billion } \\times ${multiplier.toFixed(2)} = \$${deltaGDP} \\text{ billion }`;
       let newEq2 = ``;
       for (let i = 0; i <= count; i++) {
         if (i < 4) {
@@ -387,7 +387,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       });
 
     } else {
-      eq1 = `${this.deltaG0()} \\times ${multiplier.toFixed(2)} = ${(+multiplier.toFixed(2) * this.deltaG0()).toFixed(0)}`;
+      eq1 = `\$${this.deltaG0()} \\text{ billion } \\times ${multiplier.toFixed(2)} = \$${(+multiplier.toFixed(2) * this.deltaG0()).toFixed(0)} \\text{ billion }`;
       this.equations.set({
         equation1: `$$` + eq1 + `$$`,
         equation2: `$$` + `\\sum_{${count}}^{\\infty} ${this.mpc()}^{${count}} = ` + this.saveEq2 + `= ${multiplier.toFixed(2)}` + `$$`,

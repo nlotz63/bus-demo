@@ -22,28 +22,33 @@
             <p>Restore full employment by increasing government spending (<span econMath="\( \Delta G \)"></span>) by
                 <input #spending type="number" #g0Value [value]="deltaG0()" min="0" max="600"
                     aria-label="Change in goverment spending" (change)="deltaG0.set(+g0Value.value)" /> billion dollars.
-                Then, click play to see how you did.</p>
+                Then, click play to see how you did.
+            </p>
             <div class="button-container">
                 <button type="button" mat-raised-button (click)="simulation()">{{buttonTitle()}}</button>
             </div>
             <mat-tab-group>
-                <mat-tab label="Tips" >
+                <mat-tab label="Tips">
                     <div id="results1">
                         <ul>
                             <li>
                                 Use the multiplier formula to find the multiplier. Use the "Math" tab to help you.
                             </li>
                             <li>
-                                Find the required change in real GDP, Y, needed to restore equilibrium. Before going to the next step, recall the graph shows real GDP is in trillions of dollars; therefore, multiply this amount by 1000 to convert it to billions of dollars. 
+                                Find the required change in real GDP, Y, needed to restore equilibrium. Before going to
+                                the next step, recall the graph shows real GDP is in trillions of dollars; therefore,
+                                multiply this amount by 1000 to convert it to billions of dollars.
                             </li>
                             <li>
-                                Then divide the required change in GDP by the multiplier to find the required change in goverment spending.
+                                Then divide the required change in GDP by the multiplier to find the required change in
+                                goverment spending.
                             </li>
                             <li>
-                                The "Math" and "Table" tabs update dynamically each round so you can see the multiplier effect in action.
+                                The "Math" and "Table" tabs update dynamically each round so you can see the multiplier
+                                effect in action.
                             </li>
                         </ul>
-                        </div>
+                    </div>
                 </mat-tab>
                 <mat-tab label="Math">
                     <h3>Multiplier:</h3>
@@ -52,39 +57,39 @@
                     <span [econMath]="equations().equation1"></span>
                 </mat-tab>
                 <mat-tab label="Table">
-                    <mat-table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                        <!-- Round column-->
-                        <ng-container matColumnDef="round">
-                            <th mat-header-cell *matHeaderCellDef><br />Round</th>
-                            <td mat-cell *matCellDef="let element">{{element.round}}</td>
-                        </ng-container>
-                        <!-- autonomous column-->
-                        <ng-container matColumnDef="autonomous">
-                            <th mat-header-cell *matHeaderCellDef><span econMath="\(\Delta G \)"></span><br />(in
-                                billions)</th>
-                            <td mat-cell *matCellDef="let element">{{element.autonomous}}</td>
-                        </ng-container>
-                        <!-- induced column-->
-                        <ng-container matColumnDef="induced">
-                            <th mat-header-cell *matHeaderCellDef><span econMath="\(\Delta C \)"></span><br />(in
-                                billions)</th>
-                            <td class="number" mat-cell *matCellDef="let element">{{element.induced}}</td>
-                        </ng-container>
-                        <!-- total column-->
-                        <ng-container matColumnDef="total">
-                            <th mat-header-cell *matHeaderCellDef>Total additional GDP<br />(in billions)</th>
-                            <td mat-cell *matCellDef="let element">{{element.total}}
-                        </ng-container>
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-
-                    </mat-table>
-                    <mat-paginator pageSize="10" hidePageSize="true" showFirstLastButtons="true"></mat-paginator>
+                    <div class="table-container">
+                        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                            <!-- Round column-->
+                            <ng-container matColumnDef="round">
+                                <th mat-header-cell *matHeaderCellDef><br />Round</th>
+                                <td mat-cell *matCellDef="let element">{{element.round}}</td>
+                            </ng-container>
+                            <!-- autonomous column-->
+                            <ng-container matColumnDef="autonomous">
+                                <th mat-header-cell *matHeaderCellDef><span econMath="\(\Delta G \)"></span><br />(in
+                                    billions)</th>
+                                <td mat-cell *matCellDef="let element">{{element.autonomous}}</td>
+                            </ng-container>
+                            <!-- induced column-->
+                            <ng-container matColumnDef="induced">
+                                <th mat-header-cell *matHeaderCellDef><span econMath="\(\Delta C \)"></span><br />(in
+                                    billions)</th>
+                                <td class="number" mat-cell *matCellDef="let element">{{element.induced}}</td>
+                            </ng-container>
+                            <!-- total column-->
+                            <ng-container matColumnDef="total">
+                                <th mat-header-cell *matHeaderCellDef>Total <span
+                                        econMath="\( \Delta Y \)"></span><br />(in billions)</th>
+                                <td mat-cell *matCellDef="let element">{{element.total}}
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+                        <mat-paginator pageSize="10" hidePageSize="true" showFirstLastButtons="true"
+                        class="mat-elevation-z8"></mat-paginator>
+                    </div>
                 </mat-tab>
             </mat-tab-group>
-
-
         </div>
         <div id="chart1" class="item-chart"></div>
     </div>

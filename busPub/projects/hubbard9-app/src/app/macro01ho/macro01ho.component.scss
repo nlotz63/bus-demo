@@ -6,7 +6,7 @@ span {
 }
 
 ::ng-deep.mat-mdc-text-field-wrapper {
-    height: 35px !important;
+    height: 40px !important;
     input {
         vertical-align: top;
     }
@@ -18,14 +18,13 @@ span {
 }
 
 mat-form-field {
-    width: 30%;
+    width: 35%;
     margin-right: 20px;
 
 }
 
-.mat-mdc-table {
- //   max-height: 280px;
-  //  overflow: auto;
+table {
+    width: 100%;
     tr {
         height: 10px;
     }
@@ -41,10 +40,16 @@ mat-form-field {
     }
 }
 
+.table-container {
+    padding-left: 2px;
+    
+  }
+
 button {
     margin: 0px;
 }
 .button-container {
     display: flex;
     justify-content: center;
+    margin-bottom: 5px;
 }
