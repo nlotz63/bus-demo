@@ -47,13 +47,16 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
   equation1 = ``;
   equation2 = ``;
   equation3 = ``;
+  equationS1 = ``;
+  equationS2 = ``;
+  equationS3 = ``;
   currencyFormat = new CurrencyPipe('en-US');
   cs0Area = 'A';
   cs1Area = 'A';
 
   sliderGroup = new FormGroup({
-    initialPrice: new FormControl(50),
-    newPrice: new FormControl(50)
+    initialPrice: new FormControl(2),
+    newPrice: new FormControl(2)
   });
 
 
@@ -94,20 +97,6 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
       },
       legend: { enabled: false },
       tooltip: { useHTML: true, enabled: true },
-      sonification: {
-        duration: 6000,
-        afterSeriesWait: 1000,
-        defaultInstrumentOptions: {
-          instrument: 'piano',
-          mapping: {
-            pitch: {
-              min: 'c2',
-              max: 'c6',
-              scale: Highcharts.sonification.Scales?.majorPentatonic
-            }
-          }
-        },
-      },
       accessibility: {
         point: {
           valueDescriptionFormat: `quantity: {point.x:.0f}, price: {point.y:.0f} dollars.`
@@ -116,8 +105,6 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           order: ['container', 'series', 'chartMenu']
         }
       },
-
-
       series: [
         {
           type: 'line',
@@ -176,6 +163,12 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           accessibility: {
             description: `The area between the initial price, the new price and the demand curve.`
           }
+        },
+        {
+          type: 'line',
+          name: 'S<sub>Market</sub>',
+          data: series.supply,
+          label: { enabled: true, useHTML: true}
         }
 
       ],
@@ -185,8 +178,8 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
         tickColor: '#757575',
         title: { useHTML: true, text: `Quantity of ${this.xGood} ` },
         min: 0,
-        max: 100,
-        tickInterval: 10
+        max: 40,
+        tickInterval: 2
       },
       yAxis: {
         gridLineWidth: 0,
@@ -196,8 +189,8 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
         tickWidth: 1,
         title: { useHTML: true, text: `Price per pair` },
         min: 0,
-        max: 140,
-        tickInterval: 10,
+        max: 6,
+        tickInterval: 1,
       },
       plotOptions: {
         series: {
@@ -357,22 +350,29 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
 
   private _createSeries() {
 
-    let a = 125, b = 1.25, x = 0;
+    let a = 10, b = .5, c = 0, d = .125, x = 0;
     let initP = this.sliderGroup.value.initialPrice!, newP = this.sliderGroup.value.newPrice!;
 
     let f = (x: number) => { return a - b * x; }, inverse = (x: number) => a / b - x / b;
+    let s = (x: number) => { return c + d * x; }, inverseS = (x: number) => -c / d + x / d;
 
-    let demand: any[] = [], cs1: any[] = [], cs2: any[] = [];
+
+    let demand: any[] = [],  supply: any[] = [ ], cs1: any[] = [], cs2: any[] = [];
 
     do {
       let point = {
         x: x,
         y: f(x)
       }
+      let point1 = {
+        x: x,
+        y: s(x)
+      }
       demand.push(point);
-      x = x + 10;
+      supply.push(point1);
+      x = x + .5;
 
-    } while (x <= 90);
+    } while (x <= 40);
 
     // area range series
 
@@ -405,12 +405,47 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
         low: newP < initP ? newP : initP,
         high: newP < initP ? newP : initP
       }
-    ]
+    ];
+
+    const ps1 = [
+      {
+        x: 0,
+        high: newP > initP ? initP : newP,
+        low: f(0)
+      },
+      {
+        x: newP > initP ? inverse(initP) : inverse(newP),
+        low: newP > initP ? initP : newP,
+        high: newP > initP ? initP : newP
+      }
+    ],
+
+      ps2 = [
+        {
+          x: 0,
+          low: newP > initP ? newP : initP,
+          high: newP > initP ? initP : newP
+        },
+        {
+          x: newP > initP ? inverse(initP) : inverse(newP),
+          low: newP > initP ? newP : initP,
+          high: newP > initP ? initP : newP
+        },
+        {
+          x: newP > initP ? inverse(newP) : inverse(initP),
+          low: newP > initP ? newP : initP,
+          high: newP > initP ? newP : initP
+        }
+      ];
+    
+      let connector = newP <= initP ? [{ x: inverse(newP), y: newP }, { x: inverse(newP), y: initP }] : [{ x: inverse(initP), y: initP }, { x: inverse(initP), y: newP}];
+
+
 
     let initPrice = [
       { x: 0, y: initP, accessibility: { enabled: false } },
       {
-        x: inverse(initP), y: initP,
+        x: inverseS(initP), y: initP,
         marker: {
           enabled: true,
           symbol: 'circle',
@@ -420,12 +455,12 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           lineColor: 'black'
         }
       },
-      { x: inverse(initP), y: 0, accessibility: { enabled: false } },
+      { x: inverseS(initP), y: 0, accessibility: { enabled: false } },
     ];
     let newPrice = [
       { x: 0, y: newP, accessibility: { enabled: false } },
       {
-        x: inverse(newP), y: newP,
+        x: inverseS(newP), y: newP,
         marker: {
           enabled: true,
           symbol: 'circle',
@@ -435,9 +470,12 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           lineColor: 'black'
         }
       },
-      { x: inverse(newP), y: 0, accessibility: { enabled: false } },
+      { x: inverseS(newP), y: 0, accessibility: { enabled: false } },
     ];
+    // dynamic equations
     let cs0 = ((f(0) - initP) * inverse(initP)) / 2, csNew = ((f(0) - newP) * inverse(newP)) / 2, csDif = csNew - cs0;
+    let ps0 = ((initP - s(0)) * inverse(initP)) / 2, psNew = ((newP - s(0)) * inverse(newP)) / 2, psDif = psNew - ps0;
+
 
     this.equation1 = `$$ CS_0 = \\frac{(\$${f(0)}- \$${initP}) \\times (${inverse(initP)}-0)} {2} = ${this.currencyFormat.transform(cs0) } $$`;
     this.equation2 = `$$ CS_1 = \\frac{(\$${f(0)}- \$${newP}) \\times (${inverse(newP)}-0)} {2} = ${ this.currencyFormat.transform(csNew)} $$`;
@@ -445,13 +483,27 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
 
     let labelPosition = this._positioner(initP, newP, inverse(initP), inverse(newP));
 
+    this.equationS1 = `$$ PS_0 = \\frac{(\$${initP} - \$${f(0)}) \\times (${inverse(initP)}-0)} {2} = ${this.currencyFormat.transform(ps0) } $$`;
+    this.equationS2 = `$$ PS_1 = \\frac{(\$${newP} - \$${f(0)}) \\times (${inverse(newP)}-0)} {2} = ${ this.currencyFormat.transform(psNew)} $$`;
+    this.equationS3 = `$$\\text{Change in producer surplus} = PS_1 - PS_0 = ${this.currencyFormat.transform(psDif)} $$`;
+
+    let labelPositionS = this._positioner(initP, newP, inverseS(initP), inverseS(newP));
+
+
+
+
     return {
       demand: demand,
+      supply: supply,
       initialPrice: initPrice,
       newPrice: newPrice,
       CS1: cs1,
       CS2: cs2,
-      labelPositioner: labelPosition
+      PS1: ps1,
+      PS2: ps2,
+      labelPositioner: labelPosition,
+      labelPositionerS: labelPositionS,
+      connector: connector
     }
   }
 
