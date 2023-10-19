@@ -22,11 +22,11 @@ HC_labels(Highcharts);
 HC_accessibility(Highcharts);
 
 @Component({
-  selector: 'app-interactive03',
+  selector: 'app-interactiveho04',
   standalone: true,
   imports: [CommonModule, BusPubLibModule, ReactiveFormsModule, CurrencyPipe ],
-  templateUrl: './interactive03.component.html',
-  styleUrls: ['./interactive03.component.scss'],
+  templateUrl: './interactiveho04.component.html',
+  styleUrls: ['./interactiveho04.component.scss'],
   animations: [
     trigger('myAnimationTrigger', [
         transition(':enter', [
@@ -40,7 +40,7 @@ HC_accessibility(Highcharts);
 ],
 
 })
-export class Interactive03Component implements OnInit, AfterViewInit {
+export class Interactiveho04Component implements OnInit, AfterViewInit {
 
   chart!: Highcharts.Chart;
   xGood: string = 'Jeans';

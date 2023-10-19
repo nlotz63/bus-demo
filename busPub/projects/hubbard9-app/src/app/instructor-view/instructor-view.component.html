@@ -9,7 +9,7 @@
   <mat-menu #chapter="matMenu">
     <button mat-menu-item [matMenuTriggerFor]="chapter2">2: Trade-offs, Comparative Advantage, and the Market System</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter3">3: Where Prices Come From: The Interaction of Demand and Supply</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter4">4: Government Intervention in Markets</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter4">4: Economic Efficiency, Government Price Setting, and Taxes</button>
 
     <button mat-menu-item [matMenuTriggerFor]="chapter6">6: Consumer and Producer Surplus and Market Efficiency</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter7">7: Consumer Theory</button>
@@ -51,11 +51,17 @@
     </a>
   </mat-menu>
   <mat-menu #chapter4>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive05']" [queryParams]="" skipLocationChange
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="" skipLocationChange
       (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      Price Ceilings & Price Floors
+      Consumer & producer surplus
     </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive05']" [queryParams]="" skipLocationChange
+    (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
+    (mouseleave)="interactive = savedInteractive">
+    Price Ceilings & Price Floors
+  </a>
+
   </mat-menu>
 
   <mat-menu #chapter6>

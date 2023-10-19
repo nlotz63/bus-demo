@@ -1,0 +1,57 @@
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">Price Ceilings and Price Floors</h1>
+    <div class="wrapper">
+        <div class="item-narrative">
+            <h2 class="mat-headline-6">Key Points:</h2>
+            <div>
+                <label id="radio-label11">Choose an option</label><br />
+                <mat-radio-group aria-labelledby="radio-label11" (change)="setMode($event.value);">
+                    <mat-radio-button checked="true" value="0">Price ceiling</mat-radio-button>
+                    <mat-radio-button value="1">Price floor</mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <div *ngIf="mode() === 0" @myAnimationTrigger>
+                <ul>
+                    <li>
+                        For a price ceiling to be binding, it must be set below the market clearing price.
+                    </li>
+                    <li>
+                        Although a price ceiling can increase consumer surplus, it results in a deadweight loss and a
+                        decrease in producer surplus.
+                    </li>
+                    <li>
+                        At the price ceiling, the quantity demanded is greater than the quantity supplied; therefore,
+                        less than the efficient quantity of apartments is being rented. This is the cause of the
+                        deadweight loss.
+                    </li>
+                    <li>
+                        In the presence of price ceilings, there is tendency for illicit market to form because
+                        potential renters are willing to pay higher rents.
+                    </li>
+                </ul>
+            </div>
+            <div *ngIf="mode() === 1" @myAnimationTrigger>
+                <ul>
+                    <li>
+                        For a price floor to be binding, it must be set above the market clearing price.
+                    </li>
+                    <li>
+                        Although a price floor increases producer surplus, it results in a deadweight loss and a
+                        decrease in consumer surplus.
+                    </li>
+                    <li>
+                        At the price floor, the quantity supplied is greater than the quantity demanded; therefore, less
+                        than the efficient quantity of cheese is being purchased. This is the cause of the deadweight
+                        loss.
+                    </li>
+                </ul>
+            </div>
+            <econ-slider class="econ-control" label="Price" showValue="false"
+                displayValue="{{ graph().price | currency: 'USD' : 'symbol' : '0.0-0' }}" [min]="graph().min"
+                [max]="graph().max" [(value)]="graph().price" [step]="graph().step"
+                (valueChange)="updateGraph($event)"></econ-slider>
+        </div>
+        <div class="item-chart" id="chart1">
+        </div>
+    </div>
+</div>
