@@ -1,12 +1,14 @@
 input {
     width: 50px;
 }
+
 span {
     font-size: .95em;
 }
 
 ::ng-deep.mat-mdc-text-field-wrapper {
     height: 40px !important;
+
     input {
         vertical-align: top;
     }
@@ -23,16 +25,23 @@ mat-form-field {
 
 }
 
+::ng-deep.mat-mdc-paginator-range-label {
+    margin: 20px 32px 0 24px !important;
+}
+
 table {
     width: 100%;
+
     tr {
         height: 10px;
     }
+
     th {
         font-size: .9em;
         text-align: center;
         vertical-align: baseline;
     }
+
     td {
         text-align: center;
         text-indent: 10%;
@@ -42,12 +51,13 @@ table {
 
 .table-container {
     padding-left: 2px;
-    
-  }
+
+}
 
 button {
     margin: 0px;
 }
+
 .button-container {
     display: flex;
     justify-content: center;

@@ -59,6 +59,7 @@
                 <mat-tab label="Table">
                     <div class="table-container">
                         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                            <caption>Simulation Results</caption>
                             <!-- Round column-->
                             <ng-container matColumnDef="round">
                                 <th mat-header-cell *matHeaderCellDef><br />Round</th>
@@ -85,11 +86,12 @@
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
-                        <mat-paginator pageSize="10" hidePageSize="true" showFirstLastButtons="true"
-                        class="mat-elevation-z8"></mat-paginator>
+                        <mat-paginator pageSize="9" hidePageSize="true" showFirstLastButtons="true"  class="mat-elevation-z8"></mat-paginator>
+
                     </div>
                 </mat-tab>
             </mat-tab-group>
         </div>
         <div id="chart1" class="item-chart"></div>
+
     </div>
