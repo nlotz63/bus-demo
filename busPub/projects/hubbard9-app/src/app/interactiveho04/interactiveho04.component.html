@@ -2,45 +2,50 @@
   <h1 class="mat-headline-5">Consumer Surplus</h1>
   <div class="wrapper">
     <div class="item-narrative" aria-live="polite" @myAnimationTrigger>
-      <h2 class="mat-headline-6">Computing Consumer Surplus</h2>
-      <p class="mat-body-1">
-        Use the sliders to vary the initial price and new price of jeans to practice computing consumer surplus and the change in consumer surplus.
+      <h2 class="mat-headline-6">Computing Surplus</h2>
+      <p class="mat-body-1">and
+        Use the sliders to vary the initial price and new price of chai tea to practice computing consumer surplus or producer surplus.
       </p>
-
+      <mat-radio-group class="econ-control" aria-label="Select an option" (change)="mode.set(+$event.value);_setupGraph()">
+        <mat-radio-button checked="true" value="0">Consumer surplus</mat-radio-button>
+        <mat-radio-button value="1">Producer surplus</mat-radio-button>
+      </mat-radio-group>
       <div class="control-column">
         <econ-slider
         class="econ-control"
         label="Initial price"
         showValue="false"
-        displayValue="{{sliderGroup.value.initialPrice | currency}}"
+        displayValue="{{initialPrice() | currency}}"
         min="1"
         max="5"
         step=".25"
-        [(value)]="sliderGroup.value.initialPrice!"
-        (valueChange)="updateGraph()"
+        [value]="initialPrice()"
+        (valueChange)="initialPrice.set($event);updateGraph()"
         ></econ-slider>
         <econ-slider
         class="econ-control"
         label="New price"
         showValue="false"
-        displayValue="{{sliderGroup.value.newPrice | currency}}"
+        displayValue="{{newPrice() | currency}}"
         min=".5"
         max="7"
         step=".25"
-        [(value)]="sliderGroup.value.newPrice!"
-        (valueChange)="updateGraph()"
+        [value]="newPrice()"
+        (valueChange)="newPrice.set($event);updateGraph()"
         ></econ-slider>
       </div>
       <h3 class="mat-subtitle-1">Calculations:</h3>
-      <p>
-        The following equations compute the initial consumer surplus (CS<sub>0</sub>), the new consumer surplus (CS<sub>1</sub>), and the change in consumer surplus.
+      <p *ngIf="mode() === 0">
+        The following equations compute the initial consumer surplus <span econMath="\(( CS_0 )\)"></span>, the new consumer surplus <span econMath="\(( CS_1 )\)"></span>, and the change in consumer surplus <span econMath="\( ( \Delta CS ) \)"></span>.
+      </p>
+      <p *ngIf="mode() === 1">
+        The following equations compute the initial producer surplus <span econMath="\(( PS_0 )\)"></span>, the new producer surplus <span econMath="\(( PS_1 )\)"></span>, and the change in producer surplus <span econMath="\( ( \Delta PS ) \)"></span>.
       </p>
       <p aria-live="polite">
-        <span class="econ-math" [econMath]="equation1"></span>
-        <span class="econ-math" [econMath]="equation2"></span>
-        <span class="econ-math" [econMath]="equation3"></span>
+        <span class="econ-math" [econMath]="equations().one"></span>
+        <span class="econ-math" [econMath]="equations().two"></span>
+        <span class="econ-math" [econMath]="equations().three"></span>
       </p>
-
     </div>
     <div class="item-chart" id="chart1"></div>
   </div>
