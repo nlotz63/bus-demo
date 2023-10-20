@@ -291,7 +291,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
         {
           type: 'line',
           name: 'Potential GDP',
-          lineWidth: 1,
+          lineWidth: 1.5,
           color: 'black',
           zIndex: 1,
           data: this.modelParams().potSeries
@@ -304,7 +304,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
           color: 'black',
           zIndex: 1,
           data: series.EQ,
-          marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1 },
+          marker: { radius: 3, fillColor: '#FCFBF2', lineColor: 'black', lineWidth: 1 },
           label: { enabled: false }
         },
         {
@@ -322,7 +322,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
           color: 'black',
           zIndex: 1,
           data: series.EQ,
-          marker: { radius: 3, fillColor: 'rgb(235, 235, 235)', lineColor: 'black', lineWidth: 1 },
+          marker: { radius: 3, fillColor: '#FCFBF2', lineColor: 'black', lineWidth: 1 },
           label: { enabled: false }
         },
 
@@ -380,6 +380,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.data;
     this.disableInput.set(false);
     this._setupGraph();
+    this.announcer.announce('The interactive has been reset');
   }
 
   private _equationBuilder(count: number | null) {
