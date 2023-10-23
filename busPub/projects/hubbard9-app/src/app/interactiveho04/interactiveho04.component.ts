@@ -44,8 +44,8 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
 
   chart!: Highcharts.Chart;
   currencyFormat = new CurrencyPipe('en-US', 'USD');
-  cs0Area = 'A';
-  cs1Area = 'A';
+  cs0Area = signal('A');
+  cs1Area = signal('A');
 
   // signals
   mode = signal(0);
@@ -54,9 +54,9 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
 
   controls = computed(() => {
     return {
-      initPmin: this.mode() === 0 ? 1 : .5,
+      initPmin: this.mode() === 0 ? 1 : 1,
       initPmax: this.mode() === 0 ? 5 : 3,
-      newPmin: this.mode() === 0 ? .5 : .25,
+      newPmin: this.mode() === 0 ? .5 : .5,
       newPmax: this.mode() === 0 ? 6 : 3.5,
     }
   });
@@ -67,17 +67,31 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
 
       return {
         title: `Demand for Chai Tea`,
-        caption: `The market demand curve for chai tea with a shaded triangle showing the consumer surplus at the initial price of $2.`,
+        caption: `The market demand curve for jeans. The initial consumer surplus (CS<sub>0</sub>) is the area ${this.cs0Area()}. The new consumer surplus (CS<sub>1</sub>) is the area ${this.cs1Area()}.`,
         xMax: 24,
-        yMax: 12
+        yMax: 12,
+        nameCurve: `D<sub>Market</sub>`,
+        descriptionCurve: 'A straight line that slopes down from left to right.',
+        colorCurve: '#0166B3',
+        colorInit: '#BACDE9',
+        descriptionA: 'The area under the demand curve above the initial price.',
+        descriptionBC: `The area between the initial price, the new price and the demand curve.`
+
+
       }
-      
+
     } else {
       return {
         title: `Supply of Chai Tea`,
-        caption: `The market supply curve for chai tea with a shaded triangle showing the producer surplus at the initial price of $2.`,
-        xMax: 42,
-        yMax: 6
+        caption: `The market supply curve for jeans. The initial producer surplus (PS<sub>0</sub>) is the area ${this.cs1Area()}. The new producer surplus (PS<sub>1</sub>) is the area ${this.cs0Area()}.`,
+        xMax: 35,
+        yMax: 5,
+        nameCurve: `S<sub>Market</sub>`,
+        descriptionCurve: 'A straight line that slopes upward from left to right.',
+        colorCurve: '#B0092C',
+        colorInit: '#DDB4B3',
+        descriptionA: 'The area above the supply curve below the initial price.',
+        descriptionBC: `The area between the initial price, the new price and the supply curve.`
 
       }
     }
@@ -87,7 +101,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
     one: ``,
     two: ``,
     three: ``
-})
+  })
 
 
   constructor(private announcer: LiveAnnouncer, private el: ElementRef) { }
@@ -104,21 +118,19 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
     let cs1Description = this.initialPrice() >= this.newPrice() ? 'initial price' : 'new price';
 
     if (this.initialPrice() > this.newPrice()) {
-      this.cs1Area = 'A + B + C';
-      this.cs0Area = 'A';
+      this.cs1Area.set('A + B + C');
+      this.cs0Area.set('A');
     } else if (this.initialPrice() < this.newPrice()) {
-      this.cs1Area = 'A';
-      this.cs0Area = 'A + B + C';
+      this.cs1Area.set('A');
+      this.cs0Area.set('A + B + C');
     } else {
-      this.cs0Area = 'A';
-      this.cs1Area = 'A';
+      this.cs0Area.set('A');
+      this.cs1Area.set('A');
     }
-    let caption = `The market demand curve for jeans. The initial consumer surplus (CS<sub>0</sub>) is the area ${this.cs0Area}. The new consumer surplus (CS<sub>1</sub>) is the area ${this.cs1Area}.
-    `;
 
     this.chart.update({
       caption: {
-        text: caption,
+        text: this.graph().caption,
         useHTML: true
       },
       series: [
@@ -234,17 +246,17 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
       series: [
         {
           type: 'line',
-          name: 'D<sub>Market</sub>',
+          name: this.graph().nameCurve,
           lineWidth: 2,
           zIndex: 1,
-          color: '#0771BD',
+          color: this.graph().colorCurve,
           data: this.mode() === 0 ? series.demand : series.supply,
           label: {
             useHTML: true,
             enabled: true
           },
           accessibility: {
-            description: 'A straight line that slopes down from left to right.'
+            description: this.graph().descriptionCurve
           }
         },
         {
@@ -271,11 +283,12 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           type: 'arearange',
           animation: false,
           name: 'Area A',
-          opacity: .5,
+          opacity: .75,
+          color: this.graph().colorInit,
           zIndex: -1,
           data: this.mode() === 0 ? series.CS1 : series.PS1,
           accessibility: {
-            description: `The area under the demand curve above the initial price.`
+            description: this.graph().descriptionA
           }
         },
         {
@@ -287,7 +300,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           zIndex: -1,
           data: this.mode() === 0 ? series.CS2 : series.PS2,
           accessibility: {
-            description: `The area between the initial price, the new price and the demand curve.`
+            description: this.graph().descriptionBC
           }
         },
         {
@@ -298,7 +311,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           zIndex: -1,
           color: 'black',
           data: series.connector,
-          label: {enabled: false}
+          label: { enabled: false }
         },
 
       ],
@@ -384,11 +397,11 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
         }
       ]
     });
- }
+  }
 
   private _createSeries() {
 
-    let a = 10, b = .5, c = 0, d = .125, x = 0;
+    let a = 10, b = .535, c = 0, d = .133, x = 0;
     let initP = this.initialPrice(), newP = this.newPrice();
 
     let f = (x: number) => { return a - b * x; }, inverse = (x: number) => a / b - x / b;
@@ -408,7 +421,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
       supply.push(point1);
       x = x + .5;
 
-    } while (x <= 40);
+    } while (x <= 30);
 
     // area range series
 
@@ -491,7 +504,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           lineColor: 'black'
         }
       },
-      { x:this.mode() === 0 ? inverse(initP) : inverseS(initP), y: 0, accessibility: { enabled: false } },
+      { x: this.mode() === 0 ? inverse(initP) : inverseS(initP), y: 0, accessibility: { enabled: false } },
     ];
     let newPrice = [
       { x: 0, y: newP, accessibility: { enabled: false } },
@@ -518,9 +531,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
 
     this.equations().three = this.mode() === 0 ? `$$\\Delta CS = CS_1 - CS_0 = ${this.currencyFormat.transform(csDif)} \\text{ thousand} $$` : `$$\\Delta PS = PS_1 - PS_0 = ${this.currencyFormat.transform(psDif)} \\text{ thousand} $$`;
 
-    let labelPosition = this._positioner(initP, newP, inverse(initP), inverse(newP));
-
-    let labelPositionS = this._positioner(initP, newP, inverseS(initP), inverseS(newP));
+    let labelPosition = this.mode() === 0 ? this._positioner(initP, newP, inverse(initP), inverse(newP)) : this._positioner(initP, newP, inverseS(initP), inverseS(newP));
 
     return {
       demand: demand,
@@ -532,7 +543,6 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
       PS1: ps1,
       PS2: ps2,
       labelPositioner: labelPosition,
-      labelPositionerS: labelPositionS,
       connector: connector
     }
   }
@@ -541,30 +551,66 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
     let xcsA: number = 0, xcsB: number = 0, xcsC: number = 0;
     let ycsA: number = 0, ycsB: number = 0, ycsC: number = 0;
 
-    if (initP < newP) {
-      xcsA = newQ / 2;
-      xcsB = newQ / 2;
-      xcsC = (initQ + newQ) / 2;
-      ycsA = newP + .5;
-      ycsB = initP + .1;
-      ycsC = initP + .1;
+    switch (this.mode()) {
+      case 0:
+        if (initP < newP) {
+          xcsA = newQ / 2;
+          xcsB = newQ / 2;
+          xcsC = (initQ + newQ) / 2;
+          ycsA = newP + .5;
+          ycsB = initP + .1;
+          ycsC = initP + .1;
+    
+        } else if (initP > newP) {
+          xcsA = initQ / 2;
+          xcsB = initQ / 2;
+          xcsC = (initQ + newQ) / 2;
+          ycsA = initP + .5;
+          ycsB = newP + .1;
+          ycsC = newP + .1;
+    
+        } else {
+          xcsA = newQ / 2;
+          xcsB = newQ / 2;
+          xcsC = (initQ + newQ) / 2;
+          ycsA = newP + .5;
+          ycsB = initP + .1;
+          ycsC = initP + .1;
+    
+        }
+    
+        break;
+      case 1:
+        if (initP > newP) {
+          xcsA = newQ / 2;
+          xcsB = newQ / 2;
+          xcsC = (initQ + newQ) / 2;
+          ycsA = newP - .5;
+          ycsB = initP - .25;
+          ycsC = initP - .25;
 
-    } else if (initP > newP) {
-      xcsA = initQ / 2;
-      xcsB = initQ / 2;
-      xcsC = (initQ + newQ) / 2;
-      ycsA = initP + .5;
-      ycsB = newP + .1;
-      ycsC = newP + .1;
+        } else if (initP < newP) {
+          xcsA = initQ / 2;
+          xcsB = initQ / 2;
+          xcsC = (initQ + newQ) / 2;
+          ycsA = initP - .5;
+          ycsB = newP - .25;
+          ycsC = newP - .25;
 
-    } else {
-      xcsA = newQ / 2;
-      xcsB = newQ / 2;
-      xcsC = (initQ + newQ) / 2;
-      ycsA = newP + .5;
-      ycsB = initP + .1;
-      ycsC = initP + .1;
+        } else {
+          xcsA = newQ / 2;
+          xcsB = newQ / 2;
+          xcsC = (initQ + newQ) / 2;
+          ycsA = newP - .5;
+          ycsB = initP - .25;
+          ycsC = initP - .25;
 
+        }
+
+        break;
+
+      default:
+        break;
     }
 
     return {
