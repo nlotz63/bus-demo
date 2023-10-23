@@ -6,7 +6,7 @@
       <p class="mat-body-1">and
         Use the sliders to vary the initial price and new price of chai tea to practice computing consumer surplus or producer surplus.
       </p>
-      <mat-radio-group class="econ-control" aria-label="Select an option" (change)="mode.set(+$event.value);_setupGraph()">
+      <mat-radio-group class="econ-control" aria-label="Select an option" (change)="mode.set(+$event.value)">
         <mat-radio-button checked="true" value="0">Consumer surplus</mat-radio-button>
         <mat-radio-button value="1">Producer surplus</mat-radio-button>
       </mat-radio-group>
@@ -34,18 +34,20 @@
         (valueChange)="newPrice.set($event);updateGraph()"
         ></econ-slider>
       </div>
-      <h3 class="mat-subtitle-1">Calculations:</h3>
-      <p *ngIf="mode() === 0">
-        The following equations compute the initial consumer surplus <span econMath="\(( CS_0 )\)"></span>, the new consumer surplus <span econMath="\(( CS_1 )\)"></span>, and the change in consumer surplus <span econMath="\( ( \Delta CS ) \)"></span>.
-      </p>
-      <p *ngIf="mode() === 1">
-        The following equations compute the initial producer surplus <span econMath="\(( PS_0 )\)"></span>, the new producer surplus <span econMath="\(( PS_1 )\)"></span>, and the change in producer surplus <span econMath="\( ( \Delta PS ) \)"></span>.
-      </p>
-      <p aria-live="polite">
-        <span class="econ-math" [econMath]="equations().one"></span>
-        <span class="econ-math" [econMath]="equations().two"></span>
-        <span class="econ-math" [econMath]="equations().three"></span>
-      </p>
+      <div aria-live="polite">
+        <h3 class="mat-subtitle-1">Calculations:</h3>
+        <p *ngIf="mode() === 0">
+          The following equations compute the initial consumer surplus <span econMath="\(( CS_0 )\)"></span>, the new consumer surplus <span econMath="\(( CS_1 )\)"></span>, and the change in consumer surplus <span econMath="\( ( \Delta CS ) \)"></span>.
+        </p>
+        <p *ngIf="mode() === 1">
+          The following equations compute the initial producer surplus <span econMath="\(( PS_0 )\)"></span>, the new producer surplus <span econMath="\(( PS_1 )\)"></span>, and the change in producer surplus <span econMath="\( ( \Delta PS ) \)"></span>.
+        </p>
+        <p>
+          <span class="econ-math" [econMath]="equations().one"></span>
+          <span class="econ-math" [econMath]="equations().two"></span>
+          <span class="econ-math" [econMath]="equations().three"></span>
+        </p>
+        </div>
     </div>
     <div class="item-chart" id="chart1"></div>
   </div>

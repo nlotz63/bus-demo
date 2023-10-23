@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, signal, computed, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, OnInit, signal, computed, ElementRef, effect, untracked } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -64,7 +64,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
   graph = computed(() => {
 
     if (this.mode() === 0) {
-
+      const priceDescription = this.initialPrice() >= this.newPrice() ? 'initial' : 'new';
       return {
         title: `Demand for Chai Tea`,
         caption: `The market demand curve for jeans. The initial consumer surplus (CS<sub>0</sub>) is the area ${this.cs0Area()}. The new consumer surplus (CS<sub>1</sub>) is the area ${this.cs1Area()}.`,
@@ -74,13 +74,14 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
         descriptionCurve: 'A straight line that slopes down from left to right.',
         colorCurve: '#0166B3',
         colorInit: '#BACDE9',
-        descriptionA: 'The area under the demand curve above the initial price.',
+        descriptionA: `The area under the demand curve above the ${priceDescription} price.`,
         descriptionBC: `The area between the initial price, the new price and the demand curve.`
 
 
       }
 
     } else {
+      const priceDescription = this.initialPrice() <= this.newPrice() ? 'initial' : 'new';
       return {
         title: `Supply of Chai Tea`,
         caption: `The market supply curve for jeans. The initial producer surplus (PS<sub>0</sub>) is the area ${this.cs1Area()}. The new producer surplus (PS<sub>1</sub>) is the area ${this.cs0Area()}.`,
@@ -90,7 +91,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
         descriptionCurve: 'A straight line that slopes upward from left to right.',
         colorCurve: '#B0092C',
         colorInit: '#DDB4B3',
-        descriptionA: 'The area above the supply curve below the initial price.',
+        descriptionA: `The area above the supply curve below the ${priceDescription} price.`,
         descriptionBC: `The area between the initial price, the new price and the supply curve.`
 
       }
@@ -101,7 +102,13 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
     one: ``,
     two: ``,
     three: ``
-  })
+  });
+
+  monitor = effect(() => {
+    const message =     this.mode() === 0 ? `Interactive setup for consumer surplus.` : `Interactive setup for producer surplus.`;
+    untracked(() => this._setupGraph());
+    this.announcer.announce(message);
+  });
 
 
   constructor(private announcer: LiveAnnouncer, private el: ElementRef) { }
@@ -115,7 +122,6 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
 
   public updateGraph() {
     let series = this._createSeries();
-    let cs1Description = this.initialPrice() >= this.newPrice() ? 'initial price' : 'new price';
 
     if (this.initialPrice() > this.newPrice()) {
       this.cs1Area.set('A + B + C');
@@ -150,7 +156,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
           type: 'arearange',
           data: this.mode() === 0 ? series.CS1 : series.PS1,
           accessibility: {
-            description: `The area under the demand curve above the ${cs1Description}.`
+            description: this.graph().descriptionA
           }
         },
         {
@@ -205,7 +211,7 @@ export class Interactiveho04Component implements OnInit, AfterViewInit {
     this.announcer.announce('The graph has been updated');
   }
 
-  public _setupGraph() {
+  private _setupGraph() {
     this.newPrice.set(2), this.initialPrice.set(2);
     let series = this._createSeries();
     const container = this.el.nativeElement.querySelector('#chart1');
