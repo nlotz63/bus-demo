@@ -81,7 +81,7 @@ export class ModelService {
     }
 
     const yscale = model.yscale!, xscale = model.xscale!;
-    let x = model.xMin!, a = model.demandIntercept!, b = model.demandSlope!, c = model.supplyIntercept!, d = model.supplySlope!, xMax = model.xMax!, xStep = model.xStep!;
+    let xMin = model.xMin!, a = model.demandIntercept!, b = model.demandSlope!, c = model.supplyIntercept!, d = model.supplySlope!, xMax = model.xMax!, xStep = model.xStep!, x = xMin;
 
     let qdPrice = model.qdUseP1! ? model.price1! : model.price2!,
       qsPrice = model.qsUseP1! ? model.price1! : model.price2!;
@@ -122,7 +122,11 @@ export class ModelService {
 
     } while (x <= xMax);
 
-    let eqX = (a - c) / (b + d);
+    let eqX = (a - c) / (b + d), price = model.price1!;
+    let qStar = price <= yscale*demand(eqX) ? qs(price) : qd(price);
+    let csUp = price <= yscale*demand(eqX) ? yscale*demand(qStar) : price,
+      psDown = price <= yscale * demand(eqX) ? price : yscale*supply(qStar);
+
     let eqSeries = [
       { x: 0, y: yscale * demand(eqX), accessibility: { enabled: false } },
       { name: 'Equilibrium:', x: xscale * eqX, y: yscale * demand(eqX), marker: { enabled: true } },
@@ -137,9 +141,24 @@ export class ModelService {
         { name: 'q<sup>d</sup>:', x: qd(qdPrice), y: qdPrice, marker: { enabled: true } },
         { x: qd(qdPrice), y: 0, accessibility: { enabled: false } }
       ];
-
-
-
+      let dwlSeries = [
+        { x: qStar, low: yscale*supply(qStar), high: yscale*demand(qStar) },
+        { x: eqX, low: yscale*demand(eqX), high: yscale*supply(eqX)}
+      ]; 
+  
+      let csSeries = [
+        { x: xMin, low: price, high: yscale*demand(xMin), accessibility: { enabled: false } },
+        { x: qStar, low: price, high: csUp, accessibility: { enabled: false } }
+      ],
+        psSeries = [
+          { x: xMin, high: price, low: yscale*supply(xMin), accessibility: { enabled: false } },
+          { x: qStar, high: price, low: psDown, accessibility: { enabled: false } }
+          ];
+      let priceLine = [
+        { x: 10, y: price },
+        { x: 50, y: price}
+          
+        ];
 
     return {
       demand: demandSeries,
@@ -150,8 +169,11 @@ export class ModelService {
       QSseries: qsSeries,
       QDseries: qdSeries,
       demFunct: demDescaled,
-      supFunct: supDescaled
-
+      supFunct: supDescaled,
+      CSseries: csSeries,
+      PSseries: psSeries,
+      DWL: dwlSeries,
+      priceLine: priceLine,
     }
   }
 
