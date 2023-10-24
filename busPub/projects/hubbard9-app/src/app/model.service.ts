@@ -61,7 +61,7 @@ export class ModelService {
       xscale: 1,
       yscale: 1,
       xMin: 0,
-      xMax: 55,
+      xMax: 50,
       demandIntercept: 100,
       supplyIntercept: 0,
       demandSlope: 1,
@@ -124,8 +124,8 @@ export class ModelService {
 
     let eqX = (a - c) / (b + d), price = model.price1!;
     let qStar = price <= yscale*demand(eqX) ? qs(price) : qd(price);
-    let csUp = price <= yscale*demand(eqX) ? yscale*demand(qStar) : price,
-      psDown = price <= yscale * demand(eqX) ? price : yscale*supply(qStar);
+    let csUp = price <= yscale*demand(eqX) ? yscale*demand(qStar/xscale) : price,
+      psDown = price <= yscale * demand(eqX) ? price : yscale*supply(qStar/xscale);
 
     let eqSeries = [
       { x: 0, y: yscale * demand(eqX), accessibility: { enabled: false } },
@@ -142,8 +142,8 @@ export class ModelService {
         { x: qd(qdPrice), y: 0, accessibility: { enabled: false } }
       ];
       let dwlSeries = [
-        { x: qStar, low: yscale*supply(qStar), high: yscale*demand(qStar) },
-        { x: eqX, low: yscale*demand(eqX), high: yscale*supply(eqX)}
+        { x: qStar, low: yscale*supply(qStar/xscale), high: yscale*demand(qStar/xscale) },
+        { x: xscale*eqX, low: yscale*demand(eqX), high: yscale*supply(eqX)}
       ]; 
   
       let csSeries = [
@@ -155,10 +155,10 @@ export class ModelService {
           { x: qStar, high: price, low: psDown, accessibility: { enabled: false } }
           ];
       let priceLine = [
-        { x: 10, y: price },
-        { x: 50, y: price}
+        { x: xMin*xscale, y: price },
+        { x: xMax*xscale, y: price}
           
-        ];
+    ];
 
     return {
       demand: demandSeries,
