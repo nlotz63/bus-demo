@@ -47,9 +47,9 @@
                 </ul>
             </div>
             <econ-slider class="econ-control" label="Price" showValue="false"
-                displayValue="{{ graph().price | currency: 'USD' : 'symbol' : '0.0-0' }}" [min]="graph().min"
-                [max]="graph().max" [(value)]="graph().price" [step]="graph().step"
-                (valueChange)="updateGraph($event)"></econ-slider>
+                displayValue="{{ price() | currency: 'USD' : 'symbol' : '0.0-0' }}" [min]="graph().min"
+                [max]="graph().max" [value]="price()" [step]="graph().step"
+                (valueChange)="price.set($event);updateGraph($event)"></econ-slider>
         </div>
         <div class="item-chart" id="chart1">
         </div>

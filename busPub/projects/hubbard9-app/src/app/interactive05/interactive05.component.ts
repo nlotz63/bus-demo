@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, signal, computed } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, signal, computed, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -12,6 +12,7 @@ import HC_accessibility from 'highcharts/modules/accessibility';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatRadioModule } from '@angular/material/radio';
 import { BusPubLibModule } from 'bus-pub-lib';
+import { ModelService, EconModel } from '../model.service';
 
 HC_more(Highcharts);
 HC_export(Highcharts);
@@ -44,6 +45,7 @@ export class Interactive05Component implements OnInit, AfterViewInit {
   chart1!: Highcharts.Chart;
 
   mode = signal(0);
+  price = signal(1500);
   graph = computed(() => {
     let scaler = 30, xGood = 'apartments (thousands)', yGood = 'Rent (dollars per month)', title = 'Market for 2-Bedroom Apartments',caption = 'The market for two-bedroom apartments. The supply and demand curves intersect at the market clearing price of $1,500 and quantity of 35 thousand apartments. ', price = 1500, min = 1150, max = 1500, step = 25;
 
@@ -60,11 +62,45 @@ export class Interactive05Component implements OnInit, AfterViewInit {
       price: price,
       min: min,
       max: max,
-      step: step
+      step: step,
     }
   });
 
-  constructor(private el: ElementRef, private announcer: LiveAnnouncer) { }
+  modelParams: Signal<EconModel> = computed(() => {
+
+    if (this.mode() === 0) {
+      return {
+        yscale: 30,
+        xMin: 15,
+        xMax: 60,
+        xStep: 9,
+        demandIntercept: 120,
+        supplyIntercept: -13,
+        demandSlope: 2,
+        supplySlope: 1.8,
+        price1: this.price()
+      }
+    } else {
+      return {
+        yscale: .5,
+        xMin: 15,
+        xMax: 60,
+        xStep: 9,
+        demandIntercept: 120,
+        supplyIntercept: -13,
+        demandSlope: 2,
+        supplySlope: 1.8,
+        price1: this.price()
+
+      }
+  
+    }
+   
+  });
+
+
+
+  constructor(private el: ElementRef, private announcer: LiveAnnouncer, private modelService: ModelService) { }
 
   ngOnInit(): void {
 
@@ -76,20 +112,24 @@ export class Interactive05Component implements OnInit, AfterViewInit {
 
   public setMode(value: number) {
     this.mode.set(+value);
+    const newPrice = +value === 0 ? 1500 : 25;
+    this.price.set(newPrice);
     this._setupStep();
   }
 
   public updateGraph(value: number) {
-    let series = this._createSeries();
+    this.price.set(value);
+    let series = this.modelService.demandSupply(this.modelParams());
     let priceTitle = '';
 
-    if (this.graph().price < series.EQ[1].y) {
+    if (value < series.EQ[1].y) {
       priceTitle = 'Price ceiling';
     } else if (this.graph().price > series.EQ[1].y) {
       priceTitle = 'Price floor';
     } else {
       priceTitle = 'Equilibrium price';
     }
+
     this.chart1.series[0].update({
       type: 'line',
       name: priceTitle,
@@ -117,7 +157,8 @@ export class Interactive05Component implements OnInit, AfterViewInit {
 
   // Private methods
   private _setupStep() {
-    let series = this._createSeries();
+    if (this.chart1) this.chart1.destroy();
+    let series = this.modelService.demandSupply(this.modelParams());
     const container = this.el.nativeElement.querySelector('#chart1');
     this.chart1 = new Highcharts.Chart(container, {
       chart: {
@@ -314,84 +355,6 @@ export class Interactive05Component implements OnInit, AfterViewInit {
       },
 
     });
-
-
-  }
-
-  private _createSeries() {
-    const graph = this.graph();
-    const scaler = graph.scaler;
-    let x = 15, a = 120, b = 2, c = -13, d = 1.8;
-    let demandSeries = [], supplySeries = [];
-
-    let demand = (x: number): number => {
-      return scaler * (a - b * x);
-    }
-
-    let supply = (x: number): number => {
-      return scaler * (c + d * x);
-    }
-    let qd = (y: number) => { return (y/scaler - a)/-b; }
-    let qs = (y: number) => { return (y/scaler - c)/d; }
-
-    do {
-      let point = {
-        name: 'Quantity demanded:',
-        x: x,
-        y: demand(x)
-      }
-      let point2 = {
-        name: 'Quantity supplied:',
-        x: x,
-        y: supply(x)
-      }
-      demandSeries.push(point);
-      supplySeries.push(point2);
-      x = x + 5;
-
-    } while (x <= 55);
-
-    let eqX = (a - c) / (b + d);
-    let qStar = graph.price <= demand(eqX) ? qs(graph.price) : qd(graph.price);
-    let csUp = graph.price <= demand(eqX) ? demand(qStar) :graph.price,
-      psDown = graph.price <= demand(eqX) ? graph.price : supply(qStar);
-      
-    let eqSeries = [
-      { x: 0, y: demand(eqX), accessibility: { enabled: false } },
-      { name: 'Equilibrium:', x: eqX, y: demand(eqX), marker: { enabled: true } },
-      { x: eqX, y: 0, accessibility: { enabled: false } }
-    ];
-
-    let dwlSeries = [
-      { x: qStar, low: supply(qStar), high: demand(qStar) },
-      { x: eqX, low: demand(eqX), high: supply(eqX)}
-    ]; 
-
-    let csSeries = [
-      { x: 15, low: graph.price, high: demand(15), accessibility: { enabled: false } },
-      { x: qStar, low: graph.price, high: csUp, accessibility: { enabled: false } }
-    ],
-      psSeries = [
-        { x: 15, high: graph.price, low: supply(15), accessibility: { enabled: false } },
-        { x: qStar, high: graph.price, low: psDown, accessibility: { enabled: false } }
-        ];
-    let priceLine = [
-      { x: 10, y: graph.price },
-      { x: 50, y: graph.price}
-        
-      ];
-
-    return {
-      demand: demandSeries,
-      supply: supplySeries,
-      priceLine: priceLine,
-      EQ: eqSeries,
-      DWL: dwlSeries,
-      QD: qd(graph.price),
-      QS: qs(graph.price),
-      CSseries: csSeries,
-      PSseries: psSeries
-    }
   }
 
 }
