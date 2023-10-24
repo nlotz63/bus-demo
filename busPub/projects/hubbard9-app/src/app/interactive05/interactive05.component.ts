@@ -45,16 +45,15 @@ export class Interactive05Component implements OnInit, AfterViewInit {
   chart1!: Highcharts.Chart;
 
   mode = signal(0);
-  price = signal(1500);
+  price = signal(2500);
   graph = computed(() => {
-    let scaler = 30, xGood = 'apartments (thousands)', yGood = 'Rent (dollars per month)', title = 'Market for 2-Bedroom Apartments',caption = 'The market for two-bedroom apartments. The supply and demand curves intersect at the market clearing price of $1,500 and quantity of 35 thousand apartments. ', price = 1500, min = 1150, max = 1500, step = 25;
+    let xGood = 'Quantity (millions of apartments per month)', yGood = 'Rent (dollars per month)', title = 'Market for Apartments',caption = 'The market for apartments. The supply and demand curves intersect at the market clearing price of $2,500 and quantity of two million apartments per month. ', price = 2500.23, min = 1500, max = 2500, step = 25, digitInfo = '0.0-0', xMin = 0, xMax = 4;
 
     if (this.mode() === 1) {
-      scaler = .5, xGood = 'cheese (thousands of pounds)', yGood = 'Price (dollars per pound)', title = 'Market for Gourmet Cheese', caption = 'The market for gourmet cheese. The supply and demand curves intersect at the market clearing price of $25 per pound and quantity of 35 thousand pounds.', price = 25, min = 25, max = 32, step = 1;
+      xGood = 'Quantity (billions of bushels per year)', yGood = 'Price (dollars per bushel)', title = 'Market for Wheat', caption = 'The market for wheat. The supply and demand curves intersect at the market clearing price of $6.50 per bushel and quantity of two billion bushels per year.', price = 6.5, min = 6.5, max = 9, step = .25, digitInfo = '0.2-2', xMin = 0, xMax = 4.5;
 
     };
     return {
-      scaler: scaler,
       xGood: xGood,
       yGood: yGood,
       title: title,
@@ -63,6 +62,9 @@ export class Interactive05Component implements OnInit, AfterViewInit {
       min: min,
       max: max,
       step: step,
+      xMin: xMin,
+      xMax: xMax,
+      digits: digitInfo
     }
   });
 
@@ -70,26 +72,28 @@ export class Interactive05Component implements OnInit, AfterViewInit {
 
     if (this.mode() === 0) {
       return {
-        yscale: 30,
-        xMin: 15,
-        xMax: 60,
-        xStep: 9,
-        demandIntercept: 120,
-        supplyIntercept: -13,
-        demandSlope: 2,
-        supplySlope: 1.8,
+        yscale: 62.5,
+        xscale: .05,
+        xMin: 0,
+        xMax: 70,
+        xStep: 70/7,
+        demandIntercept: 80,
+        supplyIntercept: 0,
+        demandSlope: 1,
+        supplySlope: 1,
         price1: this.price()
       }
     } else {
       return {
-        yscale: .5,
-        xMin: 15,
-        xMax: 60,
-        xStep: 9,
+        yscale: .10834,
+        xscale: .0334,
+        xMin: 0,
+        xMax: 110,
+        xStep: 11,
         demandIntercept: 120,
-        supplyIntercept: -13,
-        demandSlope: 2,
-        supplySlope: 1.8,
+        supplyIntercept: 0,
+        demandSlope: 1,
+        supplySlope: 1,
         price1: this.price()
 
       }
@@ -112,7 +116,7 @@ export class Interactive05Component implements OnInit, AfterViewInit {
 
   public setMode(value: number) {
     this.mode.set(+value);
-    const newPrice = +value === 0 ? 1500 : 25;
+    const newPrice = +value === 0 ? 2500 : 6.5;
     this.price.set(newPrice);
     this._setupStep();
   }
@@ -120,16 +124,15 @@ export class Interactive05Component implements OnInit, AfterViewInit {
   public updateGraph(value: number) {
     this.price.set(value);
     let series = this.modelService.demandSupply(this.modelParams());
-    let priceTitle = '';
+    let priceTitle = '', testEq = +(series.EQ[1].y).toFixed(2);
 
-    if (value < series.EQ[1].y) {
+    if (value < testEq) {
       priceTitle = 'Price ceiling';
-    } else if (this.graph().price > series.EQ[1].y) {
+    } else if (value > testEq) {
       priceTitle = 'Price floor';
     } else {
       priceTitle = 'Equilibrium price';
     }
-
     this.chart1.series[0].update({
       type: 'line',
       name: priceTitle,
@@ -207,6 +210,7 @@ export class Interactive05Component implements OnInit, AfterViewInit {
           order: ['container', 'series', 'chartMenu']
         }
       },
+    
       series: [
         {
           type: 'line',
@@ -307,19 +311,6 @@ export class Interactive05Component implements OnInit, AfterViewInit {
           color: '#C62828',
           zIndex: 0,
           data: series.supply,
-          sonification: {
-            tracks: [
-              {
-                type: 'speech',
-                mapping: {
-                  text: 'supply'
-                }
-              },
-              {
-                type: 'instrument'
-              }
-            ]
-          },
           accessibility: {
             description: 'A straight line that slopes up from left to right.'
           }
@@ -331,9 +322,9 @@ export class Interactive05Component implements OnInit, AfterViewInit {
         lineColor: '#757575',
         lineWidth: 1.,
         tickColor: '#757575',
-        title: { useHTML: true, text: `Quantity of ${this.graph().xGood}` },
-        min: 15,
-        max: 55,
+        title: { useHTML: true, text: `${this.graph().xGood}` },
+        min: this.graph().xMin,
+        max: this.graph().xMax,
       },
       yAxis: {
         gridLineWidth: 0,
@@ -348,9 +339,9 @@ export class Interactive05Component implements OnInit, AfterViewInit {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
             headerFormat: '<b>{series.name}: </b> ',
-            pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.0f}`
+            pointFormat: `\${point.y:,.2f}<br/><b>Quantity:</b> {point.x:.2f}`
           },
-          label: { enabled: true }
+          label: { enabled: true, connectorNeighbourDistance: 10, connectorAllowed: true }
         }
       },
 
