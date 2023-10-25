@@ -10,7 +10,7 @@ export const routes: Routes = [
     { path: 'interactive04', loadComponent: () => import('./interactiveho04/interactiveho04.component').then(m => m.Interactiveho04Component), title: 'HO: consumer and producer surplus' },
     { path: 'interactive05', loadComponent: () => import('./interactive05/interactive05.component').then(m => m.Interactive05Component), title: 'HO: Price ceilings and floors' },
     { path: 'interactive06', loadComponent: () => import('./interactiveho06/interactiveho06.component').then(m => m.Interactiveho06Component), title: 'HO: Externalities' },
-    { path: 'interactive07', loadComponent: () => import('./interactiveho07/interactiveho07.component').then( m => m.Interactiveho07Component), title: 'HO: '},
+    { path: 'interactive07', loadComponent: () => import('./interactiveho07/interactiveho07.component').then( m => m.Interactiveho07Component), title: 'HO: Optimal pollution reduction'},
     { path: 'macrointeractive01', loadComponent: () => import('./macro01ho/macro01ho.component').then( m => m.Macro01hoComponent), title: 'HO: Expenditure model'},
 
 
@@ -25,7 +25,7 @@ export const routes: Routes = [
             { path: 'interactive04', loadComponent: () => import('./interactiveho04/interactiveho04.component').then(m => m.Interactiveho04Component), title: 'HO: consumer and producer surplus' },
             { path: 'interactive05', loadComponent: () => import('./interactive05/interactive05.component').then(m => m.Interactive05Component), title: 'HO: Price ceilings and floors' },
             { path: 'interactive06', loadComponent: () => import('./interactiveho06/interactiveho06.component').then(m => m.Interactiveho06Component), title: 'HO: Externalities' },
-            { path: 'interactive07', loadComponent: () => import('./interactiveho07/interactiveho07.component').then( m => m.Interactiveho07Component), title: 'HO: '},
+            { path: 'interactive07', loadComponent: () => import('./interactiveho07/interactiveho07.component').then( m => m.Interactiveho07Component), title: 'HO: Optimal pollution reduction'},
         
             { path: 'macrointeractive01', loadComponent: () => import('./macro01ho/macro01ho.component').then( m => m.Macro01hoComponent), title: 'HO: Expenditure model'},
 
