@@ -9,6 +9,8 @@ export const routes: Routes = [
     { path: 'interactive03', loadComponent: () => import('./interactive-ho03/interactive-ho03.component').then(m => m.InteractiveHO03Component), title: 'HO: comparative advantage' },
     { path: 'interactive04', loadComponent: () => import('./interactiveho04/interactiveho04.component').then(m => m.Interactiveho04Component), title: 'HO: consumer and producer surplus' },
     { path: 'interactive05', loadComponent: () => import('./interactive05/interactive05.component').then(m => m.Interactive05Component), title: 'HO: Price ceilings and floors' },
+    { path: 'interactive06', loadComponent: () => import('./interactiveho06/interactiveho06.component').then(m => m.Interactiveho06Component), title: 'HO: Externalities' },
+    { path: 'interactive07', loadComponent: () => import('./interactiveho07/interactiveho07.component').then( m => m.Interactiveho07Component), title: 'HO: '},
     { path: 'macrointeractive01', loadComponent: () => import('./macro01ho/macro01ho.component').then( m => m.Macro01hoComponent), title: 'HO: Expenditure model'},
 
 
@@ -22,6 +24,9 @@ export const routes: Routes = [
             { path: 'Figure 3.1', loadComponent: () => import('./figure31/figure31.component').then(m => m.Figure31Component), title: 'HO: Demand Schedule' },
             { path: 'interactive04', loadComponent: () => import('./interactiveho04/interactiveho04.component').then(m => m.Interactiveho04Component), title: 'HO: consumer and producer surplus' },
             { path: 'interactive05', loadComponent: () => import('./interactive05/interactive05.component').then(m => m.Interactive05Component), title: 'HO: Price ceilings and floors' },
+            { path: 'interactive06', loadComponent: () => import('./interactiveho06/interactiveho06.component').then(m => m.Interactiveho06Component), title: 'HO: Externalities' },
+            { path: 'interactive07', loadComponent: () => import('./interactiveho07/interactiveho07.component').then( m => m.Interactiveho07Component), title: 'HO: '},
+        
             { path: 'macrointeractive01', loadComponent: () => import('./macro01ho/macro01ho.component').then( m => m.Macro01hoComponent), title: 'HO: Expenditure model'},
 
 

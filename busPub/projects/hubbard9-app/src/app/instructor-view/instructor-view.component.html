@@ -10,9 +10,8 @@
     <button mat-menu-item [matMenuTriggerFor]="chapter2">2: Trade-offs, Comparative Advantage, and the Market System</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter3">3: Where Prices Come From: The Interaction of Demand and Supply</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter4">4: Economic Efficiency, Government Price Setting, and Taxes</button>
-
+    <button mat-menu-item [matMenuTriggerFor]="chapter5">5: Externalities, Environmental Policy, and Public Goods</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter6">6: Consumer and Producer Surplus and Market Efficiency</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter7">7: Consumer Theory</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter11">11: Perfect Competition</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter12">12: Monopoly</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter13">13: Monopolistic Competition</button>
@@ -61,8 +60,20 @@
     (mouseleave)="interactive = savedInteractive">
     Price Ceilings & Price Floors
   </a>
-
   </mat-menu>
+  <mat-menu #chapter5>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive06']" [queryParams]="" skipLocationChange
+      (mouseover)="interactive = 7" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Positive & Negative Externalities
+    </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive07']" [queryParams]="" skipLocationChange
+    (mouseover)="interactive = 7" (click)="savedInteractive = interactive"
+    (mouseleave)="interactive = savedInteractive">
+    Optimal Pollution Reduction
+  </a>
+  </mat-menu>
+
 
   <mat-menu #chapter6>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive03']" [queryParams]="" skipLocationChange
@@ -74,13 +85,6 @@
       (mouseover)="interactive = 6" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       Computing Producer Surplus
-    </a>
-  </mat-menu>
-  <mat-menu #chapter7>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive02']" [queryParams]="" skipLocationChange
-      (mouseover)="interactive = 7" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      Budget Constraint
     </a>
   </mat-menu>
   <mat-menu #chapter11>
