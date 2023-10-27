@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+ import { Injectable } from '@angular/core';
 
 export interface MacroModel {
   c0: number,
@@ -155,16 +155,18 @@ export class MacroModelService {
     const eqSeries = [
       {
         x: 0,
-        y: this.AE(eq)
+        y: this.AE(eq),
+        accessibility: { enabled: false}
       },
       {
         x: eq,
         y: this.AE(eq),
-        marker: {enabled: true}
+        marker: {enabled: true},
       },
       {
         x: eq,
-        y: 18.4
+        y: 18.4,
+        accessibility: { enabled: false}
       }
     ]
 

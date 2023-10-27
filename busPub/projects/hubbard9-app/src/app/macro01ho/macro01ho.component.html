@@ -21,7 +21,7 @@
             </div>
             <p>Restore full employment by increasing government spending (<span econMath="\( \Delta G \)"></span>) by
                 <input #spending type="number" #g0Value [value]="deltaG0()" min="0" max="600"
-                    aria-label="Change in goverment spending" (change)="deltaG0.set(+g0Value.value)" [disabled]="disableInput()" /> billion dollars.
+                    aria-label="Change in goverment spending" aria-roledescription="billions of dollars" (change)="deltaG0.set(+g0Value.value)" [disabled]="disableInput()" /> billion dollars.
                 Then, click play to see how you did.
             </p>
             <div class="button-container">

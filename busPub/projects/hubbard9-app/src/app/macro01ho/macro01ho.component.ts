@@ -169,7 +169,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
         },
       ]
     });
-
+    this.announcer.announce('Graph updated.');
   }
 
   public simulation() {
@@ -181,7 +181,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       this.buttonTitle.set('Play');
       return;
     }
-    let newEQ = [{ x: 0, y: 19.2 }, { x: 19.2, y: 19.2, marker: { enabled: true } }, {x: 19.2, y: 18.4}], delta = 0, sum = 0, compMultiplier = 0;
+    let newEQ = [{ x: 0, y: 19.2, accessibility: {enabled: false} }, { x: 19.2, y: 19.2, marker: { enabled: true } }, {x: 19.2, y: 18.4, accessibility: {enabled: false}}], delta = 0, sum = 0, compMultiplier = 0;
     const gap = 1 / (1 - this.mpc()) * this.deltaG0();
 
     this.myInterval = this.period.subscribe((count) => {
@@ -196,7 +196,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       let currentEQ = newEQ.map((el, indx) => {
         switch (indx) {
           case 0:
-            return { x: 0, y: el.y + delta}
+            return { x: 0, y: el.y + delta, accessibility: {enabled: false}}
           case 1:
             return {
               x: el.x + delta,
@@ -204,7 +204,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
               marker: { enabled: true }
             }
           default:
-            return { x: el.x + delta, y: 18.4 }
+            return { x: el.x + delta, y: 18.4, accessibility: {enabled: false} }
         }
       });
 
