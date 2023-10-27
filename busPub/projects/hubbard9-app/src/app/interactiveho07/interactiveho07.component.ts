@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, signal, computed, Signal } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, computed, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { transition, trigger, style, animate } from '@angular/animations';
 import * as Highcharts from 'highcharts';
@@ -39,7 +39,6 @@ HC_accessibility(Highcharts);
       ])
     ])
   ],
-
 })
 export class Interactiveho07Component implements OnInit {
 
