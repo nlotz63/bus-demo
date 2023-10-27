@@ -141,7 +141,13 @@ $my-custom-typography-config: mat.define-typography-config(
   box-shadow: 2px 4px 4px rgba(211, 211, 211, 0.877);
 }
 
+/* @media all and (display-mode: fullscreen) {
+  .econ-interactive-container {
+    max-width: 100%;
+  }
+}
 
+ */
 .econ-control {
   position: relative;
   left: 10%;

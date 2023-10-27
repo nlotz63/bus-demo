@@ -1,0 +1,51 @@
+<div class="econ-interactive-container">
+    <h1 class="mat-headline-5">The Effects of a Tariff</h1>
+    <div class="wrapper">
+      <div class="item-narrative" aria-live="polite" >
+        <h2 class="mat-headline-6">Instructions:</h2>
+          <ul class="mat-body-1">
+            <li>
+              Use the slider to change the world price. 
+            </li>
+            <li>
+              Use the slider to change the amount of the tariff.
+            </li>
+            <li>
+              Click on the labels in the legend to see additional information about that area of the graph. 
+            </li>
+          </ul>
+ 
+        <div class="control-column">
+          <econ-slider
+          class="econ-control"
+          label="World price"
+          showValue="false"
+          displayValue="{{ sliderGroup.value.worldPrice | currency}}"
+          min="65"
+          max="90"
+          step="5"
+          [(value)]="sliderGroup.value.worldPrice!"
+          (valueChange)="updateGraph()"
+          ></econ-slider>
+          <econ-slider
+          class="econ-control"
+          label="Tariff"
+          showValue="false"
+          displayValue="{{sliderGroup.value.tariff | currency}}"
+          min="0"
+          max="35"
+          step="5"
+          [(value)]="sliderGroup.value.tariff!"
+          (valueChange)="updateGraph()"
+          ></econ-slider>
+
+         </div>
+        <h2 class="mat-subtitle-1">Additional Information:</h2>
+        <p class="mat-body-1" aria-live="polite" id="graph-update" >
+         Click items in the graph legend to see additional information about that item.
+        </p>
+  
+      </div>
+      <div class="item-chart" id="chart1"></div>
+    </div>
+  </div>

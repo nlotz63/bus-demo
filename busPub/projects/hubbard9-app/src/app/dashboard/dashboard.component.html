@@ -1,4 +1,4 @@
-<h1>Acemolu/Laibson/List: Interactive Models</h1>
+<h1>Hubbard/O'Brien: Interactive Models</h1>
 <div class="grid grid-pad">
   <a
 [routerLink]="['/interactive02']"
@@ -70,7 +70,7 @@ class="col-1-4"
 </a>
 <a
 [routerLink]="['/interactive07']"
-[queryParams]="{ mode: '2' }"
+[queryParams]="{}"
 [skipLocationChange]="enable"
 class="col-1-4"
 >
@@ -79,65 +79,16 @@ class="col-1-4"
 </div>
 </a>
 <a
-[routerLink]="['/interactive05']"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>Price Ceilings and Price Floors</h4>
-</div>
-</a>
-<a
-[routerLink]="['/interactive06']"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>Gains from Specialization</h4>
-</div>
-</a>
-<a
-[routerLink]="['/interactive07']"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>PPC Technology Shifts</h4>
-</div>
-</a>
-<a
-[routerLink]="['/interactive15']"
-[queryParams]="{mode: 0}"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>PPF: Opportunity Cost</h4>
-</div>
-</a>
-<a
-[routerLink]="['/interactive15']"
-[queryParams]="{mode: 1}"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>PPF: Efficient Production</h4>
-</div>
-</a>
-<a
-[routerLink]="['/interactive15']"
-[queryParams]="{mode: 2}"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>PPF: Shift Factors</h4>
-</div>
-</a>
-
-<a
 [routerLink]="['/interactive08']"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Elasticity Calculator</h4>
+</div>
+</a>
+<a
+[routerLink]="['/interactive09']"
 [skipLocationChange]="enable"
 class="col-1-4"
 >
@@ -147,11 +98,22 @@ class="col-1-4"
 </a>
 <a
 [routerLink]="['/interactive10']"
+[queryParams]="{mode: 0}"
 [skipLocationChange]="enable"
 class="col-1-4"
 >
 <div class="module hero">
-  <h4>Positive & Negative Externalities</h4>
+  <h4>Cost Curves</h4>
+</div>
+</a>
+<a
+[routerLink]="['/interactive10']"
+[queryParams]="{mode: 1}"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Competitive Firm</h4>
 </div>
 </a>
 <a
@@ -160,7 +122,7 @@ class="col-1-4"
 class="col-1-4"
 >
 <div class="module hero">
-  <h4>Effects of Taxes</h4>
+  <h4>Effects of Entry on Profit</h4>
 </div>
 </a>
 <a
@@ -169,25 +131,17 @@ class="col-1-4"
 class="col-1-4"
 >
 <div class="module hero">
-  <h4>Marginal Revenue</h4>
+  <h4>Monopoly Model</h4>
 </div>
 </a>
+
 <a
 [routerLink]="['/interactive13']"
 [skipLocationChange]="enable"
 class="col-1-4"
 >
 <div class="module hero">
-  <h4>Quantity & Price Effects on Revenue</h4>
-</div>
-</a>
-<a
-[routerLink]="['/interactive14']"
-[skipLocationChange]="enable"
-class="col-1-4"
->
-<div class="module hero">
-  <h4>Entry & Exit</h4>
+  <h4>Effects of Taxes</h4>
 </div>
 </a>
 <!-- Macro Models below -->

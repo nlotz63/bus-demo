@@ -7,18 +7,29 @@
     <h1>Hubbard/O'Brien: Interactive Models</h1>
   </div>
   <mat-menu #chapter="matMenu">
-    <button mat-menu-item [matMenuTriggerFor]="chapter2">2: Trade-offs, Comparative Advantage, and the Market System</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter3">3: Where Prices Come From: The Interaction of Demand and Supply</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter4">4: Economic Efficiency, Government Price Setting, and Taxes</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter5">5: Externalities, Environmental Policy, and Public Goods</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter6">6: Consumer and Producer Surplus and Market Efficiency</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter11">11: Perfect Competition</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter12">12: Monopoly</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter2">2: Trade-offs, Comparative Advantage, and the Market
+      System</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter3">3: Where Prices Come From: The Interaction of Demand and
+      Supply</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter4">4: Economic Efficiency, Government Price Setting, and
+      Taxes</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter5">5: Externalities, Environmental Policy, and Public
+      Goods</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter6">6: Elasticity: The Responsiveness of Demand and Supply</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter9">9: Comparative Advantage and the Gains from
+      International Trade</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter11">11: Technology, Production, and Costs</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter12">12: Firms in Perfectly Competitive Markets</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter13">13: Monopolistic Competition</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter15">15: Externalities</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter17">17: Taxation and Government Spending</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter20">20: Economic Growth</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter15">15: Monopoly and Antitrust Policy</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter17">17: TPublic Choice, Taxes, and the Distribution of
+      Income</button>
+
+
+    <!--     <button mat-menu-item [matMenuTriggerFor]="chapter20">20: Economic Growth</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter21">21: Long-Run Economic Growth</button>
+    
+ -->
     <button mat-menu-item [matMenuTriggerFor]="chapter22">22: Aggregate Expenditure and Output in the Short Run</button>
     <button mat-menu-item (click)="viewFullscreen()">View Fullscreen</button>
 
@@ -31,10 +42,10 @@
       Production Possibilities (PPF)
     </a>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive03']" [queryParams]="" skipLocationChange
-    (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
-    (mouseleave)="interactive = savedInteractive">
-    Comparative Advantage
-  </a>
+      (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Comparative Advantage
+    </a>
 
   </mat-menu>
   <mat-menu #chapter3>
@@ -56,10 +67,10 @@
       Consumer & producer surplus
     </a>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive05']" [queryParams]="" skipLocationChange
-    (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
-    (mouseleave)="interactive = savedInteractive">
-    Price Ceilings & Price Floors
-  </a>
+      (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Price Ceilings & Price Floors
+    </a>
   </mat-menu>
   <mat-menu #chapter5>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive06']" [queryParams]="" skipLocationChange
@@ -68,78 +79,59 @@
       Positive & Negative Externalities
     </a>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive07']" [queryParams]="" skipLocationChange
-    (mouseover)="interactive = 7" (click)="savedInteractive = interactive"
-    (mouseleave)="interactive = savedInteractive">
-    Optimal Pollution Reduction
-  </a>
+      (mouseover)="interactive = 7" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Optimal Pollution Reduction
+    </a>
   </mat-menu>
 
 
   <mat-menu #chapter6>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive03']" [queryParams]="" skipLocationChange
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive08']" skipLocationChange
       (mouseover)="interactive = 5" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      Computing Consumer Surplus
-    </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive09']" [queryParams]="" skipLocationChange
-      (mouseover)="interactive = 6" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      Computing Producer Surplus
+      Elasticity Calculator
     </a>
   </mat-menu>
+  <mat-menu #chapter9>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive09']" skipLocationChange>Effects of Tariffs</a>
+  </mat-menu>
   <mat-menu #chapter11>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 0}" skipLocationChange
-      (mouseover)="interactive = 8" (click)="savedInteractive = interactive"
+    <a mat-menu-item [routerLink]=" ['/instructor-dashboard/interactive10']" [queryParams]="{mode: 0}"
+      skipLocationChange (mouseover)="interactive = 8" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       Cost Curves
     </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 1}" skipLocationChange
-      (mouseover)="interactive = 8" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      Profit
-    </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="{mode: 2}" skipLocationChange
-      (mouseover)="interactive = 8" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      Profit Maximizing Output
-    </a>
-
   </mat-menu>
   <mat-menu #chapter12>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive12']" [queryParams]="" skipLocationChange
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive10']" [queryParams]="{mode: 1}" skipLocationChange
       (mouseover)="interactive = 12" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      Marginal Revenue & Revenue
+      Competitive Firm
     </a>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive13']" [queryParams]="" skipLocationChange
-      (mouseover)="interactive = 12" (click)="savedInteractive = interactive"
-      (mouseleave)="interactive = savedInteractive">
-      Quantity & Price Effects of a Price Decrease
-    </a>
-
   </mat-menu>
   <mat-menu #chapter13>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive13']" skipLocationChange
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive11']" skipLocationChange
       (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      Entry & Exit
+      Effects of Entry on Profit
     </a>
   </mat-menu>
   <mat-menu #chapter15>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive10']" skipLocationChange
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive12']" skipLocationChange
       (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      Positive & Negative Externalities
+      Monopoly Model
     </a>
   </mat-menu>
   <mat-menu #chapter17>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive11']" skipLocationChange
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive13']" skipLocationChange
       (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       The Effects of Taxes
     </a>
   </mat-menu>
-  <mat-menu #chapter20>
+<!--   <mat-menu #chapter20>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive08']" skipLocationChange
       (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
@@ -153,7 +145,7 @@
       The Effects of Tariffs
     </a>
   </mat-menu>
-  <mat-menu #chapter22>
+ -->  <mat-menu #chapter22>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive01']" skipLocationChange
       (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
