@@ -303,7 +303,7 @@ export class Interactive02Component implements OnInit, AfterViewInit {
           marker: { enabled: false, symbol: 'circle', radius: 2 },
           tooltip: {
             headerFormat: '',
-            pointFormat: `<b>${this.graph().xTitle}: </b>{point.x:,.2f}<br/><b>${this.graph().yTitle}:</b> {point.y:.2f}<br/><b>Opp. Cost:</b> {point.oppCost:.2f} ${this.graph().yTitle}`
+            pointFormat: `<b>${this.graph().xTitle}: </b>{point.x:,.2f}<br/><b>${this.graph().yTitle}:</b> {point.y:.2f}<br/><b>Opp. Cost:</b> {point.oppCost:.2f} ${this.yGood()}`
           },
           label: { enabled: true, style: { fontSize: '.75em' } }
         }
