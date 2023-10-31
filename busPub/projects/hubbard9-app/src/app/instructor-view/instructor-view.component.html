@@ -26,13 +26,16 @@
       Income</button>
 
 
-    <!--     <button mat-menu-item [matMenuTriggerFor]="chapter20">20: Economic Growth</button>
-    <button mat-menu-item [matMenuTriggerFor]="chapter21">21: Long-Run Economic Growth</button>
-    
- -->
+    <button mat-menu-item [matMenuTriggerFor]="chapter20">20: Economic Growth, the Financial System, and
+      Business Cycles</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter21">21: Long-Run Economic Growth: Sources and Policies</button>
     <button mat-menu-item [matMenuTriggerFor]="chapter22">22: Aggregate Expenditure and Output in the Short Run</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter23">23: Aggregate Demand and Aggregate Supply Analysis</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter25">25: Monetary Policy</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter26">26: Fiscal Policy</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter27">27: Inflation, Unemployment, and Federal Reserve Policy</button>
+    <button mat-menu-item [matMenuTriggerFor]="chapter28">28: Macroeconomics in an Open Economy</button>
     <button mat-menu-item (click)="viewFullscreen()">View Fullscreen</button>
-
   </mat-menu>
 
   <mat-menu #chapter2>
@@ -57,14 +60,14 @@
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive01']" [queryParams]="{ mode: 1 }"
       skipLocationChange (mouseover)="interactive = 4" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      Shifts in supply and demand
+      Shifts in Supply and Demand
     </a>
   </mat-menu>
   <mat-menu #chapter4>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive04']" [queryParams]="" skipLocationChange
       (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      Consumer & producer surplus
+      Consumer & Producer Surplus
     </a>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive05']" [queryParams]="" skipLocationChange
       (mouseover)="interactive = 1" (click)="savedInteractive = interactive"
@@ -84,8 +87,6 @@
       Optimal Pollution Reduction
     </a>
   </mat-menu>
-
-
   <mat-menu #chapter6>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive08']" skipLocationChange
       (mouseover)="interactive = 5" (click)="savedInteractive = interactive"
@@ -131,204 +132,72 @@
       The Effects of Taxes
     </a>
   </mat-menu>
-<!--   <mat-menu #chapter20>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive08']" skipLocationChange
+  <mat-menu #chapter20>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive02']" skipLocationChange
       (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      The Effects of Tariffs
+     Loanable Funds Market 
     </a>
   </mat-menu>
   <mat-menu #chapter21>
-    <a mat-menu-item [routerLink]="['/instructor-dashboard/interactive08']" skipLocationChange
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive03']" skipLocationChange
       (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
-      The Effects of Tariffs
+      Production Function
     </a>
   </mat-menu>
- -->  <mat-menu #chapter22>
+  <mat-menu #chapter22>
     <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive01']" skipLocationChange
       (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
       (mouseleave)="interactive = savedInteractive">
       Aggregate Expenditure Model
     </a>
   </mat-menu>
+  <mat-menu #chapter23>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive04']" skipLocationChange [queryParams]="{mode: 0}"
+      (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Static AD/AS Model
+    </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive04']" skipLocationChange [queryParams]="{mode: 1}"
+    (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+    (mouseleave)="interactive = savedInteractive">
+    Dynamic AD/AS Model
+  </a>
+  </mat-menu>
+  <mat-menu #chapter25>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive05']" skipLocationChange
+      (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Federal Funds Market
+    </a>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive04']" skipLocationChange [queryParams]="{mode: 2}"
+    (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+    (mouseleave)="interactive = savedInteractive">
+    Monetary Policy (Dynamic AD/AS Model)
+  </a>
+  </mat-menu>
+  <mat-menu #chapter26>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive04']" skipLocationChange [queryParams]="{mode: 3}"
+    (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+    (mouseleave)="interactive = savedInteractive">
+    Fiscal Policy (Dynamic AD/AS Model)
+  </a>
+  </mat-menu>
+  <mat-menu #chapter27>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive06']" skipLocationChange
+      (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Philips Curve
+    </a>
+  </mat-menu>
+  <mat-menu #chapter28>
+    <a mat-menu-item [routerLink]="['/instructor-dashboard/macrointeractive07']" skipLocationChange
+      (mouseover)="interactive = 13" (click)="savedInteractive = interactive"
+      (mouseleave)="interactive = savedInteractive">
+      Foreign Exchange Market
+    </a>
+  </mat-menu>
   <div class="econ-model-container" id="model">
     <router-outlet></router-outlet>
   </div>
-  <!--   <div class="econ-keypoints">
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 1">
-      <h2>Key Points for Key Diagram 1: Production Function</h2>
-      <ol>
-        <li>Realistic capital, labor and output values.</li>
-        <li>Steps 2 and 3: click on the curve to move the tangent line.</li>
-        <li>Tooltips display useful data such as the marginal productivities at that point.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 2">
-      <h2>Key Points for Key Diagram 2: Labor Demand</h2>
-      <ol>
-        <li>Tooltips display useful data such as the marginal productivities at that point.</li>
-        <li>Steps with multiple sliders provide a reset button.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 3">
-      <h2>Key Points for Figure 3.15: Unemployment Data</h2>
-      <ol>
-        <li>
-          Macroeconomic data retrieved from FRED in real time.
-        </li>
-        <li>The drop down provides a robust selection of unemployment data to choose from.</li>
-        <li>Option to display recession indicators</li>
-        <li>Accessibility highlight: Displaying labels for curves lowers cognitive load.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 4">
-      <h2>Key Points for Key Diagram 3: National saving</h2>
-      <ol>
-        <li>Tooltips display useful data such as the marginal productivities at that point.</li>
-        <li>Step 5 includes an option to see the effects of taxes with and without Ricardian equivalence holding.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 5">
-      <h2>Key Points for Key Diagram 4: National Saving (small open economy)</h2>
-      <ol>
-        <li>Dynamic math displays updated values for net exports.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible.</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 6">
-      <h2>Key Points for Key Diagram 5: National Saving (large open economy)</h2>
-      <ol>
-        <li>Students use an input box to enter interest rates to find the equilibrium in the goods market.</li>
-        <li>The activity is fully accessible with extra care given ensure a meaningful experience for visually impaired
-          individuals.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 7">
-      <h2>Key Points for figure 6.5: Solow Model</h2>
-      <ol>
-        <li>A mix of activities to engage students.</li>
-        <li>A drop down that highlights key points on the graphs.</li>
-        <li>A slider that student use to discover the steady state.</li>
-        <li>Sliders to show the effects of parameter changes.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 8">
-      <h2>Key Points for Figure 9.2: Derive IS Curve</h2>
-      <ol>
-        <li>An interactive that shows how one curve is derived from another model.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 9">
-      <h2>Key Points for Figure 9.4: Derive LM Curve</h2>
-      <ol>
-        <li>An interactive that shows how one curve is derived from another model.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 10">
-      <h2>Key Points for Key Diagram 6: ISLM Model</h2>
-      <ol>
-        <li>A key model in macroeconomics.</li>
-        <li>All key determinants are interactive and fully accessible.</li>
-        <li>Includes a simulation to restore the model to long-run equilibrium.</li>
-        <li>multi-slider steps include a reset button to encourage repeated engagement.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 11">
-      <h2>Key Points for Key Diagram 7: AD/AS Model</h2>
-      <ol>
-        <li>A key model in macroeconomics.</li>
-        <li>All key determinants are interactive and fully accessible.</li>
-        <li>Includes a simulation to restore the model to long-run equilibrium.</li>
-        <li>multi-slider steps include a reset button to encourage repeated engagement.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 12">
-      <h2>Key Points for Key Diagram 8: AD/AS Model (misperceptions)</h2>
-      <ol>
-        <li>A key model in macroeconomics.</li>
-        <li>All key determinants are interactive and fully accessible.</li>
-        <li>Includes a simulation to restore the model to long-run equilibrium.</li>
-        <li>multi-slider steps include a reset button to encourage repeated engagement.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 13">
-      <h2>Key Points for Figure 13.4: Supply/Demand for Currency</h2>
-      <ol>
-        <li>A drop down and radio buttons allow the student to simulate a wide range of parameter changes.</li>
-        <li>Take the static table of key determinants from the text and turns it into an engaging, interactive learning
-          experience.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 14">
-      <h2>Key Points for Figure 13.5: Goods Market (open economy)</h2>
-      <ol>
-        <li>Sliders for all relevant determinants.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-    <div class="berk-key-points col-1-8" *ngIf="interactive === 15">
-      <h2>Key Points for Figure 13.9: Open Economy ISLM</h2>
-      <ol>
-        <li>A simulation illustrating a complex concept in open-economy economics.</li>
-        <li>Tooltips display useful data.</li>
-        <li>Hamburger button (top-right in graph) offers numerious options for exporting data and images, and playing
-          sound.</li>
-        <li>Fully accessible</li>
-      </ol>
-    </div>
-  </div>
-</div> -->

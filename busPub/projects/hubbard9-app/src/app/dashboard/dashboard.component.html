@@ -146,6 +146,24 @@ class="col-1-4"
 </a>
 <!-- Macro Models below -->
 <a
+[routerLink]="['/macrointeractive02']"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Loanable Funds Market</h4>
+</div>
+</a>
+<a
+[routerLink]="['/macrointeractive03']"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Production Function</h4>
+</div>
+</a>
+<a
 [routerLink]="['/macrointeractive01']"
 [skipLocationChange]="enable"
 class="col-1-4"
@@ -154,7 +172,71 @@ class="col-1-4"
   <h4>Expenditure Model</h4>
 </div>
 </a>
-
-
-
+<a
+[routerLink]="['/macrointeractive04']"
+[queryParams]="{mode: 0}"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Static AD/AS</h4>
+</div>
+</a>
+<a
+[routerLink]="['/macrointeractive04']"
+[queryParams]="{mode: 1}"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Dynamic AD/AS</h4>
+</div>
+</a>
+<a
+[routerLink]="['/macrointeractive05']"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Federal Funds Market</h4>
+</div>
+</a>
+<a
+[routerLink]="['/macrointeractive04']"
+[queryParams]="{mode: 2}"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Monetary Policy (using dynamic AD/AS)</h4>
+</div>
+</a>
+<a
+[routerLink]="['/macrointeractive04']"
+[queryParams]="{mode: 3}"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Fiscal Policy (using dynamic AD/AS)</h4>
+</div>
+</a>
+<a
+[routerLink]="['/macrointeractive06']"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Philips Curve</h4>
+</div>
+</a>
+<a
+[routerLink]="['/macrointeractive07']"
+[skipLocationChange]="enable"
+class="col-1-4"
+>
+<div class="module hero">
+  <h4>Foreign Exchange Market</h4>
+</div>
+</a>
 </div>
