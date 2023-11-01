@@ -34,6 +34,7 @@ HC_data(Highcharts);
 HC_annotate(Highcharts);
 HC_labels(Highcharts);
 HC_accessibility(Highcharts);
+
 @Component({
   selector: 'app-macro01ho',
   standalone: true,
