@@ -54,10 +54,30 @@ export class Macro04hoComponent implements OnInit {
       xMin: 0,
       xMax: 28,
       xInterval: 2,
-      yMin: 25,
-      yMax: 150,
-      yInterval: 10
+      yMin: -2,
+      yMax: 4,
+      yInterval: .25
     }
+  });
+
+  modelParams = signal({
+    cr: 0,
+    c0: 1.5,
+    g0: 3.6,
+    i0: 3.6,
+    cy: .6,
+    iy: .001,
+    t0: .1,
+    P: 100,
+    piE: 2,
+    ir: .03,
+    ly: .75,
+    lr: .5,
+    xMin: 18,
+    xMax: 21,
+    M: 5,
+
+    
   });
 
 
@@ -69,12 +89,14 @@ export class Macro04hoComponent implements OnInit {
       this.mode.set(mode);
       this.setTitle(mode);
     });
+    this.macroModel.setParamters(this.modelParams());
     this._setupGraph();
   }
 
 
   private _setupGraph() {
     const container = this.el.nativeElement.querySelector('#chart1');
+    const series = this.macroModel.ADAS();
     this.chart = new Highcharts.Chart(container, {
       chart: {
         height: 550,
@@ -111,10 +133,11 @@ export class Macro04hoComponent implements OnInit {
       series: [
         {
           type: 'line',
-          data: [
-            [0, 20],
-            [28, 125]
-          ]
+          data: series.AD
+        },
+        {
+          type: 'line',
+          data: series.LM
         }
 
       ],
@@ -123,10 +146,10 @@ export class Macro04hoComponent implements OnInit {
         lineWidth: 1.,
         tickColor: '#757575',
         title: { useHTML: true, text: `${this.graph().xTitle}` },
-        min: this.graph().xMin,
+/*         min: this.graph().xMin,
         max: this.graph().xMax,
         tickInterval: this.graph().xInterval
-      },
+ */      },
       yAxis: {
         gridLineWidth: 0,
         lineColor: '#757575',
@@ -134,10 +157,10 @@ export class Macro04hoComponent implements OnInit {
         tickColor: '#757575',
         tickWidth: 1,
         title: { useHTML: true, text: `${this.graph().yTitle}` },
-        min: this.graph().yMin,
+/*         min: this.graph().yMin,
         max: this.graph().yMax,
         tickInterval: this.graph().yInterval
-      },
+ */      },
       plotOptions: {
         series: {
           marker: { enabled: false, symbol: 'circle', radius: 2 },

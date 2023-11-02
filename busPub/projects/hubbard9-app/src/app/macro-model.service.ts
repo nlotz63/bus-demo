@@ -101,6 +101,10 @@ export class MacroModelService {
 
   private AE = (x: number) => this.C(x) + this.I(x, 0) + this.G(x) + this.params.nx0;
 
+  private AD = (x: number) => {
+    return (this.params.M * (this.params.cr + this.params.ir + this.params.nxr)) / (this.params.cr * this.params.l0 + this.params.ir * this.params.l0 + x * this.params.lr - this.params.c0 * this.params.lr - x * this.params.cy * this.params.lr - this.params.g0 * this.params.lr - this.params.i0 * this.params.lr + x * this.params.cr * this.params.ly + x * this.params.ir * this.params.ly - this.params.lr * this.params.nx0 + this.params.l0 * this.params.nxr + x * this.params.ly * this.params.nxr - this.params.lr * (this.params.nxrf) ** 2 + x * this.params.lr * this.params.nxy - this.params.lr * (this.params.nxyf) ** 2 - this.params.cr * this.params.lr * this.params.piE - this.params.ir * this.params.lr * this.params.piE - this.params.lr * this.params.nxr * this.params.piE + this.params.cy * this.params.lr * this.params.t0 + x * this.params.cy * this.params.lr * this.params.ty);
+  }
+
   private findEq = (xLower: number, xUpper: number, objective1: CallableFunction, objective2: CallableFunction) => {
     let epsilon = 0.0000000001, diff: number, eqX: number, count = 0;
 
@@ -175,6 +179,28 @@ export class MacroModelService {
       EQ: eqSeries
     }
 
+  }
+
+  public ADAS() {
+
+    let adSeries = [], srasSeries = [], x = this.params.xMin, xMax = this.params.xMax, step = (xMax - x) / 4;
+
+    do {
+      adSeries.push({
+        x: x,
+        y: this.IS(x) 
+      });
+      srasSeries.push({
+        x: x,
+        y: this.LM(x)
+      });
+      x = x + step;
+    } while (x <= xMax);
+
+    return {
+      AD: adSeries,
+      LM: srasSeries
+    }
   }
 
   public seriesMaker(xMin: number, xMax: number, step: number, myMethod: CallableFunction) {
