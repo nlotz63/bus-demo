@@ -9,7 +9,7 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Potential GDP</mat-label>
                     <mat-select [(value)]="pot" (selectionChange)="potGDP.set($event.value)" [disabled]="disableInput()" >
-                        <mat-option [value]="option" *ngFor=" let option of options().pot">{{option}}</mat-option>
+                        <mat-option [value]="option" *ngFor=" let option of options().pot">${{option}} trillion</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
@@ -21,7 +21,7 @@
             </div>
             <p>Restore full employment by increasing government spending (<span econMath="\( \Delta G \)"></span>) by
                 <input #spending type="number" #g0Value [value]="deltaG0()" min="0" max="600"
-                    aria-label="Change in goverment spending" aria-roledescription="billions of dollars" (change)="deltaG0.set(+g0Value.value)" [disabled]="disableInput()" /> billion dollars.
+                    aria-label="Change in goverment spending" aria-description="billions of dollars" (change)="deltaG0.set(+g0Value.value)" [disabled]="disableInput()" /> billion dollars.
                 Then, click play to see how you did.
             </p>
             <div class="button-container">

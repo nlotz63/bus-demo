@@ -70,6 +70,8 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
   deltaG0 = signal(0);
   potGDP = signal(19.2);
   mpc = signal(.75);
+  prevGDP = signal(19.9);
+  prevMpc = signal(.75);
   options = signal({
     mpc: [.5, .6, .75, .8],
     pot: [19.2, 19.4, 19.6, 19.8, 20.0, 20.2]
@@ -138,8 +140,18 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
     this.macroService.setParamters(this.modelParams());
     this._setupGraph();
     this.modelParams$.subscribe((params) => {
+      let parameter: string;
       this.macroService.setParamters(params);
-      this.updateGraph();
+
+      if (this.potGDP() !== this.prevGDP()) {
+        parameter = 'Potential GDP ' + this.potGDP() + 'trillion dollars.';
+      } else {
+        parameter = 'MPC ' + params.cy;
+      }
+      this.updateGraph(parameter);
+
+      this.prevGDP.set(this.potGDP());
+      this.prevMpc.set(params.cy);
     });
   }
 
@@ -147,7 +159,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  public updateGraph() {
+  public updateGraph(param: string) {
     const series = this.macroService.AEModel('AE');
 
     this.chart.update({
@@ -170,7 +182,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
         },
       ]
     });
-    this.announcer.announce('Graph updated.');
+    this.announcer.announce(`${param} Graph updated.`);
   }
 
   public simulation() {
@@ -182,7 +194,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       this.buttonTitle.set('Play');
       return;
     }
-    let newEQ = [{ x: 0, y: 19.2, accessibility: {enabled: false} }, { x: 19.2, y: 19.2, marker: { enabled: true } }, {x: 19.2, y: 18.4, accessibility: {enabled: false}}], delta = 0, sum = 0, compMultiplier = 0;
+    let newEQ = [{ x: 0, y: 19.2, accessibility: { enabled: false } }, { x: 19.2, y: 19.2, marker: { enabled: true } }, { x: 19.2, y: 18.4, accessibility: { enabled: false } }], delta = 0, sum = 0, compMultiplier = 0;
     const gap = 1 / (1 - this.mpc()) * this.deltaG0();
 
     this.myInterval = this.period.subscribe((count) => {
@@ -197,7 +209,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
       let currentEQ = newEQ.map((el, indx) => {
         switch (indx) {
           case 0:
-            return { x: 0, y: el.y + delta, accessibility: {enabled: false}}
+            return { x: 0, y: el.y + delta, accessibility: { enabled: false } }
           case 1:
             return {
               x: el.x + delta,
@@ -205,7 +217,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
               marker: { enabled: true }
             }
           default:
-            return { x: el.x + delta, y: 18.4, accessibility: {enabled: false} }
+            return { x: el.x + delta, y: 18.4, accessibility: { enabled: false } }
         }
       });
 
@@ -454,7 +466,7 @@ export class Macro01hoComponent implements OnInit, AfterViewInit {
     }
 
     if (count === 0 && !stop) {
-      message = `The simulation has started. The graph, table, and math will update every second until the new equilibrium is reached. A point on the Y equals AE line will move up along the line toward potential GDP. An announcement at the end of the simulation will let you know how you did. Depending on your choices, the simulation can take up to a minute and a half to complete.`
+      message = `The simulation has started.The AE line shifted up by ${urDeltaG} billion dollars. The graph, table, and math will update every second until the new equilibrium is reached. A point on the Y equals AE line will move up along the line toward potential GDP. An announcement at the end of the simulation will let you know how you did. Depending on your choices, the simulation can take up to a minute and a half to complete.`
     } else if (count > 0 && stop) {
       message = `The simulation has ended. To restore full employment you needed to increase real GDP by ${reqDeltaG} billion dollars, you increased government spending by ${urDeltaG} billion dollars. ${feedback1}`;
     } else { return; }
